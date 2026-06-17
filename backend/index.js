@@ -7,7 +7,7 @@ const app = express(); // Define app first
 
 // CORS configuration
 const corsOptions = {
-  origin: ['http://localhost:3000', 'https://www.abbass.com.au', 'http://localhost:5005', 'http://localhost:5006', 'http://localhost:3004', 'http://businessbrokersss.abbass.com.au', 'https://abbass.com.au', 'https://apibusinessbrokers.abbass.com.au', 'https://www.ameerah.com.au', 'https://ameerah.com.au', 'https://www.fionajohns.com', 'https://fionajohns.com'],
+  origin: ['http://localhost:3000', 'https://www.abbass.com.au', 'http://localhost:5005', 'http://localhost:5006', 'http://localhost:3004', 'http://businessbrokersss.abbass.com.au', 'https://abbass.com.au', 'https://apibusinessbrokers.abbass.com.au', 'https://www.ameerah.com.au', 'https://ameerah.com.au', 'https://www.fionajohns.com', 'https://fionajohns.com', 'https://blackmontadvisory.com', 'https://www.blackmontadvisory.com', 'https://dev.blackmontadvisory.com', 'http://localhost:5059', 'http://localhost:3090'],
   credentials: true,
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS']
 };
@@ -91,7 +91,7 @@ app.use('/api/im-follow-up', imFollowUpRoutes);
 
 app.use('/uploads', express.static('uploads'));
 
-const PORT = process.env.PORT || 5005;
+const PORT = process.env.PORT || 5059;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 }); 

@@ -1,8 +1,15 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  basePath: '/businessbrokers',
   images: {
+    localPatterns: [
+      {
+        pathname: '/businessbrokers/**',
+      },
+      {
+        pathname: '/**',
+      },
+    ],
     remotePatterns: [
       {
         protocol: 'https',
@@ -15,9 +22,8 @@ const nextConfig: NextConfig = {
         pathname: '/uploads/**',
       },
       {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '5005',
+        protocol: 'https',
+        hostname: 'api.blackmontadvisory.com',
         pathname: '/uploads/**',
       },
       {
