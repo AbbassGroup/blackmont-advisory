@@ -9,7 +9,7 @@ jobs:
   deploy:
     name: SSH Deploy to Production
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
 
     steps:
       - name: Deploy via SSH
@@ -19,38 +19,87 @@ jobs:
           username: ${{ secrets.BLACKMONT_SERVER_USER }}
           key: ${{ secrets.BLACKMONT_SERVER_SSH_KEY }}
           port: 22
-          command_timeout: 18m
+          command_timeout: 23m
           script: |
             set -e
-
-            # ── 1. Pull latest code ─────────────────────────────
-            echo "==> Pulling latest code..."
             cd /var/www/blackmont-advisory
+
+            # ── 1. Snapshot HEAD before pull ───────────────────────
+            PREV_COMMIT=$(git rev-parse HEAD)
+            echo "==> Previous commit: $PREV_COMMIT"
+
+            # ── 2. Pull latest deployment branch ───────────────────
+            echo "==> Pulling latest code..."
             git fetch origin
             git reset --hard origin/deployment
 
-            # ── 2. Backend ──────────────────────────────────────
-            echo "==> Installing backend dependencies..."
-            cd /var/www/blackmont-advisory/backend
-            npm install --omit=dev
+            NEW_COMMIT=$(git rev-parse HEAD)
+            echo "==> New commit:      $NEW_COMMIT"
 
-            echo "==> Restarting backend..."
-            pm2 restart blackmont_backend --update-env \
-              || pm2 start index.js --name blackmont_backend --cwd /var/www/blackmont-advisory/backend
+            # ── 3. Detect what changed ─────────────────────────────
+            CHANGED=$(git diff --name-only "$PREV_COMMIT" "$NEW_COMMIT")
+            echo "==> Changed files:"
+            echo "$CHANGED"
 
-            # ── 3. Frontend ─────────────────────────────────────
-            echo "==> Installing frontend dependencies..."
-            cd /var/www/blackmont-advisory/frontend
-            npm install
+            BACKEND_CHANGED=false
+            FRONTEND_CHANGED=false
 
-            echo "==> Building Next.js frontend..."
-            npm run build
+            # Treat workflow changes as touching both (safety net)
+            if echo "$CHANGED" | grep -qE '^(backend/|\.github/)'; then
+              BACKEND_CHANGED=true
+            fi
+            if echo "$CHANGED" | grep -qE '^(frontend/|\.github/)'; then
+              FRONTEND_CHANGED=true
+            fi
 
-            echo "==> Restarting frontend..."
-            pm2 restart blackmont_frontend \
-              || pm2 start npm --name blackmont_frontend --cwd /var/www/blackmont-advisory/frontend -- start
+            # If this is the very first deploy (PREV == NEW, e.g. fresh clone),
+            # deploy everything
+            if [ "$PREV_COMMIT" = "$NEW_COMMIT" ]; then
+              echo "==> First deploy — deploying everything."
+              BACKEND_CHANGED=true
+              FRONTEND_CHANGED=true
+            fi
 
-            # ── 4. Persist PM2 list ─────────────────────────────
+            echo "==> Backend changed:  $BACKEND_CHANGED"
+            echo "==> Frontend changed: $FRONTEND_CHANGED"
+
+            # ── 4. Backend (only if backend/ changed) ──────────────
+            if [ "$BACKEND_CHANGED" = "true" ]; then
+              echo ""
+              echo "==> [BACKEND] Installing dependencies..."
+              cd /var/www/blackmont-advisory/backend
+              npm install --omit=dev
+
+              echo "==> [BACKEND] Restarting PM2..."
+              pm2 restart blackmont_backend --update-env \
+                || pm2 start index.js --name blackmont_backend \
+                     --cwd /var/www/blackmont-advisory/backend
+              echo "==> [BACKEND] Done."
+            else
+              echo "==> [BACKEND] No changes — skipping."
+            fi
+
+            # ── 5. Frontend (only if frontend/ changed) ────────────
+            if [ "$FRONTEND_CHANGED" = "true" ]; then
+              echo ""
+              echo "==> [FRONTEND] Installing dependencies..."
+              cd /var/www/blackmont-advisory/frontend
+              npm install
+
+              echo "==> [FRONTEND] Building Next.js..."
+              npm run build
+
+              echo "==> [FRONTEND] Restarting PM2..."
+              pm2 restart blackmont_frontend \
+                || pm2 start npm --name blackmont_frontend \
+                     --cwd /var/www/blackmont-advisory/frontend -- start
+              echo "==> [FRONTEND] Done."
+            else
+              echo "==> [FRONTEND] No changes — skipping."
+            fi
+
+            # ── 6. Persist PM2 list ────────────────────────────────
             pm2 save
 
+            echo ""
             echo "==> Deployment complete."
