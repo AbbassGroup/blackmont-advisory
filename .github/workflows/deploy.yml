@@ -1,4 +1,4 @@
-name: Auto Deploy on Server
+name: Deploy — blackmont-advisory
 
 on:
   push:
@@ -7,44 +7,50 @@ on:
 
 jobs:
   deploy:
-    name: Deploy via SSH
+    name: SSH Deploy to Production
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
-      - name: Connect and deploy on server
-        uses: appleboy/ssh-action@v0.1.6
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
+          host: ${{ secrets.BLACKMONT_SERVER_HOST }}
+          username: ${{ secrets.BLACKMONT_SERVER_USER }}
+          key: ${{ secrets.BLACKMONT_SERVER_SSH_KEY }}
+          port: 22
+          command_timeout: 18m
           script: |
             set -e
 
-            echo "Pulling latest code from deployment branch..."
-            cd /var/www/Business_Brokers
-
+            # ── 1. Pull latest code ─────────────────────────────
+            echo "==> Pulling latest code..."
+            cd /var/www/blackmont-advisory
             git fetch origin
             git reset --hard origin/deployment
-            git pull origin deployment
 
-            echo "Installing backend dependencies..."
-            cd /var/www/Business_Brokers/backend
+            # ── 2. Backend ──────────────────────────────────────
+            echo "==> Installing backend dependencies..."
+            cd /var/www/blackmont-advisory/backend
+            npm install --omit=dev
+
+            echo "==> Restarting backend..."
+            pm2 restart blackmont_backend --update-env \
+              || pm2 start index.js --name blackmont_backend --cwd /var/www/blackmont-advisory/backend
+
+            # ── 3. Frontend ─────────────────────────────────────
+            echo "==> Installing frontend dependencies..."
+            cd /var/www/blackmont-advisory/frontend
             npm install
 
-            echo "Restarting backend with PM2..."
-            pm2 restart businessbroker-backend || pm2 start index.js --name businessbroker-backend
-
-            echo "Installing frontend dependencies..."
-            cd /var/www/Business_Brokers/frontend
-            npm install
-
-            echo "Building Next.js frontend..."
+            echo "==> Building Next.js frontend..."
             npm run build
 
-            echo "Restarting frontend with PM2..."
-            pm2 restart businessbrokers || pm2 start npm --name businessbrokers -- start -- -p 3089
+            echo "==> Restarting frontend..."
+            pm2 restart blackmont_frontend \
+              || pm2 start npm --name blackmont_frontend --cwd /var/www/blackmont-advisory/frontend -- start
 
-            echo "Saving PM2 process list..."
+            # ── 4. Persist PM2 list ─────────────────────────────
             pm2 save
 
-            echo "Deployment complete."
+            echo "==> Deployment complete."
