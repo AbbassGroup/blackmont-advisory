@@ -1,24 +1,49 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 
 const NAV_LINKS = [
   { label: 'Home', path: '/' },
   { label: 'Services', path: '/services' },
-  { label: 'Listings', path: '/listings' },
-  { label: 'Resources', path: '/resources' },
-  { label: 'Buy a Business', path: '/buy-a-business' },
+  // { label: 'Listings', path: '/listings' },
+  // { label: 'Buy a Business', path: '/buy-a-business' },
   { label: 'About', path: '/about' },
-  { label: 'Agents', path: '/agents' },
-  { label: 'Careers', path: '/careers' },
   { label: 'Contact', path: '/contact' },
 ];
+
+function BrandLockup() {
+  return (
+    <Link
+      href='/'
+      className='flex items-center gap-3 shrink-0'
+      aria-label='Blackmont Advisory home'
+    >
+      <span className='flex h-9 w-9 items-center justify-center border-[1.5px] border-accent'>
+        <span className='text-[13px] font-bold tracking-[0.05em] text-accent'>
+          BA
+        </span>
+      </span>
+      <span className='flex flex-col leading-none'>
+        <span className='text-[15px] font-bold uppercase tracking-[0.06em] text-parchment'>
+          Blackmont
+        </span>
+        <span className='mt-0.5 text-[10px] font-normal uppercase tracking-[0.18em] text-parchment/45'>
+          Advisory
+        </span>
+      </span>
+    </Link>
+  );
+}
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -26,7 +51,7 @@ export function Header() {
   const pathname = usePathname();
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
+    const handleScroll = () => setScrolled(window.scrollY > 60);
     handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
@@ -37,30 +62,23 @@ export function Header() {
   const isActive = (path: string) =>
     path === '/' ? pathname === '/' : pathname.startsWith(path);
 
-  const navClass = [
-    'fixed top-0 left-0 right-0 z-50 transition-all duration-300 w-full',
-    scrolled
-      ? 'bg-[rgba(28,36,52,0.97)] backdrop-blur-[10px] shadow-[0_2px_16px_rgba(0,0,0,0.15)]'
-      : 'bg-gradient-to-b from-black/30 to-transparent',
-  ].join(' ');
-
   return (
-    <header className={navClass}>
-      <div className='flex justify-between items-center h-[80px] px-4 md:px-6 max-w-[1500px] mx-auto'>
-        {/* Logo */}
-        <Link href='/' className='flex items-center shrink-0'>
-          <Image
-            src='/businessbrokers/logo-text.webp'
-            alt='ABBASS Business Brokers'
-            width={180}
-            height={60}
-            className={`w-auto transition-all duration-300 ${scrolled ? 'h-[52px]' : 'h-[62px]'}`}
-            priority
-          />
-        </Link>
+    <header
+      className={[
+        'fixed inset-x-0 top-0 z-50 w-full border-b border-accent/15 bg-secondary transition-shadow duration-300',
+        scrolled ? 'shadow-[0_4px_24px_rgba(0,0,0,0.25)]' : '',
+      ].join(' ')}
+    >
+      <div
+        className={[
+          'mx-auto flex max-w-[1500px] items-center justify-between px-6 transition-[height] duration-300 sm:px-10 lg:px-16',
+          scrolled ? 'h-[60px]' : 'h-[72px]',
+        ].join(' ')}
+      >
+        <BrandLockup />
 
-        {/* Desktop Nav */}
-        <nav className='hidden lg:flex items-center justify-end grow'>
+        {/* Desktop nav */}
+        <nav className='hidden items-center gap-8 lg:flex'>
           {NAV_LINKS.map((link) => {
             const active = isActive(link.path);
             return (
@@ -68,10 +86,10 @@ export function Header() {
                 key={link.path}
                 href={link.path}
                 className={[
-                  'px-5 py-2 font-medium tracking-wide transition-all duration-200 relative whitespace-nowrap',
+                  'text-xs font-medium uppercase tracking-[0.1em] transition-colors',
                   active
-                    ? 'text-brand-primary font-semibold after:absolute after:-bottom-[2px] after:left-3 after:right-3 after:h-[2px] after:bg-brand-primary after:rounded-full'
-                    : 'text-white/90 hover:text-white',
+                    ? 'text-accent'
+                    : 'text-parchment/55 hover:text-accent',
                 ].join(' ')}
               >
                 {link.label}
@@ -80,45 +98,62 @@ export function Header() {
           })}
         </nav>
 
-        {/* Mobile Nav */}
-        <div className='lg:hidden flex items-center'>
-          <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger asChild>
-              <Button
-                variant='ghost'
-                size='icon'
-                className='text-white hover:bg-white/10'
+        <div className='flex items-center gap-3'>
+          <Link
+            href='/contact'
+            className='hidden whitespace-nowrap bg-accent px-6 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-primary transition-colors hover:bg-accent-light sm:inline-block'
+          >
+            Begin Confidentially
+          </Link>
+
+          {/* Mobile nav */}
+          <div className='lg:hidden'>
+            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  variant='ghost'
+                  size='icon'
+                  className='text-parchment hover:bg-white/10 hover:text-accent'
+                >
+                  <Menu className='h-6 w-6' />
+                  <span className='sr-only'>Toggle menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent
+                side='right'
+                className='w-[280px] border-accent/15 bg-secondary p-6 pt-16 text-parchment'
               >
-                <Menu className='h-6 w-6' />
-                <span className='sr-only'>Toggle Menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent
-              side='right'
-              className='bg-[rgba(28,36,52,0.99)] border-white/10 text-white p-6 pt-16 w-[280px]'
-            >
-              <nav className='flex flex-col space-y-1'>
-                {NAV_LINKS.map((link) => {
-                  const active = isActive(link.path);
-                  return (
-                    <Link
-                      key={link.path}
-                      href={link.path}
-                      onClick={() => setIsOpen(false)}
-                      className={[
-                        'px-4 py-3 rounded-lg text-base font-medium transition-colors',
-                        active
-                          ? 'bg-brand-primary/15 text-brand-primary font-semibold'
-                          : 'text-white/80 hover:bg-white/10 hover:text-white',
-                      ].join(' ')}
-                    >
-                      {link.label}
-                    </Link>
-                  );
-                })}
-              </nav>
-            </SheetContent>
-          </Sheet>
+                <SheetTitle className='sr-only'>Navigation menu</SheetTitle>
+                <nav className='flex flex-col space-y-1'>
+                  {NAV_LINKS.map((link) => {
+                    const active = isActive(link.path);
+                    return (
+                      <Link
+                        key={link.path}
+                        href={link.path}
+                        onClick={() => setIsOpen(false)}
+                        className={[
+                          'rounded-md px-4 py-3 text-sm font-medium uppercase tracking-[0.1em] transition-colors',
+                          active
+                            ? 'bg-accent/15 text-accent'
+                            : 'text-parchment/70 hover:bg-white/10 hover:text-accent',
+                        ].join(' ')}
+                      >
+                        {link.label}
+                      </Link>
+                    );
+                  })}
+                  <Link
+                    href='/contact'
+                    onClick={() => setIsOpen(false)}
+                    className='mt-4 bg-accent px-4 py-3 text-center text-xs font-bold uppercase tracking-[0.14em] text-primary transition-colors hover:bg-accent-light'
+                  >
+                    Begin Confidentially
+                  </Link>
+                </nav>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </div>
     </header>
