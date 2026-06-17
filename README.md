@@ -1,2 +1,3 @@
 test
 deployment
+deploy
