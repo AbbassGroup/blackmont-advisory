@@ -1,0 +1,354 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { ArrowLeft, Loader2, ChevronDown, Eye, Bell, BellOff } from 'lucide-react';
+import { apiClient } from '@/lib/api';
+import { useAdminAuth } from '@/context/admin-auth-context';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import DashboardLayout from '@/components/global/dashboard-layout';
+import { ImHistoryDialog } from '@/components/admin/im-history-dialog';
+import { ImViewLog } from '../_components/deals';
+import { toast } from 'sonner';
+
+const CATEGORIES = [
+  {
+    label: 'Hot',
+    color: 'bg-red-500 text-white',
+    hover: 'hover:bg-red-600',
+    dot: 'bg-red-500',
+  },
+  {
+    label: 'Warm',
+    color: 'bg-orange-500 text-white',
+    hover: 'hover:bg-orange-600',
+    dot: 'bg-orange-500',
+  },
+  {
+    label: 'Cold',
+    color: 'bg-blue-500 text-white',
+    hover: 'hover:bg-blue-600',
+    dot: 'bg-blue-500',
+  },
+];
+
+const NEXAR_API = process.env.NEXT_PUBLIC_NEXAR_API_URL;
+
+type Prospect = {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+  email?: string;
+};
+
+export default function ProspectsPage() {
+  const params = useParams();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const dealId = params?.id as string; // or listingId
+  const nexarDealId = searchParams?.get('dealId') || '';
+
+  // IM History State
+  const [imDialogOpen, setImDialogOpen] = useState(false);
+  const [imLogs, setImLogs] = useState<ImViewLog[]>([]);
+  const [imLoading, setImLoading] = useState(false);
+  // IM Notification State
+  const [notifEnabled, setNotifEnabled] = useState(false);
+  const [notifToggling, setNotifToggling] = useState(false);
+
+  const { user } = useAdminAuth();
+
+  const [prospects, setProspects] = useState<Prospect[]>([]);
+  const [categories, setCategories] = useState<Record<string, string>>({});
+  const [dealTitle, setDealTitle] = useState('Deal');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDealData = async () => {
+      if (!user?.token || !dealId) return;
+      setLoading(true);
+      try {
+        // Fetch prospects from Nexar API
+        const prospectsRes = await fetch(
+          `${NEXAR_API}/contacts/business-brokers/${nexarDealId}`,
+          { headers: { Authorization: `Bearer ${user.token}` } },
+        );
+
+        const prospectsData = await prospectsRes.json();
+
+        // Fetch categories from our backend API
+        const categoriesRes = await apiClient.get(
+          `/api/deals/${dealId}/categories`,
+          {
+            headers: { Authorization: `Bearer ${user.token}` },
+          },
+        );
+
+        const businessNamesRes = await fetch(`${NEXAR_API}/contacts/business`, {
+          method: 'POST',
+          body: JSON.stringify({ dealIds: [nexarDealId] }),
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        const businessNames = (await businessNamesRes.json()).data;
+
+        const businessInfo = businessNames?.find(
+          (bn: any) => bn.dealId === nexarDealId,
+        );
+
+        setProspects(prospectsData || []);
+        setCategories(categoriesRes.data || {});
+        if (businessInfo) setDealTitle(businessInfo.businessName);
+      } catch (error) {
+        console.error('Failed to fetch prospects data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDealData();
+  }, [dealId, nexarDealId, user?.token]);
+
+  // Fetch notification preference for this deal
+  useEffect(() => {
+    const fetchNotifPref = async () => {
+      if (!user?.token || !dealId) return;
+      try {
+        const res = await apiClient.get(
+          `/api/deals/${dealId}/im-notifications`,
+          { headers: { Authorization: `Bearer ${user.token}` } },
+        );
+        setNotifEnabled(res.data?.enabled || false);
+      } catch (error) {
+        console.error('Failed to fetch notification pref:', error);
+      }
+    };
+    fetchNotifPref();
+  }, [dealId, user?.token]);
+
+  const toggleNotification = async () => {
+    if (!user?.token) return;
+    const newEnabled = !notifEnabled;
+    setNotifEnabled(newEnabled);
+    setNotifToggling(true);
+    try {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      await apiClient.put(
+        `/api/deals/${dealId}/im-notifications`,
+        { enabled: newEnabled, timezone: tz },
+        { headers: { Authorization: `Bearer ${user.token}` } },
+      );
+      toast.success(
+        newEnabled
+          ? 'IM view email notifications enabled'
+          : 'IM view email notifications disabled',
+      );
+    } catch (error) {
+      console.error('Failed to toggle notification:', error);
+      setNotifEnabled(!newEnabled);
+      toast.error('Failed to update notification preference');
+    } finally {
+      setNotifToggling(false);
+    }
+  };
+
+  const handleCategorySelect = async (prospectId: string, label: string) => {
+    if (!user?.token) return;
+
+    // Optimistic update
+    setCategories((prev) => ({ ...prev, [prospectId]: label }));
+
+    try {
+      await apiClient.put(
+        `/api/deals/${dealId}/categories/${prospectId}`,
+        { category: label },
+        { headers: { Authorization: `Bearer ${user.token}` } },
+      );
+    } catch (error) {
+      console.error('Failed to save category:', error);
+    }
+  };
+
+  const getCategoryMeta = (prospectId: string) => {
+    const label = categories[prospectId];
+    if (!label) return null;
+    return CATEGORIES.find((c) => c.label === label) || null;
+  };
+
+  const sortedProspects = prospects?.length
+    ? [...prospects].sort((a, b) => {
+        const priority: Record<string, number> = { Hot: 0, Warm: 1, Cold: 2 };
+        const pa = priority[categories[a._id]] ?? 3;
+        const pb = priority[categories[b._id]] ?? 3;
+        return pa - pb;
+      })
+    : [];
+
+  const openImHistory = async () => {
+    if (!user?.token) return;
+    setImDialogOpen(true);
+    setImLoading(true);
+    try {
+      const res = await apiClient.get(
+        `/api/listings/im-views/all?listingId=${dealId}`,
+        {
+          headers: { Authorization: `Bearer ${user.token}` },
+        },
+      );
+      setImLogs(res.data || []);
+    } catch (error) {
+      console.error('Failed to fetch IM View History', error);
+      setImLogs([]);
+    } finally {
+      setImLoading(false);
+    }
+  };
+
+  return (
+    <DashboardLayout
+      title={`${dealTitle} Prospects`}
+      description='Manage prospects and categorize their interest levels'
+      button={
+        <div className='flex gap-3'>
+          <Button
+            variant='outline'
+            onClick={() => router.push('/admin/deals')}
+            className='gap-2'
+          >
+            <ArrowLeft className='w-4 h-4' /> Back to Deals
+          </Button>
+          <Button
+            variant='outline'
+            onClick={openImHistory}
+            className='gap-2 text-brand-primary border-brand-primary/20 hover:bg-brand-primary/5 hover:text-brand-primary'
+          >
+            <Eye className='w-4 h-4' /> View IM History
+          </Button>
+          <Button
+            variant='outline'
+            onClick={toggleNotification}
+            disabled={notifToggling}
+            className={`gap-2 ${
+              notifEnabled
+                ? 'text-brand-primary border-brand-primary/30 bg-brand-primary/5 hover:bg-brand-primary/10'
+                : 'text-gray-500 border-gray-200 hover:bg-gray-50'
+            }`}
+          >
+            {notifToggling ? (
+              <Loader2 className='w-4 h-4 animate-spin' />
+            ) : notifEnabled ? (
+              <Bell className='w-4 h-4' />
+            ) : (
+              <BellOff className='w-4 h-4' />
+            )}
+            {notifEnabled ? 'Notifications On' : 'Notifications Off'}
+          </Button>
+        </div>
+      }
+    >
+      <div className='bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden'>
+        <div className='overflow-x-auto'>
+          <table className='w-full text-sm text-left'>
+            <thead>
+              <tr className='border-b border-gray-100 bg-gray-50/80'>
+                <th className='px-6 py-4 font-semibold text-gray-600'>Name</th>
+                <th className='px-6 py-4 font-semibold text-gray-600'>Phone</th>
+                <th className='px-6 py-4 font-semibold text-gray-600'>Email</th>
+                <th className='px-6 py-4 font-semibold text-gray-600'>
+                  Category
+                </th>
+              </tr>
+            </thead>
+            <tbody className='divide-y divide-gray-50'>
+              {loading ? (
+                <tr>
+                  <td colSpan={4} className='text-center py-12'>
+                    <Loader2 className='w-6 h-6 animate-spin text-brand-primary mx-auto mb-2' />
+                    <p className='text-gray-400'>Loading prospects...</p>
+                  </td>
+                </tr>
+              ) : sortedProspects.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className='text-center py-12 text-gray-400'>
+                    No prospects found for this deal.
+                  </td>
+                </tr>
+              ) : (
+                sortedProspects.map((prospect) => {
+                  const meta = getCategoryMeta(prospect._id);
+                  return (
+                    <tr
+                      key={prospect._id}
+                      className='hover:bg-gray-50/60 transition-colors'
+                    >
+                      <td className='px-6 py-4 font-medium text-brand-black'>
+                        {prospect.firstName} {prospect.lastName}
+                      </td>
+                      <td className='px-6 py-4 text-gray-600'>
+                        {prospect.phone || '—'}
+                      </td>
+                      <td className='px-6 py-4 text-gray-600'>
+                        {prospect.email || '—'}
+                      </td>
+                      <td className='px-6 py-4'>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <button
+                              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-colors focus:outline-none ${
+                                meta
+                                  ? meta.color
+                                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                              }`}
+                            >
+                              {meta ? meta.label : 'Set Category'}
+                              <ChevronDown
+                                className={`w-3 h-3 ${meta ? 'opacity-80' : 'opacity-50'}`}
+                              />
+                            </button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align='start' className='w-32'>
+                            {CATEGORIES.map((cat) => (
+                              <DropdownMenuItem
+                                key={cat.label}
+                                onClick={() =>
+                                  handleCategorySelect(prospect._id, cat.label)
+                                }
+                                className='gap-2 cursor-pointer'
+                              >
+                                <span
+                                  className={`w-2 h-2 rounded-full ${cat.dot}`}
+                                />
+                                {cat.label}
+                              </DropdownMenuItem>
+                            ))}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <ImHistoryDialog
+        open={imDialogOpen}
+        onOpenChange={setImDialogOpen}
+        logs={imLogs}
+        loading={imLoading}
+        // dealId={dealId}
+        token={user?.token || ''}
+      />
+    </DashboardLayout>
+  );
+}

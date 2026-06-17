@@ -1,0 +1,149 @@
+'use client';
+
+import { ArrowUpRight, ClipboardCheck, Compass, User } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { SectionHeading } from '../section-chrome';
+import { AppraisalDialog } from '../appraisal-dialog';
+
+const BUY_A_BUSINESS_URL =
+  'https://abbass.com.au/businessbrokers/buy-a-business';
+
+const CONTACTS = [
+  {
+    role: 'Commercial Lawyer',
+    name: 'Lei Praytil',
+    company: 'Petra Law',
+    phone: '0423 162 481',
+    image: '/businessbrokers/petra-law.png',
+  },
+  {
+    role: 'Business Loans',
+    name: 'Nazar Asani',
+    company: 'Fiducia Finance',
+    phone: '0439 003 349',
+    image: '/businessbrokers/fiducia.jpg',
+  },
+  {
+    role: 'Accountant',
+    name: 'James Di Sebastiano',
+    company: 'Costanzo Harris',
+    phone: '0423 048 446',
+    image: '/businessbrokers/costanzo-harris.png',
+  },
+];
+
+export function KeyContactsSection({
+  title,
+  editable,
+  onChange,
+}: {
+  title: string;
+  editable?: boolean;
+  onChange?: (patch: { title: string }) => void;
+}) {
+  return (
+    <>
+      {/* CTAs */}
+      <div className='mb-10 grid gap-4 sm:grid-cols-2'>
+        <div className='flex flex-col rounded-2xl border border-gray-100 bg-white p-6 shadow-xs'>
+          <div className='flex items-center gap-3'>
+            <span className='flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-primary/10 text-brand-primary'>
+              <ClipboardCheck className='h-5 w-5' />
+            </span>
+            <p className='text-lg font-semibold text-brand-black'>
+              Get an Appraisal
+            </p>
+          </div>
+          <p className='mt-3 flex-1 text-sm leading-relaxed text-gray-500'>
+            Curious what your business is worth? Request a confidential,
+            no-obligation appraisal.
+          </p>
+          <AppraisalDialog>
+            <Button
+              size='lg'
+              className='mt-4 self-start bg-brand-primary text-white hover:bg-brand-primary/90'
+            >
+              Get an Appraisal
+            </Button>
+          </AppraisalDialog>
+        </div>
+
+        <div className='flex flex-col rounded-2xl border border-brand-primary/20 bg-brand-primary/8 p-6'>
+          <div className='flex items-center gap-3'>
+            <span className='flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-primary/20 text-brand-primary'>
+              <Compass className='h-5 w-5' />
+            </span>
+            <p className='text-lg font-semibold text-brand-black'>
+              Can&apos;t find the right business?
+            </p>
+          </div>
+          <p className='mt-3 flex-1 text-sm leading-relaxed text-gray-600'>
+            <span className='font-semibold text-brand-black'>
+              Get Represented
+            </span>{' '}
+            with our Business Buyers Advocacy service.
+          </p>
+          <Button
+            asChild
+            size='lg'
+            variant='outline'
+            className='mt-4 self-start'
+          >
+            <a
+              href={BUY_A_BUSINESS_URL}
+              target='_blank'
+              rel='noopener noreferrer'
+            >
+              Learn more <ArrowUpRight className='h-4 w-4' />
+            </a>
+          </Button>
+        </div>
+      </div>
+
+      {/* Key contacts */}
+      <SectionHeading
+        title={title}
+        editable={editable}
+        onChange={(v) => onChange?.({ title: v })}
+        placeholder='Key Contacts'
+      />
+      <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+        {CONTACTS.map((c) => (
+          <div
+            key={c.role}
+            className='rounded-2xl border border-gray-100 bg-white p-5 shadow-xs'
+          >
+            <div className='flex items-start gap-3'>
+              <div className='flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-primary/10 ring-2 ring-brand-primary/15'>
+                {c.image ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={c.image}
+                    alt={c.role}
+                    loading='lazy'
+                    decoding='async'
+                    className='h-full w-full object-cover'
+                  />
+                ) : (
+                  <User className='h-5 w-5 text-brand-primary' />
+                )}
+              </div>
+              <div className='min-w-0'>
+                <p className='text-xs font-semibold uppercase tracking-wide text-brand-primary'>
+                  {c.role}
+                </p>
+                <p className='text-sm font-semibold leading-snug text-brand-black'>
+                  {c.name}
+                </p>
+              </div>
+            </div>
+            <div className='mt-3 space-y-0.5 text-xs text-gray-500'>
+              {c.company && <p>{c.company}</p>}
+              <p>{c.phone}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
