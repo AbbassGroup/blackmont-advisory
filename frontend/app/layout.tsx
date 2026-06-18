@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     siteName: 'Blackmont Advisory',
     images: [
       {
-        url: 'https://www.blackmontadvisory.com/blackmont-og.jpg',
+        url: '/blackmont-og.jpg',
         width: 1200,
         height: 630,
         alt: 'Blackmont Advisory',
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     title: 'Blackmont Advisory',
     description:
       'Australia’s trusted boutique business brokerage, helping owners achieve the best outcomes when buying or selling businesses across Melbourne, Sydney, and beyond.',
-    images: ['https://www.blackmontadvisory.com/blackmont-og.jpg'],
+    images: ['/blackmont-og.jpg'],
   },
   robots: {
     index: true,
