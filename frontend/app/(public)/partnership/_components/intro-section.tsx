@@ -15,7 +15,7 @@ export function IntroSection() {
               Helping Your Clients Buy or Sell a Business
             </h2>
             <p className='text-gray-700 leading-relaxed font-semibold mb-8'>
-              Blackmont Advisory works alongside partners to provide expert
+              ABBASS Business Brokers works alongside partners to provide expert
               business sale and acquisition support, while you remain the
               trusted advisor.
             </p>

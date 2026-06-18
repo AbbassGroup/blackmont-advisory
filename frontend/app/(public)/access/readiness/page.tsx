@@ -7,7 +7,7 @@ import { breadcrumbJsonLd, buildMetadata, webAppJsonLd } from '@/lib/seo';
 
 export const metadata: Metadata = buildMetadata({
   path: '/access/readiness',
-  title: 'Sale Readiness Scorecard | Blackmont Advisory',
+  title: 'Sale Readiness Scorecard | ABBASS Business Brokers',
   description:
     'Answer 10 quick questions to get your personalised business sale-readiness score, a category breakdown, and tailored next steps.',
 });

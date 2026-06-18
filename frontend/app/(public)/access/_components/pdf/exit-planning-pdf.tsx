@@ -29,7 +29,10 @@ export function ExitPlanningPdf(props: ExitPlanningPdfProps) {
   const { assets, progressPct, progressLabel, phases } = props;
 
   return (
-    <Document title='Exit Planning Guide' author='Blackmont Advisory'>
+    <Document
+      title='Exit Planning Guide'
+      author='ABBASS Business Brokers'
+    >
       <PageShell assets={assets}>
         <TitleBlock title='Exit Planning Guide' />
 

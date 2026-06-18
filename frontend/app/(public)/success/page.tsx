@@ -1,4 +1,4 @@
-import { Check } from 'lucide-react';
+import { Check } from "lucide-react";
 
 export default function SuccessPage() {
   return (
@@ -16,8 +16,8 @@ export default function SuccessPage() {
             Thank You! We&apos;ve received your details.
           </h1>
           <p className='text-base md:text-lg text-slate-600 leading-relaxed max-w-2xl mx-auto'>
-            Thank you for choosing Blackmont Advisory. A broker will be in touch
-            shortly to discuss your business goals
+            Thank you for choosing ABBASS Business Brokers. A broker will be in
+            touch shortly to discuss your business goals
           </p>
         </div>
       </div>

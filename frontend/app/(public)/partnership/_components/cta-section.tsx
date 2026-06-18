@@ -27,8 +27,8 @@ export function CTASection() {
             Let’s Strengthen the Support You Offer Your Clients
           </h2>
           <p className='text-lg md:text-xl text-white/90 leading-relaxed font-medium'>
-            If you would like to explore how Blackmont Advisory can support your
-            firm and your clients, we welcome a confidential discussion.
+            If you would like to explore how ABBASS Business Brokers can support
+            your firm and your clients, we welcome a confidential discussion.
           </p>
         </div>
 

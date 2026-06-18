@@ -122,7 +122,7 @@ export default function CareersPage() {
             transition={{ delay: 0.1 }}
             className='text-white/90 text-xl md:text-2xl font-light max-w-[600px] mx-auto drop-shadow-md'
           >
-            Careers at Blackmont Advisory
+            Careers at ABBASS Business Brokers
           </motion.p>
         </div>
 

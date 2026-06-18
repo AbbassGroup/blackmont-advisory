@@ -36,9 +36,7 @@ export function ContactUs() {
 
             <div className='flex items-center'>
               <Mail className='w-5 h-5 mr-4 shrink-0 opacity-90' />
-              <span className='text-base font-medium'>
-                info@blackmontadvisory.com
-              </span>
+              <span className='text-base font-medium'>info@abbass.group</span>
             </div>
           </div>
         </div>
@@ -57,7 +55,7 @@ export function ContactUs() {
           <div className='relative w-40 h-12'>
             <Image
               src='/businessbrokers/logo-text.webp'
-              alt='Blackmont Advisory'
+              alt='ABBASS Business Brokers'
               fill
               className='object-contain'
             />

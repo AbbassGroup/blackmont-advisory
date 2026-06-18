@@ -20,7 +20,7 @@ const faqs = [
     a: 'A comprehensive training program is in place which will cover sales training, process training, systems training as well as financial analysis training. Additional ongoing support & training is also available.',
   },
   {
-    q: 'Why Blackmont Advisory?',
+    q: 'Why ABBASS Business Brokers?',
     a: "Leverage from an interconnected international brand that's being recognised exponentially by Australians.",
   },
   {

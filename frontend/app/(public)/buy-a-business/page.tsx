@@ -10,11 +10,11 @@ import { CTASection } from './_components/cta-section';
 import { ScrollIndicator } from '@/components/global/scroll-indicator';
 
 export const metadata: Metadata = {
-  title: 'Buy a Business | Business Buyers Agents | Blackmont Advisory',
+  title: 'Buy a Business | Business Buyers Agents | ABBASS Business Brokers',
   description:
-    'Looking to buy a business? Blackmont Advisory helps buyers find, analyse, and negotiate the right business. Independent buyer advocacy from strategy to settlement. Book a free consultation.',
+    'Looking to buy a business? ABBASS Business Brokers helps buyers find, analyse, and negotiate the right business. Independent buyer advocacy from strategy to settlement. Book a free consultation.',
   openGraph: {
-    title: 'Buy a Business | Blackmont Advisory',
+    title: 'Buy a Business | ABBASS Business Brokers',
     description: 'Independent buyer advocacy from strategy to settlement.',
   },
 };
@@ -39,7 +39,7 @@ export default function BuyBusinessPage() {
             <span className='text-brand-primary'>With Confidence</span>
           </h1>
           <p className='text-lg md:text-xl text-white/90 font-medium max-w-2xl mx-auto leading-relaxed drop-shadow'>
-            Business Buyer Representation by Blackmont Advisory
+            Business Buyer Representation by ABBASS Business Brokers
           </p>
         </div>
 

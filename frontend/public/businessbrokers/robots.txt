@@ -1,6 +1,1 @@
-# https://www.robotstxt.org/robotstxt.html
-
-User-agent: *
-Allow: /
-
-Sitemap: https://www.abbass.com.au/businessbrokers/sitemap.xml
+../robots.txt

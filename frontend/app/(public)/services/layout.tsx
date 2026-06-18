@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title:
-    'Our Services – Business Brokerage, Valuations & More | Blackmont Advisory',
+    'Our Services – Business Brokerage, Valuations & More | ABBASS Business Brokers',
   description:
     'Comprehensive business brokerage services including free valuations, buyer matching, due diligence support, and confidential business sales across Australia.',
   openGraph: {

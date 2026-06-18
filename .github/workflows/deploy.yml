@@ -84,14 +84,6 @@ jobs:
               cd /var/www/blackmont-advisory/frontend
               npm install
 
-              echo "==> [FRONTEND] Rebuilding public/businessbrokers symlinks..."
-              mkdir -p public/businessbrokers
-              for item in public/*; do
-                base=$(basename "$item")
-                [ "$base" = "businessbrokers" ] && continue
-                ln -sf "../$base" "public/businessbrokers/$base"
-              done
-
               echo "==> [FRONTEND] Building Next.js..."
               npm run build
 

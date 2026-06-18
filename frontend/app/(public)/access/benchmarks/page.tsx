@@ -7,7 +7,7 @@ import { breadcrumbJsonLd, buildMetadata, webAppJsonLd } from '@/lib/seo';
 
 export const metadata: Metadata = buildMetadata({
   path: '/access/benchmarks',
-  title: 'Industry Benchmark Report | Blackmont Advisory',
+  title: 'Industry Benchmark Report | ABBASS Business Brokers',
   description:
     'Current Australian SME market data. See typical EBITDA multiples, sale price ranges, time to sell, and what buyers look for in your industry.',
 });

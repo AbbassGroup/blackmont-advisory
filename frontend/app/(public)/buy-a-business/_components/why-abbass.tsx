@@ -31,7 +31,7 @@ export function WhyAbbass() {
     <section className='bg-gray-50 py-20 lg:py-28'>
       <div className='max-w-[1260px] mx-auto px-4 lg:px-8'>
         <div className='text-center mb-16'>
-          <Title>Why Blackmont Advisory</Title>
+          <Title>Why ABBASS Business Brokers</Title>
           <div className='w-16 h-1 bg-brand-primary rounded-full mx-auto' />
         </div>
 

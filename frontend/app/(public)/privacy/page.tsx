@@ -7,7 +7,7 @@ import { ScrollIndicator } from '@/components/global/scroll-indicator';
 const CONTENT = {
   title: 'Privacy Policy',
   intro:
-    'This Privacy Policy applies to all personal information collected by Blackmont Advisory via the website located at https://abbass.com.au/businessbrokers/.',
+    'This Privacy Policy applies to all personal information collected by Abbass Advocacy Pty Ltd via the website located at https://abbass.com.au/businessbrokers/.',
   sections: [
     {
       id: 'what-is-personal',
@@ -52,7 +52,7 @@ const CONTENT = {
       id: 'complaint',
       heading: '6. Complaint procedure',
       paragraphs: [
-        'If you have a complaint concerning the manner in which we maintain the privacy of your personal information, please contact us as set out below. All complaints will be considered by Blackmont Advisory and we may seek further information from you to clarify your concerns. If we agree that your complaint is well founded, we will, in consultation with you, take appropriate steps to rectify the problem. If you remain dissatisfied with the outcome, you may refer the matter to the Office of the Australian Information Commissioner.',
+        'If you have a complaint concerning the manner in which we maintain the privacy of your personal information, please contact us as set out below. All complaints will be considered by Abbass Advocacy Pty Ltd and we may seek further information from you to clarify your concerns. If we agree that your complaint is well founded, we will, in consultation with you, take appropriate steps to rectify the problem. If you remain dissatisfied with the outcome, you may refer the matter to the Office of the Australian Information Commissioner.',
       ],
     },
     {
@@ -66,7 +66,7 @@ const CONTENT = {
       id: 'contact',
       heading: '8. How to contact us about privacy',
       paragraphs: [
-        'If you have any queries, or if you seek access to your personal information, or if you have a complaint about our privacy practices, you can contact us through: info@blackmontadvisory.com',
+        'If you have any queries, or if you seek access to your personal information, or if you have a complaint about our privacy practices, you can contact us through: info@abbass.group',
       ],
     },
   ],

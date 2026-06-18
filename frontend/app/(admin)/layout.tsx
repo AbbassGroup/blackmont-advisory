@@ -1,7 +1,7 @@
 import { AdminAuthProvider } from '../../context/admin-auth-context';
 
 export const metadata = {
-  title: 'Admin Portal | Blackmont Advisory',
+  title: 'Admin Portal | ABBASS Business Brokers',
   robots: { index: false, follow: false },
 };
 

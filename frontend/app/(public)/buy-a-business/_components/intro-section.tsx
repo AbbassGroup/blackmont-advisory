@@ -10,9 +10,9 @@ export function IntroSection() {
             Looking to buy a business?
           </h2>
           <p className='text-lg text-gray-600 leading-relaxed mb-8'>
-            Don&apos;t go it alone. Blackmont Advisory helps individuals and
-            investors find, analyse, and negotiate the right business, so you
-            make a smart purchase with confidence and clarity.
+            Don&apos;t go it alone. ABBASS Business Brokers helps individuals
+            and investors find, analyse, and negotiate the right business, so
+            you make a smart purchase with confidence and clarity.
           </p>
           <ContactFormModal>
             <Button className='bg-brand-primary hover:bg-brand-primary-dark text-white px-8 py-6 font-semibold shadow-lg shadow-brand-primary/20 transition-all'>

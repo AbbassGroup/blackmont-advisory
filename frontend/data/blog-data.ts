@@ -1,25 +1,25 @@
 export const blogs = [
   {
-    title: 'How Blackmont Advisory Can Help sell your business',
+    title: 'How ABBASS Business Brokers Can Help sell your business',
     summary:
-      'At Blackmont Advisory, we understand that selling your business is not just a financial decision but a deeply personal one. After years of hard...',
+      'At ABBASS Business Brokers, we understand that selling your business is not just a financial decision but a deeply personal one. After years of hard...',
     image: 'https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg',
     link: 'guide-to-selling-business',
     
     content: [
       {
         type: 'paragraph',
-        text: 'At Blackmont Advisory, we understand that selling your business is not just a financial decision but a deeply personal one. After years of hard work and dedication, you want to ensure that the sale process is smooth, efficient, and financially rewarding. Whether you are selling a small business in Melbourne or a larger enterprise anywhere in Australia, working with a trusted business broker is crucial to achieving the best outcome.',
+        text: 'At ABBASS Business Brokers, we understand that selling your business is not just a financial decision but a deeply personal one. After years of hard work and dedication, you want to ensure that the sale process is smooth, efficient, and financially rewarding. Whether you are selling a small business in Melbourne or a larger enterprise anywhere in Australia, working with a trusted business broker is crucial to achieving the best outcome.',
         sx: { fontSize: 18, color: '#374151', mb: 2 },
       },
       {
         type: 'paragraph',
-        text: "In this blog, we'll explore how the professional small business brokers at Blackmont Advisory can assist you in navigating business sales in Melbourne and across the country, helping you maximize the value of your sale.",
+        text: "In this blog, we'll explore how the professional small business brokers at ABBASS Business Brokers can assist you in navigating business sales in Melbourne and across the country, helping you maximize the value of your sale.",
         sx: { fontSize: 18, color: '#374151', mb: 3 },
       },
       {
         type: 'section',
-        title: 'Why Choose Blackmont Advisory?',
+        title: 'Why Choose ABBASS Business Brokers?',
         sx: { mt: 4, mb: 1.5, color: '#56C1BC', fontWeight: 700 },
         content: [
           {
@@ -28,7 +28,7 @@ export const blogs = [
           },
           {
             type: 'paragraph',
-            text: "At Blackmont Advisory, we specialise in helping business owners achieve successful business sales. Our team of Melbourne business brokers has a deep understanding of the local market, and our nationwide experience means we can assist clients throughout Australia. We're not just any broker; we are professional small business brokers who prioritise your goals, ensuring you receive maximum value when selling your business.",
+            text: "At ABBASS Business Brokers, we specialise in helping business owners achieve successful business sales. Our team of Melbourne business brokers has a deep understanding of the local market, and our nationwide experience means we can assist clients throughout Australia. We're not just any broker; we are professional small business brokers who prioritise your goals, ensuring you receive maximum value when selling your business.",
           },
         ],
       },
@@ -43,7 +43,7 @@ export const blogs = [
           },
           {
             type: 'paragraph',
-            text: 'As your trusted business brokers, we at Blackmont Advisory offer comprehensive support, from initial consultations to closing the deal. Our services include:',
+            text: 'As your trusted business brokers, we at ABBASS Business Brokers offer comprehensive support, from initial consultations to closing the deal. Our services include:',
           },
           {
             type: 'list',
@@ -51,7 +51,7 @@ export const blogs = [
               'Business Appraisals: One of the most critical factors in any sale is getting the value right. Overpricing can scare off buyers, while underpricing can leave you short-changed. Our professional small business brokers understand the importance of small business values and work to provide you with an accurate and fair valuation.',
               'Marketing: As experienced business brokers in Australia, we use a tailored approach to market your business. This includes listing your business on business for sale brokers platforms, creating compelling marketing materials, and directly reaching out to potential buyers.',
               'Negotiation: We act as intermediaries, ensuring that all negotiations are handled professionally and in your best interests. Whether you are selling a small local shop or a large company, our goal is to get you the best possible deal.',
-              'Legal and Financial Compliance: At Blackmont Advisory, we work closely with legal and financial professionals to ensure that the sale complies with all necessary regulations, giving you peace of mind throughout the process.',
+              'Legal and Financial Compliance: At ABBASS Business Brokers, we work closely with legal and financial professionals to ensure that the sale complies with all necessary regulations, giving you peace of mind throughout the process.',
             ],
             sx: { pl: 3, mb: 2 },
           },
@@ -59,12 +59,12 @@ export const blogs = [
       },
       {
         type: 'section',
-        title: 'Blackmont Advisory: Leading the Way in Business Sales',
+        title: 'ABBASS Business Brokers: Leading the Way in Business Sales',
         sx: { mt: 4, mb: 1.5, color: '#56C1BC', fontWeight: 700 },
         content: [
           {
             type: 'paragraph',
-            text: 'For business owners in Melbourne, Blackmont Advisory is your local expert. We have extensive knowledge of the Melbourne market and have helped countless business owners navigate business sales in Melbourne. From small businesses in retail and hospitality to larger enterprises, we understand the unique dynamics of selling in this vibrant city.',
+            text: 'For business owners in Melbourne, ABBASS Business Brokers is your local expert. We have extensive knowledge of the Melbourne market and have helped countless business owners navigate business sales in Melbourne. From small businesses in retail and hospitality to larger enterprises, we understand the unique dynamics of selling in this vibrant city.',
           },
           {
             type: 'paragraph',
@@ -79,7 +79,7 @@ export const blogs = [
         content: [
           {
             type: 'paragraph',
-            text: "At Blackmont Advisory, we recognise that your business is more than just an asset to be sold — it's the result of years of hard work, passion, and dedication. That's why we focus on your small business values, ensuring that they are reflected in every step of the sale process. From your loyal customer base to your brand's reputation, we highlight the unique aspects of your business to attract the most suitable buyers.",
+            text: "At ABBASS Business Brokers, we recognise that your business is more than just an asset to be sold — it's the result of years of hard work, passion, and dedication. That's why we focus on your small business values, ensuring that they are reflected in every step of the sale process. From your loyal customer base to your brand's reputation, we highlight the unique aspects of your business to attract the most suitable buyers.",
           },
           {
             type: 'paragraph',
@@ -98,7 +98,7 @@ export const blogs = [
           },
           {
             type: 'paragraph',
-            text: "At Blackmont Advisory, we have extensive experience in handling business sales Australia-wide. We've built a reputation for delivering results, whether you're a small business owner or looking to sell a larger company. From our base in Melbourne, we work with business owners across the country, helping them navigate the sale process with ease and confidence.",
+            text: "At ABBASS Business Brokers, we have extensive experience in handling business sales Australia-wide. We've built a reputation for delivering results, whether you're a small business owner or looking to sell a larger company. From our base in Melbourne, we work with business owners across the country, helping them navigate the sale process with ease and confidence.",
           },
         ],
       },
@@ -109,7 +109,7 @@ export const blogs = [
         content: [
           {
             type: 'paragraph',
-            text: "At Blackmont Advisory, we pride ourselves on our boutique approach. We're not a high-volume broker; instead, we focus on providing personalized service that is tailored to your specific business needs. Our boutique nature allows us to spend more time understanding your business, identifying its strengths, and positioning it to attract the right buyers.",
+            text: "At ABBASS Business Brokers, we pride ourselves on our boutique approach. We're not a high-volume broker; instead, we focus on providing personalized service that is tailored to your specific business needs. Our boutique nature allows us to spend more time understanding your business, identifying its strengths, and positioning it to attract the right buyers.",
           },
           {
             type: 'paragraph',
@@ -119,12 +119,12 @@ export const blogs = [
       },
       {
         type: 'section',
-        title: 'How Blackmont Advisory Helps You Sell',
+        title: 'How ABBASS Business Brokers Helps You Sell',
         sx: { mt: 4, mb: 1.5, color: '#56C1BC', fontWeight: 700 },
         content: [
           {
             type: 'paragraph',
-            text: 'When you partner with Blackmont Advisory, we guide you through every stage of the sale process:',
+            text: 'When you partner with ABBASS Business Brokers, we guide you through every stage of the sale process:',
           },
           {
             type: 'list',
@@ -146,11 +146,11 @@ export const blogs = [
         content: [
           {
             type: 'paragraph',
-            text: "If you're considering selling your business, now is the time to work with the experts at Blackmont Advisory. Our experience in business sales Melbourne and across Australia positions us as the trusted partner for business owners looking to achieve the best outcome.",
+            text: "If you're considering selling your business, now is the time to work with the experts at ABBASS Business Brokers. Our experience in business sales Melbourne and across Australia positions us as the trusted partner for business owners looking to achieve the best outcome.",
           },
           {
             type: 'paragraph',
-            text: 'From small businesses to larger enterprises, we provide the expertise, support, and guidance you need to ensure a successful sale. Contact Blackmont Advisory today to find out how we can help you sell your business and achieve your financial goals.',
+            text: 'From small businesses to larger enterprises, we provide the expertise, support, and guidance you need to ensure a successful sale. Contact ABBASS Business Brokers today to find out how we can help you sell your business and achieve your financial goals.',
           },
         ],
       },
@@ -685,7 +685,7 @@ export const blogs = [
     title: 'The Complete Guide to Selling Small Businesses in Australia',
     summary:
       'Selling a small business is a major financial and personal milestone. This guide covers why owners sell, the broker’s role, preparation, valuation, step-by-step process, buyer types, common mistakes, and how to achieve the best outcome.',
-    image: '/blogs/blog-1.jpg',
+    image: '/businessbrokers/blogs/blog-1.jpg',
     link: 'complete-guide-to-selling-small-businesses-in-australia',
     
     content: [
@@ -959,7 +959,7 @@ export const blogs = [
     title: 'How to Create a Bulletproof Business Exit Strategy',
     summary:
       'Every small business owner will one day exit—via sale, succession, retirement, or unforeseen events. A structured exit strategy lets you leave on your terms, maximise value, and minimise stress.',
-    image: '/blogs/blog-2.jpg',
+    image: '/businessbrokers/blogs/blog-2.jpg',
     link: 'how-to-create-a-bulletproof-business-exit-strategy',
     
     content: [
@@ -1178,7 +1178,7 @@ export const blogs = [
     title: 'Why Using a Business Broker Can Maximise Your Sale Price',
     summary:
       'Selling a small business involves strategy, preparation, and expert execution. The right Business Broker brings valuation accuracy, market reach, negotiation strength, and confidentiality—often lifting price, reducing risk, and speeding up the deal.',
-    image: '/blogs/blog-3.jpg',
+    image: '/businessbrokers/blogs/blog-3.jpg',
     link: 'why-using-a-business-broker-can-maximise-your-sale-price',
     
     content: [
@@ -1386,7 +1386,7 @@ export const blogs = [
     title: 'The Step-by-Step Business Sale Process for Small Business Owners',
     summary:
       'Selling a small business is a complex, multi-stage journey. This guide walks through each step—from consultation and valuation to due diligence and settlement—and shows where expert brokers add value.',
-    image: '/blogs/blog-4.jpg',
+    image: '/businessbrokers/blogs/blog-4.jpg',
     link: 'step-by-step-business-sale-process-for-small-business-owners',
     
     content: [

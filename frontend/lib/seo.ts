@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 // Absolute URLs: the site runs under the /businessbrokers basePath, but
 // metadataBase is the bare domain, so relative canonicals would resolve wrong.
 export const SITE_URL = 'https://abbass.com.au/businessbrokers';
-export const ORG_NAME = 'Blackmont Advisory';
+export const ORG_NAME = 'ABBASS Business Brokers';
 export const OG_IMAGE = 'https://www.abbass.com.au/businessbrokers/bb-og.png';
 
 export function absoluteUrl(path = ''): string {

@@ -47,7 +47,7 @@ const reviews = [
     name: 'Rahul',
     position: 'Business Buyer',
     quote:
-      "I recently bought a cafe through Sadeq at Blackmont Advisory, and I couldn't be happier with the experience. He provided clear information and handled any issues quickly.",
+      "I recently bought a cafe through Sadeq at Abbass Business Brokers, and I couldn't be happier with the experience. He provided clear information and handled any issues quickly.",
   },
   {
     name: 'Kiran',

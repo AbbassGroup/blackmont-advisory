@@ -18,7 +18,7 @@ const phases: Phase[] = [
     label: '24+ months out',
     title: 'Lay the foundation',
     tasks: [
-      'Get a business appraisal from Blackmont Advisory to understand where you stand.',
+      'Get a business appraisal from ABBASS Business Brokers to understand where you stand.',
       'Begin clearly separating personal and business expenses in your accounts.',
       'Start delegating key operational roles to reduce your daily involvement.',
       'Review your business structure with your accountant (Pty Ltd, trust, etc.) for optimal exit tax outcomes.',
@@ -31,7 +31,7 @@ const phases: Phase[] = [
     label: '12–18 months out',
     title: 'Clean up and systemise',
     tasks: [
-      'Get a business appraisal from Blackmont Advisory to understand where you stand.',
+      'Get a business appraisal from ABBASS Business Brokers to understand where you stand.',
       'Get 3 years of clean, accountant-signed financial statements prepared.',
       'Review your commercial lease, negotiate an extension or options to renew now.',
       'Identify and develop 2–3 key staff who can run the business independently.',
@@ -44,7 +44,7 @@ const phases: Phase[] = [
     label: '6–12 months out',
     title: 'Prepare for market',
     tasks: [
-      'Engage Blackmont Advisory for a market appraisal.',
+      'Engage ABBASS Business Brokers for a market appraisal.',
       'Confirm your realistic price expectation with your broker based on current market data.',
       'Begin drafting your Information Memorandum (IM) with your broker.',
       'Refresh your premises: signage, fit-out, cleanliness, and first impressions matter.',
@@ -55,9 +55,9 @@ const phases: Phase[] = [
   },
   {
     label: '3–6 months out',
-    title: 'Engage Blackmont Advisory and go to market',
+    title: 'Engage ABBASS Business Brokers and go to market',
     tasks: [
-      'Sign your engagement agreement with Blackmont Advisory',
+      'Sign your engagement agreement with ABBASS Business Brokers',
       'Finalise your asking price, deal structure (asset vs. share sale), and negotiation floor',
       'Prepare a vendor disclosure statement and warranties with your solicitor',
       'Set up a secure data room with all key business documents ready for buyer due diligence',

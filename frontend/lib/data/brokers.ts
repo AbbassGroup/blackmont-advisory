@@ -138,8 +138,8 @@ export function getBrokerByEmail(email?: string | null): Broker | undefined {
 
 /** A neutral fallback used when no broker matches the selected email. */
 export const FALLBACK_BROKER: Broker = {
-  name: 'Blackmont Advisory',
-  email: 'info@blackmontadvisory.com',
+  name: 'ABBASS Business Brokers',
+  email: 'info@abbass.group',
   title: 'Business Broker',
   image: '/businessbrokers/mark.webp',
   phone: OFFICE_PHONE,

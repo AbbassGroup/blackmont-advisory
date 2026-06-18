@@ -31,7 +31,10 @@ export function ReadinessPdf(props: ReadinessPdfProps) {
   const { assets, total, tierGrade, blurb, breakdown, recommendations } = props;
 
   return (
-    <Document title='Sale Readiness Checklist' author='Blackmont Advisory'>
+    <Document
+      title='Sale Readiness Checklist'
+      author='ABBASS Business Brokers'
+    >
       <PageShell assets={assets}>
         <TitleBlock title='Sale Readiness Checklist' />
 

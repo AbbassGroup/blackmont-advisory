@@ -1,100 +1,53 @@
-import type { Metadata } from 'next';
-import { JsonLd } from '@/components/seo/json-ld';
-import { PageBanner } from '@/components/global/page-banner';
+'use client';
+
+import { motion } from 'framer-motion';
 import { ReviewsCarousel } from '@/components/global/reviews-carousel';
-import { ServicesGrid, SERVICES } from './_components/services-grid';
+import { ServicesGrid } from './_components/services-grid';
 import { ProcessSteps } from './_components/process-steps';
 import { FAQSection } from './_components/faq-section';
-import { FAQS } from './_components/faqs';
 import { CTASection } from './_components/cta-section';
-
-const SITE_URL = 'https://blackmontadvisory.com';
-const DESCRIPTION =
-  'Comprehensive business brokerage services tailored to your needs — business appraisals, selling your business, buyer advisory, business advisory, exit strategy and consulting from Blackmont Advisory.';
-
-export const metadata: Metadata = {
-  title: 'Our Services | Blackmont Advisory',
-  description: DESCRIPTION,
-  alternates: { canonical: '/services' },
-  openGraph: {
-    type: 'website',
-    locale: 'en_AU',
-    url: `${SITE_URL}/services`,
-    siteName: 'Blackmont Advisory',
-    title: 'Our Services | Blackmont Advisory',
-    description: DESCRIPTION,
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Our Services | Blackmont Advisory',
-    description: DESCRIPTION,
-  },
-};
-
-const structuredData = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Services',
-        item: `${SITE_URL}/services`,
-      },
-    ],
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'ItemList',
-    name: 'Blackmont Advisory Services',
-    itemListElement: SERVICES.map((service, i) => ({
-      '@type': 'ListItem',
-      position: i + 1,
-      item: {
-        '@type': 'Service',
-        name: service.title,
-        description: service.description,
-        serviceType: service.title,
-        provider: {
-          '@type': 'ProfessionalService',
-          name: 'Blackmont Advisory',
-          url: SITE_URL,
-        },
-        areaServed: 'AU',
-      },
-    })),
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: FAQS.map((faq) => ({
-      '@type': 'Question',
-      name: faq.question,
-      acceptedAnswer: { '@type': 'Answer', text: faq.answer },
-    })),
-  },
-];
+import { ScrollIndicator } from '@/components/global/scroll-indicator';
 
 export default function ServicesPage() {
   return (
-    <>
-      <JsonLd data={structuredData} />
-      <PageBanner
-        title={
-          <>
-            Our <span className='font-light text-accent'>Services</span>
-          </>
-        }
-        description='Comprehensive business brokerage services tailored to your needs.'
-        image='/services.webp'
-      />
+    <main className='min-h-screen bg-white'>
+      {/* ── Hero ─────────────────────────────────────── */}
+      <section className='relative pt-[80px] min-h-[500px] lg:min-h-[580px] flex items-center justify-center overflow-hidden'>
+        <div
+          className='absolute inset-0'
+          style={{
+            backgroundImage: `url('/businessbrokers/services.webp')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        />
+        <div className='absolute inset-0 bg-black/45' />
+        <div className='relative z-10 text-center px-4 max-w-3xl mx-auto'>
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className='text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 drop-shadow-lg tracking-tight'
+          >
+            Our Services
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className='text-lg md:text-xl text-white/90 font-medium max-w-2xl mx-auto leading-relaxed drop-shadow'
+          >
+            Comprehensive business brokerage services tailored to your needs.
+          </motion.p>
+        </div>
+
+        <ScrollIndicator />
+      </section>
+
       <ServicesGrid />
       <ProcessSteps />
       <ReviewsCarousel className='py-24' />
       <FAQSection />
       <CTASection />
-    </>
+    </main>
   );
 }

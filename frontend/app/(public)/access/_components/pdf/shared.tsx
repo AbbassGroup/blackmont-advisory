@@ -374,7 +374,7 @@ export function PageShell({ assets, children }: PageShellProps) {
         <Image src={assets.logo} style={styles.headerLogo} />
         <View style={styles.headerContact}>
           <Text>(03) 9103 1317</Text>
-          <Text>info@blackmontadvisory.com</Text>
+          <Text>info@abbass.group</Text>
           <Text>www.abbass.com.au/businessbrokers</Text>
         </View>
       </View>
@@ -418,7 +418,7 @@ export function Callout({ label, value, meta }: CalloutProps) {
 }
 
 const DISCLAIMER =
-  'The information in this document is for general informational purposes only and does not constitute financial, legal, or investment advice. Blackmont Advisory, its directors, employees, and representatives accept no liability for any loss or damage arising from reliance on the contents of this document. Readers should seek independent professional advice before making any decisions in relation to the sale or valuation of a business.';
+  'The information in this document is for general informational purposes only and does not constitute financial, legal, or investment advice. ABBASS Business Brokers, its directors, employees, and representatives accept no liability for any loss or damage arising from reliance on the contents of this document. Readers should seek independent professional advice before making any decisions in relation to the sale or valuation of a business.';
 
 export function CTA() {
   return (

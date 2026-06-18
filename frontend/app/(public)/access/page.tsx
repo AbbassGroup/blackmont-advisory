@@ -13,10 +13,11 @@ import { breadcrumbJsonLd, buildMetadata, itemListJsonLd } from '@/lib/seo';
 
 export const metadata: Metadata = buildMetadata({
   path: '/access',
-  title: 'Sell Your Business | Free Exit Tools & Advisory | Blackmont Advisory',
+  title:
+    'Sell Your Business | Free Exit Tools & Advisory | ABBASS Business Brokers',
   description:
     'Thinking about selling your business? Access free valuation tools, exit-readiness checklists, and confidential advice from ABBASS, a Melbourne boutique business brokerage.',
-  ogTitle: 'Sell Your Business | Blackmont Advisory',
+  ogTitle: 'Sell Your Business | ABBASS Business Brokers',
   ogDescription:
     'Free tools and expert insights to maximise your business exit, guided by a Melbourne boutique advisory firm.',
 });

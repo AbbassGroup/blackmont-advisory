@@ -10,9 +10,9 @@ import { ScrollIndicator } from '@/components/global/scroll-indicator';
 export const metadata: Metadata = {
   title: 'Business Listings – Buy a Business in Australia',
   description:
-    'Browse businesses for sale across Melbourne, Sydney, and Australia. Filter by category and location to find your next business opportunity with Blackmont Advisory.',
+    'Browse businesses for sale across Melbourne, Sydney, and Australia. Filter by category and location to find your next business opportunity with ABBASS Business Brokers.',
   openGraph: {
-    title: 'Businesses for Sale | Blackmont Advisory',
+    title: 'Businesses for Sale | ABBASS Business Brokers',
     description:
       'Discover verified business listings across Australia. Find your next investment today.',
   },

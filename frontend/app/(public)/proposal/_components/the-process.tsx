@@ -2,7 +2,7 @@ const steps = [
   {
     label: 'STEP 1: REVIEW APPRAISAL',
     description:
-      'Review the appraisal provided by Blackmont Advisory to understand where your business sits',
+      'Review the appraisal provided by ABBASS Business Brokers to understand where your business sits',
   },
   {
     label: 'STEP 2: Q&A',

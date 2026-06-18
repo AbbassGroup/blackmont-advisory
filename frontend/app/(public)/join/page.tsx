@@ -11,10 +11,10 @@ import { WhyJoin } from './_components/why-join';
 export const metadata: Metadata = {
   title: 'Join ABBASS – Become a Business Broker',
   description:
-    'Join our elite network of experts. Take your career to the next level as an Blackmont Advisory.',
+    'Join our elite network of experts. Take your career to the next level as an ABBASS Business Broker.',
   openGraph: {
-    title: 'Join Blackmont Advisory',
-    description: 'Take your career to the next level as an Blackmont Advisory.',
+    title: 'Join ABBASS Business Brokers',
+    description: 'Take your career to the next level as an ABBASS Business Broker.',
   },
 };
 

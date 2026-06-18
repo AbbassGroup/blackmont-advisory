@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Poppins } from 'next/font/google';
 import Script from 'next/script';
 import { Toaster } from '@/components/ui/sonner';
 import './(public)/globals.css';
 
-const inter = Inter({
+const poppins = Poppins({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700', '800'],
   variable: '--font-sans',
@@ -12,7 +12,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://abbass.com.au'),
-  title: 'Buy & Sell Businesses in Australia | Blackmont Advisory',
+  title: 'Buy & Sell Businesses in Australia | ABBASS Business Brokers',
   description:
     'Australia’s trusted boutique business brokerage, helping owners achieve the best outcomes when buying or selling businesses across Melbourne, Sydney, and beyond.',
   icons: {
@@ -21,19 +21,19 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_AU',
-    siteName: 'Blackmont Advisory',
+    siteName: 'ABBASS Business Brokers',
     images: [
       {
         url: 'https://www.abbass.com.au/businessbrokers/bb-og.png',
         width: 1200,
         height: 630,
-        alt: 'Blackmont Advisory',
+        alt: 'ABBASS Business Brokers',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Blackmont Advisory',
+    title: 'ABBASS Business Brokers',
     description:
       'Australia’s trusted boutique business brokerage, helping owners achieve the best outcomes when buying or selling businesses across Melbourne, Sydney, and beyond.',
     images: ['https://www.abbass.com.au/businessbrokers/bb-og.png'],
@@ -57,7 +57,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en' className={inter.variable}>
+    <html lang='en' className={poppins.variable}>
       <body className='min-h-full flex flex-col'>
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID}`}

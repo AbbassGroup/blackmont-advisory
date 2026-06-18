@@ -10,7 +10,8 @@ import { SectionHeading } from '../section-chrome';
 import type { MakeOfferData } from '../types';
 
 const TRUST_ACCOUNT = {
-  bankName: 'Blackmont Advisory Estate Agency Business Statutory Trust Account',
+  bankName:
+    'Abbass Advocacy Pty Ltd Estate Agency Business Statutory Trust Account',
   bsb: '013-350',
   acc: '659-404-759',
 };

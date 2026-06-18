@@ -12,22 +12,22 @@ const TERMS_DATA = {
       heading: '1. About the Website',
       paragraphs: [
         '(a) Welcome to www.abbass.com.au/businessbrokers. The Website provides you with an opportunity to browse various services that have been listed for sale through the Website (Services). The Website provides this service by way of granting you access to the content on the Website (Services).',
-        '(b) The Website is operated by   Blackmont Advisory (ACN 674 429 255). Access to and use of the Website, or any of its associated Services, is provided by   Blackmont Advisory. Please read these terms and conditions (Terms) carefully. By using, browsing and/or reading the Website, this signifies that you have read, understood and agree to be bound by the Terms. If you do not agree with the Terms, you must cease usage of the Website, or any of Services, immediately.',
-        '(c)   Blackmont Advisory reserves the right to review and change any of the Terms by updating this page at its sole discretion. When   Blackmont Advisory updates the Terms, it will use reasonable endeavours to provide you with notice of updates to the Terms. Any changes to the Terms take immediate effect from the date of their publication. Before you continue, we recommend you keep a copy of the Terms for your records.',
+        '(b) The Website is operated by Abbass Advocacy Pty Ltd T/AS Abbass Business Brokers (ACN 674 429 255). Access to and use of the Website, or any of its associated Services, is provided by Abbass Advocacy Pty Ltd T/AS Abbass Business Brokers. Please read these terms and conditions (Terms) carefully. By using, browsing and/or reading the Website, this signifies that you have read, understood and agree to be bound by the Terms. If you do not agree with the Terms, you must cease usage of the Website, or any of Services, immediately.',
+        '(c) Abbass Advocacy Pty Ltd T/AS Abbass Business Brokers reserves the right to review and change any of the Terms by updating this page at its sole discretion. When Abbass Advocacy Pty Ltd T/AS Abbass Business Brokers updates the Terms, it will use reasonable endeavours to provide you with notice of updates to the Terms. Any changes to the Terms take immediate effect from the date of their publication. Before you continue, we recommend you keep a copy of the Terms for your records.',
       ],
     },
     {
       id: 'acceptance',
       heading: '2. Acceptance of the Terms',
       paragraphs: [
-        'You ("The customer") accept the Terms by remaining on the Website. You may also accept the Terms by clicking to accept or agree to the Terms where this option is made available to you by   Blackmont Advisory in the user interface.',
+        'You ("The customer") accept the Terms by remaining on the Website. You may also accept the Terms by clicking to accept or agree to the Terms where this option is made available to you by Abbass Advocacy Pty Ltd T/AS Abbass Business Brokers in the user interface.',
       ],
     },
     {
       id: 'registration',
       heading: '3. Registration to be Contacted',
       paragraphs: [
-        '(a) In order to be contacted by Blackmont Advisory, you must first register your contact details. As part of this process, you may be required to provide personal information about yourself (such as identification or contact details), including:',
+        '(a) In order to be contacted by Abbass Business Brokers, you must first register your contact details. As part of this process, you may be required to provide personal information about yourself (such as identification or contact details), including:',
         '(i) Name',
         '(ii) Telephone number',
         '(iii) Email address',
@@ -37,9 +37,9 @@ const TERMS_DATA = {
       id: 'copyright',
       heading: '4. Copyright and Intellectual Property',
       paragraphs: [
-        '(a) The Website and all of the related Services of   Blackmont Advisory are subject to copyright. The material on the Website is protected by copyright under the laws of Australia and through international treaties. Unless otherwise indicated, all rights (including copyright) in the site content and compilation of the website (including text, graphics, logos, button icons, video images, audio clips and software) (Content) are owned or controlled for these purposes, and are reserved by   Blackmont Advisory or its contributors.',
-        '(b)   Blackmont Advisory retains all rights, title and interest in and to the Website and all related content. Nothing you do on or in relation to the Website will transfer to you:',
-        '(i) the business name, trading name, domain name, trade mark, industrial design, patent, registered design or copyright of   Blackmont Advisory; or',
+        '(a) The Website and all of the related Services of Abbass Advocacy Pty Ltd T/AS Abbass Business Brokers are subject to copyright. The material on the Website is protected by copyright under the laws of Australia and through international treaties. Unless otherwise indicated, all rights (including copyright) in the site content and compilation of the website (including text, graphics, logos, button icons, video images, audio clips and software) (Content) are owned or controlled for these purposes, and are reserved by Abbass Advocacy Pty Ltd T/AS Abbass Business Brokers or its contributors.',
+        '(b) Abbass Advocacy Pty Ltd T/AS Abbass Business Brokers retains all rights, title and interest in and to the Website and all related content. Nothing you do on or in relation to the Website will transfer to you:',
+        '(i) the business name, trading name, domain name, trade mark, industrial design, patent, registered design or copyright of Abbass Advocacy Pty Ltd T/AS Abbass Business Brokers; or',
         '(ii) the right to use or exploit a business name, trading name, domain name, trade mark or industrial design; or',
         '(iii) a system or process that is the subject of a patent, registered design or copyright (or an adaptation or modification of such a system or process).',
       ],
@@ -48,19 +48,19 @@ const TERMS_DATA = {
       id: 'privacy',
       heading: '5. Privacy',
       paragraphs: [
-        "  Blackmont Advisory takes your privacy seriously and any information provided through your use of the Website and/or the Services are subject to   Blackmont Advisory's Privacy Policy, which is available on the Website.",
+        "Abbass Advocacy Pty Ltd T/AS Abbass Business Brokers takes your privacy seriously and any information provided through your use of the Website and/or the Services are subject to Abbass Advocacy Pty Ltd T/AS Abbass Business Brokers's Privacy Policy, which is available on the Website.",
       ],
     },
     {
       id: 'disclaimer',
       heading: '6. General Disclaimer',
       paragraphs: [
-        '(a) You acknowledge that   Blackmont Advisory does not make any terms, guarantees, warranties, representations or conditions whatsoever regarding the Services other than provided for pursuant to these Terms.',
+        '(a) You acknowledge that Abbass Advocacy Pty Ltd T/AS Abbass Business Brokers does not make any terms, guarantees, warranties, representations or conditions whatsoever regarding the Services other than provided for pursuant to these Terms.',
         '(b) Nothing in these Terms limits or excludes any guarantees, warranties, representations or conditions implied or imposed by law, including the Australian Consumer Law (or any liability under them) which by law may not be limited or excluded.',
         '(c) Subject to this clause, and to the extent permitted by law:',
         '(i) all terms, guarantees, warranties, representations or conditions which are not expressly stated in these Terms are excluded; and',
-        '(ii)   Blackmont Advisory will not be liable for any special, indirect or consequential loss or damage (unless such loss or damage is reasonably foreseeable resulting from our failure to meet an applicable Consumer Guarantee), loss of profit or opportunity, or damage to goodwill arising out of or in connection with the Services or these Terms (including as a result of not being able to use the Services, whether at common law, under contract, tort (including negligence), in equity, pursuant to statute or otherwise.',
-        '(e) Use of the Website, the Services, and any of the Services of   Blackmont Advisory, is at your own risk. Everything on the Website, the Services of   Blackmont Advisory, are provided to you on an "as is" and "as available" basis, without warranty or condition of any kind. None of the affiliates, directors, officers, employees, agents, contributors, third party content providers or licensors of   Blackmont Advisory make any express or implied representation or warranty about its Content or any Services referred to on the Website. This includes (but is not restricted to) loss or damage you might suffer as a result of any of the following:',
+        '(ii) Abbass Advocacy Pty Ltd T/AS Abbass Business Brokers will not be liable for any special, indirect or consequential loss or damage (unless such loss or damage is reasonably foreseeable resulting from our failure to meet an applicable Consumer Guarantee), loss of profit or opportunity, or damage to goodwill arising out of or in connection with the Services or these Terms (including as a result of not being able to use the Services, whether at common law, under contract, tort (including negligence), in equity, pursuant to statute or otherwise.',
+        '(e) Use of the Website, the Services, and any of the Services of Abbass Advocacy Pty Ltd T/AS Abbass Business Brokers, is at your own risk. Everything on the Website, the Services of Abbass Advocacy Pty Ltd T/AS Abbass Business Brokers, are provided to you on an "as is" and "as available" basis, without warranty or condition of any kind. None of the affiliates, directors, officers, employees, agents, contributors, third party content providers or licensors of Abbass Advocacy Pty Ltd T/AS Abbass Business Brokers make any express or implied representation or warranty about its Content or any Services referred to on the Website. This includes (but is not restricted to) loss or damage you might suffer as a result of any of the following:',
         '(i) the accuracy, suitability or currency of any information on the Website, the Service (including third party material and advertisements on the Website);',
         "(ii) the Content or operation in respect to links which are provided for the User's convenience;",
         '(iii) the use of any of the calculators available on the website.',
@@ -70,16 +70,16 @@ const TERMS_DATA = {
       id: 'liability',
       heading: '7. Limitation of Liability',
       paragraphs: [
-        "(a)   Blackmont Advisory's total liability arising out of or in connection with the services or these Terms, however arising, including under contract, tort (including negligence), in equity, under statute or otherwise, will not exceed the most recent Purchase Price paid by you under these Terms or where you have not paid the Purchase Price, then the total liability of   Blackmont Advisory is the resupply of information or services to you.",
-        '(b) You expressly understand and agree that   Blackmont Advisory, its affiliates, employees, agents, contributors, third party content providers and licensors shall not be liable to you for any direct, indirect, incidental, special consequential or exemplary damages which may be incurred by you, however caused and under any theory of liability. This shall include, but is not limited to, any loss of profit (whether incurred directly or indirectly), any loss of goodwill or business reputation and any other intangible loss.',
-        '(c)   Blackmont Advisory is not responsible or liable in any manner for any site content (including the Content and Third Party Content) posted on the Website or in connection with the Services, whether posted or caused by users of the website of   Blackmont Advisory, by third parties or by any of the Services offered by   Blackmont Advisory.',
+        "(a) Abbass Advocacy Pty Ltd T/AS Abbass Business Brokers's total liability arising out of or in connection with the services or these Terms, however arising, including under contract, tort (including negligence), in equity, under statute or otherwise, will not exceed the most recent Purchase Price paid by you under these Terms or where you have not paid the Purchase Price, then the total liability of Abbass Advocacy Pty Ltd T/AS Abbass Business Brokers is the resupply of information or services to you.",
+        '(b) You expressly understand and agree that Abbass Advocacy Pty Ltd T/AS Abbass Business Brokers, its affiliates, employees, agents, contributors, third party content providers and licensors shall not be liable to you for any direct, indirect, incidental, special consequential or exemplary damages which may be incurred by you, however caused and under any theory of liability. This shall include, but is not limited to, any loss of profit (whether incurred directly or indirectly), any loss of goodwill or business reputation and any other intangible loss.',
+        '(c) Abbass Advocacy Pty Ltd T/AS Abbass Business Brokers is not responsible or liable in any manner for any site content (including the Content and Third Party Content) posted on the Website or in connection with the Services, whether posted or caused by users of the website of Abbass Advocacy Pty Ltd T/AS Abbass Business Brokers, by third parties or by any of the Services offered by Abbass Advocacy Pty Ltd T/AS Abbass Business Brokers.',
       ],
     },
     {
       id: 'indemnity',
       heading: '8. Indemnity',
       paragraphs: [
-        '(a) You agree to indemnify   Blackmont Advisory, its affiliates, employees, agents, contributors, third party content providers and licensors from and against:',
+        '(a) You agree to indemnify Abbass Advocacy Pty Ltd T/AS Abbass Business Brokers, its affiliates, employees, agents, contributors, third party content providers and licensors from and against:',
         '(i) all actions, suits, claims, demands, liabilities, costs, expenses, loss and damage (including legal fees on a full indemnity basis) incurred, suffered or arising out of or in connection with any Content you post through the Website;',
         '(ii) any direct or indirect consequences of you accessing, using or transacting on the Website or attempts to do so and any breach by you or your agents of these Terms; and/or',
         '(iii) any breach of the Terms.',
@@ -104,7 +104,7 @@ const TERMS_DATA = {
       id: 'jurisdiction',
       heading: '10. Venue and Jurisdiction',
       paragraphs: [
-        'The Services offered by   Blackmont Advisory are intended to be used by residents of Australia. In the event of any dispute arising out of or in relation to the Website, you agree that the exclusive venue for resolving any dispute shall be in the courts of Victoria, Australia.',
+        'The Services offered by Abbass Advocacy Pty Ltd T/AS Abbass Business Brokers are intended to be used by residents of Australia. In the event of any dispute arising out of or in relation to the Website, you agree that the exclusive venue for resolving any dispute shall be in the courts of Victoria, Australia.',
       ],
     },
     {

@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
 
 export interface BlogItem {
   title: string;
@@ -17,15 +16,14 @@ export function BlogCard({ blog }: { blog: BlogItem }) {
   return (
     <Link
       href={`/resources/${blog.link}`}
-      className='group flex h-full flex-col overflow-hidden border border-secondary/10 bg-background transition-colors hover:border-accent/40'
+      className='group h-full flex flex-col bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:-translate-y-1.5'
     >
-      <div className='relative h-48 w-full overflow-hidden'>
+      <div className='relative h-48 w-full overflow-hidden bg-gray-100'>
         {isExternal ? (
-          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={blog.image}
             alt={blog.title}
-            className='h-full w-full object-cover transition-transform duration-500 group-hover:scale-105'
+            className='w-full h-full object-cover transition-transform duration-500 group-hover:scale-105'
           />
         ) : (
           <Image
@@ -37,16 +35,21 @@ export function BlogCard({ blog }: { blog: BlogItem }) {
           />
         )}
       </div>
-      <div className='flex flex-1 flex-col p-6'>
-        <h3 className='mb-3 line-clamp-2 text-lg font-bold tracking-tight text-secondary transition-colors group-hover:text-accent'>
+      <div className='p-6 flex flex-col flex-1'>
+        {/* <p className='text-xs font-semibold text-brand-primary mb-2 uppercase tracking-wide'>
+          {blog.date}
+        </p> */}
+        <h3 className='text-lg font-bold text-brand-black mb-3 line-clamp-2 group-hover:text-brand-primary transition-colors'>
           {blog.title}
         </h3>
-        <p className='mb-5 line-clamp-3 flex-1 text-sm leading-relaxed text-muted-foreground'>
+        <p className='text-sm text-gray-500 mb-5 flex-1 line-clamp-3 leading-relaxed'>
           {blog.summary}
         </p>
-        <div className='mt-auto flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.12em] text-accent'>
-          Read More
-          <ArrowRight className='h-4 w-4 transition-transform group-hover:translate-x-1' />
+        <div className='text-sm font-semibold text-brand-primary flex items-center gap-1 mt-auto'>
+          Read More{' '}
+          <span className='group-hover:translate-x-1 transition-transform'>
+            →
+          </span>
         </div>
       </div>
     </Link>

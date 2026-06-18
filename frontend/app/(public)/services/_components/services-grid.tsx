@@ -1,3 +1,6 @@
+'use client';
+
+import { motion } from 'framer-motion';
 import Image from 'next/image';
 import {
   BarChart3,
@@ -5,26 +8,17 @@ import {
   Search,
   DollarSign,
   Building2,
-  Headphones,
-  type LucideIcon,
+  HeadphonesIcon,
 } from 'lucide-react';
-import { Container, Reveal } from '@/components/landing/primitives';
+import Title from '@/components/global/title';
 
-export type Service = {
-  title: string;
-  description: string;
-  icon: LucideIcon;
-  image: string;
-  details: string[];
-};
-
-export const SERVICES: Service[] = [
+const services = [
   {
     title: 'Business Appraisals',
     description:
       'Get an accurate assessment of your business worth with our comprehensive valuation services. We use industry-standard methods to determine the true market value.',
-    icon: BarChart3,
-    image: '/services.webp',
+    icon: <BarChart3 className='w-7 h-7' />,
+    image: '/businessbrokers/services.webp',
     details: [
       'Financial Analysis & Reporting',
       'Market Comparison Analysis',
@@ -37,8 +31,8 @@ export const SERVICES: Service[] = [
     title: 'Selling Small Businesses',
     description:
       'We handle the entire process of selling your business, from marketing to negotiations and closing. Our expertise ensures you get the best possible price.',
-    icon: Handshake,
-    image: '/business_sales.webp',
+    icon: <Handshake className='w-7 h-7' />,
+    image: '/businessbrokers/business_sales.webp',
     details: [
       'Confidential Marketing',
       'Buyer Screening',
@@ -51,8 +45,8 @@ export const SERVICES: Service[] = [
     title: 'Business Buyer Advisory',
     description:
       'We represent the Buyer in sourcing, analysing and negotiating the purchase of a business.',
-    icon: Search,
-    image: '/mergers.webp',
+    icon: <Search className='w-7 h-7' />,
+    image: '/businessbrokers/mergers.webp',
     details: [
       'Business Search & Matching',
       'Market Analysis',
@@ -65,8 +59,8 @@ export const SERVICES: Service[] = [
     title: 'Business Advisory',
     description:
       'Get advice around the structure and operations of your business to improve efficiency and the overall value of your business.',
-    icon: DollarSign,
-    image: '/business_advisory.webp',
+    icon: <DollarSign className='w-7 h-7' />,
+    image: '/businessbrokers/business_advisory.webp',
     details: [
       'Tax Planning',
       'Financial Structuring',
@@ -79,8 +73,8 @@ export const SERVICES: Service[] = [
     title: 'Business Exit Strategy',
     description:
       'We work close to prepare your Business exit strategy to get the best ultimate outcome for your business.',
-    icon: Building2,
-    image: '/exit_strategy.webp',
+    icon: <Building2 className='w-7 h-7' />,
+    image: '/businessbrokers/exit_strategy.webp',
     details: [
       'Confidential Representation',
       'Market Analysis',
@@ -93,8 +87,8 @@ export const SERVICES: Service[] = [
     title: 'Business Consulting Services',
     description:
       'General Business Consulting Services for your every day business operations and needs.',
-    icon: Headphones,
-    image: '/business_consulting.webp',
+    icon: <HeadphonesIcon className='w-7 h-7' />,
+    image: '/businessbrokers/business_consulting.webp',
     details: [
       'Operational Assessment',
       'Growth Strategy',
@@ -107,45 +101,53 @@ export const SERVICES: Service[] = [
 
 export function ServicesGrid() {
   return (
-    <section className='bg-background py-20 lg:py-28'>
-      <Container>
-        <Reveal className='mb-14'>
-          <h2 className='text-3xl font-bold leading-tight tracking-tight text-secondary sm:text-4xl lg:text-5xl'>
-            What We Offer
-          </h2>
-        </Reveal>
+    <section className='bg-brand-offwhite py-24'>
+      <div className='max-w-[1260px] mx-auto px-4 lg:px-8'>
+        <div className='text-center mb-16'>
+          <Title>What We Offer</Title>
+          <div className='w-16 h-1 bg-brand-primary rounded-full mx-auto' />
+        </div>
 
-        <Reveal className='grid gap-6 sm:grid-cols-2 lg:grid-cols-3'>
-          {SERVICES.map(({ title, description, icon: Icon, image }) => (
-            <article
-              key={title}
-              className='group flex flex-col overflow-hidden border border-secondary/10 bg-background transition-colors hover:border-accent/40'
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7'>
+          {services.map((service, i) => (
+            <motion.div
+              key={service.title}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: (i % 3) * 0.1 }}
+              className='group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex flex-col'
             >
+              {/* Image */}
               <div className='relative h-52 overflow-hidden'>
                 <Image
-                  src={image}
-                  alt={title}
+                  loading='eager'
+                  src={service.image}
+                  alt={service.title}
                   fill
                   sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
-                  className='object-cover transition-transform duration-500 group-hover:scale-105'
+                  className='object-cover group-hover:scale-105 transition-transform duration-500'
                 />
-                <div className='absolute inset-0 bg-secondary/45' />
-                <span className='absolute bottom-4 left-4 flex h-12 w-12 items-center justify-center bg-accent text-primary'>
-                  <Icon className='h-6 w-6' strokeWidth={1.75} />
-                </span>
+                <div className='absolute inset-0 bg-black/25' />
+                {/* Icon badge */}
+                <div className='absolute bottom-4 left-4 w-12 h-12 rounded-xl bg-brand-primary flex items-center justify-center text-white shadow-lg'>
+                  {service.icon}
+                </div>
               </div>
-              <div className='flex flex-1 flex-col p-7'>
-                <h3 className='mb-3 text-lg font-bold tracking-tight text-secondary'>
-                  {title}
+
+              {/* Content */}
+              <div className='flex flex-col flex-1 p-7'>
+                <h3 className='text-lg font-bold text-brand-black mb-3'>
+                  {service.title}
                 </h3>
-                <p className='text-base leading-relaxed text-muted-foreground'>
-                  {description}
+                <p className='text-gray-500 text-base leading-relaxed mb-5 flex-1'>
+                  {service.description}
                 </p>
               </div>
-            </article>
+            </motion.div>
           ))}
-        </Reveal>
-      </Container>
+        </div>
+      </div>
     </section>
   );
 }
