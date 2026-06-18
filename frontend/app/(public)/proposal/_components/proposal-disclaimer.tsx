@@ -21,7 +21,7 @@ export function ProposalDisclaimer({
         </h3>
 
         <p className='text-gray-600 leading-relaxed'>
-          ABBASS Business Brokers provides this report as an appraisal of your
+          Blackmont Advisory provides this report as an appraisal of your
           business for information purposes only. This appraisal must not be
           interpreted or relied upon as a formal valuation under any
           professional valuation standard. We are not certified valuers.
@@ -55,7 +55,7 @@ export function ProposalDisclaimer({
         </p>
 
         <p className='text-gray-600 leading-relaxed'>
-          To the extent permitted by law, ABBASS Business Brokers and its
+          To the extent permitted by law, Blackmont Advisory and its
           representatives expressly disclaim all liability, whether direct or
           indirect, arising from or purporting to arise from reliance on the
           contents of this report.
@@ -63,7 +63,7 @@ export function ProposalDisclaimer({
       </div>
 
       <div className='pt-2'>
-        <p className='font-bold text-brand-black'>ABBASS Business Brokers</p>
+        <p className='font-bold text-brand-black'>Blackmont Advisory</p>
         <p className='text-sm text-gray-500 mt-1'>ABN: 78 674 429 255</p>
         <p className='text-sm text-gray-500'>License (BLA) 092153L</p>
       </div>

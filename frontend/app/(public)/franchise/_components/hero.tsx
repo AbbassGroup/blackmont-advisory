@@ -21,10 +21,7 @@ export function FranchiseHero() {
           >
             <h1 className='text-4xl md:text-5xl font-extrabold text-white mb-6 leading-[1.15] drop-shadow-md tracking-tight'>
               Welcome To The World Of
-              <span className='text-brand-primary'>
-                {' '}
-                ABBASS Business Brokers
-              </span>
+              <span className='text-brand-primary'> Blackmont Advisory</span>
             </h1>
 
             <h2 className='text-xl md:text-2xl font-bold text-gray-300 mb-6'>
@@ -32,7 +29,7 @@ export function FranchiseHero() {
             </h2>
 
             <p className='text-lg text-white/80 leading-relaxed font-medium mb-10'>
-              Take your career to the next level as an ABBASS Business Broker.
+              Take your career to the next level as an Blackmont Advisory.
               Unlock unparalleled opportunities to grow your wealth, expand your
               professional network, and empower entrepreneurs in making their
               most critical business decisions. Enjoy the freedom to work on

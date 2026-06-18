@@ -29,7 +29,7 @@ export function BenchmarksPdf(props: BenchmarksPdfProps) {
   return (
     <Document
       title={`${industryName} Benchmark Report`}
-      author='ABBASS Business Brokers'
+      author='Blackmont Advisory'
     >
       <PageShell assets={assets}>
         <TitleBlock title={`${industryName} Benchmark Report`} />

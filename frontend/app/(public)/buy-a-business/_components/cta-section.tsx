@@ -13,7 +13,7 @@ export function CTASection() {
           Take the stress and risk out of your next purchase.
         </p>
         <p className='text-white/80 leading-relaxed mb-10'>
-          Let ABBASS Business Brokers represent you and ensure you buy the right
+          Let Blackmont Advisory represent you and ensure you buy the right
           business at the right price.
         </p>
         <ContactFormModal>

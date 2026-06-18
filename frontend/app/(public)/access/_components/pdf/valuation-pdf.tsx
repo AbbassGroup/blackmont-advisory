@@ -34,7 +34,7 @@ export function ValuationPdf(props: ValuationPdfProps) {
   } = props;
 
   return (
-    <Document title='Business Appraisal' author='ABBASS Business Brokers'>
+    <Document title='Business Appraisal' author='Blackmont Advisory'>
       <PageShell assets={assets}>
         <TitleBlock title='Business Appraisal' />
 

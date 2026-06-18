@@ -11,8 +11,8 @@ router.post('/', async (req, res) => {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
-  const adminEmail = 'info@abbass.group';
-  const fromEmail = 'info@abbass.group';
+  const adminEmail = 'info@blackmontadvisory.com';
+  const fromEmail = 'info@blackmontadvisory.com';
 
   const mailOptions = {
     to: adminEmail,

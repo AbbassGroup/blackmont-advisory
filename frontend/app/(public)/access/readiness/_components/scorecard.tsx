@@ -186,7 +186,7 @@ function getTier(total: number): Tier {
         `Hi ${name}, your business is well-positioned to go to market right now. A buyer will likely find this an attractive acquisition. The priority is pricing it correctly and finding the right qualified buyers.`,
       recs: [
         'Commission a formal business valuation to set your asking price with confidence',
-        'Engage ABBASS Business Brokers to begin confidential marketing to qualified buyers',
+        'Engage Blackmont Advisory to begin confidential marketing to qualified buyers',
         'Brief your accountant and solicitor, a transaction may be imminent',
         "Prepare a data room and vendor disclosure documents with your broker's guidance",
       ],

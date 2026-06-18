@@ -21,7 +21,10 @@ export default function PublicImViewer() {
       .then(({ data }) => active && setTemplate(data))
       .catch(
         () =>
-          active && setError('This Information Memorandum is unavailable or has not been published.'),
+          active &&
+          setError(
+            'This Information Memorandum is unavailable or has not been published.',
+          ),
       )
       .finally(() => active && setLoading(false));
     return () => {
@@ -31,24 +34,27 @@ export default function PublicImViewer() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-3">
-        <Loader2 className="h-10 w-10 animate-spin text-brand-primary" />
-        <p className="text-gray-500">Loading memorandum...</p>
+      <div className='flex min-h-screen flex-col items-center justify-center gap-3'>
+        <Loader2 className='h-10 w-10 animate-spin text-brand-primary' />
+        <p className='text-gray-500'>Loading memorandum...</p>
       </div>
     );
   }
 
   if (error || !template) {
     return (
-      <div className="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center gap-4 px-6 text-center">
-        <div className="flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 px-5 py-4 text-red-600">
-          <AlertCircle className="h-5 w-5" />
-          <span className="text-sm font-medium">{error || 'Not found'}</span>
+      <div className='mx-auto flex min-h-screen max-w-md flex-col items-center justify-center gap-4 px-6 text-center'>
+        <div className='flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 px-5 py-4 text-red-600'>
+          <AlertCircle className='h-5 w-5' />
+          <span className='text-sm font-medium'>{error || 'Not found'}</span>
         </div>
-        <p className="text-gray-500">
+        <p className='text-gray-500'>
           Please contact your broker at{' '}
-          <a href="mailto:info@abbass.group" className="text-brand-primary underline">
-            info@abbass.group
+          <a
+            href='mailto:info@blackmontadvisory.com'
+            className='text-brand-primary underline'
+          >
+            info@blackmontadvisory.com
           </a>{' '}
           or (03) 9103 1317.
         </p>
@@ -56,5 +62,7 @@ export default function PublicImViewer() {
     );
   }
 
-  return <ImReader sections={template.sections} brokerEmail={template.brokerEmail} />;
+  return (
+    <ImReader sections={template.sections} brokerEmail={template.brokerEmail} />
+  );
 }

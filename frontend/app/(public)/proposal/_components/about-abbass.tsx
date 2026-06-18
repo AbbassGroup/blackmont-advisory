@@ -37,8 +37,8 @@ export function AboutAbbass() {
 
       <div>
         <p className='text-gray-800 text-base leading-relaxed mb-6 text-justify'>
-          At ABBASS Business Brokers, we specialise in facilitating the seamless
-          sale and acquisition of businesses across Australia. With deep market
+          At Blackmont Advisory, we specialise in facilitating the seamless sale
+          and acquisition of businesses across Australia. With deep market
           knowledge and a personalised approach, we guide business owners and
           aspiring business owners through every step of the process, ensuring
           that transactions are smooth, efficient, and successful. Whether

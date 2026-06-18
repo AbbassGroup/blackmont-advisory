@@ -79,7 +79,7 @@ router.post('/public/offer', offerUpload.single('deposit'), async (req, res) => 
         ${businessName ? `<p style="margin:0 0 16px;color:#666">For <strong>${esc(businessName)}</strong></p>` : ''}
         <table style="border-collapse:collapse;width:100%;font-size:14px">${rowsHtml}</table>
         ${req.file ? '<p style="margin:16px 0 0;color:#666;font-size:13px">A deposit screenshot is attached.</p>' : ''}
-        <p style="margin-top:24px;color:#999;font-size:12px">ABBASS Business Brokers</p>
+        <p style="margin-top:24px;color:#999;font-size:12px">Blackmont Advisory</p>
       </div>`;
 
     const attachments = req.file

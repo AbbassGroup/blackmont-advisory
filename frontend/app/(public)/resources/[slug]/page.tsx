@@ -1,8 +1,11 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowLeft, Calendar } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { blogs } from '@/data/blog-data';
+import { JsonLd } from '@/components/seo/json-ld';
+
+const SITE_URL = 'https://blackmontadvisory.com';
 
 export function generateStaticParams() {
   return blogs.map((blog) => ({
@@ -20,8 +23,9 @@ export async function generateMetadata({
   if (!blog) return { title: 'Not Found' };
 
   return {
-    title: `${blog.title} | ABBASS Business Brokers`,
+    title: `${blog.title} | Blackmont Advisory`,
     description: blog.summary,
+    alternates: { canonical: `/resources/${blog.link}` },
     openGraph: {
       title: blog.title,
       description: blog.summary,
@@ -46,7 +50,11 @@ function renderContent(blocks: any[], level = 0) {
         return (
           <p
             key={idx}
-            className={`text-gray-600 leading-relaxed mb-6 ${block.sx?.fontWeight ? 'font-semibold text-brand-black' : ''}`}
+            className={`mb-6 leading-relaxed ${
+              block.sx?.fontWeight
+                ? 'font-semibold text-secondary'
+                : 'text-muted-foreground'
+            }`}
           >
             {block.text}
           </p>
@@ -55,7 +63,7 @@ function renderContent(blocks: any[], level = 0) {
         return (
           <ul
             key={idx}
-            className='list-disc list-inside space-y-2 mb-6 text-gray-600 pl-4'
+            className='mb-6 list-inside list-disc space-y-2 pl-4 text-muted-foreground marker:text-accent'
           >
             {block.items?.map((item: string, i: number) => (
               <li key={i} className='leading-relaxed'>
@@ -66,8 +74,8 @@ function renderContent(blocks: any[], level = 0) {
         );
       case 'section':
         return (
-          <div key={idx} className='mt-10 mb-6'>
-            <h2 className='text-2xl font-bold text-brand-black mb-4'>
+          <div key={idx} className='mb-6 mt-10'>
+            <h2 className='mb-4 text-2xl font-bold tracking-tight text-secondary'>
               {block.title}
             </h2>
             {block.content && renderContent(block.content, level + 1)}
@@ -92,17 +100,54 @@ export default async function BlogPostPage({
   }
 
   const isExternal = blog.image?.startsWith('http');
+  const imageUrl = isExternal ? blog.image : `${SITE_URL}/${blog.image}`;
+
+  const structuredData = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      headline: blog.title,
+      description: blog.summary,
+      image: imageUrl,
+      url: `${SITE_URL}/resources/${blog.link}`,
+      mainEntityOfPage: `${SITE_URL}/resources/${blog.link}`,
+      author: { '@type': 'Organization', name: 'Blackmont Advisory' },
+      publisher: { '@type': 'Organization', name: 'Blackmont Advisory' },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: 'Resources',
+          item: `${SITE_URL}/resources`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          name: blog.title,
+          item: `${SITE_URL}/resources/${blog.link}`,
+        },
+      ],
+    },
+  ];
 
   return (
-    <main className='min-h-screen bg-brand-offwhite pb-24'>
+    <main className='min-h-screen bg-muted pb-24'>
+      <JsonLd data={structuredData} />
+
       {/* ── Article Header ───────────────────────────── */}
-      <div className='relative pt-[80px] w-full min-h-[40vh] md:min-h-[50vh] flex flex-col justify-end overflow-hidden pb-12'>
+      <div className='relative flex min-h-[44vh] w-full flex-col justify-end overflow-hidden pb-12 pt-[80px] md:min-h-[52vh]'>
         <div className='absolute inset-0 z-0'>
           {isExternal ? (
+            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={blog.image}
               alt={blog.title}
-              className='w-full h-full object-cover'
+              className='h-full w-full object-cover'
             />
           ) : (
             <Image
@@ -114,61 +159,57 @@ export default async function BlogPostPage({
             />
           )}
           {/* Gradient Overlay */}
-          <div className='absolute inset-0 bg-linear-to-t from-brand-black via-brand-black/70 to-transparent' />
+          <div className='absolute inset-0 bg-gradient-to-t from-primary via-primary/70 to-primary/20' />
         </div>
 
-        <div className='relative z-10 max-w-[1400px] w-full mx-auto px-4 lg:px-8 pt-24'>
+        <div className='relative z-10 mx-auto w-full max-w-[1500px] px-6 pt-24 sm:px-10 lg:px-16'>
           <Link
             href='/resources'
-            className='inline-flex items-center text-white/80 hover:text-white transition-colors text-sm font-semibold mb-6 group'
+            className='group mb-6 inline-flex items-center text-sm font-semibold uppercase tracking-[0.1em] text-parchment/70 transition-colors hover:text-accent'
           >
-            <ArrowLeft className='w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform' />
+            <ArrowLeft className='mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1' />
             Back to Resources
           </Link>
-          {/* <div className='flex items-center gap-2 text-brand-primary font-semibold text-sm mb-4 tracking-wide uppercase'>
-            <Calendar className='w-4 h-4' />
-            {blog.date}
-          </div> */}
-          <h1 className='text-3xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight drop-shadow-md'>
+          <h1 className='max-w-4xl text-3xl font-bold leading-tight tracking-tight text-parchment md:text-5xl lg:text-6xl'>
             {blog.title}
           </h1>
         </div>
       </div>
 
       {/* ── Main Content Area ────────────────────────── */}
-      <div className='max-w-[1400px] mx-auto px-4 lg:px-8 -mt-8 relative z-20'>
-        <div className='flex flex-col lg:flex-row gap-8 lg:gap-10'>
+      <div className='relative z-20 mx-auto -mt-8 max-w-[1500px] px-6 sm:px-10 lg:px-16'>
+        <div className='flex flex-col gap-8 lg:flex-row lg:gap-12'>
           {/* ── Article Body ───────────────────────────── */}
           <div className='flex-1 lg:w-2/3'>
-            <article className='bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-10 lg:p-12'>
+            <article className='border border-secondary/10 bg-background p-6 md:p-10 lg:p-12'>
               {/* Summary / Lead */}
-              <div className='text-lg md:text-xl text-gray-500 font-medium leading-relaxed mb-10 pb-10 border-b border-gray-100'>
+              <div className='mb-10 border-b border-secondary/10 pb-10 text-lg font-light leading-relaxed text-muted-foreground md:text-xl'>
                 {blog.summary}
               </div>
 
               {/* Dynamic Content */}
-              <div className='prose prose-lg prose-brand max-w-none'>
+              <div className='prose prose-lg max-w-none'>
                 {renderContent(blog.content)}
               </div>
             </article>
           </div>
 
           {/* ── Sidebar (Related Articles) ─────────────── */}
-          <aside className='w-full lg:w-1/3 mt-8 lg:mt-0 lg:pt-12'>
+          <aside className='mt-8 w-full lg:mt-0 lg:w-1/3 lg:pt-12'>
             <div className='sticky top-24'>
-              <div className='flex items-center justify-between mb-6'>
-                <h3 className='text-xl font-bold text-brand-black'>
+              <div className='mb-6 flex items-center justify-between'>
+                <h2 className='text-xl font-bold tracking-tight text-secondary'>
                   Recent Articles
-                </h3>
+                </h2>
                 <Link
                   href='/resources'
-                  className='text-brand-primary font-semibold text-sm hover:underline'
+                  className='text-xs font-bold uppercase tracking-[0.12em] text-accent hover:underline'
                 >
                   View all
                 </Link>
               </div>
 
-              <div className='flex flex-col gap-5'>
+              <div className='flex flex-col gap-4'>
                 {blogs
                   .filter((b) => b.link !== blog.link)
                   .slice(0, 3)
@@ -178,28 +219,29 @@ export default async function BlogPostPage({
                       <Link
                         key={idx}
                         href={`/resources/${recentBlog.link}`}
-                        className='group flex bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md border border-gray-100 transition-all hover:-translate-y-1'
+                        className='group flex overflow-hidden border border-secondary/10 bg-background transition-colors hover:border-accent/40'
                       >
-                        <div className='relative w-32 shrink-0 bg-gray-100'>
+                        <div className='relative w-32 shrink-0'>
                           {externalImg ? (
+                            // eslint-disable-next-line @next/next/no-img-element
                             <img
                               src={recentBlog.image}
                               alt={recentBlog.title}
-                              className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-500'
+                              className='h-full w-full object-cover transition-transform duration-500 group-hover:scale-105'
                             />
                           ) : (
                             <Image
                               src={`${recentBlog.image}`}
                               alt={recentBlog.title}
                               fill
-                              className='object-cover group-hover:scale-105 transition-transform duration-500'
+                              className='object-cover transition-transform duration-500 group-hover:scale-105'
                             />
                           )}
                         </div>
-                        <div className='p-4 flex flex-col justify-center flex-1'>
-                          <h4 className='font-bold text-sm text-brand-black line-clamp-3 group-hover:text-brand-primary transition-colors pr-2'>
+                        <div className='flex flex-1 flex-col justify-center p-4'>
+                          <h3 className='line-clamp-3 pr-2 text-sm font-bold tracking-tight text-secondary transition-colors group-hover:text-accent'>
                             {recentBlog.title}
-                          </h4>
+                          </h3>
                         </div>
                       </Link>
                     );

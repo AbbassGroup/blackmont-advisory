@@ -7,7 +7,7 @@ const { sendMail } = require('./mailer');
 // Post-approval IM follow-up email. Works for both IM kinds — the kind only
 // changes how we resolve the broker + business name.
 
-const FROM = process.env.SENDGRID_FROM || process.env.EMAIL_FROM || 'info@abbass.group';
+const FROM = process.env.SENDGRID_FROM || process.env.EMAIL_FROM || 'info@blackmontadvisory.com';
 const TEAL = '#56C1BC';
 
 function backendBase() {
@@ -51,7 +51,7 @@ async function resolveFollowUpContext(enquiry) {
 // The check-in email sent to the prospect.
 function buildFollowUpEmail({ enquiry, businessName, brokerName, interestedUrl, browseUrl }) {
   const firstName = enquiry.firstName || 'there';
-  const signatureName = brokerName || 'ABBASS Business Brokers';
+  const signatureName = brokerName || 'Blackmont Advisory';
   const subject = `${firstName}, what did you think of ${businessName}?`;
 
   const text =
@@ -59,7 +59,7 @@ function buildFollowUpEmail({ enquiry, businessName, brokerName, interestedUrl, 
     `You recently enquired about a business opportunity. We're checking in to see if we can assist further.\n\n` +
     `Interested | Please provide more information:\n${interestedUrl}\n\n` +
     `Not Suitable | Help me find another business:\n${browseUrl}\n\n` +
-    `${signatureName}\nABBASS Business Brokers\n(03) 9103 1317\ninfo@abbass.group\nwww.abbass.com.au/businessbrokers`;
+    `${signatureName}\nBlackmont Advisory\n(03) 9103 1317\ninfo@blackmontadvisory.com\nwww.abbass.com.au/businessbrokers`;
 
   const btn = 'display:block;width:360px;max-width:100%;box-sizing:border-box;text-align:center;padding:11px 16px;font-size:14px;font-weight:bold;text-decoration:none;border-radius:6px';
   const html = `
@@ -72,7 +72,7 @@ function buildFollowUpEmail({ enquiry, businessName, brokerName, interestedUrl, 
       <p style="margin:0 0 20px">
         <a href="${browseUrl}" style="${btn};background:#fff;color:${TEAL};border:1px solid ${TEAL}">Not Suitable | Help me find another business</a>
       </p>
-      <p style="margin-top:28px">${signatureName}<br/>ABBASS Business Brokers<br/>(03) 9103 1317<br/><a href="mailto:info@abbass.group">info@abbass.group</a><br/><a href="https://www.abbass.com.au/businessbrokers">www.abbass.com.au/businessbrokers</a></p>
+      <p style="margin-top:28px">${signatureName}<br/>Blackmont Advisory<br/>(03) 9103 1317<br/><a href="mailto:info@blackmontadvisory.com">info@blackmontadvisory.com</a><br/><a href="https://www.abbass.com.au/businessbrokers">www.abbass.com.au/businessbrokers</a></p>
     </div>`;
 
   return { to: enquiry.email, from: FROM, subject, text, html };
@@ -97,7 +97,7 @@ function buildBrokerInterestEmail({ enquiry, businessName, brokerEmails }) {
         Email: <a href="mailto:${enquiry.email}">${enquiry.email}</a><br/>
         Phone: ${enquiry.phone || '—'}
       </p>
-      <p style="color:#999;font-size:12px;margin-top:24px">Sent automatically by the ABBASS Business Brokers IM follow-up.</p>
+      <p style="color:#999;font-size:12px;margin-top:24px">Sent automatically by the Blackmont Advisory IM follow-up.</p>
     </div>`;
 
   return { to: brokerEmails, from: FROM, subject, text, html };
@@ -140,7 +140,7 @@ function actionPage(title, message, color) {
       <div style="font-size:56px;margin-bottom:16px">${color === 'green' ? '✅' : '❌'}</div>
       <h2 style="color:${color === 'green' ? '#28a745' : '#dc3545'};margin-bottom:8px">${title}</h2>
       <p style="color:#555;font-size:15px;line-height:1.6">${message}</p>
-      <p style="color:#999;font-size:12px;margin-top:32px">ABBASS Business Brokers</p>
+      <p style="color:#999;font-size:12px;margin-top:32px">Blackmont Advisory</p>
     </div>
   </body></html>`;
 }

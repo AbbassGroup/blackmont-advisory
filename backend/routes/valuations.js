@@ -22,8 +22,8 @@ router.post('/', async (req, res) => {
     // Prepare promises for parallel execution
     const adminEmailPromise = (async () => {
       const msg = {
-        to: 'info@abbass.group',
-        from: 'info@abbass.group',
+        to: 'info@blackmontadvisory.com',
+        from: 'info@blackmontadvisory.com',
         subject: 'New Business Valuation Request',
         html: `<h2>New Business Valuation Request</h2>
           <p><strong>First Name:</strong> ${firstName}</p>

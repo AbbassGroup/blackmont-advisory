@@ -58,7 +58,7 @@ export const testimonials: Testimonial[] = [
   {
     name: 'Rahul Arora',
     stars: 5,
-    text: 'I recently bought a café through Sadeq at Abbass Business Brokers, and I couldn\'t be happier with the experience. Sadeq was professional, knowledgeable, and made the process smooth and stress-free. He provided clear information and handled any issues quickly. I highly recommend Sadeq for anyone looking to buy or sell a business.'
+    text: 'I recently bought a café through Sadeq at Blackmont Advisory, and I couldn\'t be happier with the experience. Sadeq was professional, knowledgeable, and made the process smooth and stress-free. He provided clear information and handled any issues quickly. I highly recommend Sadeq for anyone looking to buy or sell a business.'
   },
   {
     name: 'Imogen Hammond',

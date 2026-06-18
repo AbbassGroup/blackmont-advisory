@@ -39,7 +39,7 @@ router.post('/', async (req, res) => {
         'Christine.lamani@abbass.group',
         'igor.vasiliev@abbass.group'
       ],
-      from: process.env.SENDGRID_FROM || 'info@abbass.group',
+      from: process.env.SENDGRID_FROM || 'info@blackmontadvisory.com',
       subject: 'New Franchise EOI Submission',
       text: `New Franchise Expression of Interest\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone}\nMessage: ${message || 'No message provided'}`,
       html: `
@@ -58,19 +58,19 @@ router.post('/', async (req, res) => {
     // Send confirmation email to applicant
     const confirmationMsg = {
       to: email,
-      from: process.env.SENDGRID_FROM || 'info@abbass.group',
-      subject: 'Thank you for your EOI - ABBASS Business Brokers',
-      text: `Hi ${name},\n\nThank you for your Expression of Interest in becoming an ABBASS Business Broker.\n\nWe have received your application and will review it carefully. One of our team members will be in touch with you soon to discuss the next steps.\n\nIn the meantime, feel free to explore our website to learn more about our business brokerage services.\n\nBest regards,\nThe ABBASS Team\n\nABBASS Business Brokers\ninfo@abbass.group\n(03) 9103 1317`,
+      from: process.env.SENDGRID_FROM || 'info@blackmontadvisory.com',
+      subject: 'Thank you for your EOI - Blackmont Advisory',
+      text: `Hi ${name},\n\nThank you for your Expression of Interest in becoming an Blackmont Advisory.\n\nWe have received your application and will review it carefully. One of our team members will be in touch with you soon to discuss the next steps.\n\nIn the meantime, feel free to explore our website to learn more about our business brokerage services.\n\nBest regards,\nThe ABBASS Team\n\nBlackmont Advisory\ninfo@blackmontadvisory.com\n(03) 9103 1317`,
       html: `
         <p>Hi ${name},</p>
-        <p>Thank you for your Expression of Interest in becoming an ABBASS Business Broker.</p>
+        <p>Thank you for your Expression of Interest in becoming an Blackmont Advisory.</p>
         <p>We have received your application and will review it carefully. One of our team members will be in touch with you soon to discuss the next steps.</p>
         <p>In the meantime, feel free to explore our website to learn more about our business brokerage services.</p>
         <p>Best regards,<br/>
         The ABBASS Team</p>
         <hr/>
-        <p><strong>ABBASS Business Brokers</strong><br/>
-        <a href="mailto:info@abbass.group">info@abbass.group</a><br/>
+        <p><strong>Blackmont Advisory</strong><br/>
+        <a href="mailto:info@blackmontadvisory.com">info@blackmontadvisory.com</a><br/>
         (03) 9103 1317</p>
       `
     };

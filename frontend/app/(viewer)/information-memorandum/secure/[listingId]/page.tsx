@@ -156,9 +156,12 @@ function Centered({ children }: { children: React.ReactNode }) {
 function ContactLine() {
   return (
     <p className='mt-2 text-xs text-gray-400'>
-      ABBASS Business Brokers &middot;{' '}
-      <a href='mailto:info@abbass.group' className='text-brand-primary'>
-        info@abbass.group
+      Blackmont Advisory &middot;{' '}
+      <a
+        href='mailto:info@blackmontadvisory.com'
+        className='text-brand-primary'
+      >
+        info@blackmontadvisory.com
       </a>{' '}
       &middot; (03) 9103 1317
     </p>

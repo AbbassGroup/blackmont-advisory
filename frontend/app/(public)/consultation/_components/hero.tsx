@@ -51,7 +51,7 @@ export function HeroSection() {
           className='flex-1 max-w-[650px] text-center lg:text-left'
         >
           <h1 className='text-4xl md:text-5xl xl:text-6xl font-extrabold leading-[1.15] tracking-tight mb-6'>
-            Your Initial Consultation with ABBASS Business Brokers
+            Your Initial Consultation with Blackmont Advisory
           </h1>
           <p className='text-lg md:text-xl text-gray-300 leading-relaxed max-w-[550px] mx-auto lg:mx-0'>
             Thank you for scheduling your consultation. This page outlines what

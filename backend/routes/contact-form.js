@@ -38,11 +38,11 @@ router.post('/', async (req, res) => {
       from: process.env.EMAIL_USER,
       // to: 'mohammadjahid0007@gmail.com',
       to: 'sadeq@abbass.group',
-      subject: 'New Business Buying Inquiry - ABBASS Business Brokers',
+      subject: 'New Business Buying Inquiry - Blackmont Advisory',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
           <div style="text-align: center; margin-bottom: 30px;">
-            <h1 style="color: #56C1BC; margin: 0;">ABBASS Business Brokers</h1>
+            <h1 style="color: #56C1BC; margin: 0;">Blackmont Advisory</h1>
             <h2 style="color: #2c3e50; margin: 10px 0;">New Business Buying Inquiry</h2>
           </div>
           
@@ -98,7 +98,7 @@ router.post('/', async (req, res) => {
         </div>
       `,
       text: `
-        New Business Buying Inquiry - ABBASS Business Brokers
+        New Business Buying Inquiry - Blackmont Advisory
         
         Contact Information:
         Name: ${name}

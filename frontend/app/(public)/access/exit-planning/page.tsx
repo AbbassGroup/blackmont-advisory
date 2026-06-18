@@ -7,7 +7,7 @@ import { breadcrumbJsonLd, buildMetadata, webAppJsonLd } from '@/lib/seo';
 
 export const metadata: Metadata = buildMetadata({
   path: '/access/exit-planning',
-  title: 'Exit Planning Guide | ABBASS Business Brokers',
+  title: 'Exit Planning Guide | Blackmont Advisory',
   description:
     'A practical, phase-by-phase checklist to prepare your business for a successful sale. Track your progress from 24 months out through to settlement.',
 });

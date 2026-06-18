@@ -4,9 +4,6 @@ const nextConfig: NextConfig = {
   images: {
     localPatterns: [
       {
-        pathname: '/businessbrokers/**',
-      },
-      {
         pathname: '/**',
       },
     ],

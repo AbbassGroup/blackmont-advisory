@@ -40,7 +40,10 @@ export function sectionAnchorId(section: ImSection, index: number): string {
 export function getNavItems(sections: ImSection[]) {
   return sections
     .map((section, index) => ({ section, index }))
-    .filter(({ section }) => section.enabled !== false && getSectionMeta(section.type)?.inNav)
+    .filter(
+      ({ section }) =>
+        section.enabled !== false && getSectionMeta(section.type)?.inNav,
+    )
     .map(({ section, index }) => {
       const title = section.data?.title;
       const label =
@@ -74,20 +77,28 @@ function ImDocumentImpl({
 }: ImDocumentProps) {
   // Business name lives on the banner; the offer form emails it for context.
   const businessName =
-    (sections.find((s) => s.type === 'banner')?.data?.businessName as string) || '';
+    (sections.find((s) => s.type === 'banner')?.data?.businessName as string) ||
+    '';
 
   // Alternate band backgrounds across the non-banner sections, like the site.
-  const toneByIndex = sections.reduce<Record<number, 'white' | 'offwhite'>>((acc, section, index) => {
-    if (section.enabled === false || section.type === 'banner') return acc;
-    return { ...acc, [index]: Object.keys(acc).length % 2 === 0 ? 'white' : 'offwhite' };
-  }, {});
+  const toneByIndex = sections.reduce<Record<number, 'white' | 'offwhite'>>(
+    (acc, section, index) => {
+      if (section.enabled === false || section.type === 'banner') return acc;
+      return {
+        ...acc,
+        [index]: Object.keys(acc).length % 2 === 0 ? 'white' : 'offwhite',
+      };
+    },
+    {},
+  );
 
   return (
     <>
       {sections.map((section, index) => {
         if (section.enabled === false) return null;
         const key = section.uid || section._id || `${section.type}-${index}`;
-        const onChange = (patch: Record<string, unknown>) => onSectionChange?.(index, patch);
+        const onChange = (patch: Record<string, unknown>) =>
+          onSectionChange?.(index, patch);
 
         if (section.type === 'banner') {
           return (
@@ -227,11 +238,12 @@ function ImDocumentImpl({
       })}
 
       {/* Proprietary copyright notice — shown at the bottom of every memorandum */}
-      <footer className="border-t border-gray-100 bg-white px-8 py-6 sm:px-12">
-        <p className="mx-auto max-w-3xl text-center text-[11px] leading-relaxed text-gray-400">
-          © ABBASS Business Brokers. All rights reserved. The content, format, structure, templates,
-          and presentation style of this Information Memorandum are proprietary to ABBASS Business
-          Brokers and may not be copied, reproduced, or used without prior written consent.
+      <footer className='border-t border-gray-100 bg-white px-8 py-6 sm:px-12'>
+        <p className='mx-auto max-w-3xl text-center text-[11px] leading-relaxed text-gray-400'>
+          © Blackmont Advisory. All rights reserved. The content, format,
+          structure, templates, and presentation style of this Information
+          Memorandum are proprietary to Blackmont Advisorys and may not be
+          copied, reproduced, or used without prior written consent.
         </p>
       </footer>
     </>

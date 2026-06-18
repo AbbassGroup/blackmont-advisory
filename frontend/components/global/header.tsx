@@ -11,12 +11,12 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import Image from 'next/image';
 
 const NAV_LINKS = [
   { label: 'Home', path: '/' },
   { label: 'Services', path: '/services' },
-  // { label: 'Listings', path: '/listings' },
-  // { label: 'Buy a Business', path: '/buy-a-business' },
+  { label: 'Resources', path: '/resources' },
   { label: 'About', path: '/about' },
   { label: 'Contact', path: '/contact' },
 ];
@@ -28,11 +28,13 @@ function BrandLockup() {
       className='flex items-center gap-3 shrink-0'
       aria-label='Blackmont Advisory home'
     >
-      <span className='flex h-9 w-9 items-center justify-center border-[1.5px] border-accent'>
-        <span className='text-[13px] font-bold tracking-[0.05em] text-accent'>
-          BA
-        </span>
-      </span>
+      <Image
+        src='/assets/logo.png'
+        alt='Blackmont Advisory logo'
+        width={32}
+        height={32}
+        className='h-10 w-10'
+      />
       <span className='flex flex-col leading-none'>
         <span className='text-[15px] font-bold uppercase tracking-[0.06em] text-parchment'>
           Blackmont

@@ -20,17 +20,17 @@ export async function generateMetadata({
 
   if (!listing) {
     return {
-      title: 'Listing Not Found | ABBASS Business Brokers',
+      title: 'Listing Not Found | Blackmont Advisory',
     };
   }
 
   const seoDescription =
     listing.summary ||
     listing.description ||
-    `View details for ${listing.title} at ABBASS Business Brokers.`;
+    `View details for ${listing.title} at Blackmont Advisory.`;
 
   return {
-    title: `${listing.title} | ABBASS Business Brokers`,
+    title: `${listing.title} | Blackmont Advisory`,
     description: seoDescription.slice(0, 160),
     openGraph: {
       title: listing.title,

@@ -26,7 +26,8 @@ function ProposalSuccessPage({ businessName }: { businessName?: string }) {
           </div>
           <h2 className='text-3xl font-bold text-white mb-2'>Thank You!</h2>
           <p className='text-white text-[15px] leading-relaxed opacity-90'>
-            Your agreement for {businessName ? businessName : 'your business'} will be prepared shortly.
+            Your agreement for {businessName ? businessName : 'your business'}{' '}
+            will be prepared shortly.
           </p>
         </div>
         <div className='p-8 bg-white text-left'>
@@ -38,11 +39,11 @@ function ProposalSuccessPage({ businessName }: { businessName?: string }) {
               <strong>Phone:</strong> (03) 9103 1317
             </p>
             <p className='text-[#333] text-[14px]'>
-              <strong>Email:</strong> info@abbass.group
+              <strong>Email:</strong> info@blackmontadvisory.com
             </p>
           </div>
           <p className='text-[#999] text-[13px] text-center'>
-            ABBASS Business Brokers
+            Blackmont Advisory
           </p>
         </div>
       </div>
@@ -105,10 +106,10 @@ function ProposalContent() {
 
   const [selectedAdvertisement, setSelectedAdvertisement] = useState<any>(null);
   const [selectedSuccessFee, setSelectedSuccessFee] = useState<any>(null);
-  
+
   const [acceptingProposal, setAcceptingProposal] = useState(false);
   const [acceptError, setAcceptError] = useState('');
-  
+
   const yourInvestmentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -123,17 +124,21 @@ function ProposalContent() {
         setLoading(true);
         // GET /api/digital-proposals/email/:email/:id
         const res = await apiClient.get(
-          `/api/digital-proposals/email/${encodeURIComponent(customerEmail)}/${proposalId}`
+          `/api/digital-proposals/email/${encodeURIComponent(customerEmail)}/${proposalId}`,
         );
         const proposals = res.data;
 
         // Backend possibly returns array of matching proposals
         const approvedProposal = Array.isArray(proposals)
           ? proposals.find((p: any) => p.isApproved)
-          : proposals && proposals.isApproved ? proposals : null;
+          : proposals && proposals.isApproved
+            ? proposals
+            : null;
 
         if (!approvedProposal) {
-          setError('No approved proposal found for this email address. It may have been revoked or not yet approved.');
+          setError(
+            'No approved proposal found for this email address. It may have been revoked or not yet approved.',
+          );
           return;
         }
 
@@ -141,28 +146,40 @@ function ProposalContent() {
 
         // Record a view silently (fire-and-forget)
         try {
-          await apiClient.post(`/api/digital-proposals/${approvedProposal._id}/view`, {
-            customerEmail: approvedProposal.customerEmail,
-            customerName: approvedProposal.customerName,
-          });
+          await apiClient.post(
+            `/api/digital-proposals/${approvedProposal._id}/view`,
+            {
+              customerEmail: approvedProposal.customerEmail,
+              customerName: approvedProposal.customerName,
+            },
+          );
         } catch {
           // Non-critical — don't surface view-tracking errors to the user
         }
 
         // Pre-select defaults based on legacy logic
-        if (approvedProposal.advertisement && approvedProposal.advertisement.length > 1) {
+        if (
+          approvedProposal.advertisement &&
+          approvedProposal.advertisement.length > 1
+        ) {
           setSelectedAdvertisement(approvedProposal.advertisement[1]); // Default to option 2
-        } else if (approvedProposal.advertisement && approvedProposal.advertisement.length === 1) {
+        } else if (
+          approvedProposal.advertisement &&
+          approvedProposal.advertisement.length === 1
+        ) {
           setSelectedAdvertisement(approvedProposal.advertisement[0]);
         }
-        
-        if (approvedProposal.successFee && approvedProposal.successFee.length > 0) {
+
+        if (
+          approvedProposal.successFee &&
+          approvedProposal.successFee.length > 0
+        ) {
           setSelectedSuccessFee(approvedProposal.successFee[0]);
         }
       } catch (err: any) {
         console.error('Error fetching proposal:', err);
         setError(
-          'Failed to load your business appraisal. Please check your email link or contact us for assistance.'
+          'Failed to load your business appraisal. Please check your email link or contact us for assistance.',
         );
       } finally {
         setLoading(false);
@@ -173,21 +190,32 @@ function ProposalContent() {
   }, [customerEmail, proposalId]);
 
   const isProposalExpired = proposal?.approvedAt
-    ? new Date() > new Date(new Date(proposal.approvedAt).getTime() + PROPOSAL_EXPIRY_DAYS * 24 * 60 * 60 * 1000)
+    ? new Date() >
+      new Date(
+        new Date(proposal.approvedAt).getTime() +
+          PROPOSAL_EXPIRY_DAYS * 24 * 60 * 60 * 1000,
+      )
     : false;
 
   const handleAcceptProposal = async () => {
-    const hasAdvertisementOptions = proposal?.advertisement && proposal.advertisement.length > 0;
-    const hasSuccessFeeOptions = proposal?.successFee && proposal.successFee.length > 0;
+    const hasAdvertisementOptions =
+      proposal?.advertisement && proposal.advertisement.length > 0;
+    const hasSuccessFeeOptions =
+      proposal?.successFee && proposal.successFee.length > 0;
 
     const needsAdvertisementSelection =
-      hasAdvertisementOptions && proposal.advertisement.length > 1 && !selectedAdvertisement;
+      hasAdvertisementOptions &&
+      proposal.advertisement.length > 1 &&
+      !selectedAdvertisement;
     const needsSuccessFeeSelection =
       hasSuccessFeeOptions && !selectedSuccessFee;
 
     if (needsAdvertisementSelection || needsSuccessFeeSelection) {
       if (yourInvestmentRef.current) {
-        yourInvestmentRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        yourInvestmentRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
       }
 
       let errorMessage = 'Please select ';
@@ -199,7 +227,7 @@ function ProposalContent() {
         errorMessage += 'a success fee option';
       }
       errorMessage += ' before accepting the proposal.';
-      
+
       setAcceptError(errorMessage);
       return;
     }
@@ -210,8 +238,14 @@ function ProposalContent() {
     try {
       await apiClient.post('/api/signnow/accept-proposal', {
         proposalId: proposal._id,
-        selectedAdvertisement: selectedAdvertisement || (proposal.advertisement?.length === 1 ? proposal.advertisement[0] : null),
-        selectedSuccessFee: selectedSuccessFee || (proposal.successFee?.length === 1 ? proposal.successFee[0] : null),
+        selectedAdvertisement:
+          selectedAdvertisement ||
+          (proposal.advertisement?.length === 1
+            ? proposal.advertisement[0]
+            : null),
+        selectedSuccessFee:
+          selectedSuccessFee ||
+          (proposal.successFee?.length === 1 ? proposal.successFee[0] : null),
         customerEmail: proposal.customerEmail,
       });
 
@@ -222,7 +256,9 @@ function ProposalContent() {
     } catch (err: any) {
       console.error('Error accepting proposal:', err);
       setAcceptError(
-        err.response?.data?.message || err.message || 'Failed to process proposal acceptance'
+        err.response?.data?.message ||
+          err.message ||
+          'Failed to process proposal acceptance',
       );
     } finally {
       setAcceptingProposal(false);
@@ -237,7 +273,9 @@ function ProposalContent() {
     return (
       <div className='min-h-[60vh] flex flex-col items-center justify-center p-8'>
         <Loader2 className='w-12 h-12 animate-spin text-brand-primary mb-4' />
-        <p className='text-gray-500 font-medium text-lg'>Loading your business appraisal...</p>
+        <p className='text-gray-500 font-medium text-lg'>
+          Loading your business appraisal...
+        </p>
       </div>
     );
   }
@@ -249,8 +287,10 @@ function ProposalContent() {
           <AlertCircle className='w-8 h-8 mx-auto mb-3 opacity-90' />
           <p className='font-medium'>{error}</p>
         </div>
-        <p className='text-gray-700 font-bold mb-2'>If you believe this is an error, please contact us at:</p>
-        <p className='text-gray-600'>Email: info@abbass.group</p>
+        <p className='text-gray-700 font-bold mb-2'>
+          If you believe this is an error, please contact us at:
+        </p>
+        <p className='text-gray-600'>Email: info@blackmontadvisory.com</p>
         <p className='text-gray-600'>Phone: (03) 9103 1317</p>
       </div>
     );
@@ -261,9 +301,11 @@ function ProposalContent() {
       <div className='min-h-[60vh] flex flex-col items-center justify-center p-8 max-w-2xl mx-auto text-center'>
         <div className='bg-orange-50 text-orange-700 p-6 rounded-2xl border border-orange-100 mb-6'>
           <AlertCircle className='w-8 h-8 mx-auto mb-3 opacity-90' />
-          <p className='font-medium'>Proposal has expired. Please contact your broker.</p>
+          <p className='font-medium'>
+            Proposal has expired. Please contact your broker.
+          </p>
         </div>
-        <p className='text-gray-600'>Email: info@abbass.group</p>
+        <p className='text-gray-600'>Email: info@blackmontadvisory.com</p>
         <p className='text-gray-600'>Phone: (03) 9103 1317</p>
       </div>
     );
@@ -350,12 +392,14 @@ function ProposalContent() {
 
 export default function ProposalPageWrapper() {
   return (
-    <Suspense fallback={
-      <div className='min-h-[60vh] flex flex-col items-center justify-center p-8'>
-        <Loader2 className='w-12 h-12 animate-spin text-brand-primary mb-4' />
-        <p className='text-gray-500 font-medium text-lg'>Loading...</p>
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className='min-h-[60vh] flex flex-col items-center justify-center p-8'>
+          <Loader2 className='w-12 h-12 animate-spin text-brand-primary mb-4' />
+          <p className='text-gray-500 font-medium text-lg'>Loading...</p>
+        </div>
+      }
+    >
       <ProposalContent />
     </Suspense>
   );

@@ -45,7 +45,7 @@ const BusinessForSalePage = () => {
               Sadeq Abbass
             </h2>
             <p className='mb-4 text-[0.8rem] font-medium tracking-[0.06em] text-gray-400'>
-              Managing Director &bull; ABBASS Business Brokers
+              Managing Director &bull; Blackmont Advisory
             </p>
           </div>
 

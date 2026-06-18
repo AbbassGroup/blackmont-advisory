@@ -347,7 +347,7 @@ export function BenchmarkReport() {
         <ToolCta
           resource='Industry Benchmark Report'
           title="What's your business worth?"
-          subtitle='Get a free, confidential market appraisal from ABBASS Business Brokers.'
+          subtitle='Get a free, confidential market appraisal from Blackmont Advisory.'
           button='Get an Appraisal'
         />
       </div>

@@ -361,7 +361,7 @@ router.get('/:id/im', async (req, res) => {
             <h1>This Link Has Expired</h1>
             <p>This Information Memorandum is no longer available. The link you used has expired or is no longer active.</p>
             <p style="font-size:14px;color:#888;margin:0">If you believe this is an error, please contact the broker directly.</p>
-            <p class="footer">ABBASS Business Brokers<br/>(03) 9103 1317 &bull; info@abbass.group</p>
+            <p class="footer">Blackmont Advisory<br/>(03) 9103 1317 &bull; info@blackmontadvisory.com</p>
           </div>
         </body>
         </html>

@@ -110,7 +110,7 @@ export function AdminSidebar() {
           <Image
             loading='eager'
             src='/businessbrokers/mark.webp'
-            alt='ABBASS Business Brokers'
+            alt='Blackmont Advisory'
             width={40}
             height={40}
           />

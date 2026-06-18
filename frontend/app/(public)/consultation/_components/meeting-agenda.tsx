@@ -15,9 +15,9 @@ const agendaItems = [
   {
     id: 1,
     icon: Info,
-    title: 'A short introduction to ABBASS Business Brokers and how we operate',
+    title: 'A short introduction to Blackmont Advisory and how we operate',
     description:
-      'A short introduction to ABBASS Business Brokers and how we operate.',
+      'A short introduction to Blackmont Advisory and how we operate.',
   },
   {
     id: 2,

@@ -1,5 +1,6 @@
 import { Quote } from 'lucide-react';
-import Title from '@/components/global/title';
+import { cn } from '@/lib/utils';
+import { Container } from '@/components/landing/primitives';
 import {
   Carousel,
   CarouselContent,
@@ -40,7 +41,7 @@ const reviewsData = [
     position: 'Business Owner',
   },
   {
-    text: `I recently bought a cafe through Sadeq at Abbass Business Brokers, and I couldn't be happier with the experience. He provided clear information and handled any issues quickly.`,
+    text: `I recently bought a cafe through Sadeq at Blackmont Advisory, and I couldn't be happier with the experience. He provided clear information and handled any issues quickly.`,
     author: 'Rahul',
     position: 'Business Buyer',
   },
@@ -61,42 +62,47 @@ export function ReviewsCarousel({
   className = 'py-20 lg:py-28',
 }: ReviewsCarouselProps) {
   return (
-    <section className={className}>
-      <div className='max-w-[1260px] mx-auto px-4 lg:px-8'>
-        <div className='text-center mb-16'>
-          <Title>{title}</Title>
-          <div className='w-16 h-1 bg-brand-primary rounded-full mx-auto' />
+    <section className={cn('bg-background', className)}>
+      <Container>
+        <div className='mb-14 text-center'>
+          <h2 className='text-3xl font-bold leading-tight tracking-tight text-secondary sm:text-4xl lg:text-5xl'>
+            {title}
+          </h2>
         </div>
         <Carousel opts={{ align: 'start', loop: true }} className='w-full'>
           <CarouselContent className='-ml-5'>
             {reviewsData.map((t, i) => (
               <CarouselItem
                 key={i}
-                className='pl-5 pb-5 basis-full md:basis-1/2 lg:basis-1/3'
+                className='basis-full pb-5 pl-5 md:basis-1/2 lg:basis-1/3'
               >
-                <div className='bg-white border border-gray-100 rounded-2xl p-7 shadow-sm h-full flex flex-col hover:shadow-md transition-shadow'>
-                  <Quote className='w-8 h-8 text-brand-primary/30 mb-4 shrink-0' />
-                  <p className='text-gray-600 text-sm leading-relaxed mb-6 italic flex-1'>
+                <div className='flex h-full flex-col border border-secondary/10 bg-background p-7 transition-colors hover:border-accent/40'>
+                  <Quote
+                    aria-hidden
+                    strokeWidth={0}
+                    className='mb-4 h-8 w-8 shrink-0 fill-accent/25'
+                  />
+                  <p className='mb-6 flex-1 text-sm italic leading-relaxed text-muted-foreground'>
                     &ldquo;{t.text}&rdquo;
                   </p>
-                  <div className='flex items-center gap-3 pt-4 border-t border-gray-100'>
-                    <div>
-                      <p className='font-bold text-sm text-brand-primary-dark'>
-                        {t.author}
-                      </p>
-                      <p className='text-xs text-gray-400'>{t.position}</p>
-                    </div>
+                  <div className='border-t border-secondary/10 pt-4'>
+                    <p className='text-sm font-bold text-secondary'>
+                      {t.author}
+                    </p>
+                    <p className='text-xs text-muted-foreground'>
+                      {t.position}
+                    </p>
                   </div>
                 </div>
               </CarouselItem>
             ))}
           </CarouselContent>
-          <div className='flex justify-center gap-3 mt-10'>
-            <CarouselPrevious className='static translate-y-0 w-11 h-11 rounded-full border-gray-200 hover:bg-brand-primary hover:text-white hover:border-brand-primary transition-all duration-200' />
-            <CarouselNext className='static translate-y-0 w-11 h-11 rounded-full border-gray-200 hover:bg-brand-primary hover:text-white hover:border-brand-primary transition-all duration-200' />
+          <div className='mt-10 flex justify-center gap-3'>
+            <CarouselPrevious className='static h-11 w-11 translate-y-0 rounded-none border-secondary/20 text-secondary transition-all duration-200 hover:border-accent hover:bg-accent hover:text-primary' />
+            <CarouselNext className='static h-11 w-11 translate-y-0 rounded-none border-secondary/20 text-secondary transition-all duration-200 hover:border-accent hover:bg-accent hover:text-primary' />
           </div>
         </Carousel>
-      </div>
+      </Container>
     </section>
   );
 }

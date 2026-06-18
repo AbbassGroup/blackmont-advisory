@@ -38,7 +38,7 @@ Please log into the admin dashboard to review this ${isUpdate ? 'updated' : ''} 
 Admin Dashboard: ${process.env.FRONTEND_URL}/admin
 
 Regards,
-ABBASS Business Brokers`,
+Blackmont Advisory`,
     html: `
       <h2>${subject}</h2>
       <p>${actionText}</p>
@@ -58,7 +58,7 @@ ABBASS Business Brokers`,
       <p><a href="${process.env.FRONTEND_URL}/admin" style="background-color: #56C1BC; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Review Proposal</a></p>
       
       <p>Regards,<br/>
-      ABBASS Business Brokers</p>
+      Blackmont Advisory</p>
     `
   };
 };
@@ -68,7 +68,7 @@ const createCustomerApprovalEmail = (proposal) => {
     from: formatFrom(process.env.EMAIL_FROM),
     to: proposal.customerEmail,
     cc: proposal?.brokerEmail === "sadeq@abbass.group" ? "sadeq@abbass.group" : `${proposal?.brokerEmail}, sadeq@abbass.group`,
-    subject: 'Your Business Proposal Has Been Prepared | ABBASS Business Brokers',
+    subject: 'Your Business Proposal Has Been Prepared | Blackmont Advisory',
     text: `Dear ${proposal.customerName || proposal.brokerName},
 
 Your business appraisal for ${proposal.businessName} has been completed and approved.
@@ -79,9 +79,9 @@ ${process.env.FRONTEND_URL}/proposal?id=${proposal._id}&email=${encodeURICompone
 If you have any questions about your appraisal or would like to discuss next steps, please don't hesitate to contact us.
 
 Regards,
-ABBASS Business Brokers
+Blackmont Advisory
 Phone: (03) 9103 1317
-Email: info@abbass.group
+Email: info@blackmontadvisory.com
 Website: www.abbass.com.au/businessbrokers`,
     html: `
 
@@ -102,9 +102,9 @@ Website: www.abbass.com.au/businessbrokers`,
         
         <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
           <p style="color: #333; line-height: 1.6; margin-bottom: 5px;"><strong>Regards,</strong></p>
-          <p style="color: #333; line-height: 1.6; margin-bottom: 5px;">ABBASS Business Brokers</p>
+          <p style="color: #333; line-height: 1.6; margin-bottom: 5px;">Blackmont Advisory</p>
           <p style="color: #333; line-height: 1.6; margin-bottom: 5px;">Phone: (03) 9103 1317</p>
-          <p style="color: #333; line-height: 1.6; margin-bottom: 5px;">Email: info@abbass.group</p>
+          <p style="color: #333; line-height: 1.6; margin-bottom: 5px;">Email: info@blackmontadvisory.com</p>
           <p style="color: #333; line-height: 1.6; margin-bottom: 0;">Website: <a href="https://www.abbass.com.au/businessbrokers" style="color: #56C1BC;">www.abbass.com.au/businessbrokers</a></p>
         </div>
     `
@@ -181,7 +181,7 @@ ${successFeeText}
 
 Please prepare and send the agreement to the customer.
 
-— ABBASS Business Brokers`,
+— Blackmont Advisory`,
     html: `
 <!DOCTYPE html>
 <html>
@@ -234,7 +234,7 @@ Please prepare and send the agreement to the customer.
   <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
   
  
-  <p style="margin: 30px 0 0; color: #999; font-size: 12px;">— ABBASS Business Brokers</p>
+  <p style="margin: 30px 0 0; color: #999; font-size: 12px;">— Blackmont Advisory</p>
   
 </body>
 </html>
@@ -587,7 +587,7 @@ const createImViewedEmail = ({ prospectName, businessName, timeOpened, brokerEma
     from: formatFrom(process.env.EMAIL_FROM),
     email: brokerEmail,
     subject: `${subjectPrefix}: ${prospectName} (${businessName})`,
-    text: `IM Viewed\n\nProspect: ${prospectName}\nBusiness: ${businessName}\nTime opened: ${timeOpened}\n\n— ABBASS Business Brokers\n(03) 9103 1317 • info@abbass.group`,
+    text: `IM Viewed\n\nProspect: ${prospectName}\nBusiness: ${businessName}\nTime opened: ${timeOpened}\n\n— Blackmont Advisory\n(03) 9103 1317 • info@blackmontadvisory.com`,
     html: `
 <!DOCTYPE html>
 <html>
@@ -618,8 +618,8 @@ const createImViewedEmail = ({ prospectName, businessName, timeOpened, brokerEma
 
     <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0 16px;">
     <p style="margin: 0; color: #999; font-size: 12px;">
-      ABBASS Business Brokers<br/>
-      (03) 9103 1317 &bull; info@abbass.group
+      Blackmont Advisory<br/>
+      (03) 9103 1317 &bull; info@blackmontadvisory.com
     </p>
   </div>
 </body>

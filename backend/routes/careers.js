@@ -55,8 +55,8 @@ router.post('/apply', upload.single('resume'), async (req, res) => {
     const resumePath = req.file.path;
     const resumeData = fs.readFileSync(resumePath);
     const msg = {
-      to: 'info@abbass.group',
-      from: 'info@abbass.group',
+      to: 'info@blackmontadvisory.com',
+      from: 'info@blackmontadvisory.com',
       subject: 'New Career Application Submitted',
       text: `A new career application has been submitted.\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone}\nCover Letter: ${coverLetter}`,
       html: `<h2>New Career Application Submitted</h2><p><strong>Name:</strong> ${name}<br/><strong>Email:</strong> ${email}<br/><strong>Phone:</strong> ${phone}<br/><strong>Cover Letter:</strong> ${coverLetter}</p>`,

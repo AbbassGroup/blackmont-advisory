@@ -28,7 +28,7 @@ export function OurApproach() {
             </h3>
 
             <p className='text-[1.05rem] text-gray-600 leading-relaxed mb-4'>
-              ABBASS Business Brokers is a Melbourne-based firm specialising in
+              Blackmont Advisory is a Melbourne-based firm specialising in
               business sales across Australia.
             </p>
 

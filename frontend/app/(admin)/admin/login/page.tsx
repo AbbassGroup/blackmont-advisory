@@ -41,13 +41,13 @@ export default function AdminLoginPage() {
             <Image
               loading='eager'
               src='/businessbrokers/mark.webp'
-              alt='ABBASS Business Brokers'
+              alt='Blackmont Advisory'
               width={120}
               height={120}
               className='rounded-full object-contain mx-auto'
             />
             <p className='text-brand-black pt-2 font-medium'>
-              ABBASS Business Brokers
+              Blackmont Advisory
             </p>
           </div>
 

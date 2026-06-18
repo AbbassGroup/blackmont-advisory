@@ -7,7 +7,7 @@ import { breadcrumbJsonLd, buildMetadata, webAppJsonLd } from '@/lib/seo';
 
 export const metadata: Metadata = buildMetadata({
   path: '/access/valuation',
-  title: 'Business Valuation Tool | ABBASS Business Brokers',
+  title: 'Business Valuation Tool | Blackmont Advisory',
   description:
     'Estimate the potential value of your business with our free valuation tool. Get an indicative range based on your revenue, profit, industry, and management.',
 });
