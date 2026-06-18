@@ -9,17 +9,18 @@ jobs:
   deploy:
     name: SSH Deploy to Production
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 30
 
     steps:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.BLACKMONT_SERVER_HOST }}
-          username: ${{ secrets.BLACKMONT_SERVER_USER }}
-          key: ${{ secrets.BLACKMONT_SERVER_SSH_KEY }}
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
           port: 22
-          command_timeout: 23m
+          timeout: 120s
+          command_timeout: 25m
           script: |
             set -e
             cd /var/www/blackmont-advisory
@@ -44,7 +45,6 @@ jobs:
             BACKEND_CHANGED=false
             FRONTEND_CHANGED=false
 
-            # Treat workflow changes as touching both (safety net)
             if echo "$CHANGED" | grep -qE '^(backend/|\.github/)'; then
               BACKEND_CHANGED=true
             fi
@@ -52,8 +52,6 @@ jobs:
               FRONTEND_CHANGED=true
             fi
 
-            # If this is the very first deploy (PREV == NEW, e.g. fresh clone),
-            # deploy everything
             if [ "$PREV_COMMIT" = "$NEW_COMMIT" ]; then
               echo "==> First deploy — deploying everything."
               BACKEND_CHANGED=true
