@@ -19,6 +19,7 @@ import { Container, Eyebrow, Reveal } from '@/components/landing/primitives';
 import { ReviewsCarousel } from '@/components/global/reviews-carousel';
 
 // ─── Data ────────────────────────────────────────────────────────────────────
+// ─── Data ────────────────────────────────────────────────────────────────────
 
 const SITE_URL = 'https://blackmontadvisory.com';
 
