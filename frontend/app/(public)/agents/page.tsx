@@ -10,7 +10,7 @@ const agents = [
   {
     name: 'Freddie Wong',
     title: 'Business Broker',
-    image: '/businessbrokers/Freddie Wong.webp',
+    image: '/Freddie Wong.webp',
     location: 'Victoria',
     specialization: 'SME Businesses',
     bio: `I'm a Business Broker who is proficient in business valuation, analysing financial statements, market trends, and industry benchmarks to estimate a business's fair market value. I focus on maintaining strict confidentiality to protect sensitive business details and have experience in marketing businesses strategically to obtain the best ultimate selling price.`,
@@ -22,7 +22,7 @@ const agents = [
   {
     name: 'Igor Vasiliev',
     title: 'Business Broker',
-    image: '/businessbrokers/igor.webp',
+    image: '/igor.webp',
     location: 'Sydney',
     specialization: 'SME Businesses',
     bio: `I'm a Business Broker with over 25 years of experience leading and advising businesses across local and international markets. With a strong background in strategy, finance, and investment analysis, I help sellers position their business for the best possible outcome. My focus is on finding the right buyer, protecting your legacy, and guiding you through a smooth, successful sale.`,
@@ -34,7 +34,7 @@ const agents = [
   {
     name: 'Fiona Johns',
     title: 'Business Broker',
-    image: '/businessbrokers/fiona.jpg',
+    image: '/fiona.jpg',
     location: 'Queensland',
     specialization: 'Service Based & SME Businesses',
     bio: `I bring more than 30 years of experience, giving me a practical and client-focused approach to business sales. Having run a business, I understand how SMEs operate, how buyers think, and how to guide people through major financial decisions. I help owners prepare for the market, attract quality buyers, and manage negotiations with professionalism, clarity, and genuine care.`,
@@ -47,7 +47,7 @@ const agents = [
   {
     name: 'Asif Ahammed',
     title: 'Business Broker',
-    image: '/businessbrokers/Asif.jpg',
+    image: '/Asif.jpg',
     location: 'Victoria & Tasmania',
     specialization: 'Hospitality & Service Based Businesses',
     bio: `I'm a results-focused Business Broker with hands-on experience in business sales across various sectors. My strengths lie in understanding both the financial and emotional aspects of business transitions, ensuring a smooth and rewarding experience for all parties involved. With deep knowledge of Victoria and Tasmania markets, I help connect serious buyers with the right opportunities.`,
@@ -60,7 +60,7 @@ const agents = [
   {
     name: 'Hicham Nahas',
     title: 'Business Broker',
-    image: '/businessbrokers/IMG_3531.webp',
+    image: '/IMG_3531.webp',
     location: 'Melbourne',
     specialization: 'SME Businesses',
     bio: `I'm a Business Broker who has had a successful track record of selling businesses in the SME space. I have a strong financial and valuation background and focus on providing exceptional customer service.`,

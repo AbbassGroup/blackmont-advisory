@@ -82,7 +82,7 @@ Regards,
 Blackmont Advisory
 Phone: (03) 9103 1317
 Email: info@blackmontadvisory.com
-Website: www.abbass.com.au/businessbrokers`,
+Website: www.blackmontadvisory.com`,
     html: `
 
         <h2 style="color: #333; margin-bottom: 20px;">Your Business Proposal has been prepared</h2>
@@ -105,7 +105,7 @@ Website: www.abbass.com.au/businessbrokers`,
           <p style="color: #333; line-height: 1.6; margin-bottom: 5px;">Blackmont Advisory</p>
           <p style="color: #333; line-height: 1.6; margin-bottom: 5px;">Phone: (03) 9103 1317</p>
           <p style="color: #333; line-height: 1.6; margin-bottom: 5px;">Email: info@blackmontadvisory.com</p>
-          <p style="color: #333; line-height: 1.6; margin-bottom: 0;">Website: <a href="https://www.abbass.com.au/businessbrokers" style="color: #56C1BC;">www.abbass.com.au/businessbrokers</a></p>
+          <p style="color: #333; line-height: 1.6; margin-bottom: 0;">Website: <a href="https://www.blackmontadvisory.com" style="color: #56C1BC;">www.blackmontadvisory.com</a></p>
         </div>
     `
   };
@@ -365,7 +365,7 @@ const viewImTemplate = (title, docsJson) => {
 <body>
   <header>
     <button id="menu-btn" aria-label="Toggle document list">&#9776;</button>
-    <img src="https://www.abbass.com.au/businessbrokers/assets/logo.png" alt="ABBASS" onerror="this.style.display='none'">
+    <img src="https://www.blackmontadvisory.com/assets/logo.png" alt="ABBASS" onerror="this.style.display='none'">
     <span class="title">${title}</span>
     <span class="badge">Information Memorandum</span>
     

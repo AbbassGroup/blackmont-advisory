@@ -51,8 +51,8 @@ export function PrintButton({
     setBusy(true);
     try {
       const [logo, mark, mod] = await Promise.all([
-        loadImageAsPng('/businessbrokers/logo-dark.png'),
-        loadImageAsPng('/businessbrokers/mark.webp'),
+        loadImageAsPng('/assets/blackmont.png'),
+        loadImageAsPng('/assets/logo.png'),
         import('@react-pdf/renderer'),
       ]);
       const blob = await mod.pdf(buildDocument({ logo, mark })).toBlob();

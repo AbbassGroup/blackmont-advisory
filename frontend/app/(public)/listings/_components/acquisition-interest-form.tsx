@@ -10,7 +10,7 @@ const CONTACT_API_URL =
   'https://blackmont-api.nexartechnologies.com/api/v1/contacts/create';
 
 const inputCls =
-  'bg-[#f9fafb] border-gray-200 focus-visible:ring-brand-primary/30 focus-visible:border-brand-primary text-sm h-11';
+  'bg-[#f9fafb] border-secondary/15 focus-visible:ring-secondary/20 focus-visible:border-secondary text-sm h-11';
 
 const initialForm = {
   firstName: '',
@@ -32,14 +32,14 @@ function Label({
   optional?: boolean;
 }) {
   return (
-    <label className='mb-1.5 block text-xs font-semibold uppercase tracking-wide text-gray-500'>
+    <label className='mb-1.5 block text-xs font-semibold uppercase tracking-wide text-muted-foreground'>
       {children}
       {optional ? (
-        <span className='ml-1 font-normal normal-case text-gray-300'>
+        <span className='ml-1 font-normal normal-case text-muted-foreground'>
           (optional)
         </span>
       ) : (
-        <span className='ml-1 text-brand-primary'>*</span>
+        <span className='ml-1 text-accent'>*</span>
       )}
     </label>
   );
@@ -102,12 +102,12 @@ export function AcquisitionInterestForm() {
 
   if (submitted) {
     return (
-      <div className='flex flex-col items-center justify-center rounded-2xl border border-brand-primary/15 bg-brand-primary/5 px-6 py-12 text-center'>
-        <CheckCircle className='mb-4 h-14 w-14 text-brand-primary' />
-        <h2 className='mb-2 text-xl font-bold text-brand-black'>
+      <div className='flex flex-col items-center justify-center  border border-accent/15 bg-accent/5 px-6 py-12 text-center'>
+        <CheckCircle className='mb-4 h-14 w-14 text-accent' />
+        <h2 className='mb-2 text-xl font-bold text-secondary'>
           Interest Registered
         </h2>
-        <p className='max-w-md text-sm leading-relaxed text-gray-500'>
+        <p className='max-w-md text-sm leading-relaxed text-muted-foreground'>
           Thank you. Our team will review your requirements and contact you when
           suitable acquisition opportunities become available.
         </p>
@@ -205,7 +205,7 @@ export function AcquisitionInterestForm() {
       <div>
         <Label optional>Comments</Label>
         <Textarea
-          className='min-h-[120px] bg-[#f9fafb] text-sm border-gray-200 focus-visible:ring-brand-primary/30 focus-visible:border-brand-primary'
+          className='min-h-[120px] bg-[#f9fafb] text-sm border-secondary/15 focus-visible:ring-secondary/20 focus-visible:border-secondary'
           value={form.comments}
           onChange={set('comments')}
           disabled={loading}
@@ -213,7 +213,7 @@ export function AcquisitionInterestForm() {
       </div>
 
       {error && (
-        <p className='rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-500'>
+        <p className=' border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-500'>
           {error}
         </p>
       )}
@@ -221,7 +221,7 @@ export function AcquisitionInterestForm() {
       <Button
         type='submit'
         disabled={loading}
-        className='h-12 w-full bg-brand-primary font-semibold text-white hover:bg-brand-primary/90 sm:w-auto sm:px-8'
+        className='h-12 w-full rounded-none bg-accent font-bold uppercase tracking-[0.12em] text-primary hover:bg-accent-light sm:w-auto sm:px-8'
       >
         {loading && <Loader2 className='h-4 w-4 animate-spin' />}
         {loading ? 'Submitting...' : 'Register Interest'}

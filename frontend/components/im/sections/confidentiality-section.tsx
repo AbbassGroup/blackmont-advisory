@@ -17,7 +17,7 @@ export function ConfidentialitySection() {
       {/* Faint logo watermark in the background */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src='/businessbrokers/mark.webp'
+        src='/mark.webp'
         alt=''
         aria-hidden
         className='pointer-events-none absolute left-1/2 top-1/2 w-60 -translate-x-1/2 -translate-y-1/2 opacity-[0.12] sm:w-80'

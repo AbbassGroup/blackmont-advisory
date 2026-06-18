@@ -141,7 +141,7 @@ function ValuationFieldInput({
   if (field === 'industry') {
     return (
       <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className='h-11 w-full rounded-xl border-gray-200 bg-white px-3 shadow-none'>
+        <SelectTrigger className='h-11 w-full  border-secondary/15 bg-background px-3 shadow-none'>
           <SelectValue placeholder='Select industry' />
         </SelectTrigger>
         <SelectContent position='popper' className='max-h-80'>
@@ -163,7 +163,7 @@ function ValuationFieldInput({
   if (field === 'location') {
     return (
       <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className='h-11 w-full rounded-xl border-gray-200 bg-white px-3 shadow-none'>
+        <SelectTrigger className='h-11 w-full  border-secondary/15 bg-background px-3 shadow-none'>
           <SelectValue placeholder='Select location' />
         </SelectTrigger>
         <SelectContent position='popper'>
@@ -180,7 +180,7 @@ function ValuationFieldInput({
   if (field === 'management') {
     return (
       <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className='h-11 w-full rounded-xl border-gray-200 bg-white px-3 shadow-none'>
+        <SelectTrigger className='h-11 w-full  border-secondary/15 bg-background px-3 shadow-none'>
           <SelectValue placeholder='Choose one' />
         </SelectTrigger>
         <SelectContent position='popper'>
@@ -201,7 +201,7 @@ function ValuationFieldInput({
       value={value}
       onChange={(e) => onChange(e.target.value.replace(/\D/g, ''))}
       placeholder='e.g. 850000'
-      className='h-11 rounded-xl border-gray-200 bg-white text-base shadow-none placeholder:italic'
+      className='h-11  border-secondary/15 bg-background text-base shadow-none placeholder:italic'
     />
   );
 }
@@ -259,18 +259,18 @@ export function ValuationTool() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.35 }}
-              className='rounded-2xl border border-gray-200 bg-white p-7 text-center sm:p-9'
+              className=' border border-secondary/15 bg-background p-7 text-center sm:p-9'
             >
-              <div className='mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand-primary/10'>
-                <Calculator className='h-8 w-8 text-brand-primary' />
+              <div className='mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-accent/10'>
+                <Calculator className='h-8 w-8 text-accent' />
               </div>
-              <h2 className='mt-5 text-2xl font-semibold text-brand-black'>
+              <h2 className='mt-5 text-2xl font-semibold text-secondary'>
                 Your Estimated Business Value
               </h2>
-              <div className='mt-4 text-3xl font-extrabold tracking-tight text-brand-primary sm:text-4xl'>
+              <div className='mt-4 text-3xl font-extrabold tracking-tight text-accent sm:text-4xl'>
                 {formatMoney(result.min)} - {formatMoney(result.max)}
               </div>
-              <p className='mx-auto mt-4 max-w-md text-sm leading-relaxed text-gray-500'>
+              <p className='mx-auto mt-4 max-w-md text-sm leading-relaxed text-muted-foreground'>
                 This is an indicative range based on your revenue, profit,
                 industry, and management structure.
               </p>
@@ -291,7 +291,7 @@ export function ValuationTool() {
                 </Button>
                 <PrintButton
                   label='Print Appraisal'
-                  fileName='ABBASS-Business-Valuation.pdf'
+                  fileName='Blackmont-Business-Valuation.pdf'
                   buildDocument={(assets) => (
                     <ValuationPdf
                       assets={assets}
@@ -313,17 +313,17 @@ export function ValuationTool() {
               </div>
             </motion.div>
           ) : (
-            <div className='rounded-2xl border border-gray-200 bg-white p-7 sm:p-9'>
+            <div className=' border border-secondary/15 bg-background p-7 sm:p-9'>
               <div className='mb-7'>
                 <div className='mb-2 flex items-center justify-between text-xs font-semibold uppercase tracking-[0.12em]'>
-                  <span className='text-brand-primary'>
+                  <span className='text-accent'>
                     Question {step + 1} of {valuationQuestions.length}
                   </span>
-                  <span className='text-gray-400'>{progress}%</span>
+                  <span className='text-muted-foreground'>{progress}%</span>
                 </div>
-                <div className='h-1.5 overflow-hidden rounded-full bg-gray-200'>
+                <div className='h-1.5 overflow-hidden rounded-full bg-secondary/10'>
                   <motion.div
-                    className='h-full rounded-full bg-brand-primary'
+                    className='h-full rounded-full bg-accent'
                     animate={{ width: `${progress}%` }}
                     transition={{ duration: 0.4, ease: 'easeOut' }}
                   />
@@ -336,7 +336,7 @@ export function ValuationTool() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.25 }}
               >
-                <h2 className='text-xl font-semibold leading-snug text-brand-black'>
+                <h2 className='text-xl font-semibold leading-snug text-secondary'>
                   {current.question}
                 </h2>
                 <div className='mt-6'>
@@ -364,7 +364,7 @@ export function ValuationTool() {
                   type='button'
                   onClick={next}
                   disabled={!canContinue}
-                  className='bg-brand-primary px-6 rounded-full py-4'
+                  className='bg-accent px-6 rounded-full py-4'
                 >
                   {step === valuationQuestions.length - 1
                     ? 'Get Your Appraisal'

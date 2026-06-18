@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { Reveal } from '@/components/landing/primitives';
 
 interface SectionHeadingProps {
   label: string;
@@ -12,7 +12,6 @@ interface SectionHeadingProps {
 }
 
 export function SectionHeading({
-  label,
   title,
   description,
   align = 'left',
@@ -22,34 +21,23 @@ export function SectionHeading({
   const center = align === 'center';
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 0.5 }}
-      className={`${center ? 'mx-auto text-center' : ''} ${className}`}
-    >
-      <div className={`mb-5 ${center ? 'text-center' : ''}`}>
-        <span className='text-xs font-semibold uppercase tracking-[0.12em] text-brand-primary'>
-          {label}
-        </span>
-      </div>
+    <Reveal className={`${center ? 'mx-auto text-center' : ''} ${className}`}>
       <h2
-        className={`text-[1.9rem] md:text-4xl lg:text-[2.6rem] font-semibold tracking-tight leading-[1.12] ${
-          light ? 'text-white' : 'text-brand-black'
+        className={`text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-5xl ${
+          light ? 'text-parchment' : 'text-secondary'
         }`}
       >
         {title}
       </h2>
       {description && (
         <p
-          className={`mt-5 text-base md:text-lg leading-relaxed max-w-5xl ${
+          className={`mt-5 max-w-2xl text-lg font-light leading-relaxed ${
             center ? 'mx-auto' : ''
-          } ${light ? 'text-white/60' : 'text-gray-500'}`}
+          } ${light ? 'text-parchment/60' : 'text-muted-foreground'}`}
         >
           {description}
         </p>
       )}
-    </motion.div>
+    </Reveal>
   );
 }

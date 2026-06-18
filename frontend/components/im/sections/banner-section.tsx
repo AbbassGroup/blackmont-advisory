@@ -87,7 +87,7 @@ export function BannerSection({
         {/* logo-text.webp is a white wordmark served under the public basePath. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src='/businessbrokers/logo-text.webp'
+          src='/logo-text.webp'
           alt='Blackmont Advisory'
           className='h-7 w-auto object-contain object-left sm:h-8'
         />

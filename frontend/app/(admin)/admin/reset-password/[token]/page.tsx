@@ -76,7 +76,7 @@ export default function ResetPasswordPage() {
             <>
               <div className='text-center mb-8'>
                 <Image
-                  src='/businessbrokers/mark.webp'
+                  src='/mark.webp'
                   alt='Blackmont Advisory'
                   width={120}
                   height={120}

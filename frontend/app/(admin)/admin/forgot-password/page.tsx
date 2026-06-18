@@ -57,7 +57,7 @@ export default function ForgotPasswordPage() {
               <div className='text-center mb-8'>
                 <Image
                   loading='eager'
-                  src='/businessbrokers/mark.webp'
+                  src='/mark.webp'
                   alt='Blackmont Advisory'
                   width={120}
                   height={120}

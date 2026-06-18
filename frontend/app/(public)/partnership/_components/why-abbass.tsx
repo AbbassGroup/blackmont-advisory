@@ -32,13 +32,13 @@ const reasons = [
 
 export function WhyAbbass() {
   return (
-    <section className='relative overflow-hidden bg-[#1c2434] py-20 lg:py-28'>
+    <section className='relative overflow-hidden bg-secondary py-20 lg:py-28'>
       {/* Teal ambient glow */}
-      <div className='pointer-events-none absolute inset-0 bg-cover bg-no-repeat bg-[url("/businessbrokers/dotted.png")] opacity-5' />
+      <div className='pointer-events-none absolute inset-0 bg-cover bg-no-repeat bg-[url("/dotted.png")] opacity-5' />
 
-      <div className='relative z-10 mx-auto max-w-[1260px] px-6 lg:px-8'>
+      <div className='relative z-10 mx-auto max-w-[1500px] px-6 sm:px-10 lg:px-16'>
         <SectionHeading
-          title='Why Partner with ABBASS'
+          title='Why Partner with Blackmont'
           theme='dark'
           className='mb-16'
         />
@@ -49,17 +49,17 @@ export function WhyAbbass() {
             return (
               <div
                 key={reason.title}
-                className='flex items-start gap-5 rounded-2xl border border-white/10 bg-white/5 p-6 transition-colors hover:border-brand-primary/30 hover:bg-white/10 lg:p-7'
+                className='flex items-start gap-5  border border-white/10 bg-background/5 p-6 transition-colors hover:border-accent/30 hover:bg-background/10 lg:p-7'
               >
-                <div className='flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-brand-primary/20 bg-brand-primary/10'>
-                  <Icon className='h-7 w-7 text-brand-primary' />
+                <div className='flex h-14 w-14 shrink-0 items-center justify-center  border border-accent/20 bg-accent/10'>
+                  <Icon className='h-7 w-7 text-accent' />
                 </div>
                 <div>
-                  <h3 className='mb-3 text-xl font-bold leading-snug text-white'>
+                  <h3 className='mb-3 text-xl font-bold leading-snug text-parchment'>
                     {reason.title}
                   </h3>
 
-                  <p className='text-[1.05rem] leading-relaxed text-white/60'>
+                  <p className='text-[1.05rem] leading-relaxed text-parchment/60'>
                     {reason.description}
                   </p>
                 </div>

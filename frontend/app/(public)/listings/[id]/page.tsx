@@ -8,7 +8,7 @@ import {
 } from '@/data/pinned-listing';
 import { AcquisitionInterestForm } from '../_components/acquisition-interest-form';
 import ListingActions from '../_components/listing-actions';
-import { ScrollIndicator } from '@/components/global/scroll-indicator';
+import { PageBanner } from '@/components/global/page-banner';
 
 export async function generateMetadata({
   params,
@@ -94,65 +94,46 @@ export default async function ListingDetailPage({
 
   if (isPinnedAcquisitionListing) {
     return (
-      <main className='min-h-screen bg-brand-offwhite'>
-        <div className='relative flex min-h-[500px] items-center justify-center overflow-hidden pt-[80px] text-center lg:min-h-[580px]'>
-          {listing.image && (
-            <div
-              className='absolute inset-0 scale-110'
-              style={{
-                backgroundImage: `url(${listing.image})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                filter: 'blur(14px) brightness(0.35)',
-              }}
-            />
-          )}
-          <div className='absolute inset-0 bg-linear-to-b from-black/30 to-black/65' />
-          <div className='relative z-10 px-4 text-white'>
-            <p className='mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-brand-primary'>
-              Confidential Acquisition Access
-            </p>
-            <h1 className='mx-auto mb-4 max-w-[900px] text-3xl font-bold leading-tight drop-shadow-lg md:text-5xl'>
-              {listing.title}
-            </h1>
-            {price && (
-              <div className='text-2xl font-bold text-brand-primary drop-shadow md:text-3xl'>
+      <main className='min-h-screen bg-muted'>
+        <PageBanner
+          eyebrow='Confidential Acquisition Access'
+          title={listing.title}
+          description={
+            price ? (
+              <span className='font-semibold text-accent text-3xl'>
                 {price}
-              </div>
-            )}
-          </div>
+              </span>
+            ) : undefined
+          }
+          image={listing.image}
+        />
 
-          <ScrollIndicator />
-        </div>
-
-        <div className='mx-auto max-w-[1040px] px-4 py-10 lg:px-8'>
+        <div className='mx-auto max-w-[1040px] px-6 py-12 sm:px-10 lg:px-16'>
           <div className='mb-8 flex flex-wrap gap-3'>
             <Link
               href='/listings'
-              className='inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-600 transition-colors hover:border-brand-primary hover:text-brand-primary'
+              className='inline-flex items-center gap-2  border border-secondary/15 bg-background px-4 py-2.5 text-sm font-semibold text-muted-foreground transition-colors hover:border-accent hover:text-accent'
             >
               <ArrowLeft className='h-4 w-4' />
               Back to Listings
             </Link>
           </div>
 
-          <div className='rounded-2xl border border-gray-100 bg-white shadow-sm'>
-            <div className='flex flex-wrap gap-6 border-b border-gray-100 px-6 py-5 md:px-8'>
+          <div className=' border border-secondary/10 bg-background shadow-sm'>
+            <div className='flex flex-wrap gap-6 border-b border-secondary/10 px-6 py-5 md:px-8'>
               <div className='flex items-center gap-2'>
-                <MapPin className='h-4 w-4 shrink-0 text-brand-primary' />
-                <span className='text-lg font-semibold text-brand-black'>
+                <MapPin className='h-4 w-4 shrink-0 text-accent' />
+                <span className='text-lg font-semibold text-secondary'>
                   {listing.location}
                 </span>
               </div>
               {price && (
-                <div className='text-lg font-bold text-brand-primary'>
-                  {price}
-                </div>
+                <div className='text-lg font-bold text-accent'>{price}</div>
               )}
             </div>
 
             <div className='space-y-8 px-6 py-7 md:px-8'>
-              <p className='text-base leading-relaxed text-gray-500 md:text-lg'>
+              <p className='text-base leading-relaxed text-muted-foreground md:text-lg'>
                 We regularly represent confidential and off-market businesses
                 valued at $5 million or more that are not publicly advertised.
                 Complete the form below and we will contact qualified buyers
@@ -168,62 +149,43 @@ export default async function ListingDetailPage({
   }
 
   return (
-    <main className='min-h-screen bg-brand-offwhite'>
-      <div className='relative pt-[80px] min-h-[500px] lg:min-h-[580px] overflow-hidden flex items-center justify-center'>
-        {listing.image && (
-          <div
-            className='absolute inset-0 scale-110'
-            style={{
-              backgroundImage: `url(${listing.image})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              filter: 'blur(14px) brightness(0.35)',
-            }}
-          />
-        )}
-        <div className='absolute inset-0 bg-linear-to-b from-black/30 to-black/65' />
-        <div className='relative z-10 h-full flex items-center pb-10 justify-center'>
-          <div className='text-center text-white px-4'>
-            <h1 className='text-3xl md:text-5xl font-bold drop-shadow-lg mb-3 max-w-[800px] mx-auto leading-tight'>
-              {listing.title}
-            </h1>
-            {price && (
-              <div className='text-2xl md:text-3xl font-bold text-brand-primary drop-shadow'>
-                {price}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
+    <main className='min-h-screen bg-muted'>
+      <PageBanner
+        title={listing.title}
+        description={
+          price ? (
+            <span className='font-semibold text-accent text-3xl'>{price}</span>
+          ) : undefined
+        }
+        image={listing.image}
+      />
 
       {/* ── Content ──────────────────────────────────── */}
-      <div className='max-w-[1260px] mx-auto px-4 lg:px-8 py-10'>
+      <div className='max-w-[1260px] mx-auto px-6 sm:px-10 lg:px-16 py-10'>
         {/* Action buttons */}
         <ListingActions listingId={listing._id} listingTitle={listing.title} />
 
         {/* Single content card */}
-        <div className='bg-white rounded-2xl border border-gray-100 shadow-sm divide-y divide-gray-100'>
+        <div className='bg-background  border border-secondary/10 shadow-sm divide-y divide-secondary/10'>
           {/* ── Overview strip ─────────────────────── */}
           <div className='flex flex-wrap gap-6 px-8 py-5'>
             {(listing.suburb || listing.location) && (
               <div className='flex items-center gap-2'>
-                <MapPin className='w-4 h-4 text-brand-primary shrink-0' />
-                <span className='text-lg font-semibold text-brand-black'>
+                <MapPin className='w-4 h-4 text-accent shrink-0' />
+                <span className='text-lg font-semibold text-secondary'>
                   {listing.suburb || listing.location}
                 </span>
               </div>
             )}
             {price && (
               <div className='flex items-center gap-2'>
-                <span className='text-lg font-bold text-brand-primary'>
-                  {price}
-                </span>
+                <span className='text-lg font-bold text-accent'>{price}</span>
               </div>
             )}
             {listing.category && (
               <div className='flex items-center gap-2'>
-                <Tag className='w-4 h-4 text-brand-primary shrink-0' />
-                <span className='text-lg font-semibold text-brand-black'>
+                <Tag className='w-4 h-4 text-accent shrink-0' />
+                <span className='text-lg font-semibold text-secondary'>
                   {listing.category}
                 </span>
               </div>
@@ -233,12 +195,12 @@ export default async function ListingDetailPage({
           {/* ── About ──────────────────────────────── */}
           {listing.about && (
             <div className='px-8 py-7'>
-              <h2 className='text-base font-bold text-brand-black mb-4 flex items-center gap-2'>
-                <span className='w-1 h-5 bg-brand-primary rounded-full inline-block' />
+              <h2 className='text-base font-bold text-secondary mb-4 flex items-center gap-2'>
+                <span className='w-1 h-5 bg-accent rounded-full inline-block' />
                 About the Business
               </h2>
               <div
-                className='prose prose-sm max-w-none text-gray-500 leading-relaxed [&_p]:mb-3 [&_ul]:list-disc [&_ul]:pl-5 [&_li]:mb-1'
+                className='prose prose-sm max-w-none text-muted-foreground leading-relaxed [&_p]:mb-3 [&_ul]:list-disc [&_ul]:pl-5 [&_li]:mb-1'
                 dangerouslySetInnerHTML={{ __html: listing.about }}
               />
             </div>
@@ -246,12 +208,12 @@ export default async function ListingDetailPage({
 
           {/* ── Map ────────────────────────────────── */}
           <div className='px-8 py-7'>
-            <h2 className='text-base font-bold text-brand-black mb-4 flex items-center gap-2'>
-              <span className='w-1 h-5 bg-brand-primary rounded-full inline-block' />
+            <h2 className='text-base font-bold text-secondary mb-4 flex items-center gap-2'>
+              <span className='w-1 h-5 bg-accent rounded-full inline-block' />
               Location
             </h2>
             {listing.mapLink ? (
-              <div className='rounded-xl overflow-hidden h-[300px]'>
+              <div className=' overflow-hidden h-[300px]'>
                 <iframe
                   src={listing.mapLink}
                   width='100%'
@@ -262,8 +224,10 @@ export default async function ListingDetailPage({
                 />
               </div>
             ) : (
-              <div className='h-[180px] bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100'>
-                <p className='text-gray-400 text-sm'>No map available</p>
+              <div className='h-[180px] bg-muted  flex items-center justify-center border border-secondary/10'>
+                <p className='text-muted-foreground text-sm'>
+                  No map available
+                </p>
               </div>
             )}
           </div>

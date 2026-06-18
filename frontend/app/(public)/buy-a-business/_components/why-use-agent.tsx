@@ -8,7 +8,6 @@ import {
   Users,
   CheckCircle,
 } from 'lucide-react';
-import Title from '@/components/global/title';
 import { Button } from '@/components/ui/button';
 
 const buyerServices = [
@@ -50,40 +49,41 @@ const buyerServices = [
 
 export function WhyUseAgent() {
   return (
-    <section className='bg-brand-offwhite py-20 lg:py-28 relative overflow-hidden'>
+    <section className='bg-muted py-20 lg:py-28 relative overflow-hidden'>
       {/* Subtle decorative background element */}
-      <div className='absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20%_50%,rgba(86,193,188,0.03)_0%,transparent_50%)] pointer-events-none' />
+      <div className='absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20%_50%,rgba(201,168,76,0.03)_0%,transparent_50%)] pointer-events-none' />
 
-      <div className='max-w-[1260px] mx-auto px-4 lg:px-8 relative z-10'>
+      <div className='max-w-[1500px] mx-auto px-6 sm:px-10 lg:px-16 relative z-10'>
         <div className='grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-center mb-16 lg:mb-24'>
           <div className='relative hidden md:block aspect-square max-w-[400px] mx-auto w-full'>
             <Image
-              src='/businessbrokers/business-deal.svg'
+              src='/business-deal.svg'
               alt='Business Deal'
               fill
               className='object-contain'
             />
           </div>
           <div>
-            <Title>Why Use a Business Buyer&apos;s Agent</Title>
-            <div className='w-16 h-1 bg-brand-primary rounded-full mb-8' />
-            <p className='text-lg text-gray-700 leading-relaxed mb-4 font-medium'>
+            <h2 className='mb-8 text-3xl font-bold leading-tight tracking-tight text-secondary sm:text-4xl lg:text-5xl'>
+              Why Use a Business Buyer&apos;s Agent
+            </h2>
+            <p className='text-lg text-secondary leading-relaxed mb-4 font-medium'>
               Most people think of brokers as only working for sellers, but
               business buyers need representation too.
             </p>
-            <p className='text-lg text-gray-700 leading-relaxed mb-6 font-medium'>
+            <p className='text-lg text-secondary leading-relaxed mb-6 font-medium'>
               When you buy a business directly from a seller or broker,
               you&apos;re negotiating against professionals who represent the
               other side.
             </p>
-            <p className='text-xl text-brand-primary-dark font-semibold'>
-              At ABBASS, we represent you, the buyer.
+            <p className='text-xl text-accent font-semibold'>
+              At Blackmont, we represent you, the buyer.
             </p>
           </div>
         </div>
 
         <div className='text-center mb-12'>
-          <h3 className='text-2xl lg:text-3xl font-bold text-brand-black mb-4'>
+          <h3 className='text-2xl lg:text-3xl font-bold text-secondary mb-4'>
             We help you:
           </h3>
         </div>
@@ -92,15 +92,15 @@ export function WhyUseAgent() {
           {buyerServices.map((service, i) => (
             <div
               key={i}
-              className='bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col items-center text-center'
+              className='bg-background  p-8 border border-secondary/10 transition-colors hover:border-accent/40 flex flex-col items-center text-center'
             >
-              <div className='w-16 h-16 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center mb-6'>
+              <div className='w-16 h-16 border-[1.5px] border-accent/30 text-accent flex items-center justify-center mb-6'>
                 {service.icon}
               </div>
-              <h4 className='text-lg font-bold text-brand-black mb-3'>
+              <h4 className='text-lg font-bold text-secondary mb-3'>
                 {service.title}
               </h4>
-              <p className='text-sm text-gray-500 leading-relaxed'>
+              <p className='text-sm text-muted-foreground leading-relaxed'>
                 {service.description}
               </p>
             </div>
@@ -109,7 +109,7 @@ export function WhyUseAgent() {
 
         <div className='mt-16 text-center'>
           <ContactFormModal>
-            <Button className='bg-brand-primary hover:bg-brand-primary-dark text-white px-8 py-6 font-semibold shadow-lg shadow-brand-primary/20'>
+            <Button className='h-auto rounded-none bg-accent px-8 py-4 text-xs font-bold uppercase tracking-[0.14em] text-primary transition-colors hover:bg-accent-light'>
               Book a 15-Minute Discovery Call
             </Button>
           </ContactFormModal>

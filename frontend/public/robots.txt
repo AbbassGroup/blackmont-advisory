@@ -3,4 +3,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.abbass.com.au/businessbrokers/sitemap.xml
+Sitemap: https://www.blackmontadvisory.com/sitemap.xml

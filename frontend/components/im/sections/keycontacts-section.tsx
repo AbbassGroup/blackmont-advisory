@@ -6,7 +6,7 @@ import { SectionHeading } from '../section-chrome';
 import { AppraisalDialog } from '../appraisal-dialog';
 
 const BUY_A_BUSINESS_URL =
-  'https://abbass.com.au/businessbrokers/buy-a-business';
+  'https://www.blackmontadvisory.com/buy-a-business';
 
 const CONTACTS = [
   {
@@ -14,21 +14,21 @@ const CONTACTS = [
     name: 'Lei Praytil',
     company: 'Petra Law',
     phone: '0423 162 481',
-    image: '/businessbrokers/petra-law.png',
+    image: '/petra-law.png',
   },
   {
     role: 'Business Loans',
     name: 'Nazar Asani',
     company: 'Fiducia Finance',
     phone: '0439 003 349',
-    image: '/businessbrokers/fiducia.jpg',
+    image: '/fiducia.jpg',
   },
   {
     role: 'Accountant',
     name: 'James Di Sebastiano',
     company: 'Costanzo Harris',
     phone: '0423 048 446',
-    image: '/businessbrokers/costanzo-harris.png',
+    image: '/costanzo-harris.png',
   },
 ];
 

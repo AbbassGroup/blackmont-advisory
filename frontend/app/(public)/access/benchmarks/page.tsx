@@ -28,7 +28,7 @@ const jsonLd = [
 
 export default function BenchmarksPage() {
   return (
-    <main className='min-h-screen bg-brand-offwhite'>
+    <main className='min-h-screen bg-muted'>
       <JsonLd data={jsonLd} />
       <AccessTracker resource='Industry Benchmark Report' />
       <ToolHeader

@@ -14,7 +14,7 @@ function backendBase() {
   return (process.env.BACKEND_URL || 'http://localhost:5005').replace(/\/$/, '');
 }
 function frontendBase() {
-  return (process.env.FRONTEND_URL || 'https://www.abbass.com.au/businessbrokers').replace(/\/$/, '');
+  return (process.env.FRONTEND_URL || 'https://www.blackmontadvisory.com').replace(/\/$/, '');
 }
 
 function signInterestToken(enquiryId) {
@@ -59,7 +59,7 @@ function buildFollowUpEmail({ enquiry, businessName, brokerName, interestedUrl, 
     `You recently enquired about a business opportunity. We're checking in to see if we can assist further.\n\n` +
     `Interested | Please provide more information:\n${interestedUrl}\n\n` +
     `Not Suitable | Help me find another business:\n${browseUrl}\n\n` +
-    `${signatureName}\nBlackmont Advisory\n(03) 9103 1317\ninfo@blackmontadvisory.com\nwww.abbass.com.au/businessbrokers`;
+    `${signatureName}\nBlackmont Advisory\n(03) 9103 1317\ninfo@blackmontadvisory.com\nwww.blackmontadvisory.com`;
 
   const btn = 'display:block;width:360px;max-width:100%;box-sizing:border-box;text-align:center;padding:11px 16px;font-size:14px;font-weight:bold;text-decoration:none;border-radius:6px';
   const html = `
@@ -72,7 +72,7 @@ function buildFollowUpEmail({ enquiry, businessName, brokerName, interestedUrl, 
       <p style="margin:0 0 20px">
         <a href="${browseUrl}" style="${btn};background:#fff;color:${TEAL};border:1px solid ${TEAL}">Not Suitable | Help me find another business</a>
       </p>
-      <p style="margin-top:28px">${signatureName}<br/>Blackmont Advisory<br/>(03) 9103 1317<br/><a href="mailto:info@blackmontadvisory.com">info@blackmontadvisory.com</a><br/><a href="https://www.abbass.com.au/businessbrokers">www.abbass.com.au/businessbrokers</a></p>
+      <p style="margin-top:28px">${signatureName}<br/>Blackmont Advisory<br/>(03) 9103 1317<br/><a href="mailto:info@blackmontadvisory.com">info@blackmontadvisory.com</a><br/><a href="https://www.blackmontadvisory.com">www.blackmontadvisory.com</a></p>
     </div>`;
 
   return { to: enquiry.email, from: FROM, subject, text, html };

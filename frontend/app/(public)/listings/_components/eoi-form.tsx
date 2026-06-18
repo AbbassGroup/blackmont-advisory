@@ -16,7 +16,7 @@ import {
 import { apiClient } from '@/lib/api';
 
 const inputCls =
-  'bg-[#f9fafb] border-gray-200 focus-visible:ring-brand-primary/30 focus-visible:border-brand-primary text-sm  h-11';
+  'bg-[#f9fafb] border-secondary/15 focus-visible:ring-secondary/20 focus-visible:border-secondary text-sm  h-11';
 
 interface Props {
   open: boolean;
@@ -32,10 +32,10 @@ function Label({
   optional?: boolean;
 }) {
   return (
-    <label className='text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1.5'>
+    <label className='text-xs font-semibold text-muted-foreground uppercase tracking-wide block mb-1.5'>
       {children}
       {optional && (
-        <span className='ml-1 text-gray-300 normal-case font-normal'>
+        <span className='ml-1 text-muted-foreground normal-case font-normal'>
           (optional)
         </span>
       )}
@@ -46,8 +46,8 @@ function Label({
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
     <div className='flex items-center gap-2 mb-4'>
-      <span className='text-sm font-bold text-brand-primary'>{children}</span>
-      <div className='flex-1 h-px bg-gray-100' />
+      <span className='text-sm font-bold text-accent'>{children}</span>
+      <div className='flex-1 h-px bg-secondary/10' />
     </div>
   );
 }
@@ -124,22 +124,22 @@ export default function EOIForm({ open, onClose, listingTitle }: Props) {
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className='sm:max-w-[900px] max-h-[90vh] overflow-y-auto p-0 gap-0'>
-        <DialogHeader className='px-7 pt-7 pb-4 border-b border-gray-100'>
-          <DialogTitle className='text-lg font-bold text-brand-black'>
+        <DialogHeader className='px-7 pt-7 pb-4 border-b border-secondary/10'>
+          <DialogTitle className='text-lg font-bold text-secondary'>
             Expression of Interest (EOI)
           </DialogTitle>
-          <DialogDescription className='text-xs text-gray-400'>
+          <DialogDescription className='text-xs text-muted-foreground'>
             {listingTitle}
           </DialogDescription>
         </DialogHeader>
 
         {submitted ? (
           <div className='flex flex-col items-center justify-center py-16 px-7 text-center'>
-            <CheckCircle className='w-16 h-16 text-brand-primary mb-4' />
-            <h3 className='text-xl font-bold text-brand-black mb-2'>
+            <CheckCircle className='w-16 h-16 text-accent mb-4' />
+            <h3 className='text-xl font-bold text-secondary mb-2'>
               EOI Submitted!
             </h3>
-            <p className='text-gray-400 text-sm'>
+            <p className='text-muted-foreground text-sm'>
               We will review your offer and be in touch shortly.
             </p>
           </div>
@@ -155,7 +155,7 @@ export default function EOIForm({ open, onClose, listingTitle }: Props) {
                 {/* ── Left column ─────────────────────── */}
                 <div className='flex flex-col gap-5'>
                   {/* Purchaser Details */}
-                  <div className='bg-gray-50 rounded-2xl p-5'>
+                  <div className='bg-muted  p-5'>
                     <SectionTitle>Purchaser Details</SectionTitle>
                     <div className='flex flex-col gap-3'>
                       <div>
@@ -239,7 +239,7 @@ export default function EOIForm({ open, onClose, listingTitle }: Props) {
                   </div>
 
                   {/* Business Details */}
-                  <div className='bg-gray-50 rounded-2xl p-5'>
+                  <div className='bg-muted  p-5'>
                     <SectionTitle>Business Details</SectionTitle>
                     <div className='flex flex-col gap-3'>
                       <div>
@@ -278,7 +278,7 @@ export default function EOIForm({ open, onClose, listingTitle }: Props) {
                 {/* ── Right column ────────────────────── */}
                 <div className='flex flex-col gap-5'>
                   {/* Settlement & Contract */}
-                  <div className='bg-gray-50 rounded-2xl p-5'>
+                  <div className='bg-muted  p-5'>
                     <SectionTitle>Settlement &amp; Contract</SectionTitle>
                     <div className='grid grid-cols-2 gap-3'>
                       <div>
@@ -303,17 +303,17 @@ export default function EOIForm({ open, onClose, listingTitle }: Props) {
                   </div>
 
                   {/* Subject To */}
-                  <div className='bg-gray-50 rounded-2xl p-5'>
+                  <div className='bg-muted  p-5'>
                     <SectionTitle>Subject To</SectionTitle>
                     <Textarea
-                      className='bg-white border-gray-200 focus-visible:ring-brand-primary/30 focus-visible:border-brand-primary text-sm  min-h-[90px]'
+                      className='bg-background border-secondary/15 focus-visible:ring-secondary/20 focus-visible:border-secondary text-sm  min-h-[90px]'
                       value={form.subjectTo}
                       onChange={set('subjectTo')}
                     />
                   </div>
 
                   {/* Solicitor Details */}
-                  <div className='bg-gray-50 rounded-2xl p-5'>
+                  <div className='bg-muted  p-5'>
                     <SectionTitle>Solicitor Details</SectionTitle>
                     <div className='flex flex-col gap-3'>
                       <div>
@@ -388,7 +388,7 @@ export default function EOIForm({ open, onClose, listingTitle }: Props) {
               </div>
 
               {/* ── Price Details (full width) ─────────────────── */}
-              <div className='bg-gray-50 rounded-2xl p-5'>
+              <div className='bg-muted  p-5'>
                 <SectionTitle>Price Details</SectionTitle>
                 <div className='grid grid-cols-1 sm:grid-cols-3 gap-4'>
                   <div>
@@ -431,12 +431,12 @@ export default function EOIForm({ open, onClose, listingTitle }: Props) {
               )}
             </form>
 
-            <DialogFooter className='px-7 py-5 border-t border-gray-100'>
+            <DialogFooter className='px-7 py-5 border-t border-secondary/10'>
               <Button
                 form='eoi-form'
                 type='submit'
                 disabled={loading}
-                className='w-full bg-brand-primary hover:bg-brand-primary/90 text-white font-semibold py-3 h-12'
+                className='h-12 w-full rounded-none bg-accent py-3 text-xs font-bold uppercase tracking-[0.12em] text-primary transition-colors hover:bg-accent-light'
               >
                 {loading ? 'Submitting…' : 'Send EOI'}
               </Button>

@@ -6,7 +6,6 @@ import {
   ShieldCheck,
   Rocket,
 } from 'lucide-react';
-import Title from '@/components/global/title';
 
 const buyingProcess = [
   {
@@ -55,12 +54,13 @@ const buyingProcess = [
 
 export function BuyingProcess() {
   return (
-    <section className='bg-white py-20 lg:py-28'>
-      <div className='max-w-[1260px] mx-auto px-4 lg:px-8'>
+    <section className='bg-background py-20 lg:py-28'>
+      <div className='max-w-[1500px] mx-auto px-6 sm:px-10 lg:px-16'>
         <div className='text-center mb-16'>
-          <Title>Our Business Buying Process</Title>
-          <div className='w-16 h-1 bg-brand-primary rounded-full mx-auto mb-6' />
-          <p className='text-lg text-gray-600 max-w-2xl mx-auto'>
+          <h2 className='mb-6 text-3xl font-bold leading-tight tracking-tight text-secondary sm:text-4xl lg:text-5xl'>
+            Our Business Buying Process
+          </h2>
+          <p className='text-lg text-muted-foreground max-w-2xl mx-auto'>
             Buying a business is complex, but we make it simple.
           </p>
         </div>
@@ -69,15 +69,15 @@ export function BuyingProcess() {
           {buyingProcess.map((step, i) => (
             <div
               key={i}
-              className='relative bg-gray-50/50 rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col items-center text-center'
+              className='relative bg-background  p-8 border border-secondary/10 transition-colors hover:border-accent/40 flex flex-col items-center text-center'
             >
-              <div className='w-16 h-16 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center mb-6'>
+              <div className='w-16 h-16 border-[1.5px] border-accent/30 text-accent flex items-center justify-center mb-6'>
                 {step.icon}
               </div>
-              <h4 className='text-lg font-bold text-brand-black mb-3'>
+              <h4 className='text-lg font-bold text-secondary mb-3'>
                 {step.title}
               </h4>
-              <p className='text-sm text-gray-500 leading-relaxed'>
+              <p className='text-sm text-muted-foreground leading-relaxed'>
                 {step.description}
               </p>
             </div>

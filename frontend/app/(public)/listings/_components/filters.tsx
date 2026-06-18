@@ -43,14 +43,14 @@ function FilterSelect({
 }) {
   return (
     <div className='mb-5'>
-      <label className='block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2'>
+      <label className='block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2'>
         {label}
       </label>
       <div className='relative'>
         <select
           value={value}
           onChange={(e) => onChange(paramKey, e.target.value)}
-          className='w-full appearance-none bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-brand-black font-medium focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary transition-colors pr-9 cursor-pointer'
+          className='w-full appearance-none bg-background border border-secondary/15  px-4 py-3 text-sm text-secondary font-medium focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary transition-colors pr-9 cursor-pointer'
         >
           <option value=''>All {label}</option>
           {options.map((o) => (
@@ -59,7 +59,7 @@ function FilterSelect({
             </option>
           ))}
         </select>
-        <ChevronDown className='absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none' />
+        <ChevronDown className='absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none' />
       </div>
     </div>
   );
@@ -98,18 +98,18 @@ export default function ListingFilters({
   };
 
   return (
-    <div className='bg-white rounded-2xl border border-gray-100 shadow-sm p-6'>
+    <div className='bg-background  border border-secondary/10 shadow-sm p-6'>
       <div className='flex items-center justify-between mb-6'>
         <div>
-          <h2 className='text-sm font-bold text-brand-black'>Filters</h2>
+          <h2 className='text-sm font-bold text-secondary'>Filters</h2>
           {!hasFilters && (
-            <p className='text-[11px] text-gray-400 mt-0.5'>{count} listing{count !== 1 ? 's' : ''}</p>
+            <p className='text-[11px] text-muted-foreground mt-0.5'>{count} listing{count !== 1 ? 's' : ''}</p>
           )}
         </div>
         {hasFilters && (
           <button
             onClick={clearAll}
-            className='flex items-center gap-1 text-xs text-gray-400 hover:text-brand-primary transition-colors font-medium'
+            className='flex items-center gap-1 text-xs text-muted-foreground hover:text-accent transition-colors font-medium'
           >
             <X className='w-3.5 h-3.5' />
             Clear all
@@ -133,8 +133,8 @@ export default function ListingFilters({
       />
 
       {hasFilters && (
-        <div className='mt-2 p-3 bg-brand-primary/5 rounded-xl border border-brand-primary/10'>
-          <p className='text-xs text-brand-primary font-semibold'>
+        <div className='mt-2 p-3 bg-accent-pale  border border-accent/10'>
+          <p className='text-xs text-accent font-semibold'>
             {count} result{count !== 1 ? 's' : ''} found
           </p>
         </div>

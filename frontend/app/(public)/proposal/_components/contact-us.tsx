@@ -48,7 +48,7 @@ export function ContactUs() {
           <div className='relative w-24 h-24 mb-4'>
             <Image
               loading='eager'
-              src='/businessbrokers/mark.webp'
+              src='/mark.webp'
               alt='ABBASS Logo Marker'
               fill
               className='object-contain'
@@ -56,7 +56,7 @@ export function ContactUs() {
           </div>
           <div className='relative w-40 h-12'>
             <Image
-              src='/businessbrokers/logo-text.webp'
+              src='/logo-text.webp'
               alt='Blackmont Advisory'
               fill
               className='object-contain'

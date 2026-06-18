@@ -49,8 +49,8 @@ function ShareDialog({
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className='sm:max-w-sm p-0 gap-0'>
-        <DialogHeader className='px-6 pt-6 pb-4 border-b border-gray-100'>
-          <DialogTitle className='text-base font-bold text-brand-black'>
+        <DialogHeader className='px-6 pt-6 pb-4 border-b border-secondary/10'>
+          <DialogTitle className='text-base font-bold text-secondary'>
             Share Listing
           </DialogTitle>
         </DialogHeader>
@@ -60,7 +60,7 @@ function ShareDialog({
               href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`}
               target='_blank'
               rel='noopener noreferrer'
-              className='flex-1 flex items-center justify-center gap-2 bg-[#1877f2] hover:bg-[#166fe5] text-white text-xs font-semibold py-2.5 rounded-xl transition-colors'
+              className='flex-1 flex items-center justify-center gap-2 bg-[#1877f2] hover:bg-[#166fe5] text-white text-xs font-semibold py-2.5  transition-colors'
             >
               <Facebook className='w-4 h-4' />
             </a>
@@ -68,7 +68,7 @@ function ShareDialog({
               href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(shareUrl)}&title=${encodeURIComponent(title)}`}
               target='_blank'
               rel='noopener noreferrer'
-              className='flex-1 flex items-center justify-center gap-2 bg-[#0a66c2] hover:bg-[#0958a8] text-white text-xs font-semibold py-2.5 rounded-xl transition-colors'
+              className='flex-1 flex items-center justify-center gap-2 bg-[#0a66c2] hover:bg-[#0958a8] text-white text-xs font-semibold py-2.5  transition-colors'
             >
               <Linkedin className='w-4 h-4' />
             </a>
@@ -76,17 +76,17 @@ function ShareDialog({
               href={`https://wa.me/?text=${encodeURIComponent(`${title} ${shareUrl}`)}`}
               target='_blank'
               rel='noopener noreferrer'
-              className='flex-1 flex items-center justify-center gap-2 bg-[#25d366] hover:bg-[#1ebe5b] text-white text-xs font-semibold py-2.5 rounded-xl transition-colors'
+              className='flex-1 flex items-center justify-center gap-2 bg-[#25d366] hover:bg-[#1ebe5b] text-white text-xs font-semibold py-2.5  transition-colors'
             >
               <MessageCircle className='w-4 h-4' />
             </a>
           </div>
           <button
             onClick={handleCopy}
-            className='w-full flex items-center justify-center gap-2 border border-gray-200 hover:border-brand-primary hover:text-brand-primary text-sm font-semibold py-2.5 rounded-xl transition-all text-gray-600'
+            className='w-full flex items-center justify-center gap-2 border border-secondary/15 hover:border-accent hover:text-accent text-sm font-semibold py-2.5  transition-all text-muted-foreground'
           >
             {copied ? (
-              <Check className='w-4 h-4 text-brand-primary' />
+              <Check className='w-4 h-4 text-accent' />
             ) : (
               <Copy className='w-4 h-4' />
             )}
@@ -110,7 +110,7 @@ export default function ListingActions({ listingId, listingTitle }: Props) {
         <Button
           asChild
           variant='outline'
-          className='gap-2 rounded-xl border-gray-200 text-gray-600 hover:border-brand-primary hover:text-brand-primary font-semibold'
+          className='gap-2  border-secondary/15 text-muted-foreground hover:border-accent hover:text-accent font-semibold'
         >
           <Link href='/listings'>
             <ArrowLeft className='w-4 h-4' /> Back to Listings
@@ -118,25 +118,25 @@ export default function ListingActions({ listingId, listingTitle }: Props) {
         </Button>
         <Button
           onClick={() => setNdaOpen(true)}
-          className='bg-brand-primary hover:bg-brand-primary/90 text-white font-semibold rounded-xl px-5'
+          className='rounded-none bg-accent hover:bg-accent-light text-primary font-bold uppercase tracking-[0.12em]  px-5'
         >
           Sign NDA
         </Button>
         {/* <Button onClick={() => setEoiOpen(true)}
-          className='bg-[#1c2434] hover:bg-[#1c2434]/90 text-white font-semibold rounded-xl px-5'>
+          className='bg-[#1c2434] hover:bg-[#1c2434]/90 text-white font-semibold  px-5'>
           Express Interest (EOI)
         </Button> */}
         <Button
           variant='outline'
           onClick={() => setShareOpen(true)}
-          className='gap-2 rounded-xl border-gray-200 text-gray-600 hover:border-brand-primary hover:text-brand-primary font-semibold'
+          className='gap-2  border-secondary/15 text-muted-foreground hover:border-accent hover:text-accent font-semibold'
         >
           <Share2 className='w-4 h-4' /> Share
         </Button>
         <Button
           variant='outline'
           onClick={() => window.print()}
-          className='gap-2 rounded-xl border-gray-200 text-gray-600 hover:border-brand-primary hover:text-brand-primary font-semibold'
+          className='gap-2  border-secondary/15 text-muted-foreground hover:border-accent hover:text-accent font-semibold'
         >
           <FileDown className='w-4 h-4' /> Download PDF
         </Button>

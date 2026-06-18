@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { blogs } from '@/data/blog-data';
 
-const BASE_URL = 'https://abbass.com.au/businessbrokers';
+const BASE_URL = 'https://www.blackmontadvisory.com';
 const API_BASE = process.env.NEXT_PUBLIC_API_URL;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

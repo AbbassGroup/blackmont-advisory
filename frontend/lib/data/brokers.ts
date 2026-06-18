@@ -21,7 +21,7 @@ export type Broker = {
 };
 
 const OFFICE_PHONE = '(03) 9103 1317';
-const WEBSITE = 'www.abbass.com.au/businessbrokers';
+const WEBSITE = 'www.blackmontadvisory.com';
 
 export const BROKERS: Broker[] = [
   {

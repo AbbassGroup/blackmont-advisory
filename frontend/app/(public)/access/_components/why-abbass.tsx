@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import {
   Gem,
   Sparkles,
@@ -11,6 +10,7 @@ import {
 } from 'lucide-react';
 import { SectionHeading } from './section-heading';
 import { CountUp } from './count-up';
+import { Reveal } from '@/components/landing/primitives';
 
 const reasons = [
   {
@@ -55,56 +55,52 @@ const stats = [
 
 export function WhyAbbass() {
   return (
-    <section className='bg-white py-10 lg:py-14'>
-      <div className='max-w-[1260px] mx-auto px-6 lg:px-8'>
+    <section className='bg-background py-20 lg:py-28'>
+      <div className='max-w-[1500px] mx-auto px-6 sm:px-10 lg:px-16'>
         <SectionHeading
           label='The ABBASS Difference'
           title='Why Business Owners Choose ABBASS'
         />
 
         {/* Reasons grid */}
-        <div className='mt-8 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-gray-200 bg-gray-200 sm:grid-cols-2 lg:grid-cols-3'>
-          {reasons.map((r, i) => {
+        <Reveal className='mt-14 grid grid-cols-1 gap-px overflow-hidden border border-secondary/15 bg-secondary/10 sm:grid-cols-2 lg:grid-cols-3'>
+          {reasons.map((r) => {
             const Icon = r.icon;
             return (
-              <motion.div
+              <div
                 key={r.title}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-60px' }}
-                transition={{ duration: 0.45, delay: (i % 3) * 0.08 }}
-                className='group bg-white p-8 transition-colors duration-300 hover:bg-brand-offwhite lg:p-9'
+                className='group bg-background p-8 transition-colors duration-300 hover:bg-accent-pale lg:p-9'
               >
-                <div className='flex h-12 w-12 items-center justify-center rounded-xl bg-brand-primary/10 transition-colors duration-300 group-hover:bg-brand-primary'>
+                <div className='flex h-12 w-12 items-center justify-center border-[1.5px] border-accent/30 transition-colors duration-300 group-hover:bg-accent'>
                   <Icon
-                    className='h-6 w-6 text-brand-primary transition-colors duration-300 group-hover:text-white'
-                    strokeWidth={1.75}
+                    className='h-6 w-6 text-accent transition-colors duration-300 group-hover:text-primary'
+                    strokeWidth={1.5}
                   />
                 </div>
-                <h3 className='mt-6 text-lg font-semibold text-brand-black'>
+                <h3 className='mt-6 text-lg font-bold text-secondary'>
                   {r.title}
                 </h3>
-                <p className='mt-2 leading-relaxed text-gray-500'>
+                <p className='mt-2 leading-relaxed text-muted-foreground'>
                   {r.description}
                 </p>
-              </motion.div>
+              </div>
             );
           })}
-        </div>
+        </Reveal>
 
         {/* Stats band */}
-        <div className='mt-16 grid grid-cols-2 gap-y-10 rounded-2xl bg-brand-primary/8 px-6 py-12 lg:mt-20 lg:grid-cols-4 lg:px-8'>
+        <div className='mt-16 grid grid-cols-2 gap-y-10  bg-accent/8 px-6 py-12 lg:mt-20 lg:grid-cols-4 lg:px-8'>
           {stats.map((s, i) => (
             <div
               key={s.label}
               className={`px-6 text-center lg:px-8 ${
-                i !== 0 ? 'lg:border-l lg:border-brand-primary/15' : ''
+                i !== 0 ? 'lg:border-l lg:border-accent/15' : ''
               }`}
             >
-              <div className='text-4xl font-semibold tracking-tight text-brand-black lg:text-5xl'>
+              <div className='text-4xl font-semibold tracking-tight text-secondary lg:text-5xl'>
                 <CountUp to={s.to} suffix={s.suffix} />
               </div>
-              <div className='mt-2 text-sm text-gray-500'>{s.label}</div>
+              <div className='mt-2 text-sm text-muted-foreground'>{s.label}</div>
             </div>
           ))}
         </div>

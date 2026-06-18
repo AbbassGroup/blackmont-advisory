@@ -1,10 +1,10 @@
 'use client';
 
 import { Suspense, useState } from 'react';
-import { motion } from 'framer-motion';
 import { ArrowRight, CalendarDays } from 'lucide-react';
 import { GetStarted } from './get-started';
 import { Button } from '@/components/ui/button';
+import { Reveal } from '@/components/landing/primitives';
 
 const slots = [
   'Tue 9:30 AM',
@@ -22,56 +22,48 @@ export function Booking() {
     <Suspense>
       <section
         id='booking'
-        className='scroll-mt-24 bg-brand-primary py-16 lg:py-24'
+        className='scroll-mt-24 bg-secondary py-20 lg:py-28'
       >
-        <div className='max-w-[1260px] mx-auto px-6 lg:px-8'>
+        <div className='max-w-[1500px] mx-auto px-6 sm:px-10 lg:px-16'>
           <div className='grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-20'>
             {/* Left */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-80px' }}
-              transition={{ duration: 0.5 }}
-            >
+            <Reveal>
               <div className='mb-5'>
-                <span className='text-xs font-semibold uppercase tracking-[0.22em] text-white/80'>
+                <span className='text-xs font-bold uppercase tracking-[0.22em] text-accent'>
                   Confidential
                 </span>
               </div>
-              <h2 className='text-[1.9rem] font-semibold leading-[1.12] tracking-tight text-white md:text-4xl lg:text-[2.6rem]'>
+              <h2 className='text-[1.9rem] font-bold leading-[1.12] tracking-tight text-parchment md:text-4xl lg:text-[2.6rem]'>
                 Want Personalised Advice?
               </h2>
-              <p className='mt-5 max-w-md text-lg leading-relaxed text-white/85'>
+              <p className='mt-5 max-w-md text-lg leading-relaxed text-parchment/70'>
                 Speak confidentially with our team about business value, buyer
                 demand, timing, and exit strategies.
               </p>
               <GetStarted selectedTime={selected ?? undefined}>
-                <Button className='group mt-9 inline-flex items-center gap-2 rounded-full bg-white hover:bg-white/90 px-7 py-5.5 text-base font-semibold text-brand-primary shadow-md shadow-black/10 transition-all hover:-translate-y-0.5'>
+                <Button className='group mt-9 inline-flex h-auto items-center gap-2 rounded-none bg-accent px-8 py-4 text-xs font-bold uppercase tracking-[0.14em] text-primary transition-colors hover:bg-accent-light'>
                   Schedule a Confidential Call
                   <ArrowRight className='h-4 w-4 transition-transform group-hover:translate-x-0.5' />
                 </Button>
               </GetStarted>
-            </motion.div>
+            </Reveal>
 
             {/* Right — booking card */}
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-80px' }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className='rounded-xl bg-white p-7  lg:p-8'
+            <Reveal
+              delay={120}
+              className='border border-accent/20 bg-background p-7 lg:p-8'
             >
-              <div className='flex items-center justify-between gap-4 border-b border-gray-100 pb-5'>
+              <div className='flex items-center justify-between gap-4 border-b border-secondary/10 pb-5'>
                 <div className='flex flex-col'>
-                  <h3 className='text-lg font-semibold text-brand-black'>
+                  <h3 className='text-lg font-bold text-secondary'>
                     Select a time
                   </h3>
-                  <span className='text-xs text-gray-400'>
+                  <span className='text-xs text-muted-foreground'>
                     A 30-minute strategy call
                   </span>
                 </div>
-                <span className='flex h-10 w-10 items-center justify-center rounded-xl bg-brand-primary/10'>
-                  <CalendarDays className='h-5 w-5 text-brand-primary' />
+                <span className='flex h-10 w-10 items-center justify-center border-[1.5px] border-accent/30'>
+                  <CalendarDays className='h-5 w-5 text-accent' />
                 </span>
               </div>
 
@@ -82,10 +74,10 @@ export function Booking() {
                     <button
                       key={slot}
                       onClick={() => setSelected(slot)}
-                      className={`rounded-xl border px-4 py-3.5 text-sm font-medium transition-colors ${
+                      className={`border px-4 py-3.5 text-sm font-medium transition-colors ${
                         active
-                          ? 'border-brand-primary bg-brand-primary text-white'
-                          : 'border-gray-200 bg-white text-brand-black hover:border-brand-primary hover:bg-brand-primary/5'
+                          ? 'border-accent bg-accent text-primary'
+                          : 'border-secondary/15 bg-background text-secondary hover:border-accent hover:bg-accent-pale'
                       }`}
                     >
                       {slot}
@@ -93,7 +85,7 @@ export function Booking() {
                   );
                 })}
               </div>
-            </motion.div>
+            </Reveal>
           </div>
         </div>
       </section>

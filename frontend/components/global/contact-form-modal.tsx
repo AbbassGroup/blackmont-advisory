@@ -106,8 +106,8 @@ export function ContactFormModal({ children }: ContactFormModalProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className='sm:max-w-[500px] p-6'>
-        <DialogHeader className='pb-4 border-b border-gray-100 mb-4'>
-          <DialogTitle className='text-xl font-bold text-brand-black'>
+        <DialogHeader className='pb-4 border-b border-secondary/10 mb-4'>
+          <DialogTitle className='text-xl font-bold text-secondary'>
             Get Started Today
           </DialogTitle>
         </DialogHeader>
@@ -206,20 +206,20 @@ export function ContactFormModal({ children }: ContactFormModalProps) {
             />
           </div>
 
-          <div className='pt-4 flex justify-end gap-3 border-t border-gray-100'>
+          <div className='pt-4 flex justify-end gap-3 border-t border-secondary/10'>
             <Button
               type='button'
               variant='ghost'
               onClick={() => setOpen(false)}
               disabled={loading}
-              className='text-gray-500'
+              className='text-muted-foreground'
             >
               Cancel
             </Button>
             <Button
               type='submit'
               disabled={loading}
-              className='bg-brand-primary hover:bg-brand-primary-dark text-white px-6'
+              className='px-6 font-semibold'
             >
               {loading && <Loader2 className='w-4 h-4 mr-2 animate-spin' />}
               Submit

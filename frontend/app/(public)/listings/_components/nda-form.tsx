@@ -25,10 +25,10 @@ const COUNTRIES = [
 ];
 
 const inputCls =
-  'bg-[#f9fafb] border-gray-200 focus-visible:ring-brand-primary/30 focus-visible:border-brand-primary text-sm  h-11';
+  'bg-[#f9fafb] border-secondary/15 focus-visible:ring-secondary/20 focus-visible:border-secondary text-sm  h-11';
 
 const selectCls =
-  'w-full bg-[#f9fafb] border border-gray-200 rounded-md px-3 h-11 text-sm text-brand-black focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary';
+  'w-full bg-[#f9fafb] border border-secondary/15 rounded-md px-3 h-11 text-sm text-secondary focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary';
 
 interface Props {
   open: boolean;
@@ -39,7 +39,7 @@ interface Props {
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
-    <label className='text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1.5'>
+    <label className='text-xs font-semibold text-muted-foreground uppercase tracking-wide block mb-1.5'>
       {children}
     </label>
   );
@@ -101,29 +101,29 @@ export default function NDAForm({
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className='sm:max-w-[720px] max-h-[90vh] overflow-y-auto p-0 gap-0'>
-        <DialogHeader className='px-7 pt-7 pb-4 border-b border-gray-100'>
-          <DialogTitle className='text-lg font-bold text-brand-black'>
+        <DialogHeader className='px-7 pt-7 pb-4 border-b border-secondary/10'>
+          <DialogTitle className='text-lg font-bold text-secondary'>
             Confidentiality Agreement
           </DialogTitle>
-          <DialogDescription className='text-xs text-gray-400'>
+          <DialogDescription className='text-xs text-muted-foreground'>
             {listingTitle}
           </DialogDescription>
         </DialogHeader>
 
         {submitted ? (
           <div className='flex flex-col items-center justify-center py-16 px-7 text-center'>
-            <CheckCircle className='w-16 h-16 text-brand-primary mb-4' />
-            <h3 className='text-xl font-bold text-brand-black mb-2'>
+            <CheckCircle className='w-16 h-16 text-accent mb-4' />
+            <h3 className='text-xl font-bold text-secondary mb-2'>
               Agreement Submitted!
             </h3>
-            <p className='text-gray-400 text-sm'>
+            <p className='text-muted-foreground text-sm'>
               Thank you. We will be in touch shortly.
             </p>
           </div>
         ) : (
           <>
             {/* Agreement scroll box */}
-            <div className='mx-7 mt-5 max-h-[220px] overflow-y-auto  border-l-4 border-brand-primary bg-gray-50 px-5 py-4'>
+            <div className='mx-7 mt-5 max-h-[220px] overflow-y-auto  border-l-4 border-accent bg-muted px-5 py-4'>
               <AgreementContent />
             </div>
 
@@ -257,12 +257,13 @@ export default function NDAForm({
               )}
             </form>
 
-            <DialogFooter className='px-7 py-5 border-t border-gray-100'>
+            <DialogFooter className='px-7 py-5 border-t border-secondary/10'>
               <Button
                 form='nda-form'
                 type='submit'
+                variant={'secondary'}
                 disabled={loading}
-                className='w-full bg-brand-primary hover:bg-brand-primary/90 text-white font-semibold py-3 h-12'
+                className='h-12 w-full rounded-none py-3 text-xs font-bold uppercase tracking-[0.12em] text-white transition-colors'
               >
                 {loading ? 'Submitting…' : 'Submit Agreement'}
               </Button>

@@ -1,6 +1,5 @@
 import { ContactFormModal } from '@/components/global/contact-form-modal';
 import { Shield, Lightbulb, Handshake, ShieldCheck } from 'lucide-react';
-import Title from '@/components/global/title';
 import { Button } from '@/components/ui/button';
 
 const advantages = [
@@ -28,38 +27,39 @@ const advantages = [
 
 export function WhyAbbass() {
   return (
-    <section className='bg-gray-50 py-20 lg:py-28'>
-      <div className='max-w-[1260px] mx-auto px-4 lg:px-8'>
+    <section className='bg-muted py-20 lg:py-28'>
+      <div className='max-w-[1500px] mx-auto px-6 sm:px-10 lg:px-16'>
         <div className='text-center mb-16'>
-          <Title>Why Blackmont Advisory</Title>
-          <div className='w-16 h-1 bg-brand-primary rounded-full mx-auto' />
+          <h2 className='text-3xl font-bold leading-tight tracking-tight text-secondary sm:text-4xl lg:text-5xl'>
+            Why Blackmont Advisory
+          </h2>
         </div>
 
         <div className='grid grid-cols-1 sm:grid-cols-2 gap-6 mb-16 max-w-4xl mx-auto'>
           {advantages.map((adv, i) => (
             <div
               key={i}
-              className='bg-white rounded-2xl p-8 border border-gray-100 shadow-sm flex items-center gap-6 hover:shadow-md transition-shadow'
+              className='bg-background  p-8 border border-secondary/10 flex items-center gap-6 transition-colors hover:border-accent/40'
             >
-              <div className='w-14 h-14 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center shrink-0'>
+              <div className='w-14 h-14 border-[1.5px] border-accent/30 text-accent flex items-center justify-center shrink-0'>
                 {adv.icon}
               </div>
               <div>
-                <h4 className='text-lg font-bold text-brand-black mb-1'>
+                <h4 className='text-lg font-bold text-secondary mb-1'>
                   {adv.title}
                 </h4>
-                <p className='text-sm text-gray-500'>{adv.description}</p>
+                <p className='text-sm text-muted-foreground'>{adv.description}</p>
               </div>
             </div>
           ))}
         </div>
 
         <div className='text-center'>
-          <p className='text-xl font-bold text-brand-black mb-8 max-w-2xl mx-auto leading-relaxed'>
-            ABBASS is a boutique firm built on trust, expertise, and excellence.
+          <p className='text-xl font-bold text-secondary mb-8 max-w-2xl mx-auto leading-relaxed'>
+            Blackmont is a boutique firm built on trust, expertise, and excellence.
           </p>
           <ContactFormModal>
-            <Button className='bg-brand-primary hover:bg-brand-primary-dark text-white px-8 py-6 font-semibold shadow-lg shadow-brand-primary/20'>
+            <Button className='h-auto rounded-none bg-accent px-8 py-4 text-xs font-bold uppercase tracking-[0.14em] text-primary transition-colors hover:bg-accent-light'>
               Book a Free Consultation
             </Button>
           </ContactFormModal>

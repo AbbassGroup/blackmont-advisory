@@ -8,8 +8,8 @@ interface SectionHeadingProps {
 }
 
 /**
- * Shared partnership section header: eyebrow + title + gradient underline.
- * `theme='dark'` switches the title to white for use on navy bands.
+ * Shared partnership section header: optional gilt eyebrow + title.
+ * `theme='dark'` switches the title to parchment for use on navy bands.
  */
 export function SectionHeading({
   eyebrow,
@@ -24,22 +24,22 @@ export function SectionHeading({
       className={`${align === 'center' ? 'text-center' : 'text-left'} ${className}`}
     >
       {eyebrow && (
-        <span className='inline-block mb-3 text-xs sm:text-sm font-bold uppercase tracking-[0.2em] text-brand-primary'>
+        <p
+          className={`mb-4 flex items-center gap-3.5 text-xs font-bold uppercase tracking-[0.2em] text-accent ${
+            align === 'center' ? 'justify-center' : ''
+          }`}
+        >
+          <span className='h-0.5 w-8 bg-accent' aria-hidden />
           {eyebrow}
-        </span>
+        </p>
       )}
       <h2
-        className={`text-3xl md:text-4xl font-extrabold leading-[1.15] ${
-          isDark ? 'text-white' : 'text-brand-black'
+        className={`text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-5xl ${
+          isDark ? 'text-parchment' : 'text-secondary'
         }`}
       >
         {title}
       </h2>
-      <div
-        className={`mt-4 h-1.5 w-20 rounded-full bg-linear-to-r from-brand-primary to-brand-primary-dark ${
-          align === 'center' ? 'mx-auto' : ''
-        }`}
-      />
     </div>
   );
 }

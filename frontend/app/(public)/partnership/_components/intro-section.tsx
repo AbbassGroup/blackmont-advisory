@@ -6,15 +6,15 @@ import { PartnershipModal } from '@/components/global/partnership-modal';
 
 export function IntroSection() {
   return (
-    <section className='py-20 lg:py-28 bg-white overflow-hidden'>
-      <div className='max-w-[1260px] mx-auto px-6 lg:px-8'>
+    <section className='py-20 lg:py-28 bg-background overflow-hidden'>
+      <div className='max-w-[1500px] mx-auto px-6 sm:px-10 lg:px-16'>
         <div className='grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 items-center'>
           {/* Left Content */}
-          <div className='max-w-[600px] mx-auto md:mx-0 text-center md:text-left'>
-            <h2 className='text-3xl lg:text-5xl font-extrabold text-brand-black mb-6 leading-[1.15]'>
+          <div className='mx-auto max-w-[600px] text-center md:mx-0 md:text-left'>
+            <h2 className='mb-6 text-3xl font-bold leading-tight tracking-tight text-secondary sm:text-4xl lg:text-5xl'>
               Helping Your Clients Buy or Sell a Business
             </h2>
-            <p className='text-gray-700 leading-relaxed font-semibold mb-8'>
+            <p className='mb-8 text-lg font-light leading-relaxed text-muted-foreground'>
               Blackmont Advisory works alongside partners to provide expert
               business sale and acquisition support, while you remain the
               trusted advisor.
@@ -22,7 +22,7 @@ export function IntroSection() {
 
             <div className='inline-block'>
               <PartnershipModal>
-                <Button className='bg-brand-primary hover:bg-brand-primary-dark text-white px-8 py-7 font-bold md:text-lg shadow-[0_4px_14px_rgba(86,193,188,0.4)] hover:shadow-[0_6px_20px_rgba(86,193,188,0.6)] transition-all'>
+                <Button className='h-auto rounded-none bg-accent px-8 py-4 text-xs font-bold uppercase tracking-[0.14em] text-primary transition-colors hover:bg-accent-light'>
                   Book a Confidential Discussion
                 </Button>
               </PartnershipModal>
@@ -33,7 +33,7 @@ export function IntroSection() {
           <div className='hidden md:flex justify-center'>
             <div className='relative w-full max-w-[400px] aspect-square'>
               <Image
-                src='/businessbrokers/partnership.svg'
+                src='/partnership.svg'
                 alt='Business Partnership'
                 fill
                 className='object-contain'

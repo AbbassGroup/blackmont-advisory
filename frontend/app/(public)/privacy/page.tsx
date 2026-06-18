@@ -1,13 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { ScrollIndicator } from '@/components/global/scroll-indicator';
+import { PageBanner } from '@/components/global/page-banner';
 
 const CONTENT = {
   title: 'Privacy Policy',
   intro:
-    'This Privacy Policy applies to all personal information collected by Blackmont Advisory via the website located at https://abbass.com.au/businessbrokers/.',
+    'This Privacy Policy applies to all personal information collected by Blackmont Advisory via the website located at https://www.blackmontadvisory.com/.',
   sections: [
     {
       id: 'what-is-personal',
@@ -107,88 +106,63 @@ export default function PrivacyPolicyPage() {
   };
 
   return (
-    <main className='min-h-screen bg-white pb-24'>
-      {/* Hero Banner */}
-      <div className='relative pt-[80px] min-h-[500px] lg:min-h-[580px] bg-[#1c2434] text-center overflow-hidden flex items-center justify-center'>
-        <div className='absolute inset-0 bg-[url("https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg")] bg-cover bg-center' />
-        <div className='absolute inset-0 bg-black/45' />
-        <div className='relative z-10 max-w-[1000px] mx-auto px-6 mt-10'>
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className='text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 drop-shadow-lg tracking-tight'
-          >
-            {CONTENT.title}
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className='text-white/90 text-xl md:text-2xl font-light max-w-[600px] mx-auto drop-shadow-md'
-          >
-            Learn how we handle and protect your personal information.
-          </motion.p>
-        </div>
+    <>
+      <PageBanner
+        title={CONTENT.title}
+        description='Learn how we handle and protect your personal information.'
+        image='https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg'
+      />
 
-        <ScrollIndicator />
-      </div>
-
-      <div className='max-w-[1500px] mx-auto px-6 lg:px-12 mt-16'>
-        <div className='flex flex-col lg:flex-row gap-16 items-start'>
-          {/* Sidebar */}
-          <aside className='lg:w-[320px] shrink-0 lg:sticky lg:top-[120px] hidden lg:block'>
-            <div className='py-2'>
-              <nav className='flex flex-col gap-1'>
+      <section className='bg-background py-20 lg:py-28'>
+        <div className='mx-auto max-w-[1500px] px-6 sm:px-10 lg:px-16'>
+          <div className='flex flex-col items-start gap-12 lg:flex-row lg:gap-16'>
+            {/* Sidebar */}
+            <aside className='hidden shrink-0 lg:sticky lg:top-28 lg:block lg:w-[300px]'>
+              <nav className='flex flex-col border-l border-secondary/10'>
                 {CONTENT.sections.map((section) => (
                   <button
                     key={section.id}
                     onClick={() => scrollToSection(section.id)}
-                    className={`text-left px-5 py-3 rounded-lg text-[0.95rem] font-medium transition-colors duration-200 ${
+                    className={`-ml-px border-l-2 px-5 py-2.5 text-left text-sm font-medium transition-colors ${
                       activeId === section.id
-                        ? 'bg-[#ebf8f2] text-brand-primary-dark'
-                        : 'text-[#6b7280] hover:bg-gray-50'
+                        ? 'border-accent bg-accent-pale text-secondary'
+                        : 'border-transparent text-muted-foreground hover:text-secondary'
                     }`}
                   >
                     {section.heading.replace(/^\d+\.\s*/, '')}
                   </button>
                 ))}
               </nav>
-            </div>
-          </aside>
+            </aside>
 
-          {/* Main Content */}
-          <div className='flex-1 lg:max-w-[850px]'>
-            <div className='flex flex-col gap-14 pb-20'>
-              <p className='text-[#868A9A] text-[1.05rem] leading-loose max-w-[800px]'>
+            {/* Main Content */}
+            <div className='flex-1 lg:max-w-[850px]'>
+              <p className='mb-12 max-w-[800px] text-lg leading-relaxed text-muted-foreground'>
                 {CONTENT.intro}
               </p>
 
-              <div className='flex flex-col gap-14'>
+              <div className='flex flex-col gap-12'>
                 {CONTENT.sections.map((section) => (
-                  <motion.section
+                  <section
                     key={section.id}
                     id={section.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: '-100px' }}
-                    transition={{ duration: 0.5 }}
-                    className='scroll-m-[140px]'
+                    className='scroll-mt-28'
                   >
-                    <h2 className='text-xl md:text-2xl font-bold text-brand-primary-dark mb-5'>
+                    <h2 className='mb-5 text-xl font-bold tracking-tight text-secondary md:text-2xl'>
                       {section.heading.replace(/^\d+\.\s*/, '')}
                     </h2>
-                    <div className='flex flex-col gap-4 text-[#868A9A] text-[1.03rem] leading-loose font-light'>
+                    <div className='flex flex-col gap-4 leading-relaxed text-muted-foreground'>
                       {section.paragraphs.map((p, i) => (
                         <p key={i}>{p}</p>
                       ))}
                     </div>
-                  </motion.section>
+                  </section>
                 ))}
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </main>
+      </section>
+    </>
   );
 }

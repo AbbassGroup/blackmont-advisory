@@ -4,47 +4,47 @@ import Image from 'next/image';
 
 const logos = [
   {
-    src: '/businessbrokers/car/Donut-King.webp',
+    src: '/car/Donut-King.webp',
     alt: 'Donut King',
     href: 'https://www.donutking.com.au/',
   },
   {
-    src: '/businessbrokers/car/Degani-Logo.webp',
+    src: '/car/Degani-Logo.webp',
     alt: 'Degani',
     href: 'https://degani.com.au/',
   },
   {
-    src: '/businessbrokers/car/NDIS.webp',
+    src: '/car/NDIS.webp',
     alt: 'NDIS',
     href: 'https://www.ndis.gov.au/',
   },
   {
-    src: '/businessbrokers/car/Sumo-Salad.webp',
+    src: '/car/Sumo-Salad.webp',
     alt: 'Sumo Salad',
     href: 'https://sumosalad.com/',
   },
   {
-    src: '/businessbrokers/car/Rolld.webp',
+    src: '/car/Rolld.webp',
     alt: "Roll'd",
     href: 'https://rolld.com.au/',
   },
   {
-    src: '/businessbrokers/car/Big-Als.webp',
+    src: '/car/Big-Als.webp',
     alt: "Big Al's Pizza",
     href: 'https://www.bigalpizza.com.au/',
   },
   {
-    src: '/businessbrokers/car/Gami-Chicken.webp',
+    src: '/car/Gami-Chicken.webp',
     alt: 'Gami Chicken',
     href: 'https://www.gamichicken.com.au/',
   },
   {
-    src: '/businessbrokers/car/Cheesecake-Shop.webp',
+    src: '/car/Cheesecake-Shop.webp',
     alt: 'Cheesecake Shop',
     href: 'https://www.cheesecake.com.au/',
   },
   {
-    src: '/businessbrokers/car/Burgertory.webp',
+    src: '/car/Burgertory.webp',
     alt: 'Burgertory',
     href: 'https://www.burgertory.com.au/',
   },

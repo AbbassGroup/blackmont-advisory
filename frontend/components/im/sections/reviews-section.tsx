@@ -70,7 +70,7 @@ export function ReviewsSection({
         <div className="flex items-center justify-center rounded-2xl border border-gray-100 bg-white p-6 shadow-xs">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/businessbrokers/aibb.png"
+            src="/aibb.png"
             alt="AIBB"
             loading="lazy"
             decoding="async"
@@ -80,7 +80,7 @@ export function ReviewsSection({
         <div className="flex items-center justify-center rounded-2xl border border-gray-100 bg-white p-6 shadow-xs">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/businessbrokers/reiv.png"
+            src="/reiv.png"
             alt="REIV"
             loading="lazy"
             decoding="async"

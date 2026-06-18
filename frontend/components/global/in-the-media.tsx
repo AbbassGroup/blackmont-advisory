@@ -82,7 +82,7 @@ export function InTheMediaSection() {
             className='group flex flex-col items-center justify-center bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 p-10 no-underline text-center'
           >
             <Image
-              src='/businessbrokers/best_melbourne.png'
+              src='/best_melbourne.png'
               alt='Best Business Brokerage Melbourne Award'
               width={280}
               height={280}

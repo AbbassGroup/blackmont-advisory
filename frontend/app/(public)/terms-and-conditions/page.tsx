@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { ScrollIndicator } from '@/components/global/scroll-indicator';
+import { PageBanner } from '@/components/global/page-banner';
 
 const TERMS_DATA = {
   title: 'Terms & Conditions',
@@ -11,7 +10,7 @@ const TERMS_DATA = {
       id: 'about',
       heading: '1. About the Website',
       paragraphs: [
-        '(a) Welcome to www.abbass.com.au/businessbrokers. The Website provides you with an opportunity to browse various services that have been listed for sale through the Website (Services). The Website provides this service by way of granting you access to the content on the Website (Services).',
+        '(a) Welcome to www.blackmontadvisory.com. The Website provides you with an opportunity to browse various services that have been listed for sale through the Website (Services). The Website provides this service by way of granting you access to the content on the Website (Services).',
         '(b) The Website is operated by   Blackmont Advisory (ACN 674 429 255). Access to and use of the Website, or any of its associated Services, is provided by   Blackmont Advisory. Please read these terms and conditions (Terms) carefully. By using, browsing and/or reading the Website, this signifies that you have read, understood and agree to be bound by the Terms. If you do not agree with the Terms, you must cease usage of the Website, or any of Services, immediately.',
         '(c)   Blackmont Advisory reserves the right to review and change any of the Terms by updating this page at its sole discretion. When   Blackmont Advisory updates the Terms, it will use reasonable endeavours to provide you with notice of updates to the Terms. Any changes to the Terms take immediate effect from the date of their publication. Before you continue, we recommend you keep a copy of the Terms for your records.',
       ],
@@ -159,96 +158,71 @@ export default function TermsPage() {
   };
 
   return (
-    <main className='min-h-screen bg-white pb-24'>
-      {/* Hero Banner */}
-      <div className='relative pt-[80px] min-h-[500px] lg:min-h-[580px] bg-[#1c2434] text-center overflow-hidden flex items-center justify-center'>
-        <div className='absolute inset-0 bg-[url("https://images.pexels.com/photos/8730374/pexels-photo-8730374.jpeg")] bg-cover bg-center' />
-        <div className='absolute inset-0 bg-black/45' />
-        <div className='relative z-10 max-w-[1000px] mx-auto px-6 mt-10'>
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className='text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 drop-shadow-lg tracking-tight'
-          >
-            {TERMS_DATA.title}
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className='text-white/90 text-xl md:text-2xl font-light max-w-[600px] mx-auto drop-shadow-md'
-          >
-            Please read these terms and conditions carefully.
-          </motion.p>
-        </div>
+    <>
+      <PageBanner
+        title={TERMS_DATA.title}
+        description='Please read these terms and conditions carefully.'
+        image='https://images.pexels.com/photos/8730374/pexels-photo-8730374.jpeg'
+      />
 
-        <ScrollIndicator />
-      </div>
-
-      <div className='max-w-[1500px] mx-auto px-6 lg:px-12 mt-16'>
-        <div className='flex flex-col lg:flex-row gap-16 items-start'>
-          {/* Sidebar */}
-          <aside className='lg:w-[320px] shrink-0 lg:sticky lg:top-[120px] hidden lg:block'>
-            <div className='py-2'>
-              <nav className='flex flex-col gap-1'>
+      <section className='bg-background py-20 lg:py-28'>
+        <div className='mx-auto max-w-[1500px] px-6 sm:px-10 lg:px-16'>
+          <div className='flex flex-col items-start gap-12 lg:flex-row lg:gap-16'>
+            {/* Sidebar */}
+            <aside className='hidden shrink-0 lg:sticky lg:top-28 lg:block lg:w-[300px]'>
+              <nav className='flex flex-col border-l border-secondary/10'>
                 {TERMS_DATA.sections.map((section) => (
                   <button
                     key={section.id}
                     onClick={() => scrollToSection(section.id)}
-                    className={`text-left px-5 py-3 rounded-lg text-[0.95rem] font-medium transition-colors duration-200 ${
+                    className={`-ml-px border-l-2 px-5 py-2.5 text-left text-sm font-medium transition-colors ${
                       activeId === section.id
-                        ? 'bg-[#ebf8f2] text-brand-primary-dark'
-                        : 'text-[#6b7280] hover:bg-gray-50'
+                        ? 'border-accent bg-accent-pale text-secondary'
+                        : 'border-transparent text-muted-foreground hover:text-secondary'
                     }`}
                   >
                     {section.heading.replace(/^\d+\.\s*/, '')}
                   </button>
                 ))}
               </nav>
-            </div>
-          </aside>
+            </aside>
 
-          {/* Main Content */}
-          <div className='flex-1 lg:max-w-[850px]'>
-            <div className='flex flex-col gap-14 pb-20'>
-              {TERMS_DATA.sections.map((section) => (
-                <motion.section
-                  key={section.id}
-                  id={section.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-100px' }}
-                  transition={{ duration: 0.5 }}
-                  className='scroll-m-[140px]'
-                >
-                  <h2 className='text-xl md:text-2xl font-bold text-brand-primary-dark mb-5'>
-                    {section.heading.replace(/^\d+\.\s*/, '')}
-                  </h2>
-                  <div className='flex flex-col gap-5 text-[#868A9A] text-[1.03rem] leading-loose font-light'>
-                    {section.paragraphs.map((p, i) => (
-                      <p
-                        key={i}
-                        className={
-                          p.startsWith('(i)') || p.startsWith('9.')
-                            ? 'pl-5'
-                            : ''
-                        }
-                      >
-                        {p.split('\n').map((line, j) => (
-                          <span key={j}>
-                            {line}
-                            {j < p.split('\n').length - 1 && <br />}
-                          </span>
-                        ))}
-                      </p>
-                    ))}
-                  </div>
-                </motion.section>
-              ))}
+            {/* Main Content */}
+            <div className='flex-1 lg:max-w-[850px]'>
+              <div className='flex flex-col gap-12'>
+                {TERMS_DATA.sections.map((section) => (
+                  <section
+                    key={section.id}
+                    id={section.id}
+                    className='scroll-mt-28'
+                  >
+                    <h2 className='mb-5 text-xl font-bold tracking-tight text-secondary md:text-2xl'>
+                      {section.heading.replace(/^\d+\.\s*/, '')}
+                    </h2>
+                    <div className='flex flex-col gap-4 leading-relaxed text-muted-foreground'>
+                      {section.paragraphs.map((p, i) => (
+                        <p
+                          key={i}
+                          className={
+                            p.startsWith('(i)') || p.startsWith('9.') ? 'pl-5' : ''
+                          }
+                        >
+                          {p.split('\n').map((line, j) => (
+                            <span key={j}>
+                              {line}
+                              {j < p.split('\n').length - 1 && <br />}
+                            </span>
+                          ))}
+                        </p>
+                      ))}
+                    </div>
+                  </section>
+                ))}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </main>
+      </section>
+    </>
   );
 }

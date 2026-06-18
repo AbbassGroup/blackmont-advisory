@@ -3,7 +3,8 @@
 import { PartnershipHero } from './_components/hero';
 import { IntroSection } from './_components/intro-section';
 
-import { AgentList } from '@/app/(public)/consultation/_components/agent-list';
+import { AgentsCarousel } from '@/components/global/agents-carousel';
+import { BookDiscussionButton } from './_components/book-discussion-button';
 import { HowAddValue } from './_components/how-add-value';
 import { WhyAbbass } from './_components/why-abbass';
 import { OurApproach } from './_components/our-approach';
@@ -15,13 +16,15 @@ import { HowWork } from './_components/how-work';
 
 export default function PartnershipPage() {
   return (
-    <main className='min-h-screen bg-white'>
+    <main className='min-h-screen bg-background'>
       <PartnershipHero />
-      <div className='bg-brand-offwhite min-h-screen'>
+      <div className='min-h-screen bg-background'>
         <IntroSection />
         <WhyMatters />
         <HowWork />
-        <AgentList />
+        <AgentsCarousel title='Meet Our Agents'>
+          <BookDiscussionButton />
+        </AgentsCarousel>
 
         <HowAddValue />
         <WhyAbbass />

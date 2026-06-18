@@ -85,7 +85,7 @@ export function MediaReviews() {
               }
             >
               <img
-                src='/businessbrokers/tbm.webp'
+                src='/tbm.webp'
                 alt='Top Best Melbourne'
                 className='max-w-[200px] h-[200px] object-contain'
               />
@@ -139,7 +139,7 @@ export function MediaReviews() {
 
           <div className='bg-white border text-center border-gray-100 rounded-xl p-6 flex items-center justify-center shadow-sm h-full'>
             <img
-              src='/businessbrokers/aibb.png'
+              src='/aibb.png'
               alt='AIBB Logo'
               className='max-w-full max-h-[80px] object-contain'
             />
@@ -147,7 +147,7 @@ export function MediaReviews() {
 
           <div className='bg-white border text-center border-gray-100 rounded-xl p-6 flex items-center justify-center shadow-sm h-full'>
             <img
-              src='/businessbrokers/reiv.png'
+              src='/reiv.png'
               alt='REIV Logo'
               className='max-w-full max-h-[80px] object-contain'
             />

@@ -284,8 +284,8 @@ router.post('/', async (req, res) => {
       to: email,
       from: process.env.SENDGRID_FROM || 'info@blackmontadvisory.com',
       subject: 'Your Confidentiality Agreement with Blackmont Advisory',
-      text: `Hi ${firstName} ${lastName},\n\nThank you for your enquiry on one of our listings. See attached a copy of the Confidentiality Agreement you have just signed for your records.\n\nYou have entered into an important and legally binding agreement. Please seek legal advice if you have any questions in relation to this agreement to ensure you read and understand the terms of Confidentiality.\n\nWe will be in touch, to provide you with more information regarding this business.\n\nRegards,\nBlackmont Advisory\nhttp://www.abbass.com.au/businessbrokers\ninfo@blackmontadvisory.com\n(03) 9103 1317`,
-      html: `<p>Hi ${firstName} ${lastName},</p><p>Thank you for your enquiry on one of our listings. See attached a copy of the Confidentiality Agreement you have just signed for your records.</p><p>You have entered into an important and legally binding agreement. Please seek legal advice if you have any questions in relation to this agreement to ensure you read and understand the terms of Confidentiality.</p><p>We will be in touch, to provide you with more information regarding this business.</p><p>Regards,<br/>Blackmont Advisory<br/><a href="http://www.abbass.com.au/businessbrokers">abbass.com.au/businessbrokers</a><br/>info@blackmontadvisory.com<br/>(03) 9103 1317</p>`,
+      text: `Hi ${firstName} ${lastName},\n\nThank you for your enquiry on one of our listings. See attached a copy of the Confidentiality Agreement you have just signed for your records.\n\nYou have entered into an important and legally binding agreement. Please seek legal advice if you have any questions in relation to this agreement to ensure you read and understand the terms of Confidentiality.\n\nWe will be in touch, to provide you with more information regarding this business.\n\nRegards,\nBlackmont Advisory\nhttp://www.blackmontadvisory.com\ninfo@blackmontadvisory.com\n(03) 9103 1317`,
+      html: `<p>Hi ${firstName} ${lastName},</p><p>Thank you for your enquiry on one of our listings. See attached a copy of the Confidentiality Agreement you have just signed for your records.</p><p>You have entered into an important and legally binding agreement. Please seek legal advice if you have any questions in relation to this agreement to ensure you read and understand the terms of Confidentiality.</p><p>We will be in touch, to provide you with more information regarding this business.</p><p>Regards,<br/>Blackmont Advisory<br/><a href="http://www.blackmontadvisory.com">blackmontadvisory.com</a><br/>info@blackmontadvisory.com<br/>(03) 9103 1317</p>`,
       attachments: [
         {
           content: Buffer.from(pdfBytes).toString('base64'),
@@ -396,14 +396,14 @@ router.get('/approve', async (req, res) => {
     const viewerToken = jwt.sign({ enquiryId }, process.env.JWT_SECRET);
     const imUrl = listingId
       ? `${backendUrl}/api/listings/${listingId}/im?token=${viewerToken}`
-      : 'https://www.abbass.com.au/businessbrokers';
+      : 'https://www.blackmontadvisory.com';
     const approvedMsg = {
       to: clientEmail,
       cc: brokersEmails,
       // to: "jahid.dev8@gmail.com",
       from: process.env.SENDGRID_FROM || 'info@blackmontadvisory.com',
       subject: 'Information Memorandum | Blackmont Advisory',
-      text: `Hi ${clientName},\n\nThank you for completing the NDA. Please see the Information Memorandum at the link below:\n${imUrl}\n\nIf you have any questions, please feel free to contact the broker directly.\n\nRegards,\nBlackmont Advisory\n(03) 9103 1317\ninfo@blackmontadvisory.com\nwww.abbass.com.au/businessbrokers`,
+      text: `Hi ${clientName},\n\nThank you for completing the NDA. Please see the Information Memorandum at the link below:\n${imUrl}\n\nIf you have any questions, please feel free to contact the broker directly.\n\nRegards,\nBlackmont Advisory\n(03) 9103 1317\ninfo@blackmontadvisory.com\nwww.blackmontadvisory.com`,
       html: `
         <div style="font-family:Arial,sans-serif;max-width:600px;">
           <p>Hi ${clientName},</p>
@@ -415,7 +415,7 @@ router.get('/approve', async (req, res) => {
             </a>
           </div>
           <p>If you have any questions, please feel free to contact the broker directly.</p>
-          <p style="margin-top:32px">Regards,<br/>Blackmont Advisory<br/>(03) 9103 1317<br/><a href="mailto:info@blackmontadvisory.com">info@blackmontadvisory.com</a><br/><a href="https://www.abbass.com.au/businessbrokers">www.abbass.com.au/businessbrokers</a></p>
+          <p style="margin-top:32px">Regards,<br/>Blackmont Advisory<br/>(03) 9103 1317<br/><a href="mailto:info@blackmontadvisory.com">info@blackmontadvisory.com</a><br/><a href="https://www.blackmontadvisory.com">www.blackmontadvisory.com</a></p>
         </div>
       `,
     };
@@ -480,12 +480,12 @@ router.get('/reject', async (req, res) => {
       cc: brokersEmails,
       from: process.env.SENDGRID_FROM || 'info@blackmontadvisory.com',
       subject: 'NDA Not Accepted | Blackmont Advisory',
-      text: `Hi ${clientName},\n\nThank you for completing the NDA. Unfortunately the NDA you completed was not accepted. This may be due to the fact that your legal name or full residential address was not used. Note we do not accept PO Box addresses.\n\nRegards,\nBlackmont Advisory\n(03) 9103 1317\ninfo@blackmontadvisory.com\nwww.abbass.com.au/businessbrokers`,
+      text: `Hi ${clientName},\n\nThank you for completing the NDA. Unfortunately the NDA you completed was not accepted. This may be due to the fact that your legal name or full residential address was not used. Note we do not accept PO Box addresses.\n\nRegards,\nBlackmont Advisory\n(03) 9103 1317\ninfo@blackmontadvisory.com\nwww.blackmontadvisory.com`,
       html: `
         <div style="font-family:Arial,sans-serif;">
           <p>Hi ${clientName},</p>
           <p>Thank you for completing the NDA. Unfortunately the NDA you completed was not accepted. This may be due to the fact that your legal name or full residential address was not used. Note we do not accept PO Box addresses.</p>
-          <p style="margin-top:32px">Regards,<br/>Blackmont Advisory<br/>(03) 9103 1317<br/><a href="mailto:info@blackmontadvisory.com">info@blackmontadvisory.com</a><br/><a href="https://www.abbass.com.au/businessbrokers">www.abbass.com.au/businessbrokers</a></p>
+          <p style="margin-top:32px">Regards,<br/>Blackmont Advisory<br/>(03) 9103 1317<br/><a href="mailto:info@blackmontadvisory.com">info@blackmontadvisory.com</a><br/><a href="https://www.blackmontadvisory.com">www.blackmontadvisory.com</a></p>
         </div>
       `,
     };

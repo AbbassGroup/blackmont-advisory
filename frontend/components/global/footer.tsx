@@ -1,111 +1,16 @@
-'use client';
-
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { Linkedin, Instagram, Facebook } from 'lucide-react';
 
-const companyLinks = [
-  { label: 'Home', to: '/' },
-  { label: 'Services', to: '/services' },
-  { label: 'About', to: '/about' },
-  { label: 'Resources', to: '/resources' },
-  { label: 'Contact', to: '/contact' },
-];
-
-const expertiseLinks = [
-  { label: 'For Business Owners', to: '/#selling' },
-  { label: 'For Aspiring Acquirers', to: '/#buying' },
-  { label: 'Our Network', to: '/#network' },
+const exploreLinks = [
+  { label: 'About', to: '/#about' },
+  { label: 'Selling', to: '/#selling' },
+  { label: 'Buying', to: '/#buying' },
+  { label: 'Network', to: '/#network' },
   { label: 'Why Blackmont', to: '/#why' },
-  { label: 'Begin Confidentially', to: '/contact' },
+  { label: 'Resources', to: '/resources' },
+  { label: 'Begin Confidentially', to: '/#contact' },
 ];
-
-const SUBSCRIBE_URL =
-  'https://api.nexartechnologies.com/api/v1/subscribe/create';
-
-function NewsletterForm() {
-  const [email, setEmail] = useState('');
-  const [busy, setBusy] = useState(false);
-  const [msg, setMsg] = useState('');
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!/.+@.+\..+/.test(email)) {
-      setMsg('Please enter a valid email.');
-      return;
-    }
-    try {
-      setBusy(true);
-      const res = await fetch(SUBSCRIBE_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, businessUnit: 'Blackmont Advisory' }),
-      });
-      if (!res.ok) throw new Error();
-      setEmail('');
-      setMsg('Subscribed!');
-    } catch {
-      setMsg('Failed. Please try again.');
-    } finally {
-      setBusy(false);
-      setTimeout(() => setMsg(''), 3500);
-    }
-  }
-
-  return (
-    <form onSubmit={handleSubmit} className='mt-3'>
-      <div className='flex gap-2'>
-        <Input
-          type='email'
-          placeholder='Enter your email'
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className='h-10 flex-1 border-accent/20 bg-white/5 text-parchment placeholder:text-parchment/30 focus-visible:border-accent'
-        />
-        <Button
-          type='submit'
-          disabled={busy}
-          className='h-10 shrink-0 cursor-pointer bg-accent px-4 font-bold text-primary hover:bg-accent-light'
-        >
-          {busy ? '...' : 'Go'}
-        </Button>
-      </div>
-      {msg && <p className='mt-2 text-xs text-parchment/60'>{msg}</p>}
-    </form>
-  );
-}
-
-function FooterColumn({
-  title,
-  links,
-}: {
-  title: string;
-  links: { label: string; to: string }[];
-}) {
-  return (
-    <div>
-      <h3 className='mb-4 text-[0.8rem] font-bold uppercase tracking-[0.14em] text-accent'>
-        {title}
-      </h3>
-      <ul className='space-y-2.5'>
-        {links.map(({ label, to }) => (
-          <li key={label}>
-            <Link
-              href={to}
-              className='text-sm text-parchment/55 transition-colors hover:text-accent'
-            >
-              {label}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
 
 export function Footer() {
   return (
@@ -113,7 +18,7 @@ export function Footer() {
       <div className='mx-auto max-w-[1500px] px-6 sm:px-10 lg:px-16'>
         <div className='grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8'>
           {/* Logo + Brand */}
-          <div className='flex flex-col items-start gap-4 lg:col-span-4'>
+          <div className='flex flex-col items-start gap-4 lg:col-span-5'>
             <div className='flex items-center gap-3'>
               <Image
                 unoptimized
@@ -137,7 +42,7 @@ export function Footer() {
               We represent business owners seeking a premium exit, and act as
               exclusive buyer advocates for those looking to acquire.
             </p>
-            <div className='flex gap-3'>
+            {/* <div className='flex gap-3'>
               {[
                 {
                   Icon: Linkedin,
@@ -166,21 +71,30 @@ export function Footer() {
                   <Icon className='h-4 w-4' />
                 </a>
               ))}
-            </div>
+            </div> */}
           </div>
 
-          {/* Company */}
-          <div className='lg:col-span-2'>
-            <FooterColumn title='Company' links={companyLinks} />
-          </div>
-
-          {/* Expertise */}
+          {/* Explore */}
           <div className='lg:col-span-3'>
-            <FooterColumn title='Expertise' links={expertiseLinks} />
+            <h3 className='mb-4 text-[0.8rem] font-bold uppercase tracking-[0.14em] text-accent'>
+              Explore
+            </h3>
+            <ul className='space-y-2.5'>
+              {exploreLinks.map(({ label, to }) => (
+                <li key={label}>
+                  <Link
+                    href={to}
+                    className='text-sm text-parchment/55 transition-colors hover:text-accent'
+                  >
+                    {label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
 
-          {/* Contact + Newsletter */}
-          <div className='lg:col-span-3'>
+          {/* Get in touch */}
+          <div className='lg:col-span-4'>
             <h3 className='mb-4 text-[0.8rem] font-bold uppercase tracking-[0.14em] text-accent'>
               Get in touch
             </h3>
@@ -194,15 +108,8 @@ export function Footer() {
                 </a>
               </li>
               <li>Australia, with global reach</li>
+              <li>NDA from the first conversation</li>
             </ul>
-
-            <h3 className='mb-2 mt-7 text-[0.8rem] font-bold uppercase tracking-[0.14em] text-accent'>
-              Newsletter
-            </h3>
-            <p className='text-xs text-parchment/40'>
-              Occasional market insights and opportunities.
-            </p>
-            <NewsletterForm />
           </div>
         </div>
       </div>

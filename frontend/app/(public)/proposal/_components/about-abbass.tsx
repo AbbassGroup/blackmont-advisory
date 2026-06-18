@@ -25,7 +25,7 @@ export function AboutAbbass() {
     },
     {
       icon: Globe,
-      url: 'http://abbass.com.au/businessbrokers',
+      url: 'https://www.blackmontadvisory.com',
     },
   ];
 
