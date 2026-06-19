@@ -14,17 +14,7 @@ import { ListingBasicDetails } from '../_components/listing-basic-details';
 import { ListingMediaDocuments } from '../_components/listing-media-documents';
 import { ListingContactTeam } from '../_components/listing-contact-team';
 import { External } from '../_components/external';
-
-const BROKERS = [
-  { name: 'Tester', email: 'mohammadjahid0007@gmail.com' },
-  { name: 'Sadeq Abbass', email: 'sadeq@blackmontadvisory.com' },
-  { name: 'Asif Ahammed', email: 'asif.ahammed@blackmontadvisory.com' },
-  { name: 'Christine Lamani', email: 'christine.lamani@blackmontadvisory.com' },
-  { name: 'Freddie Wong', email: 'freddie.wong@blackmontadvisory.com' },
-  { name: 'Igor Vasiliev', email: 'igor.vasiliev@blackmontadvisory.com' },
-  { name: 'Hicham Nahas', email: 'hicham.nahas@blackmontadvisory.com' },
-  { name: 'Fiona Johns', email: 'fiona@blackmontadvisory.com' },
-];
+import { BROKERS } from '@/lib/data/brokers-list';
 
 export default function ListingFormPage() {
   const params = useParams();

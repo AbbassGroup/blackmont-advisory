@@ -10,7 +10,7 @@ import { SectionHeading } from '../section-chrome';
 import type { MakeOfferData } from '../types';
 
 const TRUST_ACCOUNT = {
-  bankName: 'Blackmont Advisory Estate Agency Business Statutory Trust Account',
+  bankName: ' Abbass Advocacy Estate Agency Business Statutory Trust Account',
   bsb: '013-350',
   acc: '659-404-759',
 };
@@ -217,9 +217,7 @@ export function MakeOfferSection({
 
       {/* Trust account — predefined; REF is unique per memorandum */}
       <div className='mt-8 max-w-full border border-border bg-card p-5'>
-        <p className='font-semibold text-secondary'>
-          {TRUST_ACCOUNT.bankName}
-        </p>
+        <p className='font-semibold text-secondary'>{TRUST_ACCOUNT.bankName}</p>
         <div className='mt-3 space-y-1.5 text-sm text-muted-foreground'>
           <DetailRow label='BSB' value={TRUST_ACCOUNT.bsb} />
           <DetailRow label='ACC' value={TRUST_ACCOUNT.acc} />
@@ -267,7 +265,9 @@ function DetailRow({
 }) {
   return (
     <div className='flex items-baseline gap-2'>
-      <span className='w-10 shrink-0 font-semibold text-muted-foreground'>{label}</span>
+      <span className='w-10 shrink-0 font-semibold text-muted-foreground'>
+        {label}
+      </span>
       <span className={valueClassName ?? 'text-muted-foreground'}>{value}</span>
     </div>
   );

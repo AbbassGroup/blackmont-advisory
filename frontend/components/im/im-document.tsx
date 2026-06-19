@@ -10,7 +10,6 @@ import { HoursSection } from './sections/hours-section';
 import { ProcessSection } from './sections/process-section';
 import { MakeOfferSection } from './sections/makeoffer-section';
 import { KeyContactsSection } from './sections/keycontacts-section';
-import { ReviewsSection } from './sections/reviews-section';
 import { SocialsSection } from './sections/socials-section';
 import { OwnershipSection } from './sections/ownership-section';
 import { HighlightsSection } from './sections/highlights-section';
@@ -96,6 +95,9 @@ function ImDocumentImpl({
     <>
       {sections.map((section, index) => {
         if (section.enabled === false) return null;
+        // Reviews were retired — the AIBB/REIV accreditations now live at the
+        // bottom of Key Contacts. Skip any reviews section in legacy templates.
+        if (section.type === 'reviews') return null;
         const key = section.uid || section._id || `${section.type}-${index}`;
         const onChange = (patch: Record<string, unknown>) =>
           onSectionChange?.(index, patch);
@@ -148,7 +150,6 @@ function ImDocumentImpl({
             case 'process':
               return (
                 <ProcessSection
-                  brokerEmail={brokerEmail}
                   title={(section.data?.title as string) ?? 'The Process'}
                   editable={editable}
                   onChange={onChange}
@@ -168,14 +169,6 @@ function ImDocumentImpl({
               return (
                 <KeyContactsSection
                   title={(section.data?.title as string) ?? 'Key Contacts'}
-                  editable={editable}
-                  onChange={onChange}
-                />
-              );
-            case 'reviews':
-              return (
-                <ReviewsSection
-                  title={(section.data?.title as string) ?? 'Reviews'}
                   editable={editable}
                   onChange={onChange}
                 />

@@ -3,11 +3,10 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Building2, Edit, Loader2, Trash2, Plus, Star } from 'lucide-react';
+import { Building2, Edit, Loader2, Trash2, Plus } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { useAdminAuth } from '@/context/admin-auth-context';
 import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
 import DashboardLayout from '@/components/global/dashboard-layout';
 
 type Listing = {
@@ -15,8 +14,6 @@ type Listing = {
   title: string;
   location: string;
   price: string | number;
-  featured: boolean;
-  partnerShared: boolean;
   referenceId: string;
 };
 
@@ -27,8 +24,6 @@ export default function ListingsPage() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
-  const featuredCount = listings.filter((l) => l.featured).length;
 
   const fetchListings = async () => {
     if (!user?.token) return;
@@ -65,60 +60,6 @@ export default function ListingsPage() {
     }
   };
 
-  const handleToggleFeatured = async (listing: Listing) => {
-    if (!user?.token) return;
-
-    const willBeFeatured = !listing.featured;
-    if (willBeFeatured && featuredCount >= 4) {
-      alert('Maximum 4 featured listings allowed.');
-      return;
-    }
-
-    // Optimistic update
-    setListings((prev) =>
-      prev.map((l) =>
-        l._id === listing._id ? { ...l, featured: willBeFeatured } : l,
-      ),
-    );
-
-    try {
-      await apiClient.put(
-        // Assuming put to /api/listings/:id updates it. If it's PATCH, change to patch.
-        // Old app used listingsApi.update(id, obj). Usually put/patch
-        `/api/listings/${listing._id}`,
-        { featured: willBeFeatured },
-        { headers: { Authorization: `Bearer ${user.token}` } },
-      );
-    } catch (err) {
-      console.error('Failed to update featured status', err);
-      // Revert on error
-      fetchListings();
-    }
-  };
-
-  const handleToggleShared = async (listing: Listing) => {
-    if (!user?.token) return;
-    const willBeShared = !listing.partnerShared;
-
-    // Optimistic update
-    setListings((prev) =>
-      prev.map((l) =>
-        l._id === listing._id ? { ...l, partnerShared: willBeShared } : l,
-      ),
-    );
-
-    try {
-      await apiClient.put(
-        `/api/listings/${listing._id}`,
-        { partnerShared: willBeShared },
-        { headers: { Authorization: `Bearer ${user.token}` } },
-      );
-    } catch (err) {
-      console.error('Failed to update shared status', err);
-      fetchListings();
-    }
-  };
-
   return (
     <DashboardLayout
       title='Manage Listings'
@@ -140,15 +81,13 @@ export default function ListingsPage() {
                 <th className='px-6 py-4 font-semibold'>Title</th>
                 <th className='px-6 py-4 font-semibold'>Location</th>
                 <th className='px-6 py-4 font-semibold'>Price</th>
-                <th className='px-6 py-4 font-semibold text-center'>Featured</th>
-                <th className='px-6 py-4 font-semibold text-center'>Shared</th>
                 <th className='px-6 py-4 font-semibold text-right'>Actions</th>
               </tr>
             </thead>
             <tbody className='divide-y divide-border'>
               {loading ? (
                 <tr>
-                  <td colSpan={7} className='text-center py-16'>
+                  <td colSpan={5} className='text-center py-16'>
                     <Loader2 className='w-8 h-8 animate-spin text-accent mx-auto mb-4' />
                     <p className='text-muted-foreground font-medium'>
                       Loading listings...
@@ -157,13 +96,13 @@ export default function ListingsPage() {
                 </tr>
               ) : error ? (
                 <tr>
-                  <td colSpan={7} className='text-center py-16 text-red-500'>
+                  <td colSpan={5} className='text-center py-16 text-red-500'>
                     {error}
                   </td>
                 </tr>
               ) : listings.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className='text-center py-16'>
+                  <td colSpan={5} className='text-center py-16'>
                     <Building2 className='w-12 h-12 text-border mx-auto mb-4' />
                     <h3 className='text-lg font-semibold text-secondary mb-1'>
                       No Listings Found
@@ -197,36 +136,6 @@ export default function ListingsPage() {
                       {listing.price === 0 || listing.price
                         ? String(listing.price)
                         : '—'}
-                    </td>
-                    <td className='px-6 py-4 text-center'>
-                      <div className='flex items-center justify-center'>
-                        <button
-                          onClick={() => handleToggleFeatured(listing)}
-                          disabled={!listing.featured && featuredCount >= 4}
-                          className={`p-1.5 rounded flex items-center gap-1.5 transition-colors ${
-                            listing.featured
-                              ? 'text-accent hover:bg-accent/10'
-                              : !listing.featured && featuredCount >= 4
-                                ? 'text-muted-foreground/50 cursor-not-allowed opacity-50'
-                                : 'text-muted-foreground/70 hover:text-accent hover:bg-muted'
-                          }`}
-                          title={
-                            !listing.featured && featuredCount >= 4
-                              ? 'Max 4 featured listings allowed'
-                              : 'Toggle Featured'
-                          }
-                        >
-                          <Star
-                            className={`w-5 h-5 ${listing.featured ? 'fill-current' : ''}`}
-                          />
-                        </button>
-                      </div>
-                    </td>
-                    <td className='px-6 py-4 text-center'>
-                      <Switch
-                        checked={!!listing.partnerShared}
-                        onCheckedChange={() => handleToggleShared(listing)}
-                      />
                     </td>
                     <td className='px-6 py-4 text-right'>
                       <div className='flex items-center justify-end gap-2'>

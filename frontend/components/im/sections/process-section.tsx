@@ -1,8 +1,21 @@
 'use client';
 
-import { resolveBroker } from '@/lib/data/brokers';
+import type { Broker } from '@/lib/data/brokers';
 import { SectionHeading } from '../section-chrome';
 import { BrokerCard } from '../broker-card';
+
+/** The memorandum's principal point of contact (firm-wide, regardless of the
+ * broker who owns the template). */
+const POINT_OF_CONTACT: Broker = {
+  name: 'Sadeq Abbass',
+  email: 'sadeq@blackmontadvisory.com',
+  title: 'Principal M&A Adviser',
+  image: '/abbass.jpeg',
+  phone: '+61 433 525 731',
+  mobile: '',
+  website: 'www.blackmontadvisory.com',
+  welcome: [],
+};
 
 const STEPS = [
   {
@@ -40,18 +53,14 @@ const STEPS = [
 ];
 
 export function ProcessSection({
-  brokerEmail,
   title,
   editable,
   onChange,
 }: {
-  brokerEmail?: string;
   title: string;
   editable?: boolean;
   onChange?: (patch: { title: string }) => void;
 }) {
-  const broker = resolveBroker(brokerEmail);
-
   return (
     <>
       <SectionHeading
@@ -83,7 +92,7 @@ export function ProcessSection({
         <p className='mb-3 text-sm font-semibold text-secondary'>
           Your point of contact
         </p>
-        <BrokerCard broker={broker} className='max-w-full' />
+        <BrokerCard broker={POINT_OF_CONTACT} className='max-w-full' />
       </div>
     </>
   );

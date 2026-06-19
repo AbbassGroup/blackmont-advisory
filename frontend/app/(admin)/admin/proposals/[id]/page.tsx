@@ -29,16 +29,7 @@ import {
   AboutBlackmont,
   ContactUs,
 } from '@/components/proposal';
-
-const BROKERS = [
-  { name: 'Tester', email: 'mohammadjahid0007@gmail.coms' },
-  { name: 'Sadeq Abbass', email: 'sadeq@blackmontadvisory.com' },
-  { name: 'Asif Ahammed', email: 'asif.ahammed@blackmontadvisory.com' },
-  { name: 'Freddie Wong', email: 'freddie.wong@blackmontadvisory.com' },
-  { name: 'Igor Vasiliev', email: 'igor.vasiliev@blackmontadvisory.com' },
-  { name: 'Hicham Nahas', email: 'hicham.nahas@blackmontadvisory.com' },
-  { name: 'Fiona Johns', email: 'fiona@blackmontadvisory.com' },
-];
+import { BROKERS } from '@/lib/data/brokers-list';
 
 const TERMS = ['30', '60', '90', '120', '150', '180', '270', '360'];
 

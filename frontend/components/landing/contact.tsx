@@ -113,22 +113,13 @@ export function Contact() {
         stage: 'Enquiry',
         email: form.email,
         phone: form.phone,
-        typeOfBusiness: form.industry,
+        industry: form.industry,
         location: form.location,
         comments: mergedComments,
+        businessUnit: 'Business Sellers',
         ...(form.name.trim() ? { name: form.name.trim() } : {}),
       });
-      trackAccessEvent('lead_submitted', {
-        lead: {
-          name: form.name,
-          email: form.email,
-          phone: form.phone,
-          industry: form.industry,
-          location: form.location,
-          comments: mergedComments,
-          leadType: 'consultation',
-        },
-      });
+
       toast.success(
         'Thank you. Your enquiry is held in confidence — a senior advisor will be in touch shortly.',
       );

@@ -29,14 +29,6 @@ export function Footer() {
                 height={48}
                 className='h-full w-full object-contain max-w-84 max-h-84'
               />
-              {/* <div className='flex flex-col leading-none'>
-                <span className='text-xl font-bold uppercase tracking-[0.06em] text-parchment'>
-                  Blackmont
-                </span>
-                <span className='mt-1 text-[0.7rem] font-medium uppercase tracking-[0.18em] text-parchment/45'>
-                  Advisory
-                </span>
-              </div> */}
             </div>
             <p className='max-w-xs text-sm leading-relaxed text-parchment/55'>
               We represent business owners seeking a premium exit, and act as
@@ -79,7 +71,7 @@ export function Footer() {
             <h3 className='mb-4 text-[0.8rem] font-bold uppercase tracking-[0.14em] text-accent'>
               Explore
             </h3>
-            <ul className='space-y-2.5'>
+            <ul className='grid grid-cols-2 gap-x-6 gap-y-2.5'>
               {exploreLinks.map(({ label, to }) => (
                 <li key={label}>
                   <Link

@@ -389,14 +389,6 @@ export const SECTION_REGISTRY: SectionMeta[] = [
     inNav: true,
   },
   {
-    type: 'reviews',
-    label: 'Reviews',
-    description: 'Accreditations and client reviews (fixed content).',
-    icon: 'Star',
-    singleton: true,
-    inNav: true,
-  },
-  {
     type: 'socials',
     label: 'Social Media',
     description: 'Linked social profiles with their original logos.',
@@ -660,6 +652,5 @@ export function buildDefaultSections(): ImSection[] {
     makeDefaultSection('process'),
     makeDefaultSection('makeoffer'),
     makeDefaultSection('keycontacts'),
-    makeDefaultSection('reviews'),
   ];
 }

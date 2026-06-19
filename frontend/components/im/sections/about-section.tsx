@@ -1,6 +1,6 @@
 'use client';
 
-import { Check, Facebook, Instagram, Linkedin, Globe } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { SectionHeading } from '../section-chrome';
 
 const SERVICES = [
@@ -10,29 +10,6 @@ const SERVICES = [
   'Exit Strategy',
   'Business Consulting',
   'Buyer Advisory',
-];
-
-const SOCIALS = [
-  {
-    icon: Globe,
-    href: 'https://www.blackmontadvisory.com',
-    label: 'Website',
-  },
-  {
-    icon: Instagram,
-    href: 'https://instagram.com/abbassbusinessbrokers',
-    label: 'Instagram',
-  },
-  {
-    icon: Facebook,
-    href: 'https://facebook.com/abbassbusinessbrokers',
-    label: 'Facebook',
-  },
-  {
-    icon: Linkedin,
-    href: 'https://www.linkedin.com/company/abbassbusinessbrokers/',
-    label: 'LinkedIn',
-  },
 ];
 
 export function AboutSection({
@@ -87,21 +64,6 @@ export function AboutSection({
               </span>
               <span className='text-sm font-medium text-secondary'>{s}</span>
             </div>
-          ))}
-        </div>
-
-        <div className='mt-8 flex items-center gap-3'>
-          {SOCIALS.map(({ icon: Icon, href, label }) => (
-            <a
-              key={label}
-              href={href}
-              target='_blank'
-              rel='noopener noreferrer'
-              title={label}
-              className='flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-parchment transition-colors hover:bg-accent hover:text-primary'
-            >
-              <Icon className='h-4 w-4' />
-            </a>
           ))}
         </div>
 

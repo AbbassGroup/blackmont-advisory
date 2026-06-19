@@ -150,6 +150,30 @@ export function KeyContactsSection({
           </div>
         ))}
       </div>
+
+      {/* Accreditations */}
+      <div className='mt-6 grid gap-4 sm:grid-cols-2'>
+        <div className='flex items-center justify-center border border-border bg-card p-10 shadow-xs'>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src='/aibb.png'
+            alt='AIBB'
+            loading='lazy'
+            decoding='async'
+            className='max-h-20 w-auto object-contain'
+          />
+        </div>
+        <div className='flex items-center justify-center border border-border bg-card p-10 shadow-xs'>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src='/reiv.png'
+            alt='REIV'
+            loading='lazy'
+            decoding='async'
+            className='max-h-20 w-auto object-contain'
+          />
+        </div>
+      </div>
     </>
   );
 }
