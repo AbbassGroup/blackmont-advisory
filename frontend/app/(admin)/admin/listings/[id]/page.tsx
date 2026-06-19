@@ -357,8 +357,8 @@ export default function ListingFormPage() {
         title='Manage Listings'
         description='Loading listing details...'
       >
-        <div className='flex items-center justify-center p-24 bg-white rounded-xl shadow-sm border border-gray-100'>
-          <Loader2 className='w-8 h-8 animate-spin text-brand-primary' />
+        <div className='flex items-center justify-center p-24 border border-border bg-card'>
+          <Loader2 className='w-8 h-8 animate-spin text-accent' />
         </div>
       </DashboardLayout>
     );
@@ -376,7 +376,7 @@ export default function ListingFormPage() {
         <Button
           variant='outline'
           onClick={() => router.push('/admin/listings')}
-          className='gap-2'
+          className='gap-2 rounded-none'
         >
           <ArrowLeft className='w-4 h-4' /> Back to Listings
         </Button>
@@ -456,12 +456,13 @@ export default function ListingFormPage() {
             variant='outline'
             onClick={() => router.push('/admin/listings')}
             disabled={saving}
+            className='rounded-none'
           >
             Cancel
           </Button>
           <Button
             type='submit'
-            className='px-8 bg-brand-primary'
+            className='px-8 rounded-none bg-accent font-semibold text-primary hover:bg-accent-light'
             disabled={saving}
           >
             {saving ? <Loader2 className='w-4 h-4 mr-2 animate-spin' /> : null}

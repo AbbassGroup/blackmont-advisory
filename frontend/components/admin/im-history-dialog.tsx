@@ -214,10 +214,10 @@ export function ImHistoryDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='md:max-w-7xl! w-full max-h-[85vh] overflow-hidden flex flex-col p-0 gap-0 bg-white'>
-        <DialogHeader className='px-6 py-4 border-b border-gray-100 flex flex-row items-center justify-between'>
-          <DialogTitle className='flex items-center gap-2 text-lg text-brand-black'>
-            <Eye className='w-5 h-5 text-brand-primary' />
+      <DialogContent className='md:max-w-7xl! w-full max-h-[85vh] overflow-hidden flex flex-col p-0 gap-0 bg-card'>
+        <DialogHeader className='px-6 py-4 border-b border-border flex flex-row items-center justify-between'>
+          <DialogTitle className='flex items-center gap-2 text-lg text-secondary'>
+            <Eye className='w-5 h-5 text-accent' />
             IM View History
           </DialogTitle>
         </DialogHeader>
@@ -225,44 +225,30 @@ export function ImHistoryDialog({
         <div className='flex-1 overflow-y-auto p-0'>
           {loading ? (
             <div className='flex items-center justify-center p-12'>
-              <Loader2 className='w-8 h-8 animate-spin text-brand-primary' />
+              <Loader2 className='w-8 h-8 animate-spin text-accent' />
             </div>
           ) : grouped.length === 0 ? (
             <div className='flex flex-col items-center justify-center p-12'>
-              <Eye className='w-12 h-12 text-gray-200 mb-4' />
-              <p className='text-gray-500 font-medium'>
+              <Eye className='w-12 h-12 text-border mb-4' />
+              <p className='text-muted-foreground font-medium'>
                 No IM views recorded yet.
               </p>
             </div>
           ) : (
             <table className='w-full text-sm text-left'>
-              <thead className='bg-gray-50/80 border-b border-gray-100 sticky top-0 z-10'>
+              <thead className='bg-muted/60 border-b border-border sticky top-0 z-10 text-xs uppercase tracking-wider text-muted-foreground'>
                 <tr>
                   <th className='w-8 px-3 py-3'></th>
-                  <th className='px-4 py-3 font-semibold text-gray-600'>
-                    Deal
-                  </th>
-                  <th className='px-4 py-3 font-semibold text-gray-600'>
-                    Name
-                  </th>
-                  <th className='px-4 py-3 font-semibold text-gray-600'>
-                    Email
-                  </th>
-                  <th className='px-4 py-3 font-semibold text-gray-600'>
-                    Views
-                  </th>
-                  <th className='px-4 py-3 font-semibold text-gray-600'>
-                    Last Viewed
-                  </th>
-                  <th className='px-4 py-3 font-semibold text-gray-600'>
-                    Expiry
-                  </th>
-                  <th className='px-4 py-3 font-semibold text-gray-600 text-center'>
-                    Access
-                  </th>
+                  <th className='px-4 py-3 font-semibold'>Deal</th>
+                  <th className='px-4 py-3 font-semibold'>Name</th>
+                  <th className='px-4 py-3 font-semibold'>Email</th>
+                  <th className='px-4 py-3 font-semibold'>Views</th>
+                  <th className='px-4 py-3 font-semibold'>Last Viewed</th>
+                  <th className='px-4 py-3 font-semibold'>Expiry</th>
+                  <th className='px-4 py-3 font-semibold text-center'>Access</th>
                 </tr>
               </thead>
-              <tbody className='divide-y divide-gray-50'>
+              <tbody className='divide-y divide-border'>
                 {grouped.map((person) => {
                   const revoked = isRevoked(person);
                   const isToggling = togglingIds.has(person.enquiryId);
@@ -276,13 +262,13 @@ export function ImHistoryDialog({
                         className={`transition-colors cursor-pointer ${
                           revoked
                             ? 'bg-red-50/40 hover:bg-red-50/60'
-                            : 'hover:bg-gray-50/60'
+                            : 'hover:bg-muted/50'
                         }`}
                         onClick={() =>
                           person.viewCount > 1 && toggleExpand(person.enquiryId)
                         }
                       >
-                        <td className='px-3 py-3 text-gray-400'>
+                        <td className='px-3 py-3 text-muted-foreground/60'>
                           {person.viewCount > 1 &&
                             (isExpanded ? (
                               <ChevronDown className='w-4 h-4' />
@@ -292,21 +278,21 @@ export function ImHistoryDialog({
                         </td>
                         <td
                           className={`px-4 py-3 font-medium ${
-                            revoked ? 'text-gray-400' : 'text-brand-black'
+                            revoked ? 'text-muted-foreground/60' : 'text-secondary'
                           }`}
                         >
                           {person.businessName}
                         </td>
                         <td
                           className={`px-4 py-3 ${
-                            revoked ? 'text-gray-400' : 'text-gray-700'
+                            revoked ? 'text-muted-foreground/60' : 'text-foreground'
                           }`}
                         >
                           {person.name}
                         </td>
                         <td
                           className={`px-4 py-3 ${
-                            revoked ? 'text-gray-400' : 'text-gray-600'
+                            revoked ? 'text-muted-foreground/60' : 'text-muted-foreground'
                           }`}
                         >
                           {person.email}
@@ -315,8 +301,8 @@ export function ImHistoryDialog({
                           <span
                             className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
                               revoked || person.viewCount === 0
-                                ? 'bg-gray-100 text-gray-400'
-                                : 'bg-brand-primary/10 text-brand-primary'
+                                ? 'bg-muted text-muted-foreground/70'
+                                : 'bg-accent/15 text-accent'
                             }`}
                           >
                             {person.viewCount}{' '}
@@ -325,13 +311,13 @@ export function ImHistoryDialog({
                         </td>
                         <td
                           className={`px-4 py-3 ${
-                            revoked ? 'text-gray-400' : 'text-gray-500'
+                            revoked ? 'text-muted-foreground/60' : 'text-muted-foreground'
                           }`}
                         >
                           {person.lastViewedAt ? (
                             <FormatLocalTime dateStr={person.lastViewedAt} />
                           ) : (
-                            <span className='text-gray-400'>Not viewed yet</span>
+                            <span className='text-muted-foreground/60'>Not viewed yet</span>
                           )}
                         </td>
                         <td className='px-4 py-3'>
@@ -343,7 +329,7 @@ export function ImHistoryDialog({
                               {expiryInfo.label}
                             </span>
                           ) : (
-                            <span className='text-xs text-gray-300'>—</span>
+                            <span className='text-xs text-muted-foreground/50'>—</span>
                           )}
                         </td>
                         <td
@@ -352,7 +338,7 @@ export function ImHistoryDialog({
                         >
                           <div className='flex items-center justify-center gap-2'>
                             {isToggling ? (
-                              <Loader2 className='w-4 h-4 animate-spin text-gray-400' />
+                              <Loader2 className='w-4 h-4 animate-spin text-muted-foreground/60' />
                             ) : (
                               <Switch
                                 size='sm'
@@ -377,12 +363,12 @@ export function ImHistoryDialog({
                         person.views.map((view, idx) => (
                           <tr
                             key={`${person.enquiryId}-view-${view._id}`}
-                            className='bg-gray-50/30'
+                            className='bg-muted/30'
                           >
                             <td className='px-3 py-2'></td>
                             <td
                               colSpan={6}
-                              className='px-4 py-2 text-xs text-gray-400 pl-8 flex items-center gap-2'
+                              className='px-4 py-2 text-xs text-muted-foreground/60 pl-8 flex items-center gap-2'
                             >
                               <span>View #{person.views.length - idx} — </span>
                               <FormatLocalTime dateStr={view.createdAt} />

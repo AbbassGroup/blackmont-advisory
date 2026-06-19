@@ -9,7 +9,6 @@ import {
   Building2,
   MessageSquare,
   Shield,
-  Briefcase,
   Users,
   Handshake,
   BarChart3,
@@ -80,12 +79,6 @@ const NAV_ITEMS = [
     superAdminOnly: true,
   },
   {
-    label: 'Career Applications',
-    href: '/admin/careers',
-    icon: Briefcase,
-    superAdminOnly: true,
-  },
-  {
     label: 'Users',
     href: '/admin/users',
     icon: Users,
@@ -105,14 +98,29 @@ export function AdminSidebar() {
   return (
     <Sidebar collapsible='icon'>
       {/* Logo / Brand */}
-      <SidebarHeader className='border-b border-sidebar-border px-4 py-4'>
-        <Link href='/' className='flex items-center gap-2.5'>
+      <SidebarHeader className='border-b border-sidebar-border px-4 py-4 group-data-[collapsible=icon]:px-0'>
+        <Link
+          href='/'
+          className='flex items-center gap-2.5 group-data-[collapsible=icon]:justify-center'
+          aria-label='Blackmont Advisory home'
+        >
           <Image
             loading='eager'
-            src='/mark.webp'
+            unoptimized
+            src='/assets/blackmont-light.png'
             alt='Blackmont Advisory'
-            width={40}
-            height={40}
+            width={150}
+            height={36}
+            className='h-9 w-auto group-data-[collapsible=icon]:hidden'
+          />
+          <Image
+            loading='eager'
+            unoptimized
+            src='/assets/logo.png'
+            alt='Blackmont Advisory'
+            width={32}
+            height={32}
+            className='hidden h-7 w-7 shrink-0 group-data-[collapsible=icon]:block'
           />
         </Link>
       </SidebarHeader>
@@ -133,6 +141,11 @@ export function AdminSidebar() {
                       asChild
                       isActive={isActive}
                       tooltip={item.label}
+                      className={
+                        isActive
+                          ? 'border-l-2 border-accent rounded-l-none'
+                          : undefined
+                      }
                     >
                       <Link href={item.href}>
                         <item.icon />
@@ -151,8 +164,8 @@ export function AdminSidebar() {
       <SidebarFooter className='border-t border-sidebar-border p-2'>
         {/* User info */}
         <div className='flex items-center gap-2.5 px-2 py-2 group-data-[collapsible=icon]:justify-center'>
-          <div className='w-8 h-8 rounded-full bg-brand-primary/15 border border-brand-primary/30 flex items-center justify-center shrink-0'>
-            <span className='text-xs font-bold text-brand-primary uppercase'>
+          <div className='w-8 h-8 rounded-full bg-accent/15 border border-accent/30 flex items-center justify-center shrink-0'>
+            <span className='text-xs font-bold text-accent uppercase'>
               {user?.user?.username?.[0] ?? 'A'}
             </span>
           </div>
@@ -168,9 +181,13 @@ export function AdminSidebar() {
         {/* Logout */}
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={logout} tooltip='Sign Out'>
-              <LogOut className='text-red-500' />
-              <span className='text-red-500'>Sign Out</span>
+            <SidebarMenuButton
+              onClick={logout}
+              tooltip='Sign Out'
+              className='text-red-300 hover:text-red-200'
+            >
+              <LogOut />
+              <span>Sign Out</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

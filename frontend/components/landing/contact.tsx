@@ -1,101 +1,184 @@
 'use client';
 
 import { useState } from 'react';
+import axios from 'axios';
 import { toast } from 'sonner';
 import { Container, Eyebrow, Reveal } from './primitives';
+import { apiClient } from '@/lib/api';
+import { trackAccessEvent } from '@/lib/track';
 
 type Tab = 'sell' | 'buy';
 
-const SELL_SECTORS = [
-  'Business Services',
-  'Manufacturing and Distribution',
-  'Healthcare Services',
-  'Industrials and Construction',
-  'Hospitality and Leisure',
-  'Trade and Technical Services',
-  'Technology',
-  'Retail',
-  'Other',
-];
-
-const REVENUE_RANGES = [
-  'Under $1M',
-  '$1M to $3M',
-  '$3M to $5M',
-  '$5M to $10M',
-  'Over $10M',
-  'Prefer not to say',
-];
-
-const BUY_SECTORS = [
-  'Business Services',
-  'Manufacturing and Distribution',
-  'Healthcare Services',
-  'Industrials and Construction',
-  'Hospitality and Leisure',
-  'Trade and Technical Services',
-  'Technology',
-  'Open to opportunities',
-];
-
-const BUDGET_FROM = ['Under $500K', '$500K to $1M', '$1M to $3M', '$3M to $5M', '$5M+'];
-const BUDGET_TO = ['$1M', '$3M', '$5M', '$10M', 'No upper limit'];
-const BUYER_TYPES = [
-  'First-time business buyer',
-  'Entrepreneur seeking next venture',
-  'Executive transitioning to ownership',
-  'Company seeking strategic acquisition',
-  'Investor or family office',
-];
+const NEXAR_API_URL =
+  process.env.NEXT_PUBLIC_NEXAR_API_URL ||
+  'https://api.nexartechnologies.com/api/v1';
 
 const fieldClass =
-  'w-full border border-accent/20 bg-white/5 px-4 py-3 text-sm font-light text-parchment outline-none transition-colors placeholder:text-parchment/25 focus:border-accent';
+  'w-full border border-accent/20 bg-white/5 px-4 py-3 text-sm font-light text-parchment outline-none transition-colors placeholder:text-parchment/25 focus:border-accent disabled:opacity-50';
 
 const labelClass =
   'text-[10px] font-bold uppercase tracking-[0.18em] text-accent';
 
 function Field({
   label,
+  required,
+  error,
   children,
 }: {
   label: string;
+  required?: boolean;
+  error?: string;
   children: React.ReactNode;
 }) {
   return (
     <div className='flex flex-col gap-1.5'>
-      <label className={labelClass}>{label}</label>
+      <label className={labelClass}>
+        {label}
+        {required && <span className='text-red-400'> *</span>}
+      </label>
       {children}
+      {error && <p className='text-xs font-medium text-red-400'>{error}</p>}
     </div>
   );
 }
 
-function Select({ options, label }: { options: string[]; label: string }) {
-  return (
-    <Field label={label}>
-      <select className={`${fieldClass} cursor-pointer appearance-none`} defaultValue=''>
-        <option value='' disabled>
-          Select
-        </option>
-        {options.map((o) => (
-          <option key={o} className='bg-secondary text-parchment'>
-            {o}
-          </option>
-        ))}
-      </select>
-    </Field>
-  );
-}
+const EMPTY_FORM = {
+  name: '',
+  email: '',
+  // sell (GetStarted)
+  phone: '',
+  industry: '',
+  location: '',
+  turnover: '',
+  comments: '',
+  // buy (ContactFormModal)
+  contactNumber: '',
+  industryInterest: '',
+  budget: '',
+  timeline: '',
+};
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function Contact() {
   const [tab, setTab] = useState<Tab>('sell');
+  const [form, setForm] = useState(EMPTY_FORM);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(false);
+
+  const update =
+    (field: keyof typeof EMPTY_FORM) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const value = e.target.value;
+      setForm((prev) => ({ ...prev, [field]: value }));
+      if (errors[field]) {
+        setErrors((prev) => {
+          const next = { ...prev };
+          delete next[field];
+          return next;
+        });
+      }
+    };
+
+  const switchTab = (next: Tab) => {
+    if (next === tab) return;
+    setTab(next);
+    setErrors({});
+  };
+
+  async function submitSell() {
+    const next: Record<string, string> = {};
+    if (!form.phone.trim()) next.phone = 'Please enter your phone number';
+    if (!form.name.trim()) next.name = 'Please enter your name';
+    if (!form.email.trim()) next.email = 'Please enter your email';
+    else if (!EMAIL_RE.test(form.email))
+      next.email = 'Please enter a valid email address';
+    if (!form.industry.trim()) next.industry = 'Please enter your industry';
+    if (!form.location.trim()) next.location = 'Please enter your location';
+    if (!form.turnover.trim())
+      next.turnover = 'Please enter your annual turnover';
+    setErrors(next);
+    if (Object.keys(next).length) return;
+
+    const turnover = form.turnover.trim();
+    const userComment = form.comments.trim();
+    const mergedComments =
+      turnover && userComment
+        ? `${turnover} - ${userComment}`
+        : turnover || userComment;
+
+    setLoading(true);
+    try {
+      await axios.put(`${NEXAR_API_URL}/deals/update/by-email`, {
+        stage: 'Enquiry',
+        email: form.email,
+        phone: form.phone,
+        typeOfBusiness: form.industry,
+        location: form.location,
+        comments: mergedComments,
+        ...(form.name.trim() ? { name: form.name.trim() } : {}),
+      });
+      trackAccessEvent('lead_submitted', {
+        lead: {
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          industry: form.industry,
+          location: form.location,
+          comments: mergedComments,
+          leadType: 'consultation',
+        },
+      });
+      toast.success(
+        'Thank you. Your enquiry is held in confidence — a senior advisor will be in touch shortly.',
+      );
+      setForm(EMPTY_FORM);
+    } catch {
+      toast.error('Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function submitBuy() {
+    const next: Record<string, string> = {};
+    if (!form.name.trim()) next.name = 'Name is required';
+    if (!form.contactNumber.trim())
+      next.contactNumber = 'Contact number is required';
+    if (!form.email.trim()) next.email = 'Email is required';
+    else if (!EMAIL_RE.test(form.email))
+      next.email = 'Please enter a valid email address';
+    setErrors(next);
+    if (Object.keys(next).length) return;
+
+    setLoading(true);
+    try {
+      await apiClient.post('/api/partnership-contact-form', {
+        name: form.name,
+        contactNumber: form.contactNumber,
+        email: form.email,
+        industryInterest: form.industryInterest,
+        budget: form.budget,
+        timeline: form.timeline,
+      });
+      toast.success(
+        'Thank you! Your enquiry has been submitted successfully. We will contact you soon.',
+      );
+      setForm(EMPTY_FORM);
+    } catch {
+      toast.error(
+        'Sorry, there was an error submitting your form. Please try again.',
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // Placeholder submit — wire to the enquiries endpoint when available.
-    toast.success(
-      'Thank you. Your enquiry is held in confidence — a senior advisor will be in touch shortly.',
-    );
-    (e.target as HTMLFormElement).reset();
+    if (loading) return;
+    if (tab === 'sell') void submitSell();
+    else void submitBuy();
   }
 
   return (
@@ -121,7 +204,7 @@ export function Contact() {
                 <button
                   key={t}
                   type='button'
-                  onClick={() => setTab(t)}
+                  onClick={() => switchTab(t)}
                   className={[
                     'py-3 text-[11px] font-bold uppercase tracking-[0.14em] transition-colors',
                     i === 0 ? 'border-r border-accent/20' : '',
@@ -135,53 +218,167 @@ export function Contact() {
               ))}
             </div>
 
-            <form onSubmit={handleSubmit} className='flex flex-col gap-3.5'>
-              <Field label='Name'>
-                <input className={fieldClass} type='text' placeholder='Full name' required />
-              </Field>
-              <Field label='Email'>
-                <input
-                  className={fieldClass}
-                  type='email'
-                  placeholder='you@company.com'
+            {tab === 'sell' ? (
+              <form onSubmit={handleSubmit} className='flex flex-col gap-3.5'>
+                <Field label='Name' required error={errors.name}>
+                  <input
+                    className={`${fieldClass} ${errors.name ? 'border-red-400' : ''}`}
+                    type='text'
+                    placeholder='Your full name'
+                    value={form.name}
+                    onChange={update('name')}
+                    disabled={loading}
+                  />
+                </Field>
+                <Field label='Email' required error={errors.email}>
+                  <input
+                    className={`${fieldClass} ${errors.email ? 'border-red-400' : ''}`}
+                    type='email'
+                    placeholder='you@business.com.au'
+                    value={form.email}
+                    onChange={update('email')}
+                    disabled={loading}
+                  />
+                </Field>
+                <Field label='Phone' required error={errors.phone}>
+                  <input
+                    className={`${fieldClass} ${errors.phone ? 'border-red-400' : ''}`}
+                    type='tel'
+                    placeholder='Enter your phone number'
+                    value={form.phone}
+                    onChange={update('phone')}
+                    disabled={loading}
+                  />
+                </Field>
+                <Field label='Industry' required error={errors.industry}>
+                  <input
+                    className={`${fieldClass} ${errors.industry ? 'border-red-400' : ''}`}
+                    type='text'
+                    placeholder='Enter industry'
+                    value={form.industry}
+                    onChange={update('industry')}
+                    disabled={loading}
+                  />
+                </Field>
+                <Field label='Location' required error={errors.location}>
+                  <input
+                    className={`${fieldClass} ${errors.location ? 'border-red-400' : ''}`}
+                    type='text'
+                    placeholder='Enter your location'
+                    value={form.location}
+                    onChange={update('location')}
+                    disabled={loading}
+                  />
+                </Field>
+                <Field
+                  label='Annual Turnover'
                   required
-                />
-              </Field>
+                  error={errors.turnover}
+                >
+                  <input
+                    className={`${fieldClass} ${errors.turnover ? 'border-red-400' : ''}`}
+                    type='text'
+                    placeholder='Enter revenue'
+                    value={form.turnover}
+                    onChange={update('turnover')}
+                    disabled={loading}
+                  />
+                </Field>
+                <Field label='Comments'>
+                  <input
+                    className={fieldClass}
+                    type='text'
+                    placeholder='Enter your comments'
+                    value={form.comments}
+                    onChange={update('comments')}
+                    disabled={loading}
+                  />
+                </Field>
 
-              {tab === 'sell' ? (
-                <>
-                  <Select label='Industry' options={SELL_SECTORS} />
-                  <Select label='Annual revenue (approx.)' options={REVENUE_RANGES} />
-                </>
-              ) : (
-                <>
-                  <Select label='Target sector' options={BUY_SECTORS} />
-                  <div className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
-                    <Select label='Budget from' options={BUDGET_FROM} />
-                    <Select label='Budget to' options={BUDGET_TO} />
-                  </div>
-                  <Select label='You are a' options={BUYER_TYPES} />
-                </>
-              )}
+                <button
+                  type='submit'
+                  disabled={loading}
+                  className='mt-2 w-full bg-accent py-4 text-xs font-bold uppercase tracking-[0.18em] text-primary transition-colors hover:bg-accent-light disabled:cursor-not-allowed disabled:opacity-60'
+                >
+                  {loading ? 'Submitting…' : 'Submit Confidentially'}
+                </button>
+              </form>
+            ) : (
+              <form onSubmit={handleSubmit} className='flex flex-col gap-3.5'>
+                <Field label='Name' required error={errors.name}>
+                  <input
+                    className={`${fieldClass} ${errors.name ? 'border-red-400' : ''}`}
+                    type='text'
+                    placeholder='Enter your full name'
+                    value={form.name}
+                    onChange={update('name')}
+                    disabled={loading}
+                  />
+                </Field>
+                <Field
+                  label='Contact Number'
+                  required
+                  error={errors.contactNumber}
+                >
+                  <input
+                    className={`${fieldClass} ${errors.contactNumber ? 'border-red-400' : ''}`}
+                    type='tel'
+                    placeholder='Enter your phone number'
+                    value={form.contactNumber}
+                    onChange={update('contactNumber')}
+                    disabled={loading}
+                  />
+                </Field>
+                <Field label='Email' required error={errors.email}>
+                  <input
+                    className={`${fieldClass} ${errors.email ? 'border-red-400' : ''}`}
+                    type='email'
+                    placeholder='Enter your email address'
+                    value={form.email}
+                    onChange={update('email')}
+                    disabled={loading}
+                  />
+                </Field>
+                <Field label='Industry Interest'>
+                  <input
+                    className={fieldClass}
+                    type='text'
+                    placeholder='Enter the industry you are interested in'
+                    value={form.industryInterest}
+                    onChange={update('industryInterest')}
+                    disabled={loading}
+                  />
+                </Field>
+                <Field label='Budget'>
+                  <input
+                    className={fieldClass}
+                    type='text'
+                    placeholder='Enter your budget'
+                    value={form.budget}
+                    onChange={update('budget')}
+                    disabled={loading}
+                  />
+                </Field>
+                <Field label='Timeline To Buy'>
+                  <input
+                    className={fieldClass}
+                    type='text'
+                    placeholder='Enter your timeline to buy'
+                    value={form.timeline}
+                    onChange={update('timeline')}
+                    disabled={loading}
+                  />
+                </Field>
 
-              <Field label='Anything else (optional)'>
-                <textarea
-                  className={`${fieldClass} min-h-[88px] resize-y`}
-                  placeholder={
-                    tab === 'sell'
-                      ? 'Timing, goals or questions'
-                      : 'Business type, location, timing'
-                  }
-                />
-              </Field>
-
-              <button
-                type='submit'
-                className='mt-2 w-full bg-accent py-4 text-xs font-bold uppercase tracking-[0.18em] text-primary transition-colors hover:bg-accent-light'
-              >
-                {tab === 'sell' ? 'Submit Confidentially' : 'Submit Acquisition Brief'}
-              </button>
-            </form>
+                <button
+                  type='submit'
+                  disabled={loading}
+                  className='mt-2 w-full bg-accent py-4 text-xs font-bold uppercase tracking-[0.18em] text-primary transition-colors hover:bg-accent-light disabled:cursor-not-allowed disabled:opacity-60'
+                >
+                  {loading ? 'Submitting…' : 'Submit Acquisition Brief'}
+                </button>
+              </form>
+            )}
           </div>
         </Reveal>
 

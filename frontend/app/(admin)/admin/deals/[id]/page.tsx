@@ -222,14 +222,14 @@ export default function ProspectsPage() {
           <Button
             variant='outline'
             onClick={() => router.push('/admin/deals')}
-            className='gap-2'
+            className='gap-2 rounded-none'
           >
             <ArrowLeft className='w-4 h-4' /> Back to Deals
           </Button>
           <Button
             variant='outline'
             onClick={openImHistory}
-            className='gap-2 text-brand-primary border-brand-primary/20 hover:bg-brand-primary/5 hover:text-brand-primary'
+            className='gap-2 rounded-none text-accent border-accent/30 hover:bg-accent/5 hover:text-accent'
           >
             <Eye className='w-4 h-4' /> View IM History
           </Button>
@@ -237,10 +237,10 @@ export default function ProspectsPage() {
             variant='outline'
             onClick={toggleNotification}
             disabled={notifToggling}
-            className={`gap-2 ${
+            className={`gap-2 rounded-none ${
               notifEnabled
-                ? 'text-brand-primary border-brand-primary/30 bg-brand-primary/5 hover:bg-brand-primary/10'
-                : 'text-gray-500 border-gray-200 hover:bg-gray-50'
+                ? 'text-accent border-accent/30 bg-accent/5 hover:bg-accent/10'
+                : 'text-muted-foreground border-border hover:bg-muted'
             }`}
           >
             {notifToggling ? (
@@ -255,30 +255,31 @@ export default function ProspectsPage() {
         </div>
       }
     >
-      <div className='bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden'>
+      <div className='overflow-hidden border border-border bg-card'>
         <div className='overflow-x-auto'>
           <table className='w-full text-sm text-left'>
             <thead>
-              <tr className='border-b border-gray-100 bg-gray-50/80'>
-                <th className='px-6 py-4 font-semibold text-gray-600'>Name</th>
-                <th className='px-6 py-4 font-semibold text-gray-600'>Phone</th>
-                <th className='px-6 py-4 font-semibold text-gray-600'>Email</th>
-                <th className='px-6 py-4 font-semibold text-gray-600'>
-                  Category
-                </th>
+              <tr className='border-b border-border bg-muted/60 text-xs uppercase tracking-wider text-muted-foreground'>
+                <th className='px-6 py-4 font-semibold'>Name</th>
+                <th className='px-6 py-4 font-semibold'>Phone</th>
+                <th className='px-6 py-4 font-semibold'>Email</th>
+                <th className='px-6 py-4 font-semibold'>Category</th>
               </tr>
             </thead>
-            <tbody className='divide-y divide-gray-50'>
+            <tbody className='divide-y divide-border'>
               {loading ? (
                 <tr>
                   <td colSpan={4} className='text-center py-12'>
-                    <Loader2 className='w-6 h-6 animate-spin text-brand-primary mx-auto mb-2' />
-                    <p className='text-gray-400'>Loading prospects...</p>
+                    <Loader2 className='w-6 h-6 animate-spin text-accent mx-auto mb-2' />
+                    <p className='text-muted-foreground'>Loading prospects...</p>
                   </td>
                 </tr>
               ) : sortedProspects.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className='text-center py-12 text-gray-400'>
+                  <td
+                    colSpan={4}
+                    className='text-center py-12 text-muted-foreground'
+                  >
                     No prospects found for this deal.
                   </td>
                 </tr>
@@ -288,15 +289,15 @@ export default function ProspectsPage() {
                   return (
                     <tr
                       key={prospect._id}
-                      className='hover:bg-gray-50/60 transition-colors'
+                      className='hover:bg-muted/50 transition-colors'
                     >
-                      <td className='px-6 py-4 font-medium text-brand-black'>
+                      <td className='px-6 py-4 font-medium text-secondary'>
                         {prospect.firstName} {prospect.lastName}
                       </td>
-                      <td className='px-6 py-4 text-gray-600'>
+                      <td className='px-6 py-4 text-muted-foreground'>
                         {prospect.phone || '—'}
                       </td>
-                      <td className='px-6 py-4 text-gray-600'>
+                      <td className='px-6 py-4 text-muted-foreground'>
                         {prospect.email || '—'}
                       </td>
                       <td className='px-6 py-4'>
@@ -306,7 +307,7 @@ export default function ProspectsPage() {
                               className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-colors focus:outline-none ${
                                 meta
                                   ? meta.color
-                                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                  : 'bg-muted text-muted-foreground hover:bg-linen'
                               }`}
                             >
                               {meta ? meta.label : 'Set Category'}

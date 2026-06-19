@@ -44,8 +44,8 @@ const steps = [
 export function TheProcess() {
   return (
     <div className='mt-16 mb-12 bg-transparent'>
-      <div className='mb-8 pb-4 border-b border-gray-200'>
-        <h2 className='text-2xl font-bold text-brand-black'>The Process</h2>
+      <div className='mb-8 pb-4 border-b border-border'>
+        <h2 className='text-2xl font-bold text-secondary'>The Process</h2>
       </div>
 
       <div className='space-y-0'>
@@ -53,20 +53,20 @@ export function TheProcess() {
           <div key={index} className='relative pl-10 pb-10 last:pb-0'>
             {/* Vertical Line */}
             {index !== steps.length - 1 && (
-              <div className='absolute left-[11px] top-8 bottom-0 w-[2px] bg-brand-primary/30' />
+              <div className='absolute left-[11px] top-8 bottom-0 w-[2px] bg-accent/30' />
             )}
 
             {/* Dot */}
-            <div className='absolute left-0 top-1 w-6 h-6 rounded-full bg-brand-primary flex items-center justify-center ring-4 ring-white shadow-sm mt-0.5 text-white font-medium text-sm'>
+            <div className='absolute left-0 top-1 w-6 h-6 rounded-full bg-accent flex items-center justify-center ring-4 ring-background shadow-sm mt-0.5 text-primary font-semibold text-sm'>
               {index + 1}
             </div>
 
             {/* Content */}
             <div>
-              <h3 className='text-[16px] font-bold text-brand-black mb-2 leading-tight uppercase tracking-wide'>
+              <h3 className='text-[16px] font-bold text-secondary mb-2 leading-tight uppercase tracking-wide'>
                 {step.label}
               </h3>
-              <p className='text-gray-600 text-base leading-relaxed'>
+              <p className='text-muted-foreground text-base leading-relaxed'>
                 {step.description}
               </p>
             </div>

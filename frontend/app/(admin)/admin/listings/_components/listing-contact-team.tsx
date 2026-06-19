@@ -37,11 +37,9 @@ export function ListingContactTeam({
   errors = {},
 }: ContactTeamProps) {
   return (
-    <div className='bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-6'>
-      <div className='flex items-center gap-2 border-b border-gray-100 pb-4 mb-4'>
-        <h2 className='text-lg font-semibold text-brand-black'>
-          Contact & Team
-        </h2>
+    <div className='border border-border bg-card p-6 space-y-6'>
+      <div className='flex items-center gap-2 border-b border-border pb-4 mb-4'>
+        <h2 className='text-lg font-semibold text-secondary'>Contact & Team</h2>
       </div>
 
       <div className='grid grid-cols-1 md:grid-cols-3 gap-6 mb-8'>

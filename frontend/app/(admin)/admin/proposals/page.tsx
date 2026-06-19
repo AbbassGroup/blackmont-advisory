@@ -121,15 +121,15 @@ export default function ProposalsPage() {
       description='Create and manage client proposals'
       button={
         <Link href='/admin/proposals/new'>
-          <Button className='bg-brand-primary hover:bg-brand-primary/90 text-white gap-2'>
+          <Button className='gap-2 rounded-none bg-accent font-semibold text-primary hover:bg-accent-light'>
             <Plus className='w-4 h-4' /> New Proposal
           </Button>
         </Link>
       }
     >
-      <div className='bg-white rounded-xl shadow-sm border border-gray-100 p-4'>
+      <div className='border border-border bg-card p-4'>
         <div className='relative max-w-sm'>
-          <Search className='absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400' />
+          <Search className='absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60' />
           <Input
             placeholder='Search proposals...'
             value={search}
@@ -137,50 +137,46 @@ export default function ProposalsPage() {
               setSearch(e.target.value);
               setPage(1);
             }}
-            className='pl-9 bg-gray-50 border-gray-200'
+            className='rounded-none border-secondary/15 bg-background pl-9 shadow-none focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-accent/15'
           />
         </div>
       </div>
 
-      <div className='bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden'>
+      <div className='overflow-hidden border border-border bg-card'>
         <div className='overflow-x-auto'>
           <table className='w-full text-sm'>
             <thead>
-              <tr className='border-b border-gray-100 bg-gray-50/80'>
-                <th className='text-left px-5 py-3.5 font-semibold text-gray-600'>
-                  Business
-                </th>
-                <th className='text-left px-5 py-3.5 font-semibold text-gray-600'>
-                  Broker
-                </th>
-                <th className='text-left px-5 py-3.5 font-semibold text-gray-600 hidden md:table-cell'>
+              <tr className='border-b border-border bg-muted/60 text-left text-xs uppercase tracking-wider text-muted-foreground'>
+                <th className='px-5 py-3.5 font-semibold'>Business</th>
+                <th className='px-5 py-3.5 font-semibold'>Broker</th>
+                <th className='px-5 py-3.5 font-semibold hidden md:table-cell'>
                   Value
                 </th>
-                <th className='text-left px-5 py-3.5 font-semibold text-gray-600'>
-                  Status
-                </th>
-                <th className='text-left px-5 py-3.5 font-semibold text-gray-600 hidden lg:table-cell'>
+                <th className='px-5 py-3.5 font-semibold'>Status</th>
+                <th className='px-5 py-3.5 font-semibold hidden lg:table-cell'>
                   Created
                 </th>
-                <th className='text-left px-5 py-3.5 font-semibold text-gray-600'>
-                  Views
-                </th>
-                <th className='text-right px-5 py-3.5 font-semibold text-gray-600'>
-                  Actions
-                </th>
+                <th className='px-5 py-3.5 font-semibold'>Views</th>
+                <th className='px-5 py-3.5 text-right font-semibold'>Actions</th>
               </tr>
             </thead>
-            <tbody className='divide-y divide-gray-50'>
+            <tbody className='divide-y divide-border'>
               {loading ? (
                 <tr>
-                  <td colSpan={6} className='text-center py-12 text-gray-400'>
-                    <Loader2 className='w-6 h-6 animate-spin mx-auto mb-2' />
+                  <td
+                    colSpan={7}
+                    className='py-12 text-center text-muted-foreground'
+                  >
+                    <Loader2 className='w-6 h-6 animate-spin mx-auto mb-2 text-accent' />
                     Loading proposals...
                   </td>
                 </tr>
               ) : proposals.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className='text-center py-12 text-gray-400'>
+                  <td
+                    colSpan={7}
+                    className='py-12 text-center text-muted-foreground'
+                  >
                     No proposals found
                   </td>
                 </tr>
@@ -188,35 +184,37 @@ export default function ProposalsPage() {
                 proposals.map((p) => (
                   <tr
                     key={p._id}
-                    className='hover:bg-gray-50/60 transition-colors'
+                    className='transition-colors hover:bg-muted/50'
                   >
                     <td className='px-5 py-4'>
-                      <p className='font-semibold text-brand-black'>
+                      <p className='font-semibold text-secondary'>
                         {p.businessName}
                       </p>
-                      <p className='text-xs text-gray-500 mt-0.5'>
+                      <p className='mt-0.5 text-xs text-muted-foreground'>
                         {p.customerName}
                       </p>
-                      <p className='text-xs text-gray-400'>{p.customerEmail}</p>
+                      <p className='text-xs text-muted-foreground/70'>
+                        {p.customerEmail}
+                      </p>
                     </td>
-                    <td className='px-5 py-4 text-gray-700'>{p.brokerName}</td>
-                    <td className='px-5 py-4 text-gray-700 hidden md:table-cell'>
+                    <td className='px-5 py-4 text-foreground'>{p.brokerName}</td>
+                    <td className='px-5 py-4 text-foreground hidden md:table-cell'>
                       {p.businessValue || '—'}
                     </td>
                     <td className='px-5 py-4'>
                       <span
-                        className={`inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full ${p.isApproved ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}
+                        className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium ${p.isApproved ? 'bg-emerald-100 text-emerald-700' : 'bg-accent/15 text-accent'}`}
                       >
                         {p.isApproved ? 'Approved' : 'Pending'}
                       </span>
                     </td>
-                    <td className='px-5 py-4 text-gray-500 hidden lg:table-cell'>
+                    <td className='px-5 py-4 text-muted-foreground hidden lg:table-cell'>
                       {format(new Date(p.createdAt), 'MMM dd, yyyy')}
                     </td>
                     <td className='px-5 py-4'>
                       <button
                         onClick={() => openHistory(p)}
-                        className='p-1.5 rounded-lg hover:bg-blue-50 text-blue-500 hover:text-blue-700 transition-colors'
+                        className='p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-secondary'
                         title='View History'
                       >
                         <History className='w-4 h-4' />
@@ -226,7 +224,7 @@ export default function ProposalsPage() {
                       <div className='flex items-center justify-end gap-1'>
                         <Link href={`/admin/proposals/${p._id}`}>
                           <button
-                            className='p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors'
+                            className='p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-secondary'
                             title='Edit'
                           >
                             <Edit className='w-4 h-4' />
@@ -237,7 +235,7 @@ export default function ProposalsPage() {
                           target='_blank'
                         >
                           <button
-                            className='p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-brand-primary transition-colors'
+                            className='p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-accent'
                             title='Open Proposal'
                           >
                             <ExternalLink className='w-4 h-4' />
@@ -248,7 +246,7 @@ export default function ProposalsPage() {
                             <button
                               onClick={() => handleRevoke(p._id)}
                               disabled={actionLoading === p._id + '-revoke'}
-                              className='p-1.5 rounded-lg hover:bg-amber-50 text-amber-600 transition-colors'
+                              className='p-1.5 text-amber-600 transition-colors hover:bg-amber-50'
                               title='Revoke'
                             >
                               {actionLoading === p._id + '-revoke' ? (
@@ -261,7 +259,7 @@ export default function ProposalsPage() {
                             <button
                               onClick={() => handleApprove(p._id)}
                               disabled={actionLoading === p._id + '-approve'}
-                              className='p-1.5 rounded-lg hover:bg-green-50 text-green-600 transition-colors'
+                              className='p-1.5 text-emerald-600 transition-colors hover:bg-emerald-50'
                               title='Approve'
                             >
                               {actionLoading === p._id + '-approve' ? (
@@ -274,7 +272,7 @@ export default function ProposalsPage() {
                         {isSuperAdmin && (
                           <button
                             onClick={() => setDeleteId(p._id)}
-                            className='p-1.5 rounded-lg hover:bg-red-50 text-red-500 transition-colors'
+                            className='p-1.5 text-red-500 transition-colors hover:bg-red-50'
                             title='Delete'
                           >
                             <Trash2 className='w-4 h-4' />
@@ -290,14 +288,15 @@ export default function ProposalsPage() {
         </div>
 
         {totalPages > 1 && (
-          <div className='flex items-center justify-between px-5 py-3.5 border-t border-gray-100 bg-gray-50/50'>
-            <p className='text-sm text-gray-500'>
+          <div className='flex items-center justify-between border-t border-border bg-muted/40 px-5 py-3.5'>
+            <p className='text-sm text-muted-foreground'>
               Page {page} of {totalPages}
             </p>
             <div className='flex items-center gap-2'>
               <Button
                 variant='outline'
                 size='sm'
+                className='rounded-none'
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
               >
@@ -306,6 +305,7 @@ export default function ProposalsPage() {
               <Button
                 variant='outline'
                 size='sm'
+                className='rounded-none'
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
               >
@@ -327,23 +327,27 @@ export default function ProposalsPage() {
       )}
 
       {deleteId && (
-        <div className='fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4'>
-          <div className='bg-white rounded-2xl shadow-xl p-6 max-w-sm w-full'>
-            <h3 className='text-lg font-bold text-brand-black mb-2'>
+        <div className='fixed inset-0 z-50 flex items-center justify-center bg-secondary/40 p-4 backdrop-blur-sm'>
+          <div className='w-full max-w-sm border border-border bg-card p-6 shadow-xl'>
+            <h3 className='mb-2 text-lg font-bold text-secondary'>
               Delete Proposal?
             </h3>
-            <p className='text-sm text-gray-500 mb-6'>
+            <p className='mb-6 text-sm text-muted-foreground'>
               This action cannot be undone. The proposal and all associated data
               will be permanently deleted.
             </p>
-            <div className='flex gap-3 justify-end'>
-              <Button variant='outline' onClick={() => setDeleteId(null)}>
+            <div className='flex justify-end gap-3'>
+              <Button
+                variant='outline'
+                className='rounded-none'
+                onClick={() => setDeleteId(null)}
+              >
                 Cancel
               </Button>
               <Button
                 onClick={handleDelete}
                 disabled={!!actionLoading}
-                className='bg-red-600 hover:bg-red-700 text-white'
+                className='rounded-none bg-red-600 text-white hover:bg-red-700'
               >
                 {actionLoading ? (
                   <Loader2 className='w-4 h-4 animate-spin' />

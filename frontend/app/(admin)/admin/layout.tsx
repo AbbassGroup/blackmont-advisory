@@ -40,14 +40,17 @@ export default function AdminLayout({
         <SidebarProvider>
           <AdminSidebar />
           <SidebarInset>
-            <header className='sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-border bg-background px-4 shrink-0'>
+            <header className='sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-border bg-card px-4 shrink-0'>
               <SidebarTrigger className='-ml-1' />
               <Separator orientation='vertical' className='h-5' />
               <p className='text-sm text-muted-foreground'>
-                Welcome {user?.user?.username}
+                Welcome{' '}
+                <span className='font-semibold text-secondary'>
+                  {user?.user?.username}
+                </span>
               </p>
             </header>
-            <div className='flex-1 overflow-auto p-6 bg-gray-50/50'>
+            <div className='flex-1 overflow-auto p-6 bg-background'>
               {children}
             </div>
           </SidebarInset>

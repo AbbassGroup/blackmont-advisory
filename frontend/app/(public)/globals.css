@@ -99,14 +99,15 @@
   --chart-4: #e2c97e;
   --chart-5: #6b6560;
   --radius: 0.5rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.2 0 0);
-  --sidebar-primary: oklch(0.74 0.18 145);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.2 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.74 0.18 145);
+  /* Admin sidebar — Blackmont navy chrome with gilt accents */
+  --sidebar: #131c2a; /* Deep navy, a touch below Secondary */
+  --sidebar-foreground: #c9c4ba; /* Muted parchment — idle labels */
+  --sidebar-primary: #c9a84c; /* Gilt */
+  --sidebar-primary-foreground: #0f1623; /* Midnight */
+  --sidebar-accent: rgba(201, 168, 76, 0.14); /* Gilt tint — hover/active */
+  --sidebar-accent-foreground: #e2c97e; /* Light gilt */
+  --sidebar-border: rgba(240, 235, 224, 0.1); /* Parchment @ 10% */
+  --sidebar-ring: #c9a84c;
 }
 
 .dark {

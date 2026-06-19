@@ -31,12 +31,14 @@ export function AboutAbbass() {
 
   return (
     <div className='mt-16 mb-12 bg-transparent'>
-      <div className='mb-6 pb-4 border-b border-gray-200'>
-        <h2 className='text-2xl font-bold text-brand-black'>About ABBASS</h2>
+      <div className='mb-6 pb-4 border-b border-border'>
+        <h2 className='text-2xl font-bold text-secondary'>
+          About Blackmont Advisory
+        </h2>
       </div>
 
       <div>
-        <p className='text-gray-800 text-base leading-relaxed mb-6 text-justify'>
+        <p className='text-foreground text-base leading-relaxed mb-6 text-justify'>
           At Blackmont Advisory, we specialise in facilitating the seamless sale
           and acquisition of businesses across Australia. With deep market
           knowledge and a personalised approach, we guide business owners and
@@ -47,15 +49,15 @@ export function AboutAbbass() {
           with confidence and ease.
         </p>
 
-        <p className='text-brand-black font-medium text-base mb-4'>
+        <p className='text-secondary font-medium text-base mb-4'>
           We help Business Owners with the following services:
         </p>
 
         <ul className='space-y-3 mb-8'>
           {services.map((service, index) => (
             <li key={index} className='flex items-start'>
-              <div className='w-2 h-2 rounded-full bg-brand-primary mt-2 mr-3 shrink-0' />
-              <span className='text-gray-800 text-base'>{service}</span>
+              <div className='w-2 h-2 rounded-full bg-accent mt-2 mr-3 shrink-0' />
+              <span className='text-foreground text-base'>{service}</span>
             </li>
           ))}
         </ul>
@@ -69,7 +71,7 @@ export function AboutAbbass() {
                 href={link.url}
                 target='_blank'
                 rel='noreferrer'
-                className='w-11 h-11 rounded-full bg-brand-primary text-white flex items-center justify-center hover:bg-brand-primary-dark hover:scale-110 transition-all duration-300 shadow-sm hover:shadow-md'
+                className='w-11 h-11 rounded-full bg-secondary text-parchment flex items-center justify-center hover:bg-accent hover:text-primary hover:scale-110 transition-all duration-300 shadow-sm hover:shadow-md'
               >
                 <Icon className='w-5 h-5' />
               </a>

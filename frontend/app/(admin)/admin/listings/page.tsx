@@ -125,85 +125,75 @@ export default function ListingsPage() {
       description='View, edit, and manage all business listings'
       button={
         <Link href='/admin/listings/new'>
-          <Button className='bg-brand-primary hover:bg-brand-primary/90 text-white gap-2'>
+          <Button className='gap-2 rounded-none bg-accent font-semibold text-primary hover:bg-accent-light'>
             <Plus className='w-4 h-4' /> Add New Listing
           </Button>
         </Link>
       }
     >
-      <div className='bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden'>
+      <div className='overflow-hidden border border-border bg-card'>
         <div className='overflow-x-auto'>
           <table className='w-full text-sm text-left'>
             <thead>
-              <tr className='bg-gray-50/80 border-b border-gray-100'>
-                <th className='px-6 py-4 font-semibold text-gray-600'>
-                  Reference ID
-                </th>
-                <th className='px-6 py-4 font-semibold text-gray-600'>Title</th>
-                <th className='px-6 py-4 font-semibold text-gray-600'>
-                  Location
-                </th>
-                <th className='px-6 py-4 font-semibold text-gray-600'>Price</th>
-                <th className='px-6 py-4 font-semibold text-gray-600 text-center'>
-                  Featured
-                </th>
-                <th className='px-6 py-4 font-semibold text-gray-600 text-center'>
-                  Shared
-                </th>
-                <th className='px-6 py-4 font-semibold text-gray-600 text-right'>
-                  Actions
-                </th>
+              <tr className='bg-muted/60 border-b border-border text-xs uppercase tracking-wider text-muted-foreground'>
+                <th className='px-6 py-4 font-semibold'>Reference ID</th>
+                <th className='px-6 py-4 font-semibold'>Title</th>
+                <th className='px-6 py-4 font-semibold'>Location</th>
+                <th className='px-6 py-4 font-semibold'>Price</th>
+                <th className='px-6 py-4 font-semibold text-center'>Featured</th>
+                <th className='px-6 py-4 font-semibold text-center'>Shared</th>
+                <th className='px-6 py-4 font-semibold text-right'>Actions</th>
               </tr>
             </thead>
-            <tbody className='divide-y divide-gray-50'>
+            <tbody className='divide-y divide-border'>
               {loading ? (
                 <tr>
-                  <td colSpan={6} className='text-center py-16'>
-                    <Loader2 className='w-8 h-8 animate-spin text-brand-primary mx-auto mb-4' />
-                    <p className='text-gray-400 font-medium'>
+                  <td colSpan={7} className='text-center py-16'>
+                    <Loader2 className='w-8 h-8 animate-spin text-accent mx-auto mb-4' />
+                    <p className='text-muted-foreground font-medium'>
                       Loading listings...
                     </p>
                   </td>
                 </tr>
               ) : error ? (
                 <tr>
-                  <td colSpan={6} className='text-center py-16 text-red-500'>
+                  <td colSpan={7} className='text-center py-16 text-red-500'>
                     {error}
                   </td>
                 </tr>
               ) : listings.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className='text-center py-16'>
-                    <Building2 className='w-12 h-12 text-gray-200 mx-auto mb-4' />
-                    <h3 className='text-lg font-semibold text-brand-black mb-1'>
+                  <td colSpan={7} className='text-center py-16'>
+                    <Building2 className='w-12 h-12 text-border mx-auto mb-4' />
+                    <h3 className='text-lg font-semibold text-secondary mb-1'>
                       No Listings Found
                     </h3>
-                    <p className='text-gray-500 mb-6'>
+                    <p className='text-muted-foreground mb-6'>
                       Get started by adding your first business listing.
                     </p>
                     <Link href='/admin/listings/new'>
-                      <Button variant='outline' className='gap-2'>
+                      <Button variant='outline' className='gap-2 rounded-none'>
                         <Plus className='w-4 h-4' /> Add Listing
                       </Button>
                     </Link>
                   </td>
                 </tr>
               ) : (
-                listings.map((listing, index) => (
+                listings.map((listing) => (
                   <tr
                     key={listing._id}
-                    className='hover:bg-gray-50/60 transition-colors'
+                    className='hover:bg-muted/50 transition-colors'
                   >
-                    <td className='px-6 py-4 font-medium text-brand-black max-w-xs truncate'>
+                    <td className='px-6 py-4 font-medium text-secondary max-w-xs truncate'>
                       {listing.referenceId || '—'}
                     </td>
-                    <td className='px-6 py-4 font-medium text-brand-black max-w-xs truncate'>
+                    <td className='px-6 py-4 font-medium text-secondary max-w-xs truncate'>
                       {listing.title || 'Untitled'}
                     </td>
-                    <td className='px-6 py-4 text-gray-600'>
+                    <td className='px-6 py-4 text-muted-foreground'>
                       {listing.location || '—'}
                     </td>
-                    <td className='px-6 py-4 text-gray-600'>
+                    <td className='px-6 py-4 text-muted-foreground'>
                       {listing.price === 0 || listing.price
                         ? String(listing.price)
                         : '—'}
@@ -215,10 +205,10 @@ export default function ListingsPage() {
                           disabled={!listing.featured && featuredCount >= 4}
                           className={`p-1.5 rounded flex items-center gap-1.5 transition-colors ${
                             listing.featured
-                              ? 'text-amber-500 hover:bg-amber-50'
+                              ? 'text-accent hover:bg-accent/10'
                               : !listing.featured && featuredCount >= 4
-                                ? 'text-gray-300 cursor-not-allowed opacity-50'
-                                : 'text-gray-400 hover:text-amber-500 hover:bg-gray-100'
+                                ? 'text-muted-foreground/50 cursor-not-allowed opacity-50'
+                                : 'text-muted-foreground/70 hover:text-accent hover:bg-muted'
                           }`}
                           title={
                             !listing.featured && featuredCount >= 4
@@ -243,7 +233,7 @@ export default function ListingsPage() {
                         <Button
                           variant='ghost'
                           size='icon'
-                          className='text-gray-500 hover:text-brand-primary hover:bg-brand-primary/10'
+                          className='text-muted-foreground hover:text-accent hover:bg-accent/10'
                           onClick={() =>
                             router.push(`/admin/listings/${listing._id}`)
                           }
@@ -253,7 +243,7 @@ export default function ListingsPage() {
                         <Button
                           variant='ghost'
                           size='icon'
-                          className='text-gray-500 hover:text-red-600 hover:bg-red-50'
+                          className='text-muted-foreground hover:text-red-600 hover:bg-red-50'
                           onClick={() =>
                             handleDelete(listing._id, listing.title)
                           }

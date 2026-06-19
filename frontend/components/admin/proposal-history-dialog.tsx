@@ -46,7 +46,7 @@ const FormatLocalTime = ({ dateStr }: { dateStr: string }) => {
   return (
     <div className='flex flex-col'>
       <span>{datePart}</span>
-      <span className='text-xs text-gray-400'>{timePart}</span>
+      <span className='text-xs text-muted-foreground/70'>{timePart}</span>
     </div>
   );
 };
@@ -60,13 +60,13 @@ export function ProposalHistoryDialog({
 }: ProposalHistoryDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='md:max-w-3xl! w-full max-h-[85vh] overflow-hidden flex flex-col p-0 gap-0 bg-white'>
-        <DialogHeader className='px-6 py-4 border-b border-gray-100'>
-          <DialogTitle className='flex items-center gap-2 text-lg text-brand-black'>
-            <Eye className='w-5 h-5 text-brand-primary' />
+      <DialogContent className='md:max-w-3xl! w-full max-h-[85vh] overflow-hidden flex flex-col p-0 gap-0 bg-card'>
+        <DialogHeader className='px-6 py-4 border-b border-border'>
+          <DialogTitle className='flex items-center gap-2 text-lg text-secondary'>
+            <Eye className='w-5 h-5 text-accent' />
             Proposal View History
             {businessName && (
-              <span className='text-sm font-normal text-gray-400 ml-1'>
+              <span className='ml-1 text-sm font-normal text-muted-foreground'>
                 — {businessName}
               </span>
             )}
@@ -76,49 +76,41 @@ export function ProposalHistoryDialog({
         <div className='flex-1 overflow-y-auto p-0'>
           {loading ? (
             <div className='flex items-center justify-center p-12'>
-              <Loader2 className='w-8 h-8 animate-spin text-brand-primary' />
+              <Loader2 className='w-8 h-8 animate-spin text-accent' />
             </div>
           ) : logs.length === 0 ? (
             <div className='flex flex-col items-center justify-center p-12'>
-              <Eye className='w-12 h-12 text-gray-200 mb-4' />
-              <p className='text-gray-500 font-medium'>
+              <Eye className='mb-4 h-12 w-12 text-border' />
+              <p className='font-medium text-muted-foreground'>
                 No views recorded yet for this proposal.
               </p>
             </div>
           ) : (
             <table className='w-full text-sm text-left'>
-              <thead className='bg-gray-50/80 border-b border-gray-100 sticky top-0 z-10'>
+              <thead className='sticky top-0 z-10 border-b border-border bg-muted/60 text-xs uppercase tracking-wider text-muted-foreground'>
                 <tr>
-                  <th className='px-5 py-3 font-semibold text-gray-600 w-12 text-center'>
-                    #
-                  </th>
-                  <th className='px-4 py-3 font-semibold text-gray-600'>
-                    Customer Name
-                  </th>
-                  <th className='px-4 py-3 font-semibold text-gray-600'>
-                    Email
-                  </th>
-                  <th className='px-4 py-3 font-semibold text-gray-600'>
-                    Viewed At
-                  </th>
+                  <th className='w-12 px-5 py-3 text-center font-semibold'>#</th>
+                  <th className='px-4 py-3 font-semibold'>Customer Name</th>
+                  <th className='px-4 py-3 font-semibold'>Email</th>
+                  <th className='px-4 py-3 font-semibold'>Viewed At</th>
                 </tr>
               </thead>
-              <tbody className='divide-y divide-gray-50'>
+              <tbody className='divide-y divide-border'>
                 {logs.map((log, idx) => (
                   <tr
                     key={log._id}
-                    className='hover:bg-gray-50/60 transition-colors'
+                    className='transition-colors hover:bg-muted/50'
                   >
-                    <td className='px-5 py-3.5 text-center text-gray-400 text-xs font-medium'>
+                    <td className='px-5 py-3.5 text-center text-xs font-medium text-muted-foreground/70'>
                       {logs.length - idx}
                     </td>
-                    <td className='px-4 py-3.5 font-medium text-brand-black'>
+                    <td className='px-4 py-3.5 font-medium text-secondary'>
                       {log.customerName || '—'}
                     </td>
-                    <td className='px-4 py-3.5 text-gray-600'>
+                    <td className='px-4 py-3.5 text-foreground'>
                       {log.customerEmail || '—'}
                     </td>
-                    <td className='px-4 py-3.5 text-gray-500'>
+                    <td className='px-4 py-3.5 text-muted-foreground'>
                       <FormatLocalTime dateStr={log.createdAt} />
                     </td>
                   </tr>
