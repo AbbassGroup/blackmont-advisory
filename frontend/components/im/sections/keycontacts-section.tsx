@@ -5,8 +5,7 @@ import { Button } from '@/components/ui/button';
 import { SectionHeading } from '../section-chrome';
 import { AppraisalDialog } from '../appraisal-dialog';
 
-const BUY_A_BUSINESS_URL =
-  'https://www.blackmontadvisory.com/buy-a-business';
+const BUY_A_BUSINESS_URL = 'https://www.blackmontadvisory.com/buy-a-business';
 
 const CONTACTS = [
   {
@@ -29,6 +28,13 @@ const CONTACTS = [
     company: 'Costanzo Harris',
     phone: '0423 048 446',
     image: '/costanzo-harris.png',
+  },
+  {
+    role: 'Business Insurance',
+    name: 'Terry Lee',
+    company: 'CGIS Insurance',
+    phone: '0456 536 680',
+    image: '/CGIS.png',
   },
 ];
 
@@ -107,7 +113,7 @@ export function KeyContactsSection({
         onChange={(v) => onChange?.({ title: v })}
         placeholder='Key Contacts'
       />
-      <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+      <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-2'>
         {CONTACTS.map((c) => (
           <div
             key={c.role}

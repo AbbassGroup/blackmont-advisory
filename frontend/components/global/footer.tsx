@@ -23,20 +23,20 @@ export function Footer() {
               <Image
                 unoptimized
                 loading='eager'
-                src='/assets/logo.png'
+                src='/assets/blackmont-light.png'
                 alt='Blackmont Advisory'
                 width={48}
                 height={48}
-                className='h-12 w-12'
+                className='h-full w-full object-contain max-w-84 max-h-84'
               />
-              <div className='flex flex-col leading-none'>
+              {/* <div className='flex flex-col leading-none'>
                 <span className='text-xl font-bold uppercase tracking-[0.06em] text-parchment'>
                   Blackmont
                 </span>
                 <span className='mt-1 text-[0.7rem] font-medium uppercase tracking-[0.18em] text-parchment/45'>
                   Advisory
                 </span>
-              </div>
+              </div> */}
             </div>
             <p className='max-w-xs text-sm leading-relaxed text-parchment/55'>
               We represent business owners seeking a premium exit, and act as

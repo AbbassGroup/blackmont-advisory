@@ -13,7 +13,7 @@ const focusPoints = [
 
 export function OurApproach() {
   return (
-    <section className='py-20 lg:py-28 bg-background relative overflow-hidden'>
+    <section className='py-20 lg:py-28 bg-white relative overflow-hidden'>
       {/* Decorative gradient orb */}
       <div className='absolute bottom-[10%] -right-[8%] w-[450px] h-[450px] rounded-full bg-[radial-gradient(circle,rgba(201,168,76,0.05)_0%,transparent_70%)] pointer-events-none' />
 
@@ -57,7 +57,7 @@ export function OurApproach() {
           <div className='hidden md:block md:col-span-5'>
             <div className='relative w-full aspect-square'>
               <Image
-                src='/our-approach.png'
+                src='/assets/partnership.webp'
                 alt='Our boutique, strategic approach'
                 fill
                 className='object-cover'

@@ -30,20 +30,13 @@ function BrandLockup() {
       aria-label='Blackmont Advisory home'
     >
       <Image
-        src='/assets/logo.png'
+        unoptimized
+        src='/assets/blackmont-light.png'
         alt='Blackmont Advisory logo'
         width={32}
         height={32}
-        className='h-10 w-10'
+        className='h-10 w-full'
       />
-      <span className='flex flex-col leading-none'>
-        <span className='text-[15px] font-bold uppercase tracking-[0.06em] text-parchment'>
-          Blackmont
-        </span>
-        <span className='mt-0.5 text-[10px] font-normal uppercase tracking-[0.18em] text-parchment/45'>
-          Advisory
-        </span>
-      </span>
     </Link>
   );
 }

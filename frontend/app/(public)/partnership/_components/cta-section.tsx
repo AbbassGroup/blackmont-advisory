@@ -30,7 +30,7 @@ function ActionCard({
 
 export function CTASection() {
   const handlePhoneClick = () => {
-    window.location.href = 'tel:0391031317';
+    window.location.href = 'tel:+61433525731';
   };
 
   return (
@@ -69,7 +69,7 @@ export function CTASection() {
           <ActionCard
             icon={Phone}
             title='Contact Us Directly'
-            body='Reach out via phone or email.'
+            body='+61 433 525 731'
             onClick={handlePhoneClick}
           />
         </div>

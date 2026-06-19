@@ -3,8 +3,6 @@
 import { PartnershipHero } from './_components/hero';
 import { IntroSection } from './_components/intro-section';
 
-import { AgentsCarousel } from '@/components/global/agents-carousel';
-import { BookDiscussionButton } from './_components/book-discussion-button';
 import { HowAddValue } from './_components/how-add-value';
 import { WhyAbbass } from './_components/why-abbass';
 import { OurApproach } from './_components/our-approach';
@@ -22,9 +20,6 @@ export default function PartnershipPage() {
         <IntroSection />
         <WhyMatters />
         <HowWork />
-        <AgentsCarousel title='Meet Our Agents'>
-          <BookDiscussionButton />
-        </AgentsCarousel>
 
         <HowAddValue />
         <WhyAbbass />

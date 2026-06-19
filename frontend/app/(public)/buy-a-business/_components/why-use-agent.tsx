@@ -57,7 +57,7 @@ export function WhyUseAgent() {
         <div className='grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-center mb-16 lg:mb-24'>
           <div className='relative hidden md:block aspect-square max-w-[400px] mx-auto w-full'>
             <Image
-              src='/business-deal.svg'
+              src='/partnership.svg'
               alt='Business Deal'
               fill
               className='object-contain'

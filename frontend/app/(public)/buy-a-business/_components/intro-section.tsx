@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { ContactFormModal } from '@/components/global/contact-form-modal';
 
@@ -21,15 +22,16 @@ export function IntroSection() {
           </ContactFormModal>
         </div>
         <div className='order-1 md:order-2 col-span-2 max-w-60 md:max-w-80 mx-auto md:ml-auto'>
-          <video
-            src='/buy.mp4'
-            autoPlay
-            loop
-            muted
-            playsInline
-            controls
-            className='w-full h-auto rounded-lg'
-          />
+          <div className='relative aspect-square w-full'>
+            <Image
+              src='/looking-business.svg'
+              alt='Looking to buy a business'
+              width={600}
+              height={600}
+              className='object-contain w-full h-full'
+              unoptimized
+            />
+          </div>
         </div>
       </div>
     </section>
