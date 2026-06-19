@@ -51,8 +51,8 @@ router.post('/', async (req, res) => {
     // Email content
     const mailOptions = {
       from: formatFrom(process.env.EMAIL_USER),
-      to: 'mohammadjahid0007@gmail.com',
-      // to: 'sadeq@blackmontadvisory.com',
+      // to: 'mohammadjahid0007@gmail.com',
+      to: 'sadeq@blackmontadvisory.com',
       subject: 'New Business Buyers Advocacy Enquiry - Blackmont Advisory',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">

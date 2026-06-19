@@ -1,12 +1,4 @@
-/**
- * Central broker directory — the single source of truth for the "Welcome
- * Message" section of an Information Memorandum and for the broker pickers in
- * the admin. Each broker's welcome copy mirrors their printed memorandum page.
- *
- * The IM welcome section is rendered by matching a template's `brokerEmail`
- * against `email` here. Emails are the join key everywhere, so keep them in
- * sync with the admin User accounts.
- */
+
 export type Broker = {
   name: string;
   email: string;
