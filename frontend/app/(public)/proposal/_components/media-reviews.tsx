@@ -1,7 +1,7 @@
 const reviews = [
   {
     name: 'HUSS KHOSRAVI',
-    text: 'Abbass and his team are highly professional and knowledgeable. He genuinely care about his clients. He provides clear, honest advice and goes the extra mile to help people achieve their property and business goals. His expertise, integrity and dedication make him a trusted advisor in the industry. Highly recommended!',
+    text: 'The Blackmont Advisory team are highly professional and knowledgeable. They genuinely care about their clients, providing clear, honest advice and going the extra mile to help people achieve their property and business goals. Their expertise, integrity and dedication make them a trusted advisor in the industry. Highly recommended!',
     rating: 5,
   },
   {
@@ -16,17 +16,17 @@ const reviews = [
   },
   {
     name: 'DAN LAKI',
-    text: 'My experience with Abbass Group was exceptional. As someone new to the process of purchasing a business, Sadeq made everything smooth and seamless. He was informative, responsive, and took the time to answer all of my questions in detail. I would definitely work with them again.',
+    text: 'My experience with Blackmont Advisory was exceptional. As someone new to the process of purchasing a business, Sadeq made everything smooth and seamless. He was informative, responsive, and took the time to answer all of my questions in detail. I would definitely work with them again.',
     rating: 5,
   },
   {
     name: 'AGUST RYAN',
-    text: 'I had a great experience with the Abbass Group. The team was outstanding! very professional, friendly, and welcoming from the start. They were always willing to help, offering clear advice and support whenever I needed it. I was impressed by how knowledgeable and approachable everyone was, making it easy to learn and feel comfortable. Abbass Group has a fantastic team that truly stands out for their dedication and teamwork. I highly recommend them!',
+    text: 'I had a great experience with the Blackmont Advisory team. They were outstanding! very professional, friendly, and welcoming from the start. They were always willing to help, offering clear advice and support whenever I needed it. I was impressed by how knowledgeable and approachable everyone was, making it easy to learn and feel comfortable. Blackmont Advisory has a fantastic team that truly stands out for their dedication and teamwork. I highly recommend them!',
     rating: 5,
   },
   {
     name: 'ADISHA FERNANDO',
-    text: 'Abbass Brokers was instrumental in helping us find the perfect buyer. Their market knowledge and negotiation skills are on another level. Highly Recommended..!!',
+    text: 'Blackmont Advisory was instrumental in helping us find the perfect buyer. Their market knowledge and negotiation skills are on another level. Highly Recommended..!!',
     rating: 5,
   },
 ];

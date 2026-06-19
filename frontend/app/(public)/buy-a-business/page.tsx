@@ -4,7 +4,7 @@ import { WhyUseAgent } from './_components/why-use-agent';
 import { BuyingProcess } from './_components/buying-process';
 import { WhoWeWorkWith } from './_components/who-we-work-with';
 import { TalkToAgent } from './_components/talk-to-agent';
-import { WhyAbbass } from './_components/why-abbass';
+import { WhyBlackmont } from './_components/why-blackmont';
 import { CTASection } from './_components/cta-section';
 import { PageBanner } from '@/components/global/page-banner';
 
@@ -38,7 +38,7 @@ export default function BuyBusinessPage() {
       <BuyingProcess />
       <WhoWeWorkWith />
       <TalkToAgent />
-      <WhyAbbass />
+      <WhyBlackmont />
       <CTASection />
     </main>
   );

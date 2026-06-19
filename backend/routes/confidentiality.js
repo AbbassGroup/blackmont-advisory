@@ -316,7 +316,7 @@ router.post('/', async (req, res) => {
     // console.log({ prospectData });
 
 
-    const nexarApi = process.env.NEXAR_API_URL || 'https://api.nexartechnologies.com/api/v1';
+    const nexarApi = process.env.NEXAR_API_URL || 'https://blackmont-api.nexartechnologies.com';
 
     // Execute all independent async operations concurrently
     await Promise.all([
@@ -410,7 +410,7 @@ router.get('/approve', async (req, res) => {
           <p>Thank you for completing the NDA. Please see below the Information Memorandum:</p>
           <div style="margin:32px 0">
             <a href="${imUrl}"
-              style="display:inline-block;padding:14px 36px;background:#56C1BC;color:#fff;font-size:16px;font-weight:bold;text-decoration:none;border-radius:6px">
+              style="display:inline-block;padding:14px 36px;background:#1b2535;color:#fff;font-size:16px;font-weight:bold;text-decoration:none;border-radius:6px">
               View IM
             </a>
           </div>

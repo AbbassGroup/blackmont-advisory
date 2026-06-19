@@ -83,13 +83,13 @@ export function SectionsPanel({
           return (
             <li
               key={section.uid || section._id || index}
-              className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-3"
+              className="flex items-center gap-3 border border-border bg-card p-3"
             >
               <div className="flex flex-col">
                 <button
                   onClick={() => onMove(index, -1)}
                   disabled={index === 0}
-                  className="text-gray-400 transition hover:text-brand-primary disabled:opacity-25"
+                  className="text-muted-foreground/60 transition hover:text-accent disabled:opacity-25"
                   title="Move up"
                 >
                   <ChevronUp className="h-4 w-4" />
@@ -97,7 +97,7 @@ export function SectionsPanel({
                 <button
                   onClick={() => onMove(index, 1)}
                   disabled={index === sections.length - 1}
-                  className="text-gray-400 transition hover:text-brand-primary disabled:opacity-25"
+                  className="text-muted-foreground/60 transition hover:text-accent disabled:opacity-25"
                   title="Move down"
                 >
                   <ChevronDown className="h-4 w-4" />
@@ -105,8 +105,10 @@ export function SectionsPanel({
               </div>
 
               <span
-                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
-                  enabled ? 'bg-brand-primary/10 text-brand-primary' : 'bg-gray-100 text-gray-400'
+                className={`flex h-9 w-9 shrink-0 items-center justify-center ${
+                  enabled
+                    ? 'bg-accent/15 text-accent'
+                    : 'bg-muted text-muted-foreground/60'
                 }`}
               >
                 <Icon className="h-4 w-4" />
@@ -115,19 +117,21 @@ export function SectionsPanel({
               <div className="min-w-0 flex-1">
                 <p
                   className={`truncate text-sm font-medium ${
-                    enabled ? 'text-brand-black' : 'text-gray-400'
+                    enabled ? 'text-secondary' : 'text-muted-foreground/60'
                   }`}
                 >
                   {label}
                 </p>
-                <p className="truncate text-xs text-gray-400">Section {index + 1}</p>
+                <p className="truncate text-xs text-muted-foreground/60">
+                  Section {index + 1}
+                </p>
               </div>
 
               <Switch checked={enabled} onCheckedChange={() => onToggle(index)} />
 
               <button
                 onClick={() => onDuplicate(index)}
-                className="rounded-lg p-1.5 text-gray-300 transition hover:bg-brand-primary/10 hover:text-brand-primary"
+                className="p-1.5 text-muted-foreground/50 transition hover:bg-accent/10 hover:text-accent"
                 title="Duplicate section"
               >
                 <Copy className="h-4 w-4" />
@@ -135,7 +139,7 @@ export function SectionsPanel({
 
               <button
                 onClick={() => onRemove(index)}
-                className="rounded-lg p-1.5 text-gray-300 transition hover:bg-red-50 hover:text-red-500"
+                className="p-1.5 text-muted-foreground/50 transition hover:bg-red-50 hover:text-red-500"
                 title="Remove section"
               >
                 <Trash2 className="h-4 w-4" />
@@ -145,10 +149,10 @@ export function SectionsPanel({
         })}
       </ul>
 
-      <div className="border-t border-gray-100 pt-5">
-        <h4 className="mb-3 text-sm font-semibold text-gray-700">Add a section</h4>
+      <div className="border-t border-border pt-5">
+        <h4 className="mb-3 text-sm font-semibold text-foreground">Add a section</h4>
         {addable.length === 0 ? (
-          <p className="text-xs text-gray-400">All available sections have been added.</p>
+          <p className="text-xs text-muted-foreground/60">All available sections have been added.</p>
         ) : (
           <div className="space-y-2">
             {addable.map((meta) => {
@@ -157,16 +161,16 @@ export function SectionsPanel({
                 <button
                   key={meta.type}
                   onClick={() => onAdd(meta.type)}
-                  className="flex w-full items-center gap-3 rounded-xl border border-dashed border-gray-300 p-3 text-left transition hover:border-brand-primary hover:bg-brand-primary/5"
+                  className="flex w-full items-center gap-3 border border-dashed border-border p-3 text-left transition hover:border-accent hover:bg-accent/5"
                 >
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-500">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center bg-muted text-muted-foreground">
                     <Icon className="h-4 w-4" />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-brand-black">{meta.label}</p>
-                    <p className="truncate text-xs text-gray-400">{meta.description}</p>
+                    <p className="text-sm font-medium text-secondary">{meta.label}</p>
+                    <p className="truncate text-xs text-muted-foreground/60">{meta.description}</p>
                   </div>
-                  <Plus className="h-4 w-4 shrink-0 text-brand-primary" />
+                  <Plus className="h-4 w-4 shrink-0 text-accent" />
                 </button>
               );
             })}

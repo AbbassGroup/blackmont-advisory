@@ -26,18 +26,18 @@ import {
   YourInvestment,
   MediaReviews,
   TheProcess,
-  AboutAbbass,
+  AboutBlackmont,
   ContactUs,
 } from '@/components/proposal';
 
 const BROKERS = [
   { name: 'Tester', email: 'mohammadjahid0007@gmail.coms' },
-  { name: 'Sadeq Abbass', email: 'sadeq@abbass.group' },
-  { name: 'Asif Ahammed', email: 'asif.ahammed@abbass.group' },
-  { name: 'Freddie Wong', email: 'freddie.wong@abbass.group' },
-  { name: 'Igor Vasiliev', email: 'igor.vasiliev@abbass.group' },
-  { name: 'Hicham Nahas', email: 'hicham.nahas@abbass.group' },
-  { name: 'Fiona Johns', email: 'fiona@abbass.group' },
+  { name: 'Sadeq Abbass', email: 'sadeq@blackmontadvisory.com' },
+  { name: 'Asif Ahammed', email: 'asif.ahammed@blackmontadvisory.com' },
+  { name: 'Freddie Wong', email: 'freddie.wong@blackmontadvisory.com' },
+  { name: 'Igor Vasiliev', email: 'igor.vasiliev@blackmontadvisory.com' },
+  { name: 'Hicham Nahas', email: 'hicham.nahas@blackmontadvisory.com' },
+  { name: 'Fiona Johns', email: 'fiona@blackmontadvisory.com' },
 ];
 
 const TERMS = ['30', '60', '90', '120', '150', '180', '270', '360'];
@@ -886,8 +886,8 @@ export default function ProposalFormPage() {
               {/* The Process */}
               <TheProcess />
 
-              {/* About ABBASS */}
-              <AboutAbbass />
+              {/* About Blackmont Advisory */}
+              <AboutBlackmont />
 
               {/* Contact Us */}
               <ContactUs />

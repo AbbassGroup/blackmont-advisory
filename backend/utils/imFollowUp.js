@@ -8,7 +8,8 @@ const { sendMail } = require('./mailer');
 // changes how we resolve the broker + business name.
 
 const FROM = process.env.SENDGRID_FROM || process.env.EMAIL_FROM || 'info@blackmontadvisory.com';
-const TEAL = '#56C1BC';
+const NAVY = '#1b2535'; // filled button background (Deep Navy)
+const GILT = '#c9a84c'; // outline button accent (Gilt)
 
 function backendBase() {
   return (process.env.BACKEND_URL || 'http://localhost:5005').replace(/\/$/, '');
@@ -67,10 +68,10 @@ function buildFollowUpEmail({ enquiry, businessName, brokerName, interestedUrl, 
       <p>Hi ${firstName},</p>
       <p>You recently enquired about a business opportunity. We're checking in to see if we can assist further.</p>
       <p style="margin:20px 0 12px">
-        <a href="${interestedUrl}" style="${btn};background:${TEAL};color:#fff">Interested | Please provide more information</a>
+        <a href="${interestedUrl}" style="${btn};background:${NAVY};color:#fff">Interested | Please provide more information</a>
       </p>
       <p style="margin:0 0 20px">
-        <a href="${browseUrl}" style="${btn};background:#fff;color:${TEAL};border:1px solid ${TEAL}">Not Suitable | Help me find another business</a>
+        <a href="${browseUrl}" style="${btn};background:#fff;color:${GILT};border:1px solid ${GILT}">Not Suitable | Help me find another business</a>
       </p>
       <p style="margin-top:28px">${signatureName}<br/>Blackmont Advisory<br/>(03) 9103 1317<br/><a href="mailto:info@blackmontadvisory.com">info@blackmontadvisory.com</a><br/><a href="https://www.blackmontadvisory.com">www.blackmontadvisory.com</a></p>
     </div>`;

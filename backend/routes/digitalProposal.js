@@ -204,7 +204,7 @@ router.put('/:id', upload.single('backgroundImage'), multerErrorHandler, async (
 
     // Update background image if new one uploaded
     if (req.file) {
-      updateData.backgroundImage = `https://apibusinessbrokers.abbass.com.au/uploads/proposals/${req.file.filename}`;
+      updateData.backgroundImage = `https://api.blackmontadvisory.com/uploads/proposals/${req.file.filename}`;
     }
 
     const updatedProposal = await DigitalProposal.findByIdAndUpdate(

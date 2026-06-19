@@ -99,33 +99,33 @@ export default function AdminConfidentialityPage() {
       title='Confidentiality Agreements'
       description='Manage and download signed NDAs and compliance agreements.'
     >
-      <div className='bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between'>
+      <div className='bg-card border border-border p-4 mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between'>
         <div className='relative max-w-lg w-full'>
-          <Search className='absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400' />
+          <Search className='absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60' />
           <Input
             placeholder='Search agreements...'
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className='pl-9 bg-gray-50 border-gray-200'
+            className='pl-9 rounded-none border-secondary/15 bg-background shadow-none focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-accent/15'
           />
         </div>
-        <p className='text-sm text-gray-500 shrink-0'>
+        <p className='text-sm text-muted-foreground shrink-0'>
           Showing{' '}
-          <span className='font-semibold text-gray-700'>
+          <span className='font-semibold text-secondary'>
             {filteredPdfs.length}
           </span>{' '}
           of {pdfs.length}
         </p>
       </div>
 
-      <div className='bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden'>
+      <div className='bg-card border border-border overflow-hidden'>
         {loading ? (
           <div className='flex items-center justify-center p-24'>
-            <Loader2 className='w-8 h-8 animate-spin text-brand-primary' />
+            <Loader2 className='w-8 h-8 animate-spin text-accent' />
           </div>
         ) : (
           <Table>
-            <TableHeader className='bg-gray-50/50'>
+            <TableHeader className='bg-muted/60'>
               <TableRow>
                 <TableHead className='font-semibold'>Name & File</TableHead>
                 <TableHead className='font-semibold'>Email</TableHead>
@@ -143,7 +143,7 @@ export default function AdminConfidentialityPage() {
                 <TableRow>
                   <TableCell
                     colSpan={7}
-                    className='text-center py-12 text-gray-500'
+                    className='text-center py-12 text-muted-foreground'
                   >
                     {searchTerm
                       ? 'No confidentiality agreements found matching your search.'
@@ -160,11 +160,11 @@ export default function AdminConfidentialityPage() {
                   return (
                     <TableRow
                       key={pdf.filename}
-                      className='hover:bg-gray-50 transition-colors'
+                      className='hover:bg-muted/50 transition-colors'
                     >
                       <TableCell>
                         <div>
-                          <p className='font-medium text-gray-900 flex items-center gap-2'>
+                          <p className='font-medium text-secondary flex items-center gap-2'>
                             {name}
                             {!pdf.hasEnquiryData && (
                               <Badge
@@ -176,23 +176,23 @@ export default function AdminConfidentialityPage() {
                             )}
                           </p>
                           <p
-                            className='text-xs text-gray-400 mt-1 max-w-[200px] truncate'
+                            className='text-xs text-muted-foreground/60 mt-1 max-w-[200px] truncate'
                             title={pdf.filename}
                           >
                             {pdf.filename}
                           </p>
                         </div>
                       </TableCell>
-                      <TableCell className='text-gray-600'>
+                      <TableCell className='text-muted-foreground'>
                         {pdf.email || '—'}
                       </TableCell>
-                      <TableCell className='text-gray-600'>
+                      <TableCell className='text-muted-foreground'>
                         {pdf.phone || '—'}
                       </TableCell>
-                      <TableCell className='text-gray-600 font-medium max-w-[200px] truncate'>
+                      <TableCell className='text-muted-foreground font-medium max-w-[200px] truncate'>
                         {pdf.businessTitle || '—'}
                       </TableCell>
-                      <TableCell className='text-gray-500 text-sm'>
+                      <TableCell className='text-muted-foreground text-sm'>
                         {pdf.createdAt
                           ? new Date(pdf.createdAt).toLocaleString(undefined, {
                               year: 'numeric',
@@ -201,7 +201,7 @@ export default function AdminConfidentialityPage() {
                             })
                           : '—'}
                       </TableCell>
-                      <TableCell className='text-gray-500 text-sm whitespace-nowrap'>
+                      <TableCell className='text-muted-foreground text-sm whitespace-nowrap'>
                         {typeof pdf.size === 'number'
                           ? `${(pdf.size / 1024).toFixed(2)} KB`
                           : '—'}
@@ -210,7 +210,7 @@ export default function AdminConfidentialityPage() {
                         <Button
                           variant='outline'
                           size='sm'
-                          className='gap-2 text-brand-primary hover:bg-brand-primary hover:text-white transition-colors'
+                          className='gap-2 rounded-none border-accent/30 text-accent transition-colors hover:bg-accent hover:text-primary'
                           onClick={() => handleDownload(pdf)}
                         >
                           <Download className='w-4 h-4' /> Download

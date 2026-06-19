@@ -17,23 +17,23 @@ export function ConfidentialitySection() {
       {/* Faint logo watermark in the background */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src='/mark.webp'
+        src='/assets/logo.png'
         alt=''
         aria-hidden
-        className='pointer-events-none absolute left-1/2 top-1/2 w-60 -translate-x-1/2 -translate-y-1/2 opacity-[0.12] sm:w-80'
+        className='pointer-events-none absolute left-1/2 top-1/2 w-60 -translate-x-1/2 -translate-y-1/2 opacity-[0.08] sm:w-80'
       />
       <div className='relative z-10'>
         <SectionHeading title='Confidentiality & Disclaimer' />
-        <h3 className='mb-4 text-lg font-semibold text-brand-primary'>
+        <h3 className='mb-4 text-lg font-semibold text-accent'>
           Conditions of Acceptance
         </h3>
-        <div className='max-w-3xl space-y-4 text-[14px] italic leading-relaxed text-gray-400'>
+        <div className='max-w-3xl space-y-4 text-[14px] italic leading-relaxed text-muted-foreground'>
           {BODY.map((p, i) => (
             <p key={i}>{p}</p>
           ))}
         </div>
-        <div className='mt-8 border-t border-gray-200 pt-4 text-sm text-gray-400'>
-          <p className='font-semibold text-gray-600'>Blackmont Advisory</p>
+        <div className='mt-8 border-t border-border pt-4 text-sm text-muted-foreground'>
+          <p className='font-semibold text-secondary'>Blackmont Advisory</p>
           <p>ABN: 78 674 429 255</p>
           <p>License (BLA) 092153L</p>
         </div>

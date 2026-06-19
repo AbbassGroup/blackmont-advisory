@@ -15,119 +15,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// SignNow API configuration
-// const SIGNNOW_CONFIG = {
-//   baseUrl: process.env.SIGNNOW_BASE_URL,
-//   templateId: process.env.SIGNNOW_TEMPLATE_ID,
-//   bearerToken: process.env.SIGNNOW_BEARER_TOKEN,
-//   fixedApproverEmail: process.env.SIGNNOW_FROM_EMAIL
-// };
-// console.log('🚀 ~ SIGNNOW_CONFIG:', SIGNNOW_CONFIG)
-
-// SignNow API functions
-// const signNowAPI = {
-//   // Step 1: Copy template
-//   copyTemplate: async (documentName) => {
-//     console.log('🚀 ~ documentName:', documentName)
-//     const response = await fetch(
-//       `${SIGNNOW_CONFIG.baseUrl}/template/${SIGNNOW_CONFIG.templateId}/copy`,
-//       {
-//         method: 'POST',
-//         headers: {
-//           Authorization: `Bearer ${SIGNNOW_CONFIG.bearerToken}`,
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({
-//           document_name: documentName,
-//         }),
-//       }
-//     );
-//     // console.log('🚀 ~ response:', response)
-
-//     if (!response.ok) {
-//       const errorText = await response.text();
-//       throw new Error(
-//         `Failed to copy template: ${response.status} ${response.statusText} - ${errorText}`
-//       );
-//     }
-
-//     return await response.json();
-//   },
-
-//   // Step 2: Fill smart fields
-//   fillSmartFields: async (documentId, data) => {
-//     const response = await fetch(
-//       `${SIGNNOW_CONFIG.baseUrl}/document/${documentId}/integration/object/smartfields`,
-//       {
-//         method: 'POST',
-//         headers: {
-//           Authorization: `Bearer ${SIGNNOW_CONFIG.bearerToken}`,
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({
-//           data: data,
-//           client_timestamp: new Date().toISOString(),
-//         }),
-//       }
-//     );
-
-//     if (!response.ok) {
-//       const errorText = await response.text();
-//       throw new Error(
-//         `Failed to fill smart fields: ${response.status} ${response.statusText} - ${errorText}`
-//       );
-//     }
-
-//     return await response.json();
-//   },
-
-//   // Step 3: Send invitation
-//   sendInvitation: async (documentId, customerEmail) => {
-//     const response = await fetch(
-//       `${SIGNNOW_CONFIG.baseUrl}/document/${documentId}/invite`,
-//       {
-//         method: 'POST',
-//         headers: {
-//           Authorization: `Bearer ${SIGNNOW_CONFIG.bearerToken}`,
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({
-//           document_id: documentId,
-//           to: [
-//             {
-//               email: customerEmail,
-//               role: 'Recipient 1',
-//               order: 1,
-//             },
-//             {
-//               email: 'sadeq@abbass.group',
-//               role: 'Recipient 2',
-//               order: 2,
-//             },
-//           ],
-//           from: SIGNNOW_CONFIG.fixedApproverEmail,
-//           // approvers: [
-//           //   {
-//           //     email: SIGNNOW_CONFIG.fixedApproverEmail,
-//           //     order: 3,
-//           //     role: 'Recipient 3',
-//           //     expiration_days: 30,
-//           //   },
-//           // ],
-//         }),
-//       }
-//     );
-
-//     if (!response.ok) {
-//       const errorText = await response.text();
-//       throw new Error(
-//         `Failed to send invitation: ${response.status} ${response.statusText} - ${errorText}`
-//       );
-//     }
-
-//     return await response.json();
-//   },
-// };
 
 // Helper function to format amount with unit
 const formatAmount = (amount, unit) => {
@@ -162,7 +49,7 @@ router.post('/accept-proposal', async (req, res) => {
       return res.status(404).json({ message: 'Proposal not found' });
     }
 
-    // Send notification email to sadeq@abbass.group and the broker
+    // Send notification email to sadeq@blackmontadvisory.com and the broker
     try {
       const emailMsg = createProposalAcceptanceEmail(proposal, selectedAdvertisement, selectedSuccessFee);
       await transporter.sendMail(emailMsg);

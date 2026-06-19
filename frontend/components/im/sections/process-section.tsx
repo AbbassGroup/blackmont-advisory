@@ -64,14 +64,14 @@ export function ProcessSection({
       <ol className='space-y-6'>
         {STEPS.map((step, i) => (
           <li key={i} className='flex gap-4'>
-            <div className='flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-primary/10 text-sm font-semibold text-brand-primary ring-1 ring-brand-primary/20'>
+            <div className='flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent/15 text-sm font-semibold text-accent ring-1 ring-accent/30'>
               {i + 1}
             </div>
             <div>
-              <h4 className='text-sm font-semibold uppercase tracking-wide text-brand-black'>
+              <h4 className='text-sm font-semibold uppercase tracking-wide text-secondary'>
                 {step.title}
               </h4>
-              <p className='mt-1 text-sm leading-relaxed text-gray-500'>
+              <p className='mt-1 text-sm leading-relaxed text-muted-foreground'>
                 {step.desc}
               </p>
             </div>
@@ -79,8 +79,8 @@ export function ProcessSection({
         ))}
       </ol>
 
-      <div className='mt-10 border-t border-gray-200 pt-8'>
-        <p className='mb-3 text-sm font-semibold text-brand-black'>
+      <div className='mt-10 border-t border-border pt-8'>
+        <p className='mb-3 text-sm font-semibold text-secondary'>
           Your point of contact
         </p>
         <BrokerCard broker={broker} className='max-w-full' />

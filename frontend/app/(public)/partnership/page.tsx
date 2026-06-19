@@ -4,7 +4,7 @@ import { PartnershipHero } from './_components/hero';
 import { IntroSection } from './_components/intro-section';
 
 import { HowAddValue } from './_components/how-add-value';
-import { WhyAbbass } from './_components/why-abbass';
+import { WhyBlackmont } from './_components/why-blackmont';
 import { OurApproach } from './_components/our-approach';
 import { Collab } from './_components/collab';
 import { FAQSection } from './_components/faq-section';
@@ -22,7 +22,7 @@ export default function PartnershipPage() {
         <HowWork />
 
         <HowAddValue />
-        <WhyAbbass />
+        <WhyBlackmont />
         <OurApproach />
         <Collab />
         <FAQSection />

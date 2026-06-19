@@ -128,8 +128,8 @@ function normRows(raw: unknown): TableRow[] {
 /** Preset row background colours for the table toolbar. */
 const ROW_COLORS: { label: string; value: string }[] = [
   { label: 'None', value: '' },
-  { label: 'Brand', value: '#56C1BC' },
-  { label: 'Teal', value: '#E6F7F6' },
+  { label: 'Brand', value: '#c9a84c' },
+  { label: 'Champagne', value: '#faf5e8' },
   { label: 'Gray', value: '#F3F4F6' },
   { label: 'Amber', value: '#FEF3C7' },
   { label: 'Green', value: '#DCFCE7' },
@@ -151,7 +151,7 @@ function bodyRowHeight(rowCount: number): number {
 const PdfPages = dynamic(() => import('../pdf-pages').then((m) => m.PdfPages), {
   ssr: false,
   loading: () => (
-    <div className='flex items-center justify-center gap-2 py-10 text-gray-400'>
+    <div className='flex items-center justify-center gap-2 py-10 text-muted-foreground/60'>
       <Loader2 className='h-5 w-5 animate-spin' /> Loading PDF...
     </div>
   ),
@@ -172,7 +172,7 @@ function VideoPlayer({ url }: { url: string }) {
   const embed = getEmbedUrl(url);
   if (embed) {
     return (
-      <div className='aspect-video w-full overflow-hidden rounded-xl border border-gray-100 shadow-xs'>
+      <div className='aspect-video w-full overflow-hidden rounded-xl border border-border shadow-xs'>
         <iframe
           src={embed}
           title='Video'
@@ -188,16 +188,16 @@ function VideoPlayer({ url }: { url: string }) {
       src={url}
       controls
       preload='metadata'
-      className='w-full rounded-xl border border-gray-100 shadow-xs'
+      className='w-full rounded-xl border border-border shadow-xs'
     />
   );
 }
 
 const RICH_READ_CLASS =
-  'im-rich max-w-3xl text-[0.95rem] leading-relaxed text-gray-600 [&_a]:text-brand-primary [&_a]:underline [&_h1]:mt-4 [&_h1]:text-xl [&_h1]:font-semibold [&_h1]:text-brand-black [&_h2]:mt-4 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-brand-black [&_li]:my-1 [&_ol]:my-3 [&_ol]:list-decimal [&_ol]:pl-6 [&_p]:mb-3 [&_strong]:font-semibold [&_ul]:my-3 [&_ul]:list-disc [&_ul]:pl-6';
+  'im-rich max-w-3xl text-[0.95rem] leading-relaxed text-muted-foreground [&_a]:text-accent [&_a]:underline [&_h1]:mt-4 [&_h1]:text-xl [&_h1]:font-semibold [&_h1]:text-secondary [&_h2]:mt-4 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-secondary [&_li]:my-1 [&_ol]:my-3 [&_ol]:list-decimal [&_ol]:pl-6 [&_p]:mb-3 [&_strong]:font-semibold [&_ul]:my-3 [&_ul]:list-disc [&_ul]:pl-6';
 
 const LINK_CLASS =
-  'inline-flex items-center gap-2 rounded-lg bg-brand-primary px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-primary/90';
+  'inline-flex items-center gap-2 bg-accent px-5 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-accent-light';
 
 // PDF buttons open a download-protected viewer in a new tab (canvas render).
 const pdfHref = (url: string) => `/im-pdf?src=${encodeURIComponent(url)}`;
@@ -287,7 +287,7 @@ function TableView({ rows: raw }: { rows: unknown }) {
   const rh = bodyRowHeight(rows.length);
 
   return (
-    <div className='overflow-hidden rounded-xl border border-gray-100 shadow-xs'>
+    <div className='overflow-hidden rounded-xl border border-border shadow-xs'>
       <table className='w-full table-fixed border-collapse'>
         <colgroup>
           {Array.from({ length: cols }, (_, i) => (
@@ -315,7 +315,7 @@ function TableView({ rows: raw }: { rows: unknown }) {
                         rowSpan={cell.rowSpan}
                         style={row.bg ? { backgroundColor: row.bg } : undefined}
                         className={cn(
-                          'whitespace-pre-wrap break-words bg-brand-primary px-4 py-3.5 align-middle text-sm text-white sm:text-base',
+                          'whitespace-pre-wrap break-words bg-secondary px-4 py-3.5 align-middle text-sm text-white sm:text-base',
                           cell.bold ? 'font-bold' : 'font-semibold',
                           cell.italic && 'italic',
                           alignClass(cell.align),
@@ -331,10 +331,10 @@ function TableView({ rows: raw }: { rows: unknown }) {
                       colSpan={cell.colSpan}
                       rowSpan={cell.rowSpan}
                       className={cn(
-                        'whitespace-pre-wrap break-words border-t border-gray-100 px-4 py-1.5 align-middle text-sm',
+                        'whitespace-pre-wrap break-words border-t border-border px-4 py-1.5 align-middle text-sm',
                         cell.bold
-                          ? 'font-semibold text-brand-black'
-                          : 'text-gray-700',
+                          ? 'font-semibold text-secondary'
+                          : 'text-foreground',
                         cell.italic && 'italic',
                         alignClass(cell.align),
                       )}
@@ -393,7 +393,7 @@ function PhotosView({ photos }: { photos: string[] }) {
       {photos.map((src, i) => (
         <div
           key={`${src}-${i}`}
-          className='overflow-hidden rounded-xl border border-gray-100 bg-gray-50'
+          className='overflow-hidden rounded-xl border border-border bg-muted'
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -436,8 +436,8 @@ function BlockRead({ block }: { block: CustomBlock }) {
 }
 
 // ─── Block editors ──────────────────────────────────────────────────────────
-const TOGGLE_ON = 'bg-brand-primary text-white';
-const TOGGLE_OFF = 'bg-white text-gray-500 hover:bg-gray-50';
+const TOGGLE_ON = 'bg-secondary text-parchment';
+const TOGGLE_OFF = 'bg-card text-muted-foreground hover:bg-muted';
 
 /** A toolbar button styled for the dark (tooltip-like) formatting bar. */
 function TBtn({
@@ -722,7 +722,7 @@ function TableEditor({
         </div>
       )}
 
-      <div className='overflow-hidden rounded-xl border border-gray-100 shadow-xs'>
+      <div className='overflow-hidden rounded-xl border border-border shadow-xs'>
         <table className='w-full table-fixed border-collapse'>
           <colgroup>
             {Array.from({ length: cols }, (_, i) => (
@@ -757,8 +757,8 @@ function TableEditor({
                         className={cn(
                           'px-3 align-middle',
                           isHeader
-                            ? 'bg-brand-primary py-2.5'
-                            : 'border-t border-gray-100 py-1.5',
+                            ? 'bg-secondary py-2.5'
+                            : 'border-t border-border py-1.5',
                           selected && 'ring-2 ring-inset ring-amber-300',
                         )}
                       >
@@ -779,8 +779,8 @@ function TableEditor({
                                 ? 'font-bold'
                                 : 'font-semibold'
                               : cell.bold
-                                ? 'font-semibold text-brand-black'
-                                : 'text-gray-700',
+                                ? 'font-semibold text-secondary'
+                                : 'text-foreground',
                             cell.italic && 'italic',
                             alignClass(cell.align),
                           )}
@@ -820,7 +820,7 @@ function TableEditor({
         >
           <Minus className='h-3.5 w-3.5' /> Column
         </Button>
-        <span className='text-xs text-gray-400'>
+        <span className='text-xs text-muted-foreground/60'>
           Tip: click a cell, then{' '}
           <strong className='font-medium'>Shift-click</strong> another to select
           a range and merge.
@@ -884,7 +884,7 @@ function ButtonsBlockEditor({
         }}
       />
       {buttons.map((b) => (
-        <div key={b.id} className='rounded-xl border border-gray-200 p-3'>
+        <div key={b.id} className='rounded-xl border border-border p-3'>
           <div className='flex flex-wrap items-center gap-2'>
             <Input
               value={b.label}
@@ -892,7 +892,7 @@ function ButtonsBlockEditor({
               placeholder='Button text'
               className='w-full sm:w-44'
             />
-            <div className='inline-flex overflow-hidden rounded-lg border border-gray-200'>
+            <div className='inline-flex overflow-hidden rounded-lg border border-border'>
               <button
                 type='button'
                 onClick={() =>
@@ -918,7 +918,7 @@ function ButtonsBlockEditor({
               type='button'
               onClick={() => removeBtn(b.id)}
               title='Remove button'
-              className='ml-auto rounded-lg p-1.5 text-gray-300 transition hover:bg-red-50 hover:text-red-500'
+              className='ml-auto rounded-lg p-1.5 text-muted-foreground/50 transition hover:bg-red-50 hover:text-red-500'
             >
               <Trash2 className='h-4 w-4' />
             </button>
@@ -950,8 +950,8 @@ function ButtonsBlockEditor({
                   {b.url ? 'Replace PDF' : 'Upload PDF'}
                 </Button>
                 {b.url && (
-                  <span className='inline-flex items-center gap-1.5 text-xs text-gray-500'>
-                    <FileText className='h-3.5 w-3.5 text-brand-primary' /> PDF
+                  <span className='inline-flex items-center gap-1.5 text-xs text-muted-foreground'>
+                    <FileText className='h-3.5 w-3.5 text-accent' /> PDF
                     attached
                   </span>
                 )}
@@ -1015,7 +1015,7 @@ function PhotosBlockEditor({
           {photos.map((src, i) => (
             <div
               key={`${src}-${i}`}
-              className='group relative overflow-hidden rounded-lg border border-gray-200'
+              className='group relative overflow-hidden rounded-lg border border-border'
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -1089,7 +1089,7 @@ function VideoBlockEditor({
           e.target.value = '';
         }}
       />
-      <div className='inline-flex overflow-hidden rounded-lg border border-gray-200'>
+      <div className='inline-flex overflow-hidden rounded-lg border border-border'>
         <button
           type='button'
           onClick={() =>
@@ -1132,8 +1132,8 @@ function VideoBlockEditor({
             {block.url ? 'Replace video' : 'Upload video'}
           </Button>
           {block.url && (
-            <span className='inline-flex items-center gap-1.5 text-xs text-gray-500'>
-              <Film className='h-3.5 w-3.5 text-brand-primary' /> Video attached
+            <span className='inline-flex items-center gap-1.5 text-xs text-muted-foreground'>
+              <Film className='h-3.5 w-3.5 text-accent' /> Video attached
             </span>
           )}
         </div>
@@ -1342,10 +1342,10 @@ export function CustomSection({
             return (
               <div
                 key={block.id}
-                className='rounded-2xl border border-gray-200 bg-white p-3'
+                className='border border-border bg-card p-3'
               >
                 <div className='mb-2.5 flex items-center justify-between gap-2'>
-                  <span className='flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-gray-400'>
+                  <span className='flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground/60'>
                     <Icon className='h-3.5 w-3.5' /> {BLOCK_LABELS[block.type]}
                   </span>
                   <div className='flex items-center gap-0.5'>
@@ -1354,7 +1354,7 @@ export function CustomSection({
                       onClick={() => moveBlock(i, -1)}
                       disabled={i === 0}
                       title='Move up'
-                      className='rounded-lg p-1.5 text-gray-400 transition hover:bg-gray-100 hover:text-gray-700 disabled:opacity-25'
+                      className='rounded-lg p-1.5 text-muted-foreground/60 transition hover:bg-muted hover:text-foreground disabled:opacity-25'
                     >
                       <ChevronUp className='h-4 w-4' />
                     </button>
@@ -1363,7 +1363,7 @@ export function CustomSection({
                       onClick={() => moveBlock(i, 1)}
                       disabled={i === blocks.length - 1}
                       title='Move down'
-                      className='rounded-lg p-1.5 text-gray-400 transition hover:bg-gray-100 hover:text-gray-700 disabled:opacity-25'
+                      className='rounded-lg p-1.5 text-muted-foreground/60 transition hover:bg-muted hover:text-foreground disabled:opacity-25'
                     >
                       <ChevronDown className='h-4 w-4' />
                     </button>
@@ -1371,7 +1371,7 @@ export function CustomSection({
                       type='button'
                       onClick={() => removeBlock(block.id)}
                       title='Remove block'
-                      className='rounded-lg p-1.5 text-gray-300 transition hover:bg-red-50 hover:text-red-500'
+                      className='rounded-lg p-1.5 text-muted-foreground/50 transition hover:bg-red-50 hover:text-red-500'
                     >
                       <Trash2 className='h-4 w-4' />
                     </button>
@@ -1389,8 +1389,8 @@ export function CustomSection({
           })}
 
           {/* Add block */}
-          <div className='rounded-2xl border border-dashed border-gray-300 p-3'>
-            <p className='mb-2 text-xs font-semibold uppercase tracking-wide text-gray-400'>
+          <div className='border border-dashed border-border p-3'>
+            <p className='mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground/60'>
               Add block
             </p>
             <div className='flex flex-wrap gap-2'>

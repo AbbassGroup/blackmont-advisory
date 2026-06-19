@@ -8,7 +8,7 @@ import { ProposalFinancialOverview } from './_components/proposal-financial-over
 import { ProposalBusinessAppraisal } from './_components/proposal-business-appraisal';
 import { YourInvestment } from './_components/your-investment';
 import { TheProcess } from './_components/the-process';
-import { AboutAbbass } from './_components/about-abbass';
+import { AboutBlackmont } from './_components/about-blackmont';
 import { ContactUs } from './_components/contact-us';
 import { MediaReviews } from './_components/media-reviews';
 import { CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
@@ -376,7 +376,7 @@ function ProposalContent() {
 
         <TheProcess />
 
-        <AboutAbbass />
+        <AboutBlackmont />
 
         <ContactUs />
 

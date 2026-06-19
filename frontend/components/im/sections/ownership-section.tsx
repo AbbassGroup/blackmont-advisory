@@ -20,7 +20,7 @@ function Row({
 }) {
   return (
     <div className='flex flex-wrap items-baseline gap-x-2 gap-y-1'>
-      <span className='text-sm font-semibold text-gray-500'>{label}:</span>
+      <span className='text-sm font-semibold text-muted-foreground'>{label}:</span>
       <InlineText
         as='span'
         singleLine
@@ -28,7 +28,7 @@ function Row({
         value={value}
         onChange={onChange}
         placeholder='—'
-        className='text-sm font-semibold text-brand-black'
+        className='text-sm font-semibold text-secondary'
       />
     </div>
   );
@@ -48,9 +48,9 @@ function GroupCard({
   onChange: (patch: Partial<StaffGroup>) => void;
 }) {
   return (
-    <div className='overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-xs'>
-      <div className='bg-brand-primary/10 px-5 py-2.5'>
-        <p className='text-sm font-semibold uppercase tracking-wide text-brand-primary'>
+    <div className='overflow-hidden border border-border bg-card shadow-xs'>
+      <div className='bg-accent/15 px-5 py-2.5'>
+        <p className='text-sm font-semibold uppercase tracking-wide text-accent'>
           {heading}
         </p>
       </div>
@@ -114,12 +114,12 @@ export function OwnershipSection({
       />
 
       {/* Business owner(s) */}
-      <div className='overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-xs'>
-        <div className='flex items-center gap-3 bg-brand-primary/10 px-5 py-3'>
-          <span className='flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-primary text-white'>
+      <div className='overflow-hidden border border-border bg-card shadow-xs'>
+        <div className='flex items-center gap-3 bg-accent/15 px-5 py-3'>
+          <span className='flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent text-primary'>
             <UserRound className='h-5 w-5' />
           </span>
-          <p className='text-base font-semibold text-brand-black'>
+          <p className='text-base font-semibold text-secondary'>
             Business Owner(s)
           </p>
         </div>

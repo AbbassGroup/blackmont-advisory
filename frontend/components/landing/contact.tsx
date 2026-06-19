@@ -11,7 +11,7 @@ type Tab = 'sell' | 'buy';
 
 const NEXAR_API_URL =
   process.env.NEXT_PUBLIC_NEXAR_API_URL ||
-  'https://api.nexartechnologies.com/api/v1';
+  'https://blackmont-api.nexartechnologies.com';
 
 const fieldClass =
   'w-full border border-accent/20 bg-white/5 px-4 py-3 text-sm font-light text-parchment outline-none transition-colors placeholder:text-parchment/25 focus:border-accent disabled:opacity-50';
@@ -270,11 +270,7 @@ export function Contact() {
                     disabled={loading}
                   />
                 </Field>
-                <Field
-                  label='Annual Turnover'
-                  required
-                  error={errors.turnover}
-                >
+                <Field label='Annual Turnover' required error={errors.turnover}>
                   <input
                     className={`${fieldClass} ${errors.turnover ? 'border-red-400' : ''}`}
                     type='text'
@@ -387,7 +383,9 @@ export function Contact() {
           <Eyebrow className='mb-5'>Get in touch</Eyebrow>
           <h2 className='mb-6 text-3xl font-bold leading-[1.1] tracking-tight text-secondary sm:text-4xl lg:text-[3.4rem]'>
             Every transaction begins with a{' '}
-            <span className='font-light text-accent'>private conversation.</span>
+            <span className='font-light text-accent'>
+              private conversation.
+            </span>
           </h2>
           <p className='mb-11 text-lg font-light leading-loose text-muted-foreground'>
             Considering a sale, looking to acquire, or simply exploring your

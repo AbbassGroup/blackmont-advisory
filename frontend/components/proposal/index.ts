@@ -8,5 +8,5 @@ export { ProposalBusinessAppraisal } from '@/app/(public)/proposal/_components/p
 export { YourInvestment } from '@/app/(public)/proposal/_components/your-investment';
 export { MediaReviews } from '@/app/(public)/proposal/_components/media-reviews';
 export { TheProcess } from '@/app/(public)/proposal/_components/the-process';
-export { AboutAbbass } from '@/app/(public)/proposal/_components/about-abbass';
+export { AboutBlackmont } from '@/app/(public)/proposal/_components/about-blackmont';
 export { ContactUs } from '@/app/(public)/proposal/_components/contact-us';

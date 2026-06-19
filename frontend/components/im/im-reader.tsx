@@ -63,26 +63,26 @@ export function ImReader({
       {/* Mobile contents — a slide-out sheet (the desktop sidebar is hidden below lg) */}
       {navItems.length > 0 && (
         <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
-          <div className="sticky top-0 z-30 border-b border-gray-100 bg-white/95 backdrop-blur lg:hidden">
+          <div className="sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur lg:hidden">
             <SheetTrigger asChild>
               <button
                 type="button"
                 className="flex w-full items-center justify-between gap-3 px-5 py-3"
               >
                 <span className="flex min-w-0 items-center gap-2">
-                  <List className="h-4 w-4 shrink-0 text-brand-primary" />
-                  <span className="text-sm font-semibold text-brand-black">Contents</span>
+                  <List className="h-4 w-4 shrink-0 text-accent" />
+                  <span className="text-sm font-semibold text-secondary">Contents</span>
                   {activeLabel && (
-                    <span className="truncate text-xs text-gray-400">· {activeLabel}</span>
+                    <span className="truncate text-xs text-muted-foreground/60">· {activeLabel}</span>
                   )}
                 </span>
-                <ChevronRight className="h-4 w-4 shrink-0 text-gray-400" />
+                <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground/60" />
               </button>
             </SheetTrigger>
           </div>
 
           <SheetContent side="left" className="flex w-72 flex-col gap-0 p-0">
-            <SheetHeader className="shrink-0 border-b border-gray-100">
+            <SheetHeader className="shrink-0 border-b border-border">
               <SheetTitle>Contents</SheetTitle>
             </SheetHeader>
             <ul className="min-h-0 flex-1 space-y-0.5 overflow-y-auto overscroll-contain p-2">
@@ -97,8 +97,8 @@ export function ImReader({
                     className={cn(
                       'w-full rounded-lg px-3 py-2 text-left text-sm transition',
                       activeId === item.id
-                        ? 'bg-brand-primary/10 font-semibold text-brand-primary'
-                        : 'text-gray-600 hover:bg-gray-100',
+                        ? 'bg-accent/15 font-semibold text-accent'
+                        : 'text-muted-foreground hover:bg-muted',
                     )}
                   >
                     {item.label}
@@ -113,7 +113,7 @@ export function ImReader({
       <div className="mx-auto flex max-w-6xl gap-8 py-0 sm:px-4 sm:py-8">
         {navItems.length > 0 && (
           <nav className="sticky top-6 hidden max-h-[calc(100vh-4rem)] w-56 shrink-0 flex-col lg:flex">
-            <p className="mb-3 shrink-0 px-3 text-xs font-semibold uppercase tracking-wide text-gray-400">
+            <p className="mb-3 shrink-0 px-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground/60">
               Contents
             </p>
             <ul className="min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-contain pr-1">
@@ -124,8 +124,8 @@ export function ImReader({
                     className={cn(
                       'w-full rounded-lg px-3 py-2 text-left text-sm transition',
                       activeId === item.id
-                        ? 'bg-brand-primary/10 font-semibold text-brand-primary'
-                        : 'text-gray-600 hover:bg-gray-100',
+                        ? 'bg-accent/15 font-semibold text-accent'
+                        : 'text-muted-foreground hover:bg-muted',
                     )}
                   >
                     {item.label}
@@ -137,7 +137,7 @@ export function ImReader({
         )}
 
         <div className="min-w-0 flex-1">
-          <div className="overflow-hidden bg-white sm:rounded-2xl sm:border sm:border-gray-100 sm:shadow-xs">
+          <div className="overflow-hidden bg-card sm:border sm:border-border sm:shadow-xs">
             <ImDocument sections={sections} editable={false} brokerEmail={brokerEmail} />
           </div>
         </div>

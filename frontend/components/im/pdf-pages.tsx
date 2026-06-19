@@ -32,7 +32,7 @@ export function PdfPages({ url }: { url: string }) {
         file={url}
         onLoadSuccess={({ numPages: n }) => setNumPages(n)}
         loading={
-          <div className="flex items-center justify-center gap-2 py-10 text-gray-400">
+          <div className="flex items-center justify-center gap-2 py-10 text-muted-foreground/60">
             <Loader2 className="h-5 w-5 animate-spin" /> Loading PDF...
           </div>
         }
@@ -51,7 +51,7 @@ export function PdfPages({ url }: { url: string }) {
               width={width}
               renderTextLayer={false}
               renderAnnotationLayer={false}
-              className="overflow-hidden rounded-lg border border-gray-100 shadow-xs"
+              className="overflow-hidden rounded-lg border border-border shadow-xs"
             />
           ))}
       </Document>

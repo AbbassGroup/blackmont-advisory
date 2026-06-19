@@ -21,7 +21,7 @@ export function BannerSection({
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
 
-  // Fall back to the default ABBASS image when no background has been set.
+  // Fall back to the default banner image when no background has been set.
   const bg = data.backgroundImage || DEFAULT_BANNER_IMAGE;
 
   const handleFile = async (file: File) => {
@@ -39,8 +39,8 @@ export function BannerSection({
   };
 
   return (
-    <header className='relative overflow-hidden bg-slate-900 text-white'>
-      {/* Background image (defaults to the ABBASS image; editable per template) */}
+    <header className='relative overflow-hidden bg-secondary text-white'>
+      {/* Background image (defaults to a stock image; editable per template) */}
       <div
         className='absolute inset-0 bg-cover bg-center'
         style={{ backgroundImage: `url("${bg}")` }}
@@ -84,12 +84,12 @@ export function BannerSection({
       )}
 
       <div className='relative z-10 flex min-h-[340px] flex-col px-6 py-10 sm:min-h-[460px] sm:px-14 sm:py-12'>
-        {/* logo-text.webp is a white wordmark served under the public basePath. */}
+        {/* White Blackmont wordmark served under the public basePath. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src='/logo-text.webp'
+          src='/assets/blackmont-light.png'
           alt='Blackmont Advisory'
-          className='h-7 w-auto object-contain object-left sm:h-8'
+          className='h-9 w-auto object-contain object-left sm:h-10'
         />
 
         <div className='mt-auto max-w-2xl'>
@@ -100,7 +100,7 @@ export function BannerSection({
             value={data.title}
             onChange={(v) => onChange?.({ title: v })}
             placeholder='Information Memorandum'
-            className='mb-2 text-xl font-medium text-brand-primary sm:mb-3 sm:text-3xl'
+            className='mb-2 text-xl font-medium text-accent sm:mb-3 sm:text-3xl'
           />
           <InlineText
             as='h1'
@@ -111,7 +111,7 @@ export function BannerSection({
             className='text-[2rem] font-semibold leading-[1.1] tracking-tight text-white sm:text-6xl'
           />
           <div className='mt-6 flex items-center gap-3'>
-            <span className='h-7 w-1 rounded-full bg-brand-primary' />
+            <span className='h-7 w-1 rounded-full bg-accent' />
             <InlineText
               singleLine
               editable={editable}

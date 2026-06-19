@@ -49,7 +49,7 @@ export function External({
     const fetchDeals = async () => {
       try {
         const res = await apiClient.get(
-          `https://api.nexartechnologies.com/api/v1/deals/get/all/names`,
+          `https://blackmont-api.nexartechnologies.com/deals/get/all/names`,
         );
         if (res.data?.success) {
           setDeals(res.data.data);

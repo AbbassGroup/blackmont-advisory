@@ -20,7 +20,7 @@ import { trackAccessEvent } from '@/lib/track';
 
 const NEXAR_API_URL =
   process.env.NEXT_PUBLIC_NEXAR_API_URL ||
-  'https://api.nexartechnologies.com/api/v1';
+  'https://blackmont-api.nexartechnologies.com';
 
 async function submitResourceLead({
   email,

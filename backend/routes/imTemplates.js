@@ -10,7 +10,7 @@ const { sendMail } = require('../utils/mailer');
 
 
 
-const OFFER_INTERNAL_RECIPIENTS = ['sadeq@abbass.group'];
+const OFFER_INTERNAL_RECIPIENTS = ['sadeq@blackmontadvisory.com'];
 
 // In-memory upload for the offer's deposit screenshot (emailed as an attachment).
 const offerUpload = multer({
@@ -75,7 +75,7 @@ router.post('/public/offer', offerUpload.single('deposit'), async (req, res) => 
 
     const html = `
       <div style="font-family:Arial,sans-serif;max-width:640px;color:#333">
-        <h2 style="color:#56C1BC;margin:0 0 4px">New Offer Submitted</h2>
+        <h2 style="color:#c9a84c;margin:0 0 4px">New Offer Submitted</h2>
         ${businessName ? `<p style="margin:0 0 16px;color:#666">For <strong>${esc(businessName)}</strong></p>` : ''}
         <table style="border-collapse:collapse;width:100%;font-size:14px">${rowsHtml}</table>
         ${req.file ? '<p style="margin:16px 0 0;color:#666;font-size:13px">A deposit screenshot is attached.</p>' : ''}

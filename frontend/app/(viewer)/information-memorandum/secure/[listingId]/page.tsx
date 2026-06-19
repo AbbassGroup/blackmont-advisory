@@ -65,7 +65,7 @@ function SecureImViewer() {
         <h1 className='text-xl font-semibold tracking-tight text-brand-black'>
           This Link Has Expired
         </h1>
-        <p className='text-sm leading-relaxed text-gray-500'>
+        <p className='text-sm leading-relaxed text-muted-foreground'>
           This Information Memorandum is no longer available. If you believe
           this is an error, please contact the broker directly.
         </p>
@@ -77,10 +77,10 @@ function SecureImViewer() {
   // Email gate.
   return (
     <Centered>
-      <span className='flex h-12 w-12 items-center justify-center rounded-full bg-brand-primary/10 text-brand-primary'>
+      <span className='flex h-12 w-12 items-center justify-center rounded-full bg-accent/15 text-accent'>
         <Lock className='h-6 w-6' />
       </span>
-      <h1 className='text-xl font-semibold tracking-tight text-brand-black'>
+      <h1 className='text-xl font-semibold tracking-tight text-secondary'>
         Verify your email to continue
       </h1>
 
@@ -88,7 +88,7 @@ function SecureImViewer() {
         <div className='space-y-1.5'>
           <Label htmlFor='im-email'>Email address</Label>
           <div className='relative'>
-            <Mail className='pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400' />
+            <Mail className='pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60' />
             <Input
               id='im-email'
               type='email'
@@ -128,7 +128,7 @@ function SecureImViewer() {
           type='submit'
           size='lg'
           disabled={submitting || !email.trim()}
-          className='w-full bg-brand-primary text-white hover:bg-brand-primary/90'
+          className='w-full rounded-none bg-accent font-semibold text-primary hover:bg-accent-light'
         >
           {submitting ? (
             <Loader2 className='h-4 w-4 animate-spin' />
@@ -146,7 +146,7 @@ function SecureImViewer() {
 function Centered({ children }: { children: React.ReactNode }) {
   return (
     <div className='flex min-h-screen items-center justify-center px-4 py-10'>
-      <div className='flex w-full max-w-md flex-col items-center gap-3 rounded-2xl border border-gray-100 bg-white p-8 text-center shadow-sm'>
+      <div className='flex w-full max-w-md flex-col items-center gap-3 border border-border bg-card p-8 text-center shadow-sm'>
         {children}
       </div>
     </div>
@@ -155,11 +155,11 @@ function Centered({ children }: { children: React.ReactNode }) {
 
 function ContactLine() {
   return (
-    <p className='mt-2 text-xs text-gray-400'>
+    <p className='mt-2 text-xs text-muted-foreground/60'>
       Blackmont Advisory &middot;{' '}
       <a
         href='mailto:info@blackmontadvisory.com'
-        className='text-brand-primary'
+        className='text-accent'
       >
         info@blackmontadvisory.com
       </a>{' '}
@@ -173,7 +173,7 @@ export default function SecureImViewerPage() {
     <Suspense
       fallback={
         <div className='flex min-h-screen items-center justify-center'>
-          <Loader2 className='h-8 w-8 animate-spin text-brand-primary' />
+          <Loader2 className='h-8 w-8 animate-spin text-accent' />
         </div>
       }
     >

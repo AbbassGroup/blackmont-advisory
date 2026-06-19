@@ -25,7 +25,7 @@ export function SectionShell({
       id={id}
       className={cn(
         'scroll-mt-24 px-5 py-9 sm:px-12 sm:py-14',
-        tone === 'offwhite' ? 'bg-brand-offwhite' : 'bg-white',
+        tone === 'offwhite' ? 'bg-background' : 'bg-white',
         className,
       )}
     >
@@ -57,7 +57,7 @@ export function SectionHeading({
         value={title}
         onChange={onChange}
         placeholder={placeholder}
-        className="text-[1.5rem] font-semibold leading-tight tracking-tight text-brand-black sm:text-[2.1rem]"
+        className="text-[1.5rem] font-semibold leading-tight tracking-tight text-secondary sm:text-[2.1rem]"
       />
     </div>
   );

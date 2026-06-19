@@ -269,7 +269,7 @@ export default function ImEditorPage() {
   if (loading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-brand-primary" />
+        <Loader2 className="h-6 w-6 animate-spin text-accent" />
       </div>
     );
   }
@@ -277,12 +277,14 @@ export default function ImEditorPage() {
   if (loadError || !template) {
     return (
       <div className="mx-auto flex min-h-[60vh] max-w-md flex-col items-center justify-center gap-4 text-center">
-        <div className="flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 px-5 py-4 text-red-600">
+        <div className="flex items-center gap-2 border border-red-100 bg-red-50 px-5 py-4 text-red-600">
           <AlertCircle className="h-5 w-5" />
           <span className="text-sm font-medium">{loadError || 'Not found'}</span>
         </div>
         <Link href="/admin/information-memorandum">
-          <Button variant="outline">Back to list</Button>
+          <Button variant="outline" className="rounded-none">
+            Back to list
+          </Button>
         </Link>
       </div>
     );
@@ -296,12 +298,12 @@ export default function ImEditorPage() {
       </div>
 
       {/* Document — continuous web-page flow, edited inline */}
-      <div className="min-h-[calc(100vh-3.5rem)] bg-gray-100/70 pb-32">
+      <div className="min-h-[calc(100vh-3.5rem)] bg-muted/40 pb-32">
         <div className="mx-auto max-w-4xl px-4 py-8">
           {/* onBlur bubbles (focusout) — typed inline edits save when focus leaves a field. */}
           <div
             onBlur={commit}
-            className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm"
+            className="overflow-hidden border border-border bg-card shadow-sm"
           >
             <ImDocument
               sections={template.sections}
@@ -334,7 +336,7 @@ export default function ImEditorPage() {
       >
         <DrawerContent className="data-[vaul-drawer-direction=right]:sm:max-w-md">
           {activePanel && (
-            <DrawerHeader className="border-b border-gray-100">
+            <DrawerHeader className="border-b border-border">
               <DrawerTitle>{PANEL_META[activePanel].title}</DrawerTitle>
               <DrawerDescription>{PANEL_META[activePanel].description}</DrawerDescription>
             </DrawerHeader>
@@ -369,18 +371,25 @@ export default function ImEditorPage() {
 
       {/* Delete confirm */}
       {confirmDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
-            <h3 className="mb-2 text-lg font-bold text-brand-black">Delete memorandum?</h3>
-            <p className="mb-6 text-sm text-gray-500">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-secondary/40 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-sm border border-border bg-card p-6 shadow-xl">
+            <h3 className="mb-2 text-lg font-bold text-secondary">Delete memorandum?</h3>
+            <p className="mb-6 text-sm text-muted-foreground">
               This memorandum will be removed from your list. It is archived (kept in the database)
               rather than permanently erased, so it can be recovered if needed.
             </p>
             <div className="flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setConfirmDelete(false)}>
+              <Button
+                variant="outline"
+                className="rounded-none"
+                onClick={() => setConfirmDelete(false)}
+              >
                 Cancel
               </Button>
-              <Button onClick={handleDelete} className="bg-red-600 text-white hover:bg-red-700">
+              <Button
+                onClick={handleDelete}
+                className="rounded-none bg-red-600 text-white hover:bg-red-700"
+              >
                 Delete
               </Button>
             </div>

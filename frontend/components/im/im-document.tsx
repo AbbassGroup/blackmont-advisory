@@ -132,7 +132,7 @@ function ImDocumentImpl({
             case 'about':
               return (
                 <AboutSection
-                  title={(section.data?.title as string) ?? 'About ABBASS'}
+                  title={(section.data?.title as string) ?? 'About Blackmont Advisory'}
                   editable={editable}
                   onChange={onChange}
                 />
@@ -238,11 +238,11 @@ function ImDocumentImpl({
       })}
 
       {/* Proprietary copyright notice — shown at the bottom of every memorandum */}
-      <footer className='border-t border-gray-100 bg-white px-8 py-6 sm:px-12'>
-        <p className='mx-auto max-w-3xl text-center text-[11px] leading-relaxed text-gray-400'>
+      <footer className='border-t border-border bg-card px-8 py-6 sm:px-12'>
+        <p className='mx-auto max-w-3xl text-center text-[11px] leading-relaxed text-muted-foreground/70'>
           © Blackmont Advisory. All rights reserved. The content, format,
           structure, templates, and presentation style of this Information
-          Memorandum are proprietary to Blackmont Advisorys and may not be
+          Memorandum are proprietary to Blackmont Advisory and may not be
           copied, reproduced, or used without prior written consent.
         </p>
       </footer>

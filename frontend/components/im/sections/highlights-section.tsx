@@ -89,7 +89,7 @@ function IconPicker({ value, onChange }: { value: string; onChange: (icon: strin
         <button
           type="button"
           title="Change icon"
-          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#2b2b2b] text-white ring-brand-primary/40 transition hover:ring-2"
+          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-secondary text-parchment ring-accent/40 transition hover:ring-2"
         >
           <HighlightIcon icon={value} className="h-5 w-5" />
         </button>
@@ -107,8 +107,8 @@ function IconPicker({ value, onChange }: { value: string; onChange: (icon: strin
               className={cn(
                 'flex items-center justify-center rounded-lg p-2 transition',
                 value === key
-                  ? 'bg-brand-primary/10 text-brand-primary'
-                  : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800',
+                  ? 'bg-accent/15 text-accent'
+                  : 'text-muted-foreground hover:bg-muted hover:text-foreground',
               )}
             >
               <Icon className="h-4 w-4" />
@@ -162,12 +162,12 @@ export function HighlightsSection({
           {shown.map((it) => (
             <div
               key={it.id}
-              className="flex items-center gap-4 rounded-2xl bg-white p-3 shadow-xs ring-1 ring-gray-100"
+              className="flex items-center gap-4 border border-border bg-card p-3 shadow-xs"
             >
               {editable ? (
                 <IconPicker value={it.icon} onChange={(icon) => updateItem(it.id, { icon }, true)} />
               ) : (
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#2b2b2b] text-white">
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-secondary text-parchment">
                   <HighlightIcon icon={it.icon} className="h-5 w-5" />
                 </span>
               )}
@@ -180,7 +180,7 @@ export function HighlightsSection({
                   value={it.title}
                   onChange={(v) => updateItem(it.id, { title: v })}
                   placeholder="Title"
-                  className="text-sm font-semibold text-brand-black"
+                  className="text-sm font-semibold text-secondary"
                 />
                 <InlineText
                   as="p"
@@ -189,7 +189,7 @@ export function HighlightsSection({
                   value={it.desc}
                   onChange={(v) => updateItem(it.id, { desc: v })}
                   placeholder="Detail"
-                  className="text-sm text-gray-500"
+                  className="text-sm text-muted-foreground"
                 />
               </div>
 
@@ -198,7 +198,7 @@ export function HighlightsSection({
                   type="button"
                   onClick={() => removeItem(it.id)}
                   title="Remove highlight"
-                  className="shrink-0 rounded-lg p-1.5 text-gray-300 transition hover:bg-red-50 hover:text-red-500"
+                  className="shrink-0 rounded-lg p-1.5 text-muted-foreground/50 transition hover:bg-red-50 hover:text-red-500"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -212,7 +212,7 @@ export function HighlightsSection({
         <button
           type="button"
           onClick={addItem}
-          className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-gray-300 px-4 py-3 text-sm font-medium text-gray-500 transition hover:border-brand-primary hover:bg-brand-primary/5 hover:text-brand-primary"
+          className="mt-3 flex w-full items-center justify-center gap-2 border border-dashed border-border px-4 py-3 text-sm font-medium text-muted-foreground transition hover:border-accent hover:bg-accent/5 hover:text-accent"
         >
           <Plus className="h-4 w-4" /> Add highlight
         </button>

@@ -26,16 +26,16 @@ export function WelcomeSection({
         placeholder='Welcome Message'
       />
 
-      <div className='max-w-3xl space-y-4 text-[0.95rem] leading-relaxed text-gray-500'>
+      <div className='max-w-3xl space-y-4 text-[0.95rem] leading-relaxed text-muted-foreground'>
         {broker.welcome.map((para, i) => (
           <p key={i}>{para}</p>
         ))}
       </div>
       <div className='mt-6'>
-        <p className='text-base font-semibold text-brand-black'>
+        <p className='text-base font-semibold text-secondary'>
           {broker.name}
         </p>
-        <p className='text-sm text-gray-500'>{broker.title}</p>
+        <p className='text-sm text-muted-foreground'>{broker.title}</p>
       </div>
 
       <BrokerCard broker={broker} className='mt-8' />

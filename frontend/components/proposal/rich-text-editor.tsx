@@ -52,7 +52,7 @@ export function RichTextEditor({
 
   return (
     <div>
-      <div className='flex items-center gap-0.5 border border-gray-200 border-b-0 rounded-t-lg bg-gray-50 px-1 py-1'>
+      <div className='flex items-center gap-0.5 border border-border border-b-0 rounded-t-lg bg-muted px-1 py-1'>
         {tools.map((tool) => (
           <button
             key={tool.title}
@@ -61,8 +61,8 @@ export function RichTextEditor({
             title={tool.title}
             className={`p-1.5 rounded transition-colors ${
               tool.active
-                ? 'bg-brand-primary/10 text-brand-primary'
-                : 'text-gray-500 hover:bg-gray-200 hover:text-gray-700'
+                ? 'bg-accent/15 text-accent'
+                : 'text-muted-foreground hover:bg-muted hover:text-foreground'
             }`}
           >
             <tool.icon className='w-4 h-4' />
@@ -70,7 +70,7 @@ export function RichTextEditor({
         ))}
       </div>
       <div
-        className='border border-gray-200 rounded-b-lg bg-white min-h-[120px] p-3 focus-within:ring-2 focus-within:ring-brand-primary/30 focus-within:border-brand-primary transition-colors [&_.ProseMirror]:outline-none [&_.ProseMirror]:min-h-[96px]'
+        className='border border-border rounded-b-lg bg-card min-h-[120px] p-3 focus-within:ring-2 focus-within:ring-accent/15 focus-within:border-accent transition-colors [&_.ProseMirror]:outline-none [&_.ProseMirror]:min-h-[96px]'
         style={{
           // placeholder styling
           // @ts-expect-error CSS custom property

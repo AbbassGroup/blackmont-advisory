@@ -3,7 +3,7 @@ import { SellHero } from './_components/hero';
 import { Resources } from './_components/resources';
 import { Process } from './_components/process';
 import { Booking } from './_components/booking';
-import { WhyAbbass } from './_components/why-abbass';
+import { WhyBlackmont } from './_components/why-blackmont';
 import { AgentsCarousel } from '@/components/global/agents-carousel';
 import { ReviewsCarousel } from '@/components/global/reviews-carousel';
 import { ScheduleCallCta } from './_components/schedule-call-cta';
@@ -15,7 +15,7 @@ export const metadata: Metadata = buildMetadata({
   path: '/access',
   title: 'Sell Your Business | Free Exit Tools & Advisory | Blackmont Advisory',
   description:
-    'Thinking about selling your business? Access free valuation tools, exit-readiness checklists, and confidential advice from ABBASS, a Melbourne boutique business brokerage.',
+    'Thinking about selling your business? Access free valuation tools, exit-readiness checklists, and confidential advice from Blackmont Advisory, a Melbourne boutique business brokerage.',
   ogTitle: 'Sell Your Business | Blackmont Advisory',
   ogDescription:
     'Free tools and expert insights to maximise your business exit, guided by a Melbourne boutique advisory firm.',
@@ -63,7 +63,7 @@ export default function SellPage() {
       <Resources />
       <Process />
       <Booking />
-      <WhyAbbass />
+      <WhyBlackmont />
       <ScheduleCallCta />
       <AgentsCarousel title="Meet Our Team" />
       <ReviewsCarousel title='What Owners Say' />

@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   description:
     'Australia’s trusted boutique business brokerage, helping owners achieve the best outcomes when buying or selling businesses across Melbourne, Sydney, and beyond.',
   icons: {
-    icon: '/mark.webp',
+    icon: '/logo.png',
   },
   openGraph: {
     type: 'website',
