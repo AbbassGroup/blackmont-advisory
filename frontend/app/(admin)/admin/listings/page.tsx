@@ -16,6 +16,8 @@ type Listing = {
   location: string;
   price: string | number;
   referenceId: string;
+  deal?: string;
+  businessName?: string;
 };
 
 export default function ListingsPage() {
@@ -128,7 +130,7 @@ export default function ListingsPage() {
                       {formatReferenceId(listing.referenceId) || '—'}
                     </td>
                     <td className='px-6 py-4 font-medium text-secondary max-w-xs truncate'>
-                      {listing.title || 'Untitled'}
+                      {listing.businessName || listing.title || 'Untitled'}
                     </td>
                     <td className='px-6 py-4 text-muted-foreground'>
                       {listing.location || '—'}

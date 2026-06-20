@@ -7,6 +7,7 @@ const sendEmail = require('../utils/sendEmail');
 const { createImViewedEmail } = require('../utils/emailTemplates');
 const router = express.Router();
 const Listing = require('../models/Listing');
+const User = require('../models/User');
 const ImTemplate = require('../models/ImTemplate');
 const auth = require('../middleware/auth.middleware');
 const multer = require('multer');
@@ -34,6 +35,49 @@ function multerErrorHandler(err, req, res, next) {
 
 
 
+async function getAuthenticatedUser(req) {
+  const header = req.headers.authorization;
+  if (!header?.startsWith('Bearer ')) return null;
+
+  try {
+    const token = header.split(' ')[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    return await User.findById(decoded.userId);
+  } catch {
+    return null;
+  }
+}
+
+// Listing.deal stores a Nexar deal _id (see external.tsx). businessName is not
+// stored on the listing — it is resolved from Nexar POST /contacts/business.
+async function enrichListingsWithBusinessNames(listings) {
+  const dealIds = listings.map((listing) => listing.deal).filter(Boolean);
+  if (dealIds.length === 0) return listings;
+
+  const withFallback = (listing) => ({
+    ...listing,
+    businessName: listing.title || 'Unknown Business',
+  });
+
+  try {
+    const businessNames = await fetchBusinessNames(dealIds);
+    return listings.map((listing) => {
+      if (!listing.deal) return listing;
+
+      const businessInfo = businessNames.find(
+        (bn) => String(bn.dealId) === String(listing.deal),
+      );
+      return {
+        ...listing,
+        businessName: businessInfo?.businessName || listing.title || 'Unknown Business',
+      };
+    });
+  } catch (apiErr) {
+    console.error('Failed to fetch business names from Nexar API:', apiErr.message);
+    return listings.map((listing) => (listing.deal ? withFallback(listing) : listing));
+  }
+}
+
 router.get('/', async (req, res) => {
   try {
     // latest first
@@ -44,7 +88,14 @@ router.get('/', async (req, res) => {
     if (req.query.location) {
       filter.location = { $regex: new RegExp(req.query.location, 'i') };
     }
-    const listings = await Listing.find(filter).sort({ createdAt: -1 });
+    const listings = await Listing.find(filter).sort({ createdAt: -1 }).lean();
+
+    const user = await getAuthenticatedUser(req);
+    if (user) {
+      const enriched = await enrichListingsWithBusinessNames(listings);
+      return res.json(enriched);
+    }
+
     res.json(listings);
   } catch (err) {
     res.status(500).json({ error: err.message });
