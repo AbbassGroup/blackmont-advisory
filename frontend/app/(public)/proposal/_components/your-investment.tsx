@@ -14,10 +14,10 @@ function CustomCheckbox({
         e.stopPropagation();
         onChange();
       }}
-      className={`relative w-5 h-5 rounded border flex items-center justify-center transition-colors cursor-pointer ${
+      className={`relative w-5 h-5 border flex items-center justify-center transition-colors cursor-pointer ${
         checked
-          ? 'bg-brand-primary border-brand-primary'
-          : 'bg-white border-gray-300 hover:border-brand-primary'
+          ? 'bg-accent border-accent'
+          : 'bg-white border-gray-300 hover:border-accent'
       }`}
     >
       {checked && (
@@ -26,7 +26,7 @@ function CustomCheckbox({
           viewBox='0 0 24 24'
           stroke='currentColor'
           strokeWidth={3}
-          className='w-3.5 h-3.5 text-white'
+          className='w-3.5 h-3.5 text-primary'
         >
           <path
             strokeLinecap='round'
@@ -93,8 +93,8 @@ export const YourInvestment = forwardRef<HTMLDivElement, YourInvestmentProps>(
         className='mt-16 mb-12 bg-transparent scroll-mt-24'
         id='your-investment'
       >
-        <div className='mb-8 pb-4 border-b border-gray-200'>
-          <h2 className='text-2xl font-bold text-brand-black'>
+        <div className='mb-8 pb-4 border-b border-border'>
+          <h2 className='text-2xl font-bold text-secondary'>
             Your Investment
           </h2>
         </div>
@@ -102,7 +102,7 @@ export const YourInvestment = forwardRef<HTMLDivElement, YourInvestmentProps>(
         {/* Advertisement Section */}
         {advertisementData.length > 0 && (
           <div className='mb-12'>
-            <h3 className='text-xl font-bold text-brand-primary mb-6'>
+            <h3 className='text-xl font-bold text-accent mb-6'>
               Advertisement
             </h3>
             <div
@@ -112,10 +112,10 @@ export const YourInvestment = forwardRef<HTMLDivElement, YourInvestmentProps>(
                 <div
                   key={index}
                   onClick={() => setSelectedAdvertisement(item)}
-                  className={`flex flex-col border rounded-xl p-6 transition-all duration-200 cursor-pointer h-full ${
+                  className={`flex flex-col border p-6 transition-all duration-200 cursor-pointer h-full ${
                     selectedAdvertisement === item
-                      ? 'bg-[#f8fdfc] border-brand-primary border-2 shadow-sm'
-                      : 'bg-white border-gray-200 hover:border-brand-primary/50 hover:shadow-md hover:-translate-y-1'
+                      ? 'bg-accent-pale border-accent border-2 shadow-sm'
+                      : 'bg-white border-border hover:border-accent/50 hover:shadow-md hover:-translate-y-1'
                   }`}
                 >
                   <div className='mb-4 flex flex-col items-center w-full'>
@@ -126,11 +126,11 @@ export const YourInvestment = forwardRef<HTMLDivElement, YourInvestmentProps>(
                   </div>
 
                   <div className='flex-1 mb-6 text-center w-full'>
-                    <div className='prose prose-sm max-w-none text-gray-700 mx-auto prose-p:my-1 prose-ul:pl-4 prose-ul:my-1 prose-li:my-0.5 prose-strong:font-semibold'>
+                    <div className='prose prose-sm max-w-none text-foreground mx-auto prose-p:my-1 prose-ul:pl-4 prose-ul:my-1 prose-li:my-0.5 prose-strong:font-semibold'>
                       {item.text ? (
                         <div dangerouslySetInnerHTML={{ __html: item.text }} />
                       ) : (
-                        <p className='whitespace-pre-line text-[15px] leading-snug text-gray-800'>
+                        <p className='whitespace-pre-line text-[15px] leading-snug text-foreground'>
                           {item.text}
                         </p>
                       )}
@@ -138,7 +138,7 @@ export const YourInvestment = forwardRef<HTMLDivElement, YourInvestmentProps>(
                   </div>
 
                   <div className='mt-auto w-full'>
-                    <div className='bg-brand-primary text-white px-6 py-3 rounded-md text-center shadow-sm'>
+                    <div className='bg-accent text-primary px-6 py-3 text-center shadow-sm'>
                       <span className='font-bold text-xl'>
                         {formatAmount(item.amount, item.unit)}
                       </span>
@@ -152,11 +152,11 @@ export const YourInvestment = forwardRef<HTMLDivElement, YourInvestmentProps>(
 
         {/* Engagement Section */}
         <div className='mb-12'>
-          <h3 className='text-xl font-bold text-brand-primary mb-6'>
+          <h3 className='text-xl font-bold text-accent mb-6'>
             Engagement
           </h3>
-          <div className='border border-gray-200 rounded-xl p-8 bg-white text-center shadow-sm w-full'>
-            <p className='text-gray-800 text-base leading-relaxed mb-8 max-w-2xl mx-auto'>
+          <div className='border border-border p-8 bg-white text-center shadow-sm w-full'>
+            <p className='text-foreground text-base leading-relaxed mb-8 max-w-2xl mx-auto'>
               Call through key contacts in database
               <br />
               Handle enquiries from prospects
@@ -167,7 +167,7 @@ export const YourInvestment = forwardRef<HTMLDivElement, YourInvestmentProps>(
               stakeholders on deal structure
             </p>
 
-            <div className='inline-block bg-brand-primary text-white px-8 py-3 rounded-md shadow-sm'>
+            <div className='inline-block bg-accent text-primary px-8 py-3 shadow-sm'>
               <span className='font-bold text-xl'>${engagementFee || '0'}</span>
             </div>
           </div>
@@ -176,7 +176,7 @@ export const YourInvestment = forwardRef<HTMLDivElement, YourInvestmentProps>(
         {/* Success Fee Section */}
         {successFeeData.length > 0 && (
           <div>
-            <h3 className='text-xl font-bold text-brand-primary mb-6'>
+            <h3 className='text-xl font-bold text-accent mb-6'>
               Success Fee
             </h3>
             <div className={`grid gap-6 ${getGridCols(successFeeData.length)}`}>
@@ -184,10 +184,10 @@ export const YourInvestment = forwardRef<HTMLDivElement, YourInvestmentProps>(
                 <div
                   key={index}
                   onClick={() => setSelectedSuccessFee(item)}
-                  className={`flex flex-col items-center border rounded-xl p-6 transition-all duration-200 cursor-pointer h-full ${
+                  className={`flex flex-col items-center border p-6 transition-all duration-200 cursor-pointer h-full ${
                     selectedSuccessFee === item
-                      ? 'bg-[#f8fdfc] border-brand-primary border-2 shadow-sm'
-                      : 'bg-white border-gray-200 hover:border-brand-primary/50 hover:shadow-md hover:-translate-y-1'
+                      ? 'bg-accent-pale border-accent border-2 shadow-sm'
+                      : 'bg-white border-border hover:border-accent/50 hover:shadow-md hover:-translate-y-1'
                   }`}
                 >
                   <div className='mb-4'>
@@ -198,11 +198,11 @@ export const YourInvestment = forwardRef<HTMLDivElement, YourInvestmentProps>(
                   </div>
 
                   <div className='flex-1 mb-6 text-center w-full'>
-                    <div className='prose prose-sm max-w-none text-gray-700 mx-auto prose-p:my-1 prose-ul:pl-4 prose-ul:my-1 prose-li:my-0.5 prose-strong:font-semibold'>
+                    <div className='prose prose-sm max-w-none text-foreground mx-auto prose-p:my-1 prose-ul:pl-4 prose-ul:my-1 prose-li:my-0.5 prose-strong:font-semibold'>
                       {item.text ? (
                         <div dangerouslySetInnerHTML={{ __html: item.text }} />
                       ) : (
-                        <p className='whitespace-pre-line text-[15px] leading-snug text-gray-800'>
+                        <p className='whitespace-pre-line text-[15px] leading-snug text-foreground'>
                           {item.text}
                         </p>
                       )}
@@ -210,7 +210,7 @@ export const YourInvestment = forwardRef<HTMLDivElement, YourInvestmentProps>(
                   </div>
 
                   <div className='mt-auto w-full'>
-                    <div className='bg-brand-primary text-white px-6 py-3 rounded-md text-center shadow-sm inline-block min-w-[200px] w-full'>
+                    <div className='bg-accent text-primary px-6 py-3 text-center shadow-sm inline-block min-w-[200px] w-full'>
                       <span className='font-bold text-xl'>
                         {formatAmount(item.amount, item.unit)}
                       </span>

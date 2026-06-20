@@ -10,7 +10,7 @@ import {
   Link,
 } from '@react-pdf/renderer';
 
-export const CONTACT_URL = 'https://abbass.com.au/businessbrokers/contact';
+export const CONTACT_URL = 'https://www.blackmontadvisory.com/contact';
 
 export interface PdfAssets {
   logo: string;
@@ -18,16 +18,17 @@ export interface PdfAssets {
 }
 
 const C = {
-  brand: '#56c1bc',
-  brandDark: '#2f807b',
-  brandLight: '#ecfaf9',
-  text: '#1f2937',
-  textDark: '#111827',
-  muted: '#6b7280',
-  light: '#9ca3af',
-  border: '#e5e7eb',
-  borderStrong: '#d1d5db',
-  bg: '#fafafa',
+  brand: '#c9a84c', // Gilt — accent
+  brandDark: '#1b2535', // Deep Navy — accent text on light
+  brandLight: '#faf5e8', // Gilt — faint wash
+  midnight: '#0f1623', // Primary — text on gilt
+  text: '#2e2c28', // Ink — body
+  textDark: '#1b2535', // Deep Navy — headings
+  muted: '#6b6560', // Ink, muted
+  light: '#9c958c',
+  border: '#e6e1d6',
+  borderStrong: '#d8d2c6',
+  bg: '#f7f5f1',
   white: '#ffffff',
 };
 
@@ -341,7 +342,7 @@ export const styles = StyleSheet.create({
     paddingBottom: 9,
     paddingHorizontal: 26,
     backgroundColor: C.brand,
-    color: C.white,
+    color: C.midnight,
     fontSize: 10.5,
     fontFamily: 'Helvetica-Bold',
     borderRadius: 999,
@@ -373,9 +374,8 @@ export function PageShell({ assets, children }: PageShellProps) {
         {/* eslint-disable-next-line jsx-a11y/alt-text */}
         <Image src={assets.logo} style={styles.headerLogo} />
         <View style={styles.headerContact}>
-          <Text>(03) 9103 1317</Text>
           <Text>info@blackmontadvisory.com</Text>
-          <Text>www.abbass.com.au/businessbrokers</Text>
+          <Text>www.blackmontadvisory.com</Text>
         </View>
       </View>
 

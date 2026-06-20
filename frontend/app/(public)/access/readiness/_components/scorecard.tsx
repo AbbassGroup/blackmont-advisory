@@ -196,16 +196,16 @@ function getTier(total: number): Tier {
     return {
       grade: 'Nearly Sale Ready',
       icon: CheckCircle2,
-      color: '#56c1bc',
+      color: '#c9a84c',
       bg: '#ecfbfa',
-      text: '#2f807b',
+      text: '#1b2535',
       blurb: (name) =>
         `Hi ${name}, your business is close to market-ready. A few targeted improvements could add 10–20% to your final sale price and attract higher quality buyers.`,
       recs: [
         'Identify and address your two or three lowest-scoring areas before listing',
         'Get your most recent financial year reviewed and signed off by your accountant now',
         'Reduce owner-dependency further, document your remaining key processes',
-        'Book a market appraisal with ABBASS to understand your current realistic price range',
+        'Book a market appraisal with Blackmont to understand your current realistic price range',
       ],
     };
   }
@@ -222,7 +222,7 @@ function getTier(total: number): Tier {
         'Start documenting your key systems and processes, this is the highest-impact improvement',
         'Engage an accountant to clean up and prepare 3 years of financial statements',
         'Begin deliberately reducing your personal involvement in daily operations',
-        'Speak to ABBASS now about a 12-month preparation roadmap tailored to your business',
+        'Speak to Blackmont now about a 12-month preparation roadmap tailored to your business',
       ],
     };
   }
@@ -237,7 +237,7 @@ function getTier(total: number): Tier {
     recs: [
       'Prioritise financial records immediately, no serious buyer will proceed without 3 years of clean financials',
       'Address any legal, ATO, or compliance matters as an urgent first step',
-      'Engage ABBASS for a long-term exit strategy session, we can map the full journey with you',
+      'Engage Blackmont for a long-term exit strategy session, we can map the full journey with you',
       'Consider a business coach or operations consultant to help build systems and reduce owner dependency',
     ],
   };
@@ -287,16 +287,16 @@ export function Scorecard() {
         {/* QUIZ */}
         {view === 'quiz' && (
           <div>
-            <div className='mb-7 h-1.5 overflow-hidden rounded-full bg-gray-200'>
+            <div className='mb-7 h-1.5 overflow-hidden rounded-full bg-secondary/10'>
               <motion.div
-                className='h-full rounded-full bg-brand-primary'
+                className='h-full rounded-full bg-accent'
                 animate={{ width: `${pct}%` }}
                 transition={{ duration: 0.4, ease: 'easeOut' }}
               />
             </div>
 
-            <div className='rounded-2xl border border-gray-200 bg-white p-7 lg:p-9'>
-              <div className='text-xs font-semibold uppercase tracking-[0.12em] text-brand-primary'>
+            <div className=' border border-secondary/15 bg-background p-7 lg:p-9'>
+              <div className='text-xs font-semibold uppercase tracking-[0.12em] text-accent'>
                 Question {curQ + 1} of {questions.length}
               </div>
               <AnimatePresence mode='wait'>
@@ -307,7 +307,7 @@ export function Scorecard() {
                   exit={{ opacity: 0, x: -12 }}
                   transition={{ duration: 0.25 }}
                 >
-                  <h2 className='mt-3 text-xl font-semibold leading-snug text-brand-black'>
+                  <h2 className='mt-3 text-xl font-semibold leading-snug text-secondary'>
                     {questions[curQ].text}
                   </h2>
 
@@ -318,24 +318,24 @@ export function Scorecard() {
                         <button
                           key={i}
                           onClick={() => select(i)}
-                          className={`flex items-start gap-3 rounded-xl border px-4 py-3.5 text-left text-sm transition-all ${
+                          className={`flex items-start gap-3  border px-4 py-3.5 text-left text-sm transition-all ${
                             active
-                              ? 'border-brand-primary bg-brand-primary/5'
-                              : 'border-gray-200 bg-white hover:border-brand-primary/60'
+                              ? 'border-accent bg-accent/5'
+                              : 'border-secondary/15 bg-background hover:border-accent/60'
                           }`}
                         >
                           <span
                             className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
                               active
-                                ? 'border-brand-primary bg-brand-primary'
-                                : 'border-gray-300'
+                                ? 'border-accent bg-accent'
+                                : 'border-secondary/20'
                             }`}
                           >
                             {active && (
-                              <span className='h-2 w-2 rounded-full bg-white' />
+                              <span className='h-2 w-2 rounded-full bg-background' />
                             )}
                           </span>
-                          <span className='leading-snug text-brand-black'>
+                          <span className='leading-snug text-secondary'>
                             {opt.label}
                           </span>
                         </button>
@@ -358,8 +358,8 @@ export function Scorecard() {
                 <Button
                   onClick={next}
                   disabled={answers[curQ] === null}
-                  className='bg-brand-primary px-6 rounded-full py-4'
-                  // className='inline-flex items-center gap-2 rounded-full bg-brand-primary px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-primary-dark disabled:cursor-not-allowed disabled:opacity-50'
+                  className='bg-accent px-6 rounded-full py-4'
+                  // className='inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-primary transition-colors hover:bg-accent-light disabled:cursor-not-allowed disabled:opacity-50'
                 >
                   {curQ === questions.length - 1 ? 'See My Score' : 'Next'}
                   <ArrowRight className='h-4 w-4' />
@@ -378,7 +378,7 @@ export function Scorecard() {
             className='space-y-5'
           >
             {/* Hero */}
-            <div className='rounded-2xl border border-gray-200 bg-white p-8 text-center'>
+            <div className=' border border-secondary/15 bg-background p-8 text-center'>
               <div
                 className='mx-auto flex h-28 w-28 flex-col items-center justify-center rounded-full border-4'
                 style={{ background: tier.bg, borderColor: `${tier.color}55` }}
@@ -389,7 +389,7 @@ export function Scorecard() {
                 >
                   {total}
                 </span>
-                <span className='text-xs text-gray-500'>out of 100</span>
+                <span className='text-xs text-muted-foreground'>out of 100</span>
               </div>
               <div
                 className='mt-5 flex items-center justify-center gap-2 text-2xl font-bold'
@@ -402,14 +402,14 @@ export function Scorecard() {
                 />
                 {tier.grade}
               </div>
-              <p className='mx-auto mt-2 max-w-lg text-sm leading-relaxed text-gray-500'>
+              <p className='mx-auto mt-2 max-w-lg text-sm leading-relaxed text-muted-foreground'>
                 {tier.blurb(name)}
               </p>
             </div>
 
             {/* Breakdown */}
-            <div className='rounded-2xl border border-gray-200 bg-white p-7'>
-              <h3 className='text-base font-semibold text-brand-black'>
+            <div className=' border border-secondary/15 bg-background p-7'>
+              <h3 className='text-base font-semibold text-secondary'>
                 Score breakdown by category
               </h3>
               <div className='mt-5 space-y-3.5'>
@@ -427,14 +427,14 @@ export function Scorecard() {
                   return (
                     <div key={i}>
                       <div className='mb-1.5 flex justify-between text-sm'>
-                        <span className='text-brand-black'>
+                        <span className='text-secondary'>
                           {questions[i].cat}
                         </span>
                         <span className='font-semibold' style={{ color: col }}>
                           {isNa ? 'N/A' : `${pts}/10`}
                         </span>
                       </div>
-                      <div className='h-1.5 overflow-hidden rounded-full bg-gray-200'>
+                      <div className='h-1.5 overflow-hidden rounded-full bg-secondary/10'>
                         <motion.div
                           className='h-full rounded-full'
                           style={{ background: col }}
@@ -450,17 +450,17 @@ export function Scorecard() {
             </div>
 
             {/* Recommendations */}
-            <div className='rounded-2xl border border-gray-200 bg-white p-7'>
-              <h3 className='text-base font-semibold text-brand-black'>
+            <div className=' border border-secondary/15 bg-background p-7'>
+              <h3 className='text-base font-semibold text-secondary'>
                 Your personalised next steps
               </h3>
               <div className='mt-5 space-y-3'>
                 {tier.recs.map((r, i) => (
                   <div key={i} className='flex items-start gap-3'>
-                    <span className='flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-primary text-xs font-bold text-white'>
+                    <span className='flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-bold text-primary'>
                       {i + 1}
                     </span>
-                    <span className='text-sm leading-relaxed text-brand-black'>
+                    <span className='text-sm leading-relaxed text-secondary'>
                       {r}
                     </span>
                   </div>
@@ -471,7 +471,7 @@ export function Scorecard() {
             <div className='flex justify-center'>
               <PrintButton
                 label='Print Checklist'
-                fileName='ABBASS-Sale-Readiness-Checklist.pdf'
+                fileName='Blackmont-Sale-Readiness-Checklist.pdf'
                 buildDocument={(assets) => (
                   <ReadinessPdf
                     assets={assets}

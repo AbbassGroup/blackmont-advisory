@@ -23,7 +23,7 @@ export function ImControlBar({
   onTogglePublish: () => void;
 }) {
   return (
-    <div className="fixed bottom-3 left-1/2 z-40 flex max-w-[calc(100vw-0.75rem)] -translate-x-1/2 items-center gap-0.5 overflow-x-auto rounded-2xl border border-gray-200 bg-white/95 p-1 shadow-[0_8px_30px_rgba(0,0,0,0.12)] backdrop-blur sm:bottom-4 sm:gap-1 sm:p-1.5">
+    <div className="fixed bottom-3 left-1/2 z-40 flex max-w-[calc(100vw-0.75rem)] -translate-x-1/2 items-center gap-0.5 overflow-x-auto rounded-2xl border border-border bg-card/95 p-1 shadow-[0_8px_30px_rgba(15,22,35,0.18)] backdrop-blur sm:bottom-4 sm:gap-1 sm:p-1.5">
       <Link href="/admin/information-memorandum">
         <BarButton label="Back" icon={<ArrowLeft className="h-5 w-5" />} />
       </Link>
@@ -58,7 +58,7 @@ export function ImControlBar({
         className={`flex shrink-0 items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition-colors sm:px-4 ${
           status === 'published'
             ? 'bg-amber-50 text-amber-600 hover:bg-amber-100'
-            : 'bg-brand-primary text-white hover:bg-brand-primary/90'
+            : 'bg-accent text-primary hover:bg-accent-light'
         }`}
       >
         {publishing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Globe className="h-4 w-4" />}
@@ -87,8 +87,8 @@ function BarButton({
       title={label}
       className={`flex min-w-0 shrink-0 flex-col items-center gap-0.5 rounded-xl px-2.5 py-1.5 text-[10px] font-medium transition-colors sm:min-w-[58px] sm:px-3 sm:text-[11px] ${
         active
-          ? 'bg-brand-primary/10 text-brand-primary'
-          : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800'
+          ? 'bg-accent/15 text-accent'
+          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
       }`}
     >
       {icon}
@@ -98,5 +98,5 @@ function BarButton({
 }
 
 function Divider() {
-  return <span className="mx-1 hidden h-8 w-px shrink-0 bg-gray-200 sm:inline-block" />;
+  return <span className="mx-1 hidden h-8 w-px shrink-0 bg-border sm:inline-block" />;
 }

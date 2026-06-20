@@ -350,7 +350,7 @@ export const SECTION_REGISTRY: SectionMeta[] = [
   },
   {
     type: 'about',
-    label: 'About ABBASS',
+    label: 'About Blackmont Advisory',
     description: 'About the firm and the services offered.',
     icon: 'Building2',
     singleton: true,
@@ -385,14 +385,6 @@ export const SECTION_REGISTRY: SectionMeta[] = [
     label: 'Key Contacts',
     description: 'Appraisal & advocacy CTAs plus recommended contacts.',
     icon: 'Contact',
-    singleton: true,
-    inNav: true,
-  },
-  {
-    type: 'reviews',
-    label: 'Reviews',
-    description: 'Accreditations and client reviews (fixed content).',
-    icon: 'Star',
     singleton: true,
     inNav: true,
   },
@@ -444,7 +436,7 @@ export function getSectionMeta(type: string): SectionMeta | undefined {
 
 // ─── Default content ─────────────────────────────────────────────────────────
 /** Default banner background (served under the public basePath). Editable per template. */
-export const DEFAULT_BANNER_IMAGE = '/businessbrokers/abbass.avif';
+export const DEFAULT_BANNER_IMAGE = '/abbass.avif';
 
 export const DEFAULT_HOURS_ROWS: HoursRow[] = [
   { day: 'Monday', hours: '8am - 6pm' },
@@ -585,7 +577,7 @@ export function makeDefaultSection(type: SectionType): ImSection {
     case 'welcome':
       return { ...base, data: { title: 'Welcome Message' } satisfies WelcomeData };
     case 'about':
-      return { ...base, data: { title: 'About ABBASS' } satisfies AboutData };
+      return { ...base, data: { title: 'About Blackmont Advisory' } satisfies AboutData };
     case 'process':
       return { ...base, data: { title: 'The Process' } satisfies ProcessData };
     case 'reviews':
@@ -660,6 +652,5 @@ export function buildDefaultSections(): ImSection[] {
     makeDefaultSection('process'),
     makeDefaultSection('makeoffer'),
     makeDefaultSection('keycontacts'),
-    makeDefaultSection('reviews'),
   ];
 }

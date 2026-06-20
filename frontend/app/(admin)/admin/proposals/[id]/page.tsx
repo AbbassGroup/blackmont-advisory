@@ -26,21 +26,19 @@ import {
   YourInvestment,
   MediaReviews,
   TheProcess,
-  AboutAbbass,
+  AboutBlackmont,
   ContactUs,
 } from '@/components/proposal';
-
-const BROKERS = [
-  { name: 'Tester', email: 'mohammadjahid0007@gmail.coms' },
-  { name: 'Sadeq Abbass', email: 'sadeq@abbass.group' },
-  { name: 'Asif Ahammed', email: 'asif.ahammed@abbass.group' },
-  { name: 'Freddie Wong', email: 'freddie.wong@abbass.group' },
-  { name: 'Igor Vasiliev', email: 'igor.vasiliev@abbass.group' },
-  { name: 'Hicham Nahas', email: 'hicham.nahas@abbass.group' },
-  { name: 'Fiona Johns', email: 'fiona@abbass.group' },
-];
+import { BROKERS } from '@/lib/data/brokers-list';
 
 const TERMS = ['30', '60', '90', '120', '150', '180', '270', '360'];
+
+const inputCls =
+  'h-10 rounded-none border-secondary/15 bg-background shadow-none focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-accent/15';
+const selectCls =
+  'w-full h-10 px-3 rounded-none border border-secondary/15 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-accent/15 focus:border-accent';
+const selectDisabledCls =
+  'w-full h-10 px-3 rounded-none border border-secondary/15 text-sm bg-muted text-muted-foreground';
 
 const DEFAULT_FORM = {
   template: 'business_appraisal',
@@ -351,7 +349,7 @@ export default function ProposalFormPage() {
   if (loading) {
     return (
       <div className='flex items-center justify-center py-20'>
-        <Loader2 className='w-6 h-6 animate-spin text-brand-primary' />
+        <Loader2 className='w-6 h-6 animate-spin text-accent' />
       </div>
     );
   }
@@ -366,17 +364,17 @@ export default function ProposalFormPage() {
         className='lg:col-span-2 overflow-y-auto p-6 space-y-4'
       >
         {/* Header */}
-        <div className='bg-white rounded-xl border border-gray-100 shadow-sm p-5'>
+        <div className='bg-card border border-border p-5'>
           <Link href='/admin/proposals'>
             <Button
               variant='ghost'
               size='sm'
-              className='gap-1.5 mb-3 -ml-2 text-gray-500 hover:text-gray-700'
+              className='gap-1.5 mb-3 -ml-2 text-muted-foreground hover:text-foreground'
             >
               <ArrowLeft className='w-4 h-4' /> Back to List
             </Button>
           </Link>
-          <h1 className='text-xl font-bold text-brand-black'>
+          <h1 className='text-xl font-bold text-secondary'>
             {isNew ? 'Create New Proposal' : 'Edit Proposal'}
           </h1>
         </div>
@@ -384,10 +382,10 @@ export default function ProposalFormPage() {
         {/* Alert */}
         {message && (
           <div
-            className={`flex items-center gap-2.5 p-4 rounded-xl text-sm font-medium ${
+            className={`flex items-center gap-2.5 p-4 text-sm font-medium ${
               message.type === 'success'
-                ? 'bg-green-50 border border-green-200 text-green-700'
-                : 'bg-red-50 border border-red-200 text-red-700'
+                ? 'border border-emerald-200 bg-emerald-50 text-emerald-700'
+                : 'border border-red-200 bg-red-50 text-red-700'
             }`}
           >
             {message.type === 'success' && (
@@ -397,13 +395,13 @@ export default function ProposalFormPage() {
           </div>
         )}
 
-        <div className='bg-white rounded-xl border border-gray-100 shadow-sm p-5 space-y-5'>
+        <div className='bg-card border border-border p-5 space-y-5'>
           {/* Template Selection */}
           <Field label='Template Type' required>
             <select
               value={formData.template}
               onChange={(e) => handleInputChange('template', e.target.value)}
-              className='w-full h-10 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary'
+              className={selectCls}
             >
               <option value='business_appraisal'>Business Appraisal</option>
               <option value='franchise_proposal'>Franchise Proposal</option>
@@ -420,7 +418,7 @@ export default function ProposalFormPage() {
                   handleInputChange('businessName', e.target.value)
                 }
                 placeholder='Enter the business name'
-                className='h-10'
+                className={inputCls}
               />
             </Field>
             {isAppraisal && (
@@ -432,7 +430,7 @@ export default function ProposalFormPage() {
                     handleInputChange('businessValue', e.target.value)
                   }
                   placeholder='e.g., $2.1M-2.3M + SAV'
-                  className='h-10'
+                  className={inputCls}
                 />
               </Field>
             )}
@@ -446,7 +444,7 @@ export default function ProposalFormPage() {
                 onChange={(e) =>
                   handleInputChange('agreementTerm', e.target.value)
                 }
-                className='w-full h-10 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary'
+                className={selectCls}
               >
                 {TERMS.map((t) => (
                   <option key={t} value={t}>
@@ -467,7 +465,7 @@ export default function ProposalFormPage() {
                     brokerEmail: b?.email ?? '',
                   }));
                 }}
-                className='w-full h-10 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary'
+                className={selectCls}
               >
                 <option value=''>Select Broker</option>
                 {BROKERS.map((b) => (
@@ -489,7 +487,7 @@ export default function ProposalFormPage() {
                   handleInputChange('businessAddress', e.target.value)
                 }
                 placeholder='Enter business address'
-                className='h-10'
+                className={inputCls}
               />
             </Field>
             <Field label='Listing Price' required>
@@ -501,26 +499,26 @@ export default function ProposalFormPage() {
                   handleInputChange('listingPrice', e.target.value)
                 }
                 placeholder='e.g., 2500000'
-                className='h-10'
+                className={inputCls}
               />
             </Field>
           </div>
 
           {/* Background Image */}
           <div>
-            <Label className='text-sm font-medium text-gray-700 mb-2 block'>
+            <Label className='text-sm font-medium text-foreground mb-2 block'>
               Background Image
             </Label>
             <Button
               type='button'
               variant='outline'
-              className='w-full gap-2'
+              className='w-full gap-2 rounded-none'
               onClick={() => fileRef.current?.click()}
             >
               <CloudUpload className='w-4 h-4' />
               Upload Background Image
             </Button>
-            <p className='text-xs text-gray-400 italic mt-1'>
+            <p className='text-xs text-muted-foreground/70 italic mt-1'>
               Maximum file size: 5MB
             </p>
             <input
@@ -531,7 +529,7 @@ export default function ProposalFormPage() {
               onChange={handleImageChange}
             />
             {imagePreview && (
-              <div className='mt-2 rounded-lg overflow-hidden border border-gray-200'>
+              <div className='mt-2 overflow-hidden border border-border'>
                 <img
                   src={imagePreview}
                   alt='Background Preview'
@@ -552,7 +550,7 @@ export default function ProposalFormPage() {
                   handleInputChange('customerEmail', e.target.value)
                 }
                 placeholder='customer@example.com'
-                className='h-10'
+                className={inputCls}
               />
             </Field>
             <Field label='Customer Name' required>
@@ -563,7 +561,7 @@ export default function ProposalFormPage() {
                   handleInputChange('customerName', e.target.value)
                 }
                 placeholder='Enter customer name'
-                className='h-10'
+                className={inputCls}
               />
             </Field>
           </div>
@@ -571,7 +569,7 @@ export default function ProposalFormPage() {
           {/* Financial Assumptions - Business Appraisal only */}
           {isAppraisal && (
             <div data-field='financialAssumptions'>
-              <Label className='text-sm font-medium text-gray-700 mb-2 block'>
+              <Label className='text-sm font-medium text-foreground mb-2 block'>
                 Financial Assumptions <span className='text-red-500'>*</span>
               </Label>
               <RichTextEditor
@@ -586,9 +584,9 @@ export default function ProposalFormPage() {
         </div>
 
         {/* Advertisement Section */}
-        <div className='bg-white rounded-xl border border-gray-100 shadow-sm p-5 space-y-4'>
+        <div className='bg-card border border-border p-5 space-y-4'>
           <div className='flex items-center justify-between'>
-            <h2 className='font-semibold text-brand-black'>Advertisement</h2>
+            <h2 className='font-semibold text-secondary'>Advertisement</h2>
             {formData.advertisement && formData.advertisement.length < 3 && (
               <Button
                 type='button'
@@ -605,10 +603,10 @@ export default function ProposalFormPage() {
             <div
               key={index}
               data-field={`advertisement-${index}`}
-              className='border border-gray-200 rounded-xl p-4 space-y-3'
+              className='border border-border p-4 space-y-3'
             >
               <div className='flex items-center justify-between'>
-                <span className='text-sm font-medium text-gray-700'>
+                <span className='text-sm font-medium text-foreground'>
                   Advertisement Option {index + 1}
                 </span>
                 {index > 0 && (
@@ -624,7 +622,7 @@ export default function ProposalFormPage() {
                 )}
               </div>
               <div>
-                <Label className='text-sm font-medium text-gray-600 mb-1 block'>
+                <Label className='text-sm font-medium text-muted-foreground mb-1 block'>
                   Description
                 </Label>
                 <RichTextEditor
@@ -651,14 +649,14 @@ export default function ProposalFormPage() {
                       handleInputChange('advertisement', newAd);
                     }}
                     placeholder='e.g., 1500'
-                    className='h-10'
+                    className={inputCls}
                   />
                 </Field>
                 <Field label={`Unit ${index + 1}`}>
                   <select
                     value={ad.unit}
                     disabled
-                    className='w-full h-10 px-3 rounded-lg border border-gray-200 text-sm bg-gray-50'
+                    className={selectDisabledCls}
                   >
                     <option value='Dollar'>Dollar ($)</option>
                     <option value='Percentage'>Percentage (%)</option>
@@ -670,9 +668,9 @@ export default function ProposalFormPage() {
         </div>
 
         {/* Engagement Fee */}
-        <div className='bg-white rounded-xl border border-gray-100 shadow-sm p-5 space-y-4'>
-          <h2 className='font-semibold text-brand-black'>Engagement Fee</h2>
-          <div className='border border-gray-200 rounded-xl p-4'>
+        <div className='bg-card border border-border p-5 space-y-4'>
+          <h2 className='font-semibold text-secondary'>Engagement Fee</h2>
+          <div className='border border-border p-4'>
             <div className='max-w-xs'>
               <Field label='Amount'>
                 <Input
@@ -682,7 +680,7 @@ export default function ProposalFormPage() {
                     handleInputChange('engagementFee', e.target.value)
                   }
                   placeholder='e.g., 5000'
-                  className='h-10'
+                  className={inputCls}
                 />
               </Field>
             </div>
@@ -690,9 +688,9 @@ export default function ProposalFormPage() {
         </div>
 
         {/* Success Fee Section */}
-        <div className='bg-white rounded-xl border border-gray-100 shadow-sm p-5 space-y-4'>
+        <div className='bg-card border border-border p-5 space-y-4'>
           <div className='flex items-center justify-between'>
-            <h2 className='font-semibold text-brand-black'>Success Fee</h2>
+            <h2 className='font-semibold text-secondary'>Success Fee</h2>
             {formData.successFee && formData.successFee.length < 3 && (
               <Button
                 type='button'
@@ -709,10 +707,10 @@ export default function ProposalFormPage() {
             <div
               key={index}
               data-field={`successFee-${index}`}
-              className='border border-gray-200 rounded-xl p-4 space-y-3'
+              className='border border-border p-4 space-y-3'
             >
               <div className='flex items-center justify-between'>
-                <span className='text-sm font-medium text-gray-700'>
+                <span className='text-sm font-medium text-foreground'>
                   Success Fee Option {index + 1}{' '}
                   {index === 0 ? '(Required)' : '(Optional)'}
                 </span>
@@ -729,7 +727,7 @@ export default function ProposalFormPage() {
                 )}
               </div>
               <div>
-                <Label className='text-sm font-medium text-gray-600 mb-1 block'>
+                <Label className='text-sm font-medium text-muted-foreground mb-1 block'>
                   Description <span className='text-red-500'>*</span>
                 </Label>
                 <RichTextEditor
@@ -756,7 +754,7 @@ export default function ProposalFormPage() {
                       handleInputChange('successFee', newFee);
                     }}
                     placeholder='e.g., 7'
-                    className='h-10'
+                    className={inputCls}
                   />
                 </Field>
                 <Field label={`Unit ${index + 1}`}>
@@ -770,7 +768,7 @@ export default function ProposalFormPage() {
                       };
                       handleInputChange('successFee', newFee);
                     }}
-                    className='w-full h-10 px-3 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary'
+                    className={selectCls}
                   >
                     <option value='Dollar'>Dollar ($)</option>
                     <option value='Percentage'>Percentage (%)</option>
@@ -782,8 +780,8 @@ export default function ProposalFormPage() {
         </div>
 
         {/* Performance Bonus & Sale Price */}
-        <div className='bg-white rounded-xl border border-gray-100 shadow-sm p-5 space-y-4'>
-          <h2 className='font-semibold text-brand-black'>Additional Details</h2>
+        <div className='bg-card border border-border p-5 space-y-4'>
+          <h2 className='font-semibold text-secondary'>Additional Details</h2>
           <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
             <Field label='Performance Bonus'>
               <Input
@@ -793,7 +791,7 @@ export default function ProposalFormPage() {
                   handleInputChange('performanceBonus', e.target.value)
                 }
                 placeholder='e.g., 50000'
-                className='h-10'
+                className={inputCls}
               />
             </Field>
             <Field label='Sale Price'>
@@ -802,18 +800,18 @@ export default function ProposalFormPage() {
                 value={formData.salePrice}
                 onChange={(e) => handleInputChange('salePrice', e.target.value)}
                 placeholder='e.g., 2300000'
-                className='h-10'
+                className={inputCls}
               />
             </Field>
           </div>
         </div>
 
         {/* Save Button */}
-        <div className='bg-white rounded-xl border border-gray-100 shadow-sm p-5'>
+        <div className='bg-card border border-border p-5'>
           <Button
             onClick={handleSave}
             disabled={saving}
-            className='w-full bg-brand-primary hover:bg-brand-primary/90 text-white h-11 gap-2'
+            className='h-11 w-full gap-2 rounded-none bg-accent font-semibold text-primary hover:bg-accent-light'
           >
             {saving ? (
               <>
@@ -831,9 +829,9 @@ export default function ProposalFormPage() {
 
       {/* ===== PREVIEW SECTION — Right Side (sticky) ===== */}
       <div className='lg:col-span-3 overflow-y-auto p-6 pl-0'>
-        <div className='bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden'>
-          <div className='px-5 py-4 border-b border-gray-100'>
-            <h2 className='font-semibold text-brand-black'>Preview</h2>
+        <div className='bg-card border border-border overflow-hidden'>
+          <div className='px-5 py-4 border-b border-border'>
+            <h2 className='font-semibold text-secondary'>Preview</h2>
           </div>
           <div>
             {/* Banner Section */}
@@ -879,8 +877,8 @@ export default function ProposalFormPage() {
               {/* The Process */}
               <TheProcess />
 
-              {/* About ABBASS */}
-              <AboutAbbass />
+              {/* About Blackmont Advisory */}
+              <AboutBlackmont />
 
               {/* Contact Us */}
               <ContactUs />
@@ -903,7 +901,7 @@ function Field({
 }) {
   return (
     <div className='space-y-1.5'>
-      <Label className='text-sm font-medium text-gray-700'>
+      <Label className='text-sm font-medium text-foreground'>
         {label} {required && <span className='text-red-500'>*</span>}
       </Label>
       {children}

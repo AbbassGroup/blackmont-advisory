@@ -8,7 +8,7 @@ import { ProposalFinancialOverview } from './_components/proposal-financial-over
 import { ProposalBusinessAppraisal } from './_components/proposal-business-appraisal';
 import { YourInvestment } from './_components/your-investment';
 import { TheProcess } from './_components/the-process';
-import { AboutAbbass } from './_components/about-abbass';
+import { AboutBlackmont } from './_components/about-blackmont';
 import { ContactUs } from './_components/contact-us';
 import { MediaReviews } from './_components/media-reviews';
 import { CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
@@ -18,31 +18,31 @@ const PROPOSAL_EXPIRY_DAYS = 30;
 
 function ProposalSuccessPage({ businessName }: { businessName?: string }) {
   return (
-    <div className='min-h-screen bg-linear-to-br from-[#f5f7fa] to-[#e4e8ec] flex items-center justify-center p-6'>
-      <div className='max-w-[500px] w-full text-center bg-white rounded-3xl overflow-hidden shadow-xl'>
-        <div className='bg-linear-to-br from-brand-primary to-[#3da8a3] py-12 px-8'>
-          <div className='w-20 h-20 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-5'>
-            <CheckCircle2 className='w-12 h-12 text-white' />
+    <div className='min-h-screen bg-background flex items-center justify-center p-6'>
+      <div className='max-w-[500px] w-full text-center bg-card border border-border overflow-hidden shadow-xl'>
+        <div className='bg-secondary py-12 px-8'>
+          <div className='w-20 h-20 rounded-full border border-accent/30 bg-accent/15 flex items-center justify-center mx-auto mb-5'>
+            <CheckCircle2 className='w-12 h-12 text-accent' />
           </div>
-          <h2 className='text-3xl font-bold text-white mb-2'>Thank You!</h2>
-          <p className='text-white text-[15px] leading-relaxed opacity-90'>
+          <h2 className='text-3xl font-bold text-parchment mb-2'>Thank You!</h2>
+          <p className='text-parchment/70 text-[15px] leading-relaxed'>
             Your agreement for {businessName ? businessName : 'your business'}{' '}
             will be prepared shortly.
           </p>
         </div>
-        <div className='p-8 bg-white text-left'>
-          <div className='bg-[#f8f9fa] rounded-xl p-6 mb-6'>
-            <p className='text-[#666] text-[13px] uppercase tracking-wider mb-2 font-bold'>
+        <div className='p-8 bg-card text-left'>
+          <div className='bg-muted p-6 mb-6'>
+            <p className='text-muted-foreground text-[13px] uppercase tracking-wider mb-2 font-bold'>
               Questions?
             </p>
-            <p className='text-[#333] text-[14px] mb-1'>
+            <p className='text-foreground text-[14px] mb-1'>
               <strong>Phone:</strong> (03) 9103 1317
             </p>
-            <p className='text-[#333] text-[14px]'>
+            <p className='text-foreground text-[14px]'>
               <strong>Email:</strong> info@blackmontadvisory.com
             </p>
           </div>
-          <p className='text-[#999] text-[13px] text-center'>
+          <p className='text-muted-foreground text-[13px] text-center'>
             Blackmont Advisory
           </p>
         </div>
@@ -63,7 +63,7 @@ function AcceptProposalButton({
   return (
     <div className='text-center my-12 relative z-20'>
       {acceptError && (
-        <div className='mb-6 max-w-[600px] mx-auto p-4 bg-red-50 text-red-700 border border-red-200 rounded-xl flex items-center justify-center gap-2'>
+        <div className='mb-6 max-w-[600px] mx-auto p-4 bg-red-50 text-red-700 border border-red-200 flex items-center justify-center gap-2'>
           <AlertCircle className='w-5 h-5 shrink-0' />
           <span className='text-sm'>{acceptError}</span>
         </div>
@@ -72,7 +72,7 @@ function AcceptProposalButton({
       <button
         onClick={handleAcceptProposal}
         disabled={acceptingProposal}
-        className='bg-brand-primary text-white px-10 py-4 text-lg font-bold rounded-xl min-w-[240px] shadow-[0_4px_20px_rgba(86,193,188,0.25)] hover:bg-brand-primary-dark hover:-translate-y-1 transition-all duration-300 disabled:opacity-70 disabled:transform-none disabled:cursor-wait flex items-center justify-center mx-auto gap-3'
+        className='bg-accent text-primary px-10 py-4 text-lg font-bold uppercase tracking-[0.12em] min-w-[240px] shadow-lg hover:bg-accent-light hover:-translate-y-1 transition-all duration-300 disabled:opacity-70 disabled:transform-none disabled:cursor-wait flex items-center justify-center mx-auto gap-3'
       >
         {acceptingProposal ? (
           <>
@@ -85,7 +85,7 @@ function AcceptProposalButton({
       </button>
 
       {acceptingProposal && (
-        <p className='text-sm text-gray-500 mt-4'>
+        <p className='text-sm text-muted-foreground mt-4'>
           Please wait while we process your proposal acceptance...
         </p>
       )}
@@ -272,8 +272,8 @@ function ProposalContent() {
   if (loading) {
     return (
       <div className='min-h-[60vh] flex flex-col items-center justify-center p-8'>
-        <Loader2 className='w-12 h-12 animate-spin text-brand-primary mb-4' />
-        <p className='text-gray-500 font-medium text-lg'>
+        <Loader2 className='w-12 h-12 animate-spin text-accent mb-4' />
+        <p className='text-muted-foreground font-medium text-lg'>
           Loading your business appraisal...
         </p>
       </div>
@@ -287,11 +287,11 @@ function ProposalContent() {
           <AlertCircle className='w-8 h-8 mx-auto mb-3 opacity-90' />
           <p className='font-medium'>{error}</p>
         </div>
-        <p className='text-gray-700 font-bold mb-2'>
+        <p className='text-secondary font-bold mb-2'>
           If you believe this is an error, please contact us at:
         </p>
-        <p className='text-gray-600'>Email: info@blackmontadvisory.com</p>
-        <p className='text-gray-600'>Phone: (03) 9103 1317</p>
+        <p className='text-muted-foreground'>Email: info@blackmontadvisory.com</p>
+        <p className='text-muted-foreground'>Phone: (03) 9103 1317</p>
       </div>
     );
   }
@@ -305,8 +305,8 @@ function ProposalContent() {
             Proposal has expired. Please contact your broker.
           </p>
         </div>
-        <p className='text-gray-600'>Email: info@blackmontadvisory.com</p>
-        <p className='text-gray-600'>Phone: (03) 9103 1317</p>
+        <p className='text-muted-foreground'>Email: info@blackmontadvisory.com</p>
+        <p className='text-muted-foreground'>Phone: (03) 9103 1317</p>
       </div>
     );
   }
@@ -376,7 +376,7 @@ function ProposalContent() {
 
         <TheProcess />
 
-        <AboutAbbass />
+        <AboutBlackmont />
 
         <ContactUs />
 
@@ -395,8 +395,8 @@ export default function ProposalPageWrapper() {
     <Suspense
       fallback={
         <div className='min-h-[60vh] flex flex-col items-center justify-center p-8'>
-          <Loader2 className='w-12 h-12 animate-spin text-brand-primary mb-4' />
-          <p className='text-gray-500 font-medium text-lg'>Loading...</p>
+          <Loader2 className='w-12 h-12 animate-spin text-accent mb-4' />
+          <p className='text-muted-foreground font-medium text-lg'>Loading...</p>
         </div>
       }
     >

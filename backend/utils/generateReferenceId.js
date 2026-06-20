@@ -1,27 +1,26 @@
 const Listing = require('../models/Listing');
 
 const PREFIX = 'ABB';
-const PAD = 3;
+const DIGITS = 6; // 100000–999999
 
 /**
- * Generate the next sequential reference ID (ABB001, ABB002, ABB003, ...).
- * Looks up the highest existing ABB-numbered referenceId in the database and
- * increments it. Falls back to ABB001 when none exist yet.
+ * Generate a random, unique reference ID (e.g. ABB482917).
+ * Picks a random 6-digit number and verifies it isn't already in use, retrying
+ * on the rare collision. Falls back to a timestamp-based suffix if needed.
  */
 const generateReferenceId = async () => {
-  const listings = await Listing.find(
-    { referenceId: { $regex: /^ABB\d+$/i } },
-    { referenceId: 1, _id: 0 }
-  ).lean();
+  const min = 10 ** (DIGITS - 1); // 100000
+  const max = 10 ** DIGITS - 1; // 999999
 
-  let maxNum = 0;
-  for (const { referenceId } of listings) {
-    const num = parseInt(referenceId.slice(PREFIX.length), 10);
-    if (Number.isFinite(num) && num > maxNum) maxNum = num;
+  for (let attempt = 0; attempt < 10; attempt++) {
+    const num = Math.floor(min + Math.random() * (max - min + 1));
+    const candidate = `${PREFIX}${num}`;
+    const exists = await Listing.exists({ referenceId: candidate });
+    if (!exists) return candidate;
   }
 
-  const next = maxNum + 1;
-  return `${PREFIX}${String(next).padStart(PAD, '0')}`;
+  // Extremely unlikely fallback — last 8 digits of the timestamp guarantee uniqueness.
+  return `${PREFIX}${Date.now().toString().slice(-8)}`;
 };
 
 module.exports = generateReferenceId;

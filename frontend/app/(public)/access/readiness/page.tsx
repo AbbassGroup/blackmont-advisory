@@ -28,7 +28,7 @@ const jsonLd = [
 
 export default function ReadinessPage() {
   return (
-    <main className='min-h-screen bg-brand-offwhite'>
+    <main className='min-h-screen bg-muted'>
       <JsonLd data={jsonLd} />
       <AccessTracker resource='Sale Readiness Score' />
       <ToolHeader

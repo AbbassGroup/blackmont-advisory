@@ -33,18 +33,18 @@ const faqs = [
 function FAQItem({ faq }: { faq: (typeof faqs)[0] }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className='border-b border-brand-primary/15 overflow-hidden'>
+    <div className='border-b border-accent/15 overflow-hidden'>
       <button
         onClick={() => setOpen((p) => !p)}
         className='w-full flex items-center justify-between gap-4 py-5 text-left transition-colors duration-150 group'
       >
         <span
-          className={`font-semibold text-[1.05rem] transition-colors ${open ? 'text-brand-black' : 'text-brand-black group-hover:text-brand-primary'}`}
+          className={`font-semibold text-[1.05rem] transition-colors ${open ? 'text-secondary' : 'text-secondary group-hover:text-accent'}`}
         >
           {faq.q}
         </span>
         <ChevronDown
-          className={`w-5 h-5 shrink-0 transition-transform duration-300 ${open ? 'rotate-180 text-brand-primary' : 'text-gray-400'}`}
+          className={`w-5 h-5 shrink-0 transition-transform duration-300 ${open ? 'rotate-180 text-accent' : 'text-muted-foreground'}`}
         />
       </button>
       <AnimatePresence initial={false}>
@@ -56,7 +56,7 @@ function FAQItem({ faq }: { faq: (typeof faqs)[0] }) {
             transition={{ duration: 0.25 }}
             className='overflow-hidden'
           >
-            <div className='pb-6 text-gray-500 leading-relaxed text-[1rem]'>
+            <div className='pb-6 text-muted-foreground leading-relaxed text-[1rem]'>
               {faq.a}
             </div>
           </motion.div>
@@ -68,8 +68,8 @@ function FAQItem({ faq }: { faq: (typeof faqs)[0] }) {
 
 export function FAQSection() {
   return (
-    <section className='py-20 lg:py-28 bg-gradient-to-b from-[#F8FFFE] via-white to-[#F5FCFB]'>
-      <div className='max-w-[1260px] mx-auto px-6 lg:px-8'>
+    <section className='py-20 lg:py-28 bg-background'>
+      <div className='max-w-[1500px] mx-auto px-6 sm:px-10 lg:px-16'>
         <SectionHeading title='Frequent Questions' className='mb-16' />
 
         <div className='grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-20 items-center text-left'>
@@ -84,7 +84,7 @@ export function FAQSection() {
           <div className='hidden md:block md:col-span-5'>
             <div className='relative w-full max-w-[400px] mx-auto aspect-square'>
               <Image
-                src='/businessbrokers/faq.svg'
+                src='/faq.svg'
                 alt='Frequently Asked Questions'
                 fill
                 className='object-contain'

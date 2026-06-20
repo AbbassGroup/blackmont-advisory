@@ -83,15 +83,15 @@ function StatCard({
   hint?: string;
 }) {
   return (
-    <div className='bg-white rounded-xl shadow-sm border border-gray-100 p-5'>
-      <div className='flex items-center gap-2 text-brand-black/50'>
-        <Icon className='w-4 h-4' />
+    <div className='bg-card border border-border border-l-2 border-l-accent p-5'>
+      <div className='flex items-center gap-2 text-muted-foreground'>
+        <Icon className='w-4 h-4 text-accent' />
         <span className='text-xs font-medium uppercase tracking-wide'>
           {label}
         </span>
       </div>
-      <p className='mt-2 text-2xl font-bold text-brand-black'>{value}</p>
-      {hint && <p className='mt-0.5 text-xs text-brand-black/50'>{hint}</p>}
+      <p className='mt-2 text-2xl font-bold text-secondary'>{value}</p>
+      {hint && <p className='mt-0.5 text-xs text-muted-foreground'>{hint}</p>}
     </div>
   );
 }
@@ -99,12 +99,12 @@ function StatCard({
 function leadTypeBadge(type?: string) {
   if (type === 'consultation')
     return (
-      <Badge className='bg-blue-100 text-blue-700 hover:bg-blue-100'>
+      <Badge className='rounded-none bg-secondary/10 text-secondary hover:bg-secondary/10'>
         Consultation
       </Badge>
     );
   return (
-    <Badge className='bg-green-100 text-green-700 hover:bg-green-100'>
+    <Badge className='rounded-none bg-accent/15 text-accent hover:bg-accent/15'>
       Resource Unlock
     </Badge>
   );
@@ -160,10 +160,10 @@ export default function ResourceAnalyticsPage() {
           <button
             key={r.days}
             onClick={() => setDays(r.days)}
-            className={`px-3.5 py-1.5 rounded-lg text-sm font-medium border transition-colors ${
+            className={`px-3.5 py-1.5 rounded-none text-sm font-medium border transition-colors ${
               days === r.days
-                ? 'bg-brand-primary text-white border-brand-primary'
-                : 'bg-white text-brand-black/70 border-gray-200 hover:bg-gray-50'
+                ? 'bg-accent text-primary border-accent'
+                : 'bg-card text-foreground border-border hover:bg-muted'
             }`}
           >
             {r.label}
@@ -173,7 +173,7 @@ export default function ResourceAnalyticsPage() {
 
       {loading ? (
         <div className='flex items-center justify-center p-24'>
-          <Loader2 className='w-8 h-8 animate-spin text-brand-primary' />
+          <Loader2 className='w-8 h-8 animate-spin text-accent' />
         </div>
       ) : (
         <div className='space-y-6'>
@@ -206,17 +206,17 @@ export default function ResourceAnalyticsPage() {
             />
           </div>
 
-          <div className='bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden'>
-            <div className='px-5 py-4 border-b border-gray-100'>
-              <h2 className='text-sm font-semibold text-brand-black'>
+          <div className='bg-card border border-border overflow-hidden'>
+            <div className='px-5 py-4 border-b border-border'>
+              <h2 className='text-sm font-semibold text-secondary'>
                 Resource funnel
               </h2>
-              <p className='text-xs text-brand-black/50'>
+              <p className='text-xs text-muted-foreground'>
                 How each tool moves from open to completion to lead.
               </p>
             </div>
             <Table>
-              <TableHeader className='bg-gray-50/50'>
+              <TableHeader className='bg-muted/60'>
                 <TableRow>
                   <TableHead className='font-semibold'>Resource</TableHead>
                   <TableHead className='font-semibold text-center'>
@@ -247,7 +247,7 @@ export default function ResourceAnalyticsPage() {
                       <TableCell className='text-center'>
                         {r.completions}
                       </TableCell>
-                      <TableCell className='text-center font-semibold text-brand-primary'>
+                      <TableCell className='text-center font-semibold text-accent'>
                         {r.leads}
                       </TableCell>
                     </TableRow>
@@ -256,7 +256,7 @@ export default function ResourceAnalyticsPage() {
                   <TableRow>
                     <TableCell
                       colSpan={5}
-                      className='text-center text-brand-black/40 py-10'
+                      className='text-center text-muted-foreground/60 py-10'
                     >
                       No activity in this period yet.
                     </TableCell>
@@ -266,29 +266,29 @@ export default function ResourceAnalyticsPage() {
             </Table>
           </div>
 
-          <div className='bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden'>
-            <div className='px-5 py-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-3'>
+          <div className='bg-card border border-border overflow-hidden'>
+            <div className='px-5 py-4 border-b border-border flex flex-wrap items-center justify-between gap-3'>
               <div>
-                <h2 className='text-sm font-semibold text-brand-black'>
+                <h2 className='text-sm font-semibold text-secondary'>
                   Captured leads
                 </h2>
-                <p className='text-xs text-brand-black/50'>
+                <p className='text-xs text-muted-foreground'>
                   Contacts collected from the resource tools and consultation
                   forms.
                 </p>
               </div>
               <div className='relative max-w-xs w-full'>
-                <Search className='absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400' />
+                <Search className='absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60' />
                 <Input
                   placeholder='Search leads...'
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className='pl-9 bg-gray-50 border-gray-200'
+                  className='pl-9 rounded-none border-secondary/15 bg-background shadow-none focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-accent/15'
                 />
               </div>
             </div>
             <Table>
-              <TableHeader className='bg-gray-50/50'>
+              <TableHeader className='bg-muted/60'>
                 <TableRow>
                   <TableHead className='font-semibold'>Name</TableHead>
                   <TableHead className='font-semibold'>Email</TableHead>
@@ -309,7 +309,7 @@ export default function ResourceAnalyticsPage() {
                       <TableCell>{l.phone || '—'}</TableCell>
                       <TableCell>{l.resource || '—'}</TableCell>
                       <TableCell>{leadTypeBadge(l.leadType)}</TableCell>
-                      <TableCell className='whitespace-nowrap text-brand-black/60'>
+                      <TableCell className='whitespace-nowrap text-muted-foreground'>
                         {new Date(l.createdAt).toLocaleDateString('en-AU', {
                           day: '2-digit',
                           month: 'short',
@@ -322,7 +322,7 @@ export default function ResourceAnalyticsPage() {
                   <TableRow>
                     <TableCell
                       colSpan={6}
-                      className='text-center text-brand-black/40 py-10'
+                      className='text-center text-muted-foreground/60 py-10'
                     >
                       No leads captured in this period yet.
                     </TableCell>

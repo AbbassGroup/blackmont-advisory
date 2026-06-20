@@ -11,12 +11,12 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://abbass.com.au'),
+  metadataBase: new URL('https://www.blackmontadvisory.com'),
   title: 'Buy & Sell Businesses in Australia | Blackmont Advisory',
   description:
     'Australia’s trusted boutique business brokerage, helping owners achieve the best outcomes when buying or selling businesses across Melbourne, Sydney, and beyond.',
   icons: {
-    icon: '/businessbrokers/mark.webp',
+    icon: '/assets/logo.png',
   },
   openGraph: {
     type: 'website',
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     siteName: 'Blackmont Advisory',
     images: [
       {
-        url: 'https://www.abbass.com.au/businessbrokers/bb-og.png',
+        url: '/assets/blackmont-og.png',
         width: 1200,
         height: 630,
         alt: 'Blackmont Advisory',
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     title: 'Blackmont Advisory',
     description:
       'Australia’s trusted boutique business brokerage, helping owners achieve the best outcomes when buying or selling businesses across Melbourne, Sydney, and beyond.',
-    images: ['https://www.abbass.com.au/businessbrokers/bb-og.png'],
+    images: ['/assets/blackmont-og.png'],
   },
   robots: {
     index: true,

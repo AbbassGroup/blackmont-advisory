@@ -104,7 +104,7 @@ export const blogs = [
       },
       {
         type: 'section',
-        title: 'The ABBASS Difference: A Boutique Approach to Business Sales',
+        title: 'The Blackmont Advisory Difference: A Boutique Approach to Business Sales',
         sx: { mt: 4, mb: 1.5, color: '#56C1BC', fontWeight: 700 },
         content: [
           {

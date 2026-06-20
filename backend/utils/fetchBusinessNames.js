@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 const fetchBusinessNames = async (dealIds) => {
-  const nexarApi = process.env.NEXAR_API_URL || 'https://api.nexartechnologies.com/api/v1';
+  const nexarApi = process.env.NEXAR_API_URL || 'https://blackmont-api.nexartechnologies.com';
   const businessNamesRes = await axios.post(`${nexarApi}/contacts/business`, {
     dealIds
   }, {

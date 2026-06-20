@@ -228,7 +228,7 @@ export function SocialsSection({
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{ ['--accent' as string]: color }}
-                  className="group relative flex items-center gap-4 overflow-hidden rounded-2xl border border-gray-100 bg-white p-3.5 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--accent)] hover:shadow-md"
+                  className="group relative flex items-center gap-4 overflow-hidden border border-border bg-card p-3.5 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--accent)] hover:shadow-md"
                 >
                   {/* Accent wash that fades in on hover */}
                   <span
@@ -246,10 +246,10 @@ export function SocialsSection({
                     )}
                   </span>
                   <div className="relative min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold text-brand-black">{l.label}</p>
-                    <p className="truncate text-xs text-gray-400">{prettyUrl(l.url)}</p>
+                    <p className="truncate text-sm font-semibold text-secondary">{l.label}</p>
+                    <p className="truncate text-xs text-muted-foreground/60">{prettyUrl(l.url)}</p>
                   </div>
-                  <ArrowUpRight className="relative h-4 w-4 shrink-0 text-gray-300 transition-colors group-hover:text-[var(--accent)]" />
+                  <ArrowUpRight className="relative h-4 w-4 shrink-0 text-muted-foreground/50 transition-colors group-hover:text-[var(--accent)]" />
                 </a>
               );
             })}
@@ -258,17 +258,17 @@ export function SocialsSection({
 
       {/* Editor controls */}
       {editable && (
-        <div className="mt-6 space-y-3 rounded-2xl border border-dashed border-gray-200 bg-gray-50/60 p-4">
+        <div className="mt-6 space-y-3 border border-dashed border-border bg-muted/40 p-4">
           {links.length > 0 && (
             <div className="space-y-3">
               {links.map((l) => (
                 <div
                   key={l.id}
-                  className="flex flex-wrap items-center gap-2 rounded-xl border border-gray-200 bg-white p-3"
+                  className="flex flex-wrap items-center gap-2 border border-border bg-card p-3"
                 >
                   <span
                     className={`flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg ${
-                      FULL_COLOR.has(l.platform) ? '' : 'bg-gray-50'
+                      FULL_COLOR.has(l.platform) ? '' : 'bg-muted'
                     }`}
                   >
                     <BrandGlyph
@@ -307,7 +307,7 @@ export function SocialsSection({
                     type="button"
                     onClick={() => removeLink(l.id)}
                     title="Remove"
-                    className="ml-auto rounded-lg p-1.5 text-gray-300 transition hover:bg-red-50 hover:text-red-500"
+                    className="ml-auto rounded-lg p-1.5 text-muted-foreground/50 transition hover:bg-red-50 hover:text-red-500"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>

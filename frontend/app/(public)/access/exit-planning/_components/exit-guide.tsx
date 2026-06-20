@@ -133,16 +133,16 @@ export function ExitGuide() {
     <section className='py-12 lg:py-16'>
       <div className='mx-auto max-w-3xl px-5 lg:px-8'>
         {/* Overall progress */}
-        <div className='flex items-center gap-6 rounded-2xl bg-brand-black px-6 py-6 lg:px-8'>
-          <div className='relative flex h-[68px] w-[68px] shrink-0 flex-col items-center justify-center rounded-full border-2 border-brand-primary/40 bg-white/5'>
-            <span className='text-xl font-extrabold leading-none text-brand-primary'>
+        <div className='flex items-center gap-6 border-[1.5px] border-secondary bg-secondary px-6 py-6 lg:px-8'>
+          <div className='relative flex h-[68px] w-[68px] shrink-0 flex-col items-center justify-center rounded-full border-2 border-accent/40 bg-white/5'>
+            <span className='text-xl font-extrabold leading-none text-accent'>
               {pct}%
             </span>
-            <span className='text-[10px] text-white/40'>complete</span>
+            <span className='text-[10px] text-parchment/40'>complete</span>
           </div>
           <div>
-            <h2 className='text-lg font-semibold text-white'>{copy.h}</h2>
-            <p className='mt-1 text-sm text-white/55'>{copy.s}</p>
+            <h2 className='text-lg font-bold text-parchment'>{copy.h}</h2>
+            <p className='mt-1 text-sm text-parchment/55'>{copy.s}</p>
           </div>
         </div>
 
@@ -163,24 +163,24 @@ export function ExitGuide() {
               >
                 <div className='flex items-center gap-4'>
                   <div
-                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-extrabold text-white transition-colors ${
-                      complete ? 'bg-green-600' : 'bg-brand-primary'
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-extrabold transition-colors ${
+                      complete ? 'bg-green-600 text-white' : 'bg-accent text-primary'
                     }`}
                   >
                     {complete ? <Check className='h-5 w-5' /> : pi + 1}
                   </div>
                   <div className='flex-1'>
-                    <h3 className='text-[17px] font-semibold text-brand-black'>
+                    <h3 className='text-[17px] font-semibold text-secondary'>
                       {phase.title}
                     </h3>
-                    <p className='text-xs text-gray-400'>{phase.label}</p>
+                    <p className='text-xs text-muted-foreground'>{phase.label}</p>
                   </div>
-                  <span className='whitespace-nowrap text-xs font-semibold text-brand-primary'>
+                  <span className='whitespace-nowrap text-xs font-semibold text-accent'>
                     {phaseDone} / {phase.tasks.length} done
                   </span>
                 </div>
 
-                <div className='ml-5 mt-3 space-y-2 border-l border-gray-200 pl-7'>
+                <div className='ml-5 mt-3 space-y-2 border-l border-secondary/15 pl-7'>
                   {phase.tasks.map((task, ti) => {
                     const key = `${pi}-${ti}`;
                     const checked = !!done[key];
@@ -191,21 +191,21 @@ export function ExitGuide() {
                         className={`flex w-full items-start gap-3 rounded-lg border px-4 py-3 text-left transition-colors ${
                           checked
                             ? 'border-green-200 bg-green-50'
-                            : 'border-gray-200 bg-white hover:border-brand-primary'
+                            : 'border-secondary/15 bg-background hover:border-accent'
                         }`}
                       >
                         <span
                           className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-colors ${
                             checked
                               ? 'border-green-600 bg-green-600 text-white'
-                              : 'border-gray-300'
+                              : 'border-secondary/20'
                           }`}
                         >
                           {checked && <Check className='h-3 w-3' />}
                         </span>
                         <span
                           className={`text-sm leading-snug ${
-                            checked ? 'text-gray-400' : 'text-brand-black'
+                            checked ? 'text-muted-foreground' : 'text-secondary'
                           }`}
                         >
                           {task}
@@ -222,7 +222,7 @@ export function ExitGuide() {
         <div className='mt-8 flex justify-center'>
           <PrintButton
             label='Print Exit Guide'
-            fileName='ABBASS-Exit-Planning-Guide.pdf'
+            fileName='Blackmont-Exit-Planning-Guide.pdf'
             buildDocument={(assets) => (
               <ExitPlanningPdf
                 assets={assets}

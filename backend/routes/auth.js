@@ -140,44 +140,6 @@ router.get("/me", authMiddleware, async (req, res) => {
 
 
 /**
- * @route GET /user/:id
- * @desc Get user details by ID (superadmin only or the same user)
- */
-router.get("/user/:id", authMiddleware, async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    // Allow superadmin or the same logged-in user
-    if (req.user.role !== "superadmin" && req.user._id.toString() !== id) {
-      return res.status(403).json({
-        message: "Forbidden: You are not authorized to view this user",
-      });
-    }
-
-    const user = await User.findById(id).select("-password");
-    if (!user) {
-      return res.status(404).json({
-        message: "User not found",
-      });
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: "User fetched successfully",
-      data: user,
-    });
-  } catch (err) {
-    console.error("[Get User by ID Error]", err.message);
-    return res.status(500).json({
-      message: "An error occurred while fetching the user",
-      error: process.env.NODE_ENV === "development" ? err.message : undefined,
-    });
-  }
-});
-
-
-
-/**
  * @route GET /admins
  * @desc Get all users (superadmin only)
  */

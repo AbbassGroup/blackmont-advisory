@@ -211,29 +211,29 @@ export function BenchmarkReport() {
               <button
                 key={item.name}
                 onClick={() => setSelected(i)}
-                className={`rounded-2xl border p-4 text-left transition-all cursor-pointer ${
+                className={` border p-4 text-left transition-all cursor-pointer ${
                   active
-                    ? 'border-brand-primary bg-brand-primary text-white shadow-[0_12px_30px_-14px_rgba(86, 193, 188, 0.7)]'
-                    : 'border-gray-200 bg-white hover:border-brand-primary hover:bg-brand-primary/5 hover:shadow-sm'
+                    ? 'border-accent bg-accent text-primary shadow-[0_12px_30px_-14px_rgba(201, 168, 76, 0.7)]'
+                    : 'border-secondary/15 bg-background hover:border-accent hover:bg-accent/5 hover:shadow-sm'
                 }`}
               >
                 <div
                   className={`text-[13px] font-semibold ${
-                    active ? 'text-white/80' : 'text-brand-black'
+                    active ? 'text-primary/80' : 'text-secondary'
                   }`}
                 >
                   {item.name}
                 </div>
                 <div
                   className={`mt-2 text-2xl font-extrabold tracking-tight ${
-                    active ? 'text-white' : 'text-brand-primary'
+                    active ? 'text-primary' : 'text-accent'
                   }`}
                 >
                   {item.multi}
                 </div>
                 <div
                   className={`mt-0.5 text-[10px] uppercase tracking-[0.07em] ${
-                    active ? 'text-white/55' : 'text-gray-400'
+                    active ? 'text-primary/55' : 'text-muted-foreground'
                   }`}
                 >
                   EBITDA multiple
@@ -252,10 +252,10 @@ export function BenchmarkReport() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 8 }}
               transition={{ duration: 0.3 }}
-              className='mt-6 scroll-mt-24 rounded-2xl border border-gray-200 bg-white p-7 lg:p-8'
+              className='mt-6 scroll-mt-24  border border-secondary/15 bg-background p-7 lg:p-8'
             >
               <div className='flex flex-wrap items-center justify-between gap-3'>
-                <h2 className='text-2xl font-extrabold tracking-tight text-brand-black'>
+                <h2 className='text-2xl font-extrabold tracking-tight text-secondary'>
                   {ind.name}
                 </h2>
                 <span
@@ -278,37 +278,37 @@ export function BenchmarkReport() {
                 ].map((m) => (
                   <div
                     key={m.label}
-                    className='rounded-xl bg-brand-offwhite p-4 text-center'
+                    className=' bg-muted p-4 text-center'
                   >
-                    <div className='text-xl font-extrabold tracking-tight text-brand-black'>
+                    <div className='text-xl font-extrabold tracking-tight text-secondary'>
                       {m.val}
                     </div>
-                    <div className='mt-1 text-[11px] uppercase tracking-[0.07em] text-gray-400'>
+                    <div className='mt-1 text-[11px] uppercase tracking-[0.07em] text-muted-foreground'>
                       {m.label}
                     </div>
                   </div>
                 ))}
               </div>
 
-              <h3 className='mt-7 text-sm font-semibold text-brand-black'>
+              <h3 className='mt-7 text-sm font-semibold text-secondary'>
                 What buyers are looking at
               </h3>
               <div className='mt-3 flex flex-wrap gap-2'>
                 {ind.drivers.map((d) => (
                   <span
                     key={d}
-                    className='rounded-full border border-gray-200 bg-brand-offwhite px-3 py-1.5 text-xs font-medium text-brand-black'
+                    className='rounded-full border border-secondary/15 bg-muted px-3 py-1.5 text-xs font-medium text-secondary'
                   >
                     {d}
                   </span>
                 ))}
               </div>
 
-              <div className='mt-6 border-t border-gray-100 pt-5'>
-                <div className='text-xs font-bold uppercase tracking-[0.08em] text-brand-primary'>
-                  ABBASS market insight
+              <div className='mt-6 border-t border-secondary/15 pt-5'>
+                <div className='text-xs font-bold uppercase tracking-[0.08em] text-accent'>
+                  Blackmont market insight
                 </div>
-                <p className='mt-2 text-sm leading-relaxed text-gray-500'>
+                <p className='mt-2 text-sm leading-relaxed text-muted-foreground'>
                   {ind.insight}
                 </p>
               </div>
@@ -317,7 +317,7 @@ export function BenchmarkReport() {
         </AnimatePresence>
 
         {!ind && (
-          <p className='mt-6 rounded-2xl border border-dashed border-gray-300 bg-white/50 p-8 text-center text-sm text-gray-400'>
+          <p className='mt-6  border border-dashed border-secondary/20 bg-background/50 p-8 text-center text-sm text-muted-foreground'>
             Select an industry above to see typical multiples, price ranges, and
             what buyers look for.
           </p>
@@ -327,7 +327,7 @@ export function BenchmarkReport() {
           <div className='mt-6 flex justify-center'>
             <PrintButton
               label='Print Report'
-              fileName={`ABBASS-${ind.name.replace(/[^a-z0-9]+/gi, '-')}-Benchmark.pdf`}
+              fileName={`Blackmont-${ind.name.replace(/[^a-z0-9]+/gi, '-')}-Benchmark.pdf`}
               buildDocument={(assets) => (
                 <BenchmarksPdf
                   assets={assets}

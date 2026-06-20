@@ -5,10 +5,6 @@ const jwt = require('jsonwebtoken');
 const { sendMail } = require('../utils/mailer');
 const { default: axios } = require('axios');
 
-const adminAuth = require("../middleware/auth.middleware");
-
-
-
 // POST /api/valuations - public
 router.post('/', async (req, res) => {
   try {
@@ -41,7 +37,7 @@ router.post('/', async (req, res) => {
 
 
     const integrationPromise = (async () => {
-      const nexarApi = process.env.NEXAR_API_URL || 'https://api.nexartechnologies.com/api/v1';
+      const nexarApi = process.env.NEXAR_API_URL || 'https://blackmont-api.nexartechnologies.com';
       try {
         await axios.post(`${nexarApi}/deals/create/integration`, {
           name: `${firstName} ${lastName}`,
@@ -61,34 +57,6 @@ router.post('/', async (req, res) => {
     await Promise.allSettled([adminEmailPromise, integrationPromise]);
 
     res.status(201).json({ message: 'Request submitted' });
-  } catch (err) {
-    res.status(500).json({ error: 'Server error' });
-  }
-});
-
-// GET /api/valuations - admin only
-router.get('/', adminAuth, async (req, res) => {
-  try {
-    const requests = await ValuationRequest.find().sort({ createdAt: -1 });
-    res.json(requests);
-  } catch (err) {
-    res.status(500).json({ error: 'Server error' });
-  }
-});
-
-// PUT /api/valuations/:id - admin only, update formCompleted status
-router.put('/:id', adminAuth, async (req, res) => {
-  try {
-    const { formCompleted } = req.body;
-    const updatedRequest = await ValuationRequest.findByIdAndUpdate(
-      req.params.id,
-      { formCompleted },
-      { new: true }
-    );
-    if (!updatedRequest) {
-      return res.status(404).json({ error: 'Valuation request not found' });
-    }
-    res.json(updatedRequest);
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
   }

@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/admin/', '/api/', '/proposal'],
       },
     ],
-    sitemap: 'https://abbass.com.au/sitemap.xml',
+    sitemap: 'https://www.blackmontadvisory.com/sitemap.xml',
   };
 }

@@ -138,8 +138,6 @@ export default function Deals() {
     }
   };
 
-  console.log({ deals });
-
   return (
     <DashboardLayout
       title='Deals & Prospects'
@@ -148,23 +146,23 @@ export default function Deals() {
         <Button
           variant='outline'
           onClick={(e) => openImHistory(e)}
-          className='gap-2 text-brand-primary border-brand-primary/20 hover:bg-brand-primary/5 hover:text-brand-primary'
+          className='gap-2 rounded-none text-accent border-accent/30 hover:bg-accent/5 hover:text-accent'
         >
           <Eye className='w-4 h-4' /> View All IM History
         </Button>
       }
     >
       {loading ? (
-        <div className='flex items-center justify-center p-12 bg-white rounded-xl shadow-sm border border-gray-100'>
-          <Loader2 className='w-8 h-8 animate-spin text-brand-primary' />
+        <div className='flex items-center justify-center p-12 border border-border bg-card'>
+          <Loader2 className='w-8 h-8 animate-spin text-accent' />
         </div>
       ) : deals.length === 0 ? (
-        <div className='flex flex-col items-center justify-center p-12 bg-white rounded-xl shadow-sm border border-gray-100'>
-          <Briefcase className='w-12 h-12 text-gray-300 mb-4' />
-          <h3 className='text-lg font-semibold text-brand-black'>
+        <div className='flex flex-col items-center justify-center p-12 border border-border bg-card'>
+          <Briefcase className='w-12 h-12 text-border mb-4' />
+          <h3 className='text-lg font-semibold text-secondary'>
             No Deals Found
           </h3>
-          <p className='text-gray-500'>
+          <p className='text-muted-foreground'>
             There are currently no deals available.
           </p>
         </div>
@@ -179,9 +177,9 @@ export default function Deals() {
                 key={deal._id}
                 href={`/admin/deals/${deal._id}?dealId=${deal.deal}`}
               >
-                <div className='group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md hover:border-brand-primary/30 transition-all duration-300 h-full flex flex-col cursor-pointer'>
+                <div className='group bg-card border border-border overflow-hidden hover:shadow-md hover:border-accent/40 transition-all duration-300 h-full flex flex-col cursor-pointer'>
                   {/* Image container */}
-                  <div className='aspect-4/3 w-full bg-gray-100 relative overflow-hidden'>
+                  <div className='aspect-4/3 w-full bg-muted relative overflow-hidden'>
                     {deal.image ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <Image
@@ -195,14 +193,14 @@ export default function Deals() {
                         className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-500'
                       />
                     ) : (
-                      <div className='w-full h-full flex items-center justify-center bg-gray-50'>
-                        <Briefcase className='w-10 h-10 text-gray-300' />
+                      <div className='w-full h-full flex items-center justify-center bg-muted/60'>
+                        <Briefcase className='w-10 h-10 text-border' />
                       </div>
                     )}
                   </div>
                   {/* Content */}
                   <div className='grow mx-4 py-4 flex justify-between items-start gap-2'>
-                    <h3 className='font-semibold text-brand-black line-clamp-2 leading-snug group-hover:text-brand-primary transition-colors'>
+                    <h3 className='font-semibold text-secondary line-clamp-2 leading-snug group-hover:text-accent transition-colors'>
                       {deal.businessName}
                     </h3>
                     <div className='flex items-center gap-1 shrink-0'>
@@ -211,8 +209,8 @@ export default function Deals() {
                         disabled={isToggling}
                         className={`p-1.5 rounded-full transition-colors ${
                           isNotifEnabled
-                            ? 'text-brand-primary bg-brand-primary/10 hover:bg-brand-primary/20'
-                            : 'text-gray-400 hover:text-gray-500 hover:bg-gray-100'
+                            ? 'text-accent bg-accent/10 hover:bg-accent/20'
+                            : 'text-muted-foreground/70 hover:text-muted-foreground hover:bg-muted'
                         }`}
                         title={
                           isNotifEnabled
@@ -230,7 +228,7 @@ export default function Deals() {
                       </button>
                       <button
                         onClick={(e) => openImHistory(e, deal._id)}
-                        className='p-1.5 text-gray-400 hover:text-brand-primary hover:bg-brand-primary/10 rounded-full transition-colors shrink-0'
+                        className='p-1.5 text-muted-foreground/70 hover:text-accent hover:bg-accent/10 rounded-full transition-colors shrink-0'
                         title='View IM History for this Deal'
                       >
                         <Eye className='w-4 h-4' />

@@ -12,21 +12,26 @@ export function ContactUs() {
     >
       <div className='absolute inset-0 bg-black/40' />
 
-      <div className='relative z-10 max-w-[340px] mx-auto rounded-xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.2)]'>
+      <div className='relative z-10 max-w-[340px] mx-auto overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.3)]'>
+        {/* gilt hairline at the top */}
+        <span
+          aria-hidden
+          className='block h-0.5 w-full bg-linear-to-r from-transparent via-accent to-transparent'
+        />
         {/* Top Info Section */}
-        <div className='bg-brand-primary text-white p-8 text-center'>
-          <h2 className='font-bold text-2xl tracking-wide mb-6 uppercase'>
+        <div className='bg-secondary text-parchment p-8 text-center'>
+          <h2 className='font-bold text-2xl tracking-wide mb-6 uppercase text-accent'>
             CONTACT US
           </h2>
 
           <div className='space-y-5 text-left ml-2'>
             <div className='flex items-center'>
-              <Phone className='w-5 h-5 mr-4 shrink-0 opacity-90' />
+              <Phone className='w-5 h-5 mr-4 shrink-0 text-accent' />
               <span className='text-base font-medium'>(03) 9103 1317</span>
             </div>
 
             <div className='flex items-start'>
-              <MapPin className='w-5 h-5 mr-4 mt-0.5 shrink-0 opacity-90' />
+              <MapPin className='w-5 h-5 mr-4 mt-0.5 shrink-0 text-accent' />
               <span className='text-base font-medium leading-snug'>
                 101 Moray St, South
                 <br />
@@ -35,7 +40,7 @@ export function ContactUs() {
             </div>
 
             <div className='flex items-center'>
-              <Mail className='w-5 h-5 mr-4 shrink-0 opacity-90' />
+              <Mail className='w-5 h-5 mr-4 shrink-0 text-accent' />
               <span className='text-base font-medium'>
                 info@blackmontadvisory.com
               </span>
@@ -44,19 +49,12 @@ export function ContactUs() {
         </div>
 
         {/* Bottom Logo Section */}
-        <div className='bg-[#222] p-8 flex flex-col items-center justify-center min-h-[160px]'>
-          <div className='relative w-24 h-24 mb-4'>
+        <div className='bg-primary p-8 flex flex-col items-center justify-center min-h-[160px]'>
+          <div className='relative h-14 w-52'>
             <Image
               loading='eager'
-              src='/businessbrokers/mark.webp'
-              alt='ABBASS Logo Marker'
-              fill
-              className='object-contain'
-            />
-          </div>
-          <div className='relative w-40 h-12'>
-            <Image
-              src='/businessbrokers/logo-text.webp'
+              unoptimized
+              src='/assets/blackmont-light.png'
               alt='Blackmont Advisory'
               fill
               className='object-contain'

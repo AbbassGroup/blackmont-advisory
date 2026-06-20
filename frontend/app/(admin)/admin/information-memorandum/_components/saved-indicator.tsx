@@ -18,12 +18,12 @@ export function SavedIndicator({
       text: lastSavedAt
         ? `Saved ${formatDistanceToNow(lastSavedAt, { addSuffix: true })}`
         : 'All changes saved',
-      cls: 'border-gray-200 bg-white text-gray-500',
+      cls: 'border-border bg-card text-muted-foreground',
     },
     saving: {
       icon: <Loader2 className="h-4 w-4 animate-spin" />,
       text: 'Saving...',
-      cls: 'border-gray-200 bg-white text-gray-500',
+      cls: 'border-border bg-card text-muted-foreground',
     },
     saved: {
       icon: <Check className="h-4 w-4" />,

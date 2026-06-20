@@ -145,7 +145,7 @@ export default function InformationMemorandumPage() {
         <Button
           onClick={handleCreate}
           disabled={creating}
-          className='gap-2 bg-brand-primary text-white hover:bg-brand-primary/90'
+          className='gap-2 rounded-none bg-accent font-semibold text-primary hover:bg-accent-light'
         >
           {creating ? (
             <Loader2 className='h-4 w-4 animate-spin' />
@@ -156,10 +156,10 @@ export default function InformationMemorandumPage() {
         </Button>
       }
     >
-      <div className='rounded-xl border border-gray-100 bg-white p-4 shadow-sm'>
+      <div className='border border-border bg-card p-4 shadow-sm'>
         <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
           <div className='relative w-full max-w-sm'>
-            <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400' />
+            <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60' />
             <Input
               placeholder='Search by business or broker...'
               value={search}
@@ -167,12 +167,12 @@ export default function InformationMemorandumPage() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className='border-gray-200 bg-gray-50 pl-9'
+              className='rounded-none border-secondary/15 bg-background pl-9 shadow-none focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-accent/15'
             />
           </div>
 
           {/* Active / Archived tabs */}
-          <div className='flex w-fit shrink-0 gap-1 rounded-xl border border-gray-200 bg-gray-50 p-1'>
+          <div className='flex w-fit shrink-0 gap-1 border border-border bg-muted p-1'>
             <TabButton
               active={tab === 'active'}
               onClick={() => switchTab('active')}
@@ -189,11 +189,11 @@ export default function InformationMemorandumPage() {
         </div>
       </div>
 
-      <div className='overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm'>
+      <div className='overflow-hidden border border-border bg-card shadow-sm'>
         <div className='overflow-x-auto'>
           <table className='w-full text-sm'>
             <thead>
-              <tr className='border-b border-gray-100 bg-gray-50/80'>
+              <tr className='border-b border-border bg-muted/60'>
                 <Th>Memorandum</Th>
                 <Th>Broker</Th>
                 <Th>Status</Th>
@@ -206,14 +206,14 @@ export default function InformationMemorandumPage() {
             <tbody className='divide-y divide-gray-50'>
               {loading ? (
                 <tr>
-                  <td colSpan={5} className='py-12 text-center text-gray-400'>
+                  <td colSpan={5} className='py-12 text-center text-muted-foreground/60'>
                     <Loader2 className='mx-auto mb-2 h-6 w-6 animate-spin' />
                     Loading templates...
                   </td>
                 </tr>
               ) : templates.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className='py-12 text-center text-gray-400'>
+                  <td colSpan={5} className='py-12 text-center text-muted-foreground/60'>
                     {isArchived ? (
                       'No archived templates.'
                     ) : (
@@ -229,33 +229,33 @@ export default function InformationMemorandumPage() {
                 templates.map((t) => (
                   <tr
                     key={t._id}
-                    className='transition-colors hover:bg-gray-50/60'
+                    className='transition-colors hover:bg-muted/50'
                   >
                     <td className='px-5 py-4'>
-                      <p className='font-semibold text-brand-black'>
+                      <p className='font-semibold text-secondary'>
                         {t.businessName || 'Untitled'}
                       </p>
                     </td>
-                    <td className='px-5 py-4 text-gray-700'>
+                    <td className='px-5 py-4 text-foreground'>
                       <p>
                         {getBrokerByEmail(t.brokerEmail)?.name ||
                           t.brokerEmail ||
                           '-'}
                       </p>
-                      <p className='text-xs text-gray-400'>{t.brokerEmail}</p>
+                      <p className='text-xs text-muted-foreground/60'>{t.brokerEmail}</p>
                     </td>
                     <td className='px-5 py-4'>
                       <span
-                        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${
+                        className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium ${
                           t.status === 'published'
-                            ? 'bg-green-100 text-green-700'
-                            : 'bg-amber-100 text-amber-700'
+                            ? 'bg-emerald-100 text-emerald-700'
+                            : 'bg-accent/15 text-accent'
                         }`}
                       >
                         {t.status === 'published' ? 'Published' : 'Draft'}
                       </span>
                     </td>
-                    <td className='hidden px-5 py-4 text-gray-500 lg:table-cell'>
+                    <td className='hidden px-5 py-4 text-muted-foreground lg:table-cell'>
                       {(() => {
                         const d = isArchived ? t.archivedAt : t.updatedAt;
                         return d
@@ -303,7 +303,7 @@ export default function InformationMemorandumPage() {
                               >
                                 <IconBtn
                                   title='Open published page'
-                                  className='hover:text-brand-primary'
+                                  className='hover:text-accent'
                                 >
                                   <ExternalLink className='h-4 w-4' />
                                 </IconBtn>
@@ -312,7 +312,7 @@ export default function InformationMemorandumPage() {
                             <Link href={`/im-print/${t._id}`} target='_blank'>
                               <IconBtn
                                 title='Print / Save PDF'
-                                className='hover:text-brand-primary'
+                                className='hover:text-accent'
                               >
                                 <Printer className='h-4 w-4' />
                               </IconBtn>
@@ -342,7 +342,7 @@ export default function InformationMemorandumPage() {
                             <button
                               onClick={() => setArchiveId(t._id)}
                               title='Archive'
-                              className='rounded-lg p-1.5 text-gray-500 transition-colors hover:bg-amber-50 hover:text-amber-600'
+                              className='rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-amber-50 hover:text-amber-600'
                             >
                               <Archive className='h-4 w-4' />
                             </button>
@@ -358,8 +358,8 @@ export default function InformationMemorandumPage() {
         </div>
 
         {totalPages > 1 && (
-          <div className='flex items-center justify-between border-t border-gray-100 bg-gray-50/50 px-5 py-3.5'>
-            <p className='text-sm text-gray-500'>
+          <div className='flex items-center justify-between border-t border-border bg-muted/40 px-5 py-3.5'>
+            <p className='text-sm text-muted-foreground'>
               Page {page} of {totalPages}
             </p>
             <div className='flex items-center gap-2'>
@@ -386,12 +386,12 @@ export default function InformationMemorandumPage() {
 
       {/* Archive confirm */}
       {archiveId && (
-        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm'>
-          <div className='w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl'>
-            <h3 className='mb-2 text-lg font-bold text-brand-black'>
+        <div className='fixed inset-0 z-50 flex items-center justify-center bg-secondary/40 p-4 backdrop-blur-sm'>
+          <div className='w-full max-w-sm border border-border bg-card p-6 shadow-xl'>
+            <h3 className='mb-2 text-lg font-bold text-secondary'>
               Archive template?
             </h3>
-            <p className='mb-6 text-sm text-gray-500'>
+            <p className='mb-6 text-sm text-muted-foreground'>
               This memorandum will be moved to{' '}
               <span className='font-medium'>Archived</span>.
             </p>
@@ -402,7 +402,7 @@ export default function InformationMemorandumPage() {
               <Button
                 onClick={handleArchive}
                 disabled={!!actionId}
-                className='bg-amber-500 text-white hover:bg-amber-600'
+                className='rounded-none bg-amber-500 text-white hover:bg-amber-600'
               >
                 {actionId ? (
                   <Loader2 className='h-4 w-4 animate-spin' />
@@ -417,12 +417,12 @@ export default function InformationMemorandumPage() {
 
       {/* Permanent delete confirm */}
       {permId && (
-        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm'>
-          <div className='w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl'>
-            <h3 className='mb-2 text-lg font-bold text-brand-black'>
+        <div className='fixed inset-0 z-50 flex items-center justify-center bg-secondary/40 p-4 backdrop-blur-sm'>
+          <div className='w-full max-w-sm border border-border bg-card p-6 shadow-xl'>
+            <h3 className='mb-2 text-lg font-bold text-secondary'>
               Delete permanently?
             </h3>
-            <p className='mb-6 text-sm text-gray-500'>
+            <p className='mb-6 text-sm text-muted-foreground'>
               This will{' '}
               <span className='font-medium text-red-600'>
                 permanently remove
@@ -436,7 +436,7 @@ export default function InformationMemorandumPage() {
               <Button
                 onClick={handlePermanentDelete}
                 disabled={!!actionId}
-                className='bg-red-600 text-white hover:bg-red-700'
+                className='rounded-none bg-red-600 text-white hover:bg-red-700'
               >
                 {actionId ? (
                   <Loader2 className='h-4 w-4 animate-spin' />
@@ -465,10 +465,10 @@ function TabButton({
     <button
       onClick={onClick}
       className={cn(
-        'flex items-center gap-1.5 rounded-lg px-3.5 py-1 text-sm font-medium transition-colors',
+        'flex items-center gap-1.5 px-3.5 py-1 text-sm font-medium transition-colors',
         active
-          ? 'bg-brand-primary/10 text-brand-primary'
-          : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800',
+          ? 'bg-card text-secondary shadow-sm'
+          : 'text-muted-foreground hover:text-foreground',
       )}
     >
       {children}
@@ -485,7 +485,7 @@ function Th({
 }) {
   return (
     <th
-      className={`px-5 py-3.5 text-left font-semibold text-gray-600 ${className}`}
+      className={`px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground ${className}`}
     >
       {children}
     </th>
@@ -504,7 +504,7 @@ function IconBtn({
   return (
     <span
       title={title}
-      className={`flex rounded-lg p-1.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 ${className}`}
+      className={`flex p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-secondary ${className}`}
     >
       {children}
     </span>

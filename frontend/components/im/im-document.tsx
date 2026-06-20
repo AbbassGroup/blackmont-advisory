@@ -10,7 +10,6 @@ import { HoursSection } from './sections/hours-section';
 import { ProcessSection } from './sections/process-section';
 import { MakeOfferSection } from './sections/makeoffer-section';
 import { KeyContactsSection } from './sections/keycontacts-section';
-import { ReviewsSection } from './sections/reviews-section';
 import { SocialsSection } from './sections/socials-section';
 import { OwnershipSection } from './sections/ownership-section';
 import { HighlightsSection } from './sections/highlights-section';
@@ -96,6 +95,9 @@ function ImDocumentImpl({
     <>
       {sections.map((section, index) => {
         if (section.enabled === false) return null;
+        // Reviews were retired — the AIBB/REIV accreditations now live at the
+        // bottom of Key Contacts. Skip any reviews section in legacy templates.
+        if (section.type === 'reviews') return null;
         const key = section.uid || section._id || `${section.type}-${index}`;
         const onChange = (patch: Record<string, unknown>) =>
           onSectionChange?.(index, patch);
@@ -132,7 +134,7 @@ function ImDocumentImpl({
             case 'about':
               return (
                 <AboutSection
-                  title={(section.data?.title as string) ?? 'About ABBASS'}
+                  title={(section.data?.title as string) ?? 'About Blackmont Advisory'}
                   editable={editable}
                   onChange={onChange}
                 />
@@ -148,7 +150,6 @@ function ImDocumentImpl({
             case 'process':
               return (
                 <ProcessSection
-                  brokerEmail={brokerEmail}
                   title={(section.data?.title as string) ?? 'The Process'}
                   editable={editable}
                   onChange={onChange}
@@ -168,14 +169,6 @@ function ImDocumentImpl({
               return (
                 <KeyContactsSection
                   title={(section.data?.title as string) ?? 'Key Contacts'}
-                  editable={editable}
-                  onChange={onChange}
-                />
-              );
-            case 'reviews':
-              return (
-                <ReviewsSection
-                  title={(section.data?.title as string) ?? 'Reviews'}
                   editable={editable}
                   onChange={onChange}
                 />
@@ -238,11 +231,11 @@ function ImDocumentImpl({
       })}
 
       {/* Proprietary copyright notice — shown at the bottom of every memorandum */}
-      <footer className='border-t border-gray-100 bg-white px-8 py-6 sm:px-12'>
-        <p className='mx-auto max-w-3xl text-center text-[11px] leading-relaxed text-gray-400'>
+      <footer className='border-t border-border bg-card px-8 py-6 sm:px-12'>
+        <p className='mx-auto max-w-3xl text-center text-[11px] leading-relaxed text-muted-foreground/70'>
           © Blackmont Advisory. All rights reserved. The content, format,
           structure, templates, and presentation style of this Information
-          Memorandum are proprietary to Blackmont Advisorys and may not be
+          Memorandum are proprietary to Blackmont Advisory and may not be
           copied, reproduced, or used without prior written consent.
         </p>
       </footer>

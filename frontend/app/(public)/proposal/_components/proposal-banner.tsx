@@ -23,18 +23,18 @@ export function ProposalBanner({
       style={{ backgroundImage: bgImage }}
     >
       <div className='relative z-10 text-center px-4 w-full max-w-4xl mx-auto'>
-        <h1 className='text-3xl md:text-5xl font-bold mb-3 drop-shadow-md'>
+        {template === 'business_appraisal' && (
+          <p className='mb-4 text-xs md:text-sm font-bold uppercase tracking-[0.24em] text-accent drop-shadow-sm'>
+            Business Appraisal
+          </p>
+        )}
+
+        <h1 className='text-3xl md:text-5xl font-bold mb-5 drop-shadow-md'>
           {businessName}
         </h1>
 
         {template === 'business_appraisal' && (
-          <h2 className='text-xl md:text-2xl font-medium mb-6 drop-shadow-sm opacity-90'>
-            Business Appraisal
-          </h2>
-        )}
-
-        {template === 'business_appraisal' && (
-          <div className='inline-block bg-brand-primary/95 text-white px-6 py-2.5 rounded-md font-semibold text-lg md:text-xl shadow-lg'>
+          <div className='inline-block bg-accent text-primary px-7 py-2.5 font-semibold text-lg md:text-xl shadow-lg'>
             {businessValue}
           </div>
         )}

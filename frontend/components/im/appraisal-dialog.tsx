@@ -64,9 +64,9 @@ export function AppraisalDialog({ children }: { children: React.ReactNode }) {
 
         {status === 'success' ? (
           <div className='flex flex-col items-center gap-3 py-6 text-center'>
-            <CheckCircle2 className='h-10 w-10 text-brand-primary' />
-            <p className='font-semibold text-brand-black'>Request received</p>
-            <p className='text-sm text-gray-500'>
+            <CheckCircle2 className='h-10 w-10 text-accent' />
+            <p className='font-semibold text-secondary'>Request received</p>
+            <p className='text-sm text-muted-foreground'>
               Thanks, we&apos;ll reach out shortly about your appraisal.
             </p>
             <Button
@@ -118,7 +118,7 @@ export function AppraisalDialog({ children }: { children: React.ReactNode }) {
             <Button
               type='submit'
               disabled={status === 'loading'}
-              className='w-full gap-2 bg-brand-primary text-white hover:bg-brand-primary/90'
+              className='w-full gap-2 rounded-none bg-accent font-semibold text-primary hover:bg-accent-light'
             >
               {status === 'loading' && (
                 <Loader2 className='h-4 w-4 animate-spin' />
@@ -146,7 +146,7 @@ function Field({
 }) {
   return (
     <div className='space-y-1.5'>
-      <label className='block text-sm font-medium text-gray-600'>{label}</label>
+      <label className='block text-sm font-medium text-muted-foreground'>{label}</label>
       {children}
     </div>
   );

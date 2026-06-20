@@ -10,10 +10,14 @@ import { SectionHeading } from '../section-chrome';
 import type { MakeOfferData } from '../types';
 
 const TRUST_ACCOUNT = {
-  bankName: 'Blackmont Advisory Estate Agency Business Statutory Trust Account',
+  bankName: ' Abbass Advocacy Estate Agency Business Statutory Trust Account',
   bsb: '013-350',
   acc: '659-404-759',
 };
+
+// Solid field surface so inputs stay legible on the section's tinted band.
+const FIELD_CLS =
+  'bg-card border-secondary/20 shadow-sm focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-accent/15';
 
 export function MakeOfferSection({
   data,
@@ -98,10 +102,20 @@ export function MakeOfferSection({
       ) : (
         <form onSubmit={handleSubmit} className='grid gap-4 sm:grid-cols-2'>
           <Field label='Name' required>
-            <Input name='name' required placeholder='Full name' />
+            <Input
+              name='name'
+              required
+              placeholder='Full name'
+              className={FIELD_CLS}
+            />
           </Field>
           <Field label='Number' required>
-            <Input name='number' required placeholder='Phone number' />
+            <Input
+              name='number'
+              required
+              placeholder='Phone number'
+              className={FIELD_CLS}
+            />
           </Field>
           <Field label='Email' required>
             <Input
@@ -109,16 +123,23 @@ export function MakeOfferSection({
               type='email'
               required
               placeholder='you@example.com'
+              className={FIELD_CLS}
             />
           </Field>
           <Field label='Offer amount' required>
-            <Input name='offerAmount' required placeholder='e.g. $550,000' />
+            <Input
+              name='offerAmount'
+              required
+              placeholder='e.g. $550,000'
+              className={FIELD_CLS}
+            />
           </Field>
           <Field label='Offer terms' required className='sm:col-span-2'>
             <Input
               name='offerTerms'
               required
               placeholder='e.g. Subject to finance'
+              className={FIELD_CLS}
             />
           </Field>
           <Field label='Comments' className='sm:col-span-2'>
@@ -126,6 +147,7 @@ export function MakeOfferSection({
               name='comments'
               rows={3}
               placeholder='Anything else we should know?'
+              className={FIELD_CLS}
             />
           </Field>
           <Field
@@ -136,19 +158,19 @@ export function MakeOfferSection({
               name='deposit'
               type='file'
               accept='image/*,application/pdf'
-              className='file:mr-3 file:rounded file:bg-brand-primary/10 file:px-2 file:py-1 file:text-brand-primary'
+              className={`${FIELD_CLS} file:mr-3 file:rounded file:bg-accent/15 file:px-2 file:py-1 file:text-accent`}
             />
           </Field>
 
           {/* Purchaser refund details — part of the offer form */}
           <div className='mt-2 sm:col-span-2'>
-            <h3 className='text-base font-semibold uppercase tracking-tight text-brand-black'>
+            <h3 className='text-base font-semibold uppercase tracking-tight text-secondary'>
               Purchaser Refund Details
             </h3>
-            <p className='mt-0.5 text-sm text-brand-primary'>
+            <p className='mt-0.5 text-sm text-accent'>
               In the event a refund is required
             </p>
-            <p className='mt-4 text-sm leading-relaxed text-gray-500'>
+            <p className='mt-4 text-sm leading-relaxed text-muted-foreground'>
               Please note, in the event you are not successful and you have
               provided a holding deposit, we will refund your deposit as soon as
               it clears into the trust account. Please provide your bank details
@@ -156,13 +178,21 @@ export function MakeOfferSection({
             </p>
           </div>
           <Field label='Account Name' className='sm:col-span-2'>
-            <Input name='accountName' placeholder='Account name' />
+            <Input
+              name='accountName'
+              placeholder='Account name'
+              className={FIELD_CLS}
+            />
           </Field>
           <Field label='BSB'>
-            <Input name='bsb' placeholder='000-000' />
+            <Input name='bsb' placeholder='000-000' className={FIELD_CLS} />
           </Field>
           <Field label='Account Number'>
-            <Input name='accountNumber' placeholder='000000000' />
+            <Input
+              name='accountNumber'
+              placeholder='000000000'
+              className={FIELD_CLS}
+            />
           </Field>
 
           {error && (
@@ -173,7 +203,7 @@ export function MakeOfferSection({
               type='submit'
               size='lg'
               disabled={submitting}
-              className='bg-brand-primary text-white hover:bg-brand-primary/90'
+              className='rounded-none bg-accent font-semibold text-primary hover:bg-accent-light'
             >
               {submitting ? (
                 <Loader2 className='h-4 w-4 animate-spin' />
@@ -186,17 +216,15 @@ export function MakeOfferSection({
       )}
 
       {/* Trust account — predefined; REF is unique per memorandum */}
-      <div className='mt-8 max-w-full rounded-2xl border border-gray-200 bg-white p-5'>
-        <p className='font-semibold text-brand-black'>
-          {TRUST_ACCOUNT.bankName}
-        </p>
-        <div className='mt-3 space-y-1.5 text-sm text-gray-600'>
+      <div className='mt-8 max-w-full border border-border bg-card p-5'>
+        <p className='font-semibold text-secondary'>{TRUST_ACCOUNT.bankName}</p>
+        <div className='mt-3 space-y-1.5 text-sm text-muted-foreground'>
           <DetailRow label='BSB' value={TRUST_ACCOUNT.bsb} />
           <DetailRow label='ACC' value={TRUST_ACCOUNT.acc} />
           <DetailRow
             label='REF'
             value={data.ref || '-'}
-            valueClassName='font-semibold text-brand-black'
+            valueClassName='font-semibold text-secondary'
           />
         </div>
       </div>
@@ -217,7 +245,7 @@ function Field({
 }) {
   return (
     <div className={className}>
-      <label className='mb-1.5 block text-sm font-medium text-gray-600'>
+      <label className='mb-1.5 block text-sm font-medium text-muted-foreground'>
         {label}
         {required && <span className='ml-0.5 text-red-400'>*</span>}
       </label>
@@ -237,8 +265,10 @@ function DetailRow({
 }) {
   return (
     <div className='flex items-baseline gap-2'>
-      <span className='w-10 shrink-0 font-semibold text-gray-500'>{label}</span>
-      <span className={valueClassName ?? 'text-gray-600'}>{value}</span>
+      <span className='w-10 shrink-0 font-semibold text-muted-foreground'>
+        {label}
+      </span>
+      <span className={valueClassName ?? 'text-muted-foreground'}>{value}</span>
     </div>
   );
 }

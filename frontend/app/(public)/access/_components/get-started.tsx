@@ -19,7 +19,7 @@ import { trackAccessEvent } from '@/lib/track';
 
 const NEXAR_API_URL =
   process.env.NEXT_PUBLIC_NEXAR_API_URL ||
-  'https://api.nexartechnologies.com/api/v1';
+  'https://blackmont-api.nexartechnologies.com';
 
 async function submitResourceLead({
   name,
@@ -236,19 +236,19 @@ export function GetStarted({
       <DialogContent className='p-6 sm:max-w-110 gap-0'>
         {success ? (
           <div className='py-4 text-center'>
-            <div className='mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-primary/10'>
-              <Check className='h-7 w-7 text-brand-primary' />
+            <div className='mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-accent/10'>
+              <Check className='h-7 w-7 text-accent' />
             </div>
-            <DialogTitle className='text-lg font-semibold text-brand-black'>
+            <DialogTitle className='text-lg font-semibold text-secondary'>
               Request received
             </DialogTitle>
-            <p className='mx-auto mt-2 max-w-xs text-sm text-gray-500'>
+            <p className='mx-auto mt-2 max-w-xs text-sm text-muted-foreground'>
               Thanks! Our team will be in touch shortly to arrange your
               confidential call.
             </p>
             <Button
               onClick={() => handleOpenChange(false)}
-              className='bg-brand-primary mt-5 w-full'
+              className='bg-accent mt-5 w-full'
             >
               Close
             </Button>
@@ -256,7 +256,7 @@ export function GetStarted({
         ) : (
           <>
             <DialogHeader className='space-y-1.5'>
-              <DialogTitle className='text-base sm:text-lg font-semibold text-brand-black'>
+              <DialogTitle className='text-base sm:text-lg font-semibold text-secondary'>
                 Schedule a Confidential Call
               </DialogTitle>
             </DialogHeader>
@@ -396,11 +396,7 @@ export function GetStarted({
                 </p>
               )}
 
-              <Button
-                type='submit'
-                disabled={loading}
-                className='bg-brand-primary w-full'
-              >
+              <Button type='submit' disabled={loading} className='w-full'>
                 {loading && <Loader2 className='h-4 w-4 animate-spin' />}
                 {loading ? 'Submitting…' : 'Submit'}
               </Button>

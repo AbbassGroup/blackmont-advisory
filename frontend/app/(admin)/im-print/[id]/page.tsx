@@ -140,13 +140,13 @@ export default function ImPrintPage() {
   if (!template) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-brand-primary" />
+        <Loader2 className="h-6 w-6 animate-spin text-accent" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100/70 print:bg-white">
+    <div className="min-h-screen bg-muted/40 print:bg-white">
       {/* Force brand colours/images to print (browsers skip them by default) and
           keep table rows / images from splitting across pages. */}
       <style>{`@media print {
@@ -158,14 +158,14 @@ export default function ImPrintPage() {
       }`}</style>
 
       {/* Toolbar — hidden when printing */}
-      <div className="sticky top-0 z-10 border-b border-gray-100 bg-white/95 backdrop-blur print:hidden">
+      <div className="sticky top-0 z-10 border-b border-border bg-card/95 backdrop-blur print:hidden">
         <div className="mx-auto flex max-w-4xl items-center justify-between gap-3 px-4 py-3">
-          <p className="truncate text-sm text-gray-500">
+          <p className="truncate text-sm text-muted-foreground">
             {template.businessName || 'Information Memorandum'}
           </p>
           <Button
             onClick={() => void doPrint()}
-            className="shrink-0 gap-2 bg-brand-primary text-white hover:bg-brand-primary/90"
+            className="shrink-0 gap-2 rounded-none bg-accent font-semibold text-primary hover:bg-accent-light"
           >
             <Printer className="h-4 w-4" /> Print / Save PDF
           </Button>
@@ -178,7 +178,7 @@ export default function ImPrintPage() {
       <div className="mx-auto w-[186mm] py-6 print:py-0">
         <div
           ref={docRef}
-          className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm print:overflow-visible print:rounded-none print:border-0 print:shadow-none"
+          className="overflow-hidden border border-border bg-card shadow-sm print:overflow-visible print:rounded-none print:border-0 print:shadow-none"
         >
           <ImDocument sections={template.sections} editable={false} brokerEmail={template.brokerEmail} />
         </div>

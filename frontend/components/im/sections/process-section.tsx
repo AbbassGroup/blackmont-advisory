@@ -1,8 +1,21 @@
 'use client';
 
-import { resolveBroker } from '@/lib/data/brokers';
+import type { Broker } from '@/lib/data/brokers';
 import { SectionHeading } from '../section-chrome';
 import { BrokerCard } from '../broker-card';
+
+/** The memorandum's principal point of contact (firm-wide, regardless of the
+ * broker who owns the template). */
+const POINT_OF_CONTACT: Broker = {
+  name: 'Sadeq Abbass',
+  email: 'sadeq@blackmontadvisory.com',
+  title: 'Principal M&A Adviser',
+  image: '/abbass.jpeg',
+  phone: '+61 433 525 731',
+  mobile: '',
+  website: 'www.blackmontadvisory.com',
+  welcome: [],
+};
 
 const STEPS = [
   {
@@ -40,18 +53,14 @@ const STEPS = [
 ];
 
 export function ProcessSection({
-  brokerEmail,
   title,
   editable,
   onChange,
 }: {
-  brokerEmail?: string;
   title: string;
   editable?: boolean;
   onChange?: (patch: { title: string }) => void;
 }) {
-  const broker = resolveBroker(brokerEmail);
-
   return (
     <>
       <SectionHeading
@@ -64,14 +73,14 @@ export function ProcessSection({
       <ol className='space-y-6'>
         {STEPS.map((step, i) => (
           <li key={i} className='flex gap-4'>
-            <div className='flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-primary/10 text-sm font-semibold text-brand-primary ring-1 ring-brand-primary/20'>
+            <div className='flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent/15 text-sm font-semibold text-accent ring-1 ring-accent/30'>
               {i + 1}
             </div>
             <div>
-              <h4 className='text-sm font-semibold uppercase tracking-wide text-brand-black'>
+              <h4 className='text-sm font-semibold uppercase tracking-wide text-secondary'>
                 {step.title}
               </h4>
-              <p className='mt-1 text-sm leading-relaxed text-gray-500'>
+              <p className='mt-1 text-sm leading-relaxed text-muted-foreground'>
                 {step.desc}
               </p>
             </div>
@@ -79,11 +88,11 @@ export function ProcessSection({
         ))}
       </ol>
 
-      <div className='mt-10 border-t border-gray-200 pt-8'>
-        <p className='mb-3 text-sm font-semibold text-brand-black'>
+      <div className='mt-10 border-t border-border pt-8'>
+        <p className='mb-3 text-sm font-semibold text-secondary'>
           Your point of contact
         </p>
-        <BrokerCard broker={broker} className='max-w-full' />
+        <BrokerCard broker={POINT_OF_CONTACT} className='max-w-full' />
       </div>
     </>
   );

@@ -27,7 +27,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   // Server render / before hydration completes → show nothing (avoids mismatch)
   if (!isMounted) {
     return (
-      <div className='min-h-screen flex items-center justify-center bg-gray-50'>
+      <div className='min-h-screen flex items-center justify-center bg-background'>
         <Loader2 className='w-6 h-6 animate-spin text-brand-primary' />
       </div>
     );
@@ -48,9 +48,9 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   // Token present but user profile not yet fetched
   if (token && !user) {
     return (
-      <div className='min-h-screen flex items-center justify-center bg-gray-50'>
+      <div className='min-h-screen flex items-center justify-center bg-background'>
         <div className='flex flex-col items-center gap-3'>
-          <Loader2 className='w-6 h-6 animate-spin text-brand-primary' />
+          <Loader2 className='w-6 h-6 animate-spin text-accent' />
           <p className='text-gray-400 text-sm'>Verifying session...</p>
         </div>
       </div>

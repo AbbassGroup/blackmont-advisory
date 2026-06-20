@@ -15,7 +15,7 @@ export default function AgreementContent() {
           business that is advertised for sale.
         </li>
         <li>
-          <strong>&quot;The Vendor&apos;s Agent&quot;</strong> is Abbass
+          <strong>&quot;The Vendor&apos;s Agent&quot;</strong> is Blackmont Advisory
           Advocacy Pty Ltd (ACN 674 429 255) trading as Blackmont Advisory (ABN
           78 674 429 255).
         </li>

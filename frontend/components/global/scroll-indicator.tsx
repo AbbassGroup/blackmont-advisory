@@ -32,8 +32,8 @@ export function ScrollIndicator({ className = '' }: ScrollIndicatorProps) {
       className={`group absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 cursor-pointer flex-col items-center ${className}`}
     >
       <span className='animate-scroll-cue flex flex-col items-center -space-y-3.5'>
-        <ChevronDown className='h-7 w-7 text-white/80 drop-shadow-md transition-colors group-hover:text-brand-primary' />
-        <ChevronDown className='h-7 w-7 text-white/40 drop-shadow-md transition-colors group-hover:text-brand-primary/70' />
+        <ChevronDown className='h-7 w-7 text-white/80 drop-shadow-md transition-colors group-hover:text-accent' />
+        <ChevronDown className='h-7 w-7 text-white/40 drop-shadow-md transition-colors group-hover:text-accent/70' />
       </span>
     </button>
   );

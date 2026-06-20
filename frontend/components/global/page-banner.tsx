@@ -8,6 +8,8 @@ type PageBannerProps = {
   eyebrow?: string;
   /** Optional background image path, shown faintly behind a cream overlay. */
   image?: string;
+  /** Optional content rendered below the description (e.g. CTAs, trust signals). */
+  children?: React.ReactNode;
 };
 
 /**
@@ -21,6 +23,7 @@ export function PageBanner({
   description,
   eyebrow,
   image,
+  children,
 }: PageBannerProps) {
   return (
     <section className='relative overflow-hidden border-b border-secondary/10 bg-background'>
@@ -53,6 +56,7 @@ export function PageBanner({
               {description}
             </p>
           )}
+          {children}
         </Reveal>
       </Container>
     </section>

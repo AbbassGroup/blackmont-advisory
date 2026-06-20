@@ -100,37 +100,31 @@ export default function AdminEnquiriesPage() {
     switch (source) {
       case 'Contact Form':
         return (
-          <Badge className='bg-purple-100 text-purple-700 hover:bg-purple-100'>
+          <Badge className='rounded-none bg-secondary/10 text-secondary hover:bg-secondary/10'>
             Contact Form
           </Badge>
         );
       case 'Franchise Form':
         return (
-          <Badge className='bg-green-100 text-green-700 hover:bg-green-100'>
+          <Badge className='rounded-none bg-accent/15 text-accent hover:bg-accent/15'>
             Franchise Form
           </Badge>
         );
       case 'Listing EOI':
         return (
-          <Badge className='bg-yellow-100 text-yellow-700 hover:bg-yellow-100'>
+          <Badge className='rounded-none bg-emerald-100 text-emerald-700 hover:bg-emerald-100'>
             Listing EOI
-          </Badge>
-        );
-      case 'Career Application':
-        return (
-          <Badge className='bg-blue-100 text-blue-700 hover:bg-blue-100'>
-            Career
           </Badge>
         );
       case 'Confidentiality Agreement':
         return (
-          <Badge className='bg-red-100 text-red-700 hover:bg-red-100'>
+          <Badge className='rounded-none bg-red-100 text-red-700 hover:bg-red-100'>
             Confidentiality
           </Badge>
         );
       default:
         return (
-          <Badge className='bg-gray-100 text-gray-700 hover:bg-gray-100'>
+          <Badge className='rounded-none bg-muted text-muted-foreground hover:bg-muted'>
             {source || 'Valuations Form'}
           </Badge>
         );
@@ -142,26 +136,26 @@ export default function AdminEnquiriesPage() {
       title='Enquiries'
       description='Manage all leads and form submissions.'
     >
-      <div className='bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6'>
+      <div className='bg-card border border-border p-4 mb-6'>
         <div className='relative max-w-sm'>
-          <Search className='absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400' />
+          <Search className='absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60' />
           <Input
             placeholder='Search enquiries...'
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className='pl-9 bg-gray-50 border-gray-200'
+            className='pl-9 rounded-none border-secondary/15 bg-background shadow-none focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-accent/15'
           />
         </div>
       </div>
 
-      <div className='bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden'>
+      <div className='bg-card border border-border overflow-hidden'>
         {loading ? (
           <div className='flex items-center justify-center p-24'>
-            <Loader2 className='w-8 h-8 animate-spin text-brand-primary' />
+            <Loader2 className='w-8 h-8 animate-spin text-accent' />
           </div>
         ) : (
           <Table>
-            <TableHeader className='bg-gray-50/50'>
+            <TableHeader className='bg-muted/60'>
               <TableRow>
                 <TableHead className='font-semibold'>Name</TableHead>
                 <TableHead className='font-semibold'>Phone</TableHead>
@@ -178,7 +172,7 @@ export default function AdminEnquiriesPage() {
                 <TableRow>
                   <TableCell
                     colSpan={6}
-                    className='text-center py-12 text-gray-500'
+                    className='text-center py-12 text-muted-foreground'
                   >
                     {searchTerm
                       ? 'No enquiries found matching your search.'
@@ -195,19 +189,19 @@ export default function AdminEnquiriesPage() {
                   return (
                     <TableRow
                       key={enquiry._id}
-                      className='hover:bg-gray-50 transition-colors'
+                      className='hover:bg-muted/50 transition-colors'
                     >
-                      <TableCell className='font-medium text-gray-900 max-w-[200px] truncate'>
+                      <TableCell className='font-medium text-secondary max-w-[200px] truncate'>
                         {name}
                       </TableCell>
-                      <TableCell className='text-gray-600 max-w-[200px] truncate'>
+                      <TableCell className='text-muted-foreground max-w-[200px] truncate'>
                         {enquiry.phone || '—'}
                       </TableCell>
-                      <TableCell className='text-gray-600 max-w-[200px] truncate'>
+                      <TableCell className='text-muted-foreground max-w-[200px] truncate'>
                         {enquiry.email || '—'}
                       </TableCell>
                       <TableCell>{getSourceBadge(enquiry.source)}</TableCell>
-                      <TableCell className='text-gray-500 text-sm'>
+                      <TableCell className='text-muted-foreground text-sm'>
                         {new Date(enquiry.createdAt).toLocaleString(undefined, {
                           year: 'numeric',
                           month: 'short',

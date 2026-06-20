@@ -20,7 +20,7 @@ const createAdminNotificationEmail = (proposal, type = 'created') => {
 
   return {
     from: formatFrom(process.env.EMAIL_FROM),
-    to: 'sadeq@abbass.group',
+    to: 'sadeq@blackmontadvisory.com',
     subject: subject,
     text: `${actionText}
 
@@ -55,7 +55,7 @@ Blackmont Advisory`,
       </ul>
       
       <p>Please log into the admin dashboard to review this ${isUpdate ? 'updated' : ''} proposal.</p>
-      <p><a href="${process.env.FRONTEND_URL}/admin" style="background-color: #56C1BC; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Review Proposal</a></p>
+      <p><a href="${process.env.FRONTEND_URL}/admin" style="background-color: #1b2535; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Review Proposal</a></p>
       
       <p>Regards,<br/>
       Blackmont Advisory</p>
@@ -67,7 +67,7 @@ const createCustomerApprovalEmail = (proposal) => {
   return {
     from: formatFrom(process.env.EMAIL_FROM),
     to: proposal.customerEmail,
-    cc: proposal?.brokerEmail === "sadeq@abbass.group" ? "sadeq@abbass.group" : `${proposal?.brokerEmail}, sadeq@abbass.group`,
+    cc: proposal?.brokerEmail === "sadeq@blackmontadvisory.com" ? "sadeq@blackmontadvisory.com" : `${proposal?.brokerEmail}, sadeq@blackmontadvisory.com`,
     subject: 'Your Business Proposal Has Been Prepared | Blackmont Advisory',
     text: `Dear ${proposal.customerName || proposal.brokerName},
 
@@ -82,7 +82,7 @@ Regards,
 Blackmont Advisory
 Phone: (03) 9103 1317
 Email: info@blackmontadvisory.com
-Website: www.abbass.com.au/businessbrokers`,
+Website: www.blackmontadvisory.com`,
     html: `
 
         <h2 style="color: #333; margin-bottom: 20px;">Your Business Proposal has been prepared</h2>
@@ -95,7 +95,7 @@ Website: www.abbass.com.au/businessbrokers`,
         
         <div style="margin: 30px 0;">
           <a href="${process.env.FRONTEND_URL}/proposal?id=${proposal._id}&email=${encodeURIComponent(proposal.customerEmail)}" 
-             style="background-color: #56C1BC; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">View Report</a>
+             style="background-color: #1b2535; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">View Report</a>
         </div>
         
         <p style="color: #333; line-height: 1.6;">If you have any questions about your appraisal or would like to discuss next steps, please don't hesitate to contact us.</p>
@@ -105,7 +105,7 @@ Website: www.abbass.com.au/businessbrokers`,
           <p style="color: #333; line-height: 1.6; margin-bottom: 5px;">Blackmont Advisory</p>
           <p style="color: #333; line-height: 1.6; margin-bottom: 5px;">Phone: (03) 9103 1317</p>
           <p style="color: #333; line-height: 1.6; margin-bottom: 5px;">Email: info@blackmontadvisory.com</p>
-          <p style="color: #333; line-height: 1.6; margin-bottom: 0;">Website: <a href="https://www.abbass.com.au/businessbrokers" style="color: #56C1BC;">www.abbass.com.au/businessbrokers</a></p>
+          <p style="color: #333; line-height: 1.6; margin-bottom: 0;">Website: <a href="https://www.blackmontadvisory.com" style="color: #c9a84c;">www.blackmontadvisory.com</a></p>
         </div>
     `
   };
@@ -137,15 +137,15 @@ const createProposalAcceptanceEmail = (proposal, selectedAdvertisement, selected
     ? selectedSuccessFee.text.replace(/<br\s*\/?>/gi, '\n').replace(/&amp;/g, '&')
     : '';
 
-  const recipients = ['sadeq@abbass.group'];
-  if (proposal.brokerEmail && proposal.brokerEmail !== 'sadeq@abbass.group') {
+  const recipients = ['sadeq@blackmontadvisory.com'];
+  if (proposal.brokerEmail && proposal.brokerEmail !== 'sadeq@blackmontadvisory.com') {
     recipients.push(proposal.brokerEmail);
   }
 
   return {
     from: formatFrom(process.env.EMAIL_FROM),
     to: recipients.join(', '),
-    subject: `Proposal Accepted: ${proposal.businessName} - Business Brokers`,
+    subject: `Proposal Accepted: ${proposal.businessName} - Blackmont Advisory`,
     text: `PROPOSAL ACCEPTED
 
 A client has accepted a proposal. Please prepare the agreement.
@@ -222,12 +222,12 @@ Please prepare and send the agreement to the customer.
   <h3 style="margin: 0 0 15px; color: #333; font-size: 14px;">SELECTED OPTIONS</h3>
   
   <div style="margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 4px;">
-    <p style="margin: 0 0 5px;"><strong>Advertisement:</strong> <span style="color: #56C1BC;">${advertisementAmount}</span></p>
+    <p style="margin: 0 0 5px;"><strong>Advertisement:</strong> <span style="color: #c9a84c;">${advertisementAmount}</span></p>
     <p style="margin: 0; color: #666; font-size: 13px; white-space: pre-line;">${selectedAdvertisement?.text ? selectedAdvertisement.text.replace(/<br\s*\/?>/gi, '<br>').replace(/&amp;/g, '&') : 'N/A'}</p>
   </div>
   
   <div style="margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 4px;">
-    <p style="margin: 0 0 5px;"><strong>Success Fee:</strong> <span style="color: #56C1BC;">${successFeeAmount}</span></p>
+    <p style="margin: 0 0 5px;"><strong>Success Fee:</strong> <span style="color: #c9a84c;">${successFeeAmount}</span></p>
     <p style="margin: 0; color: #666; font-size: 13px; white-space: pre-line;">${selectedSuccessFee?.text ? selectedSuccessFee.text.replace(/<br\s*\/?>/gi, '<br>').replace(/&amp;/g, '&') : 'N/A'}</p>
   </div>
   
@@ -327,7 +327,7 @@ const viewImTemplate = (title, docsJson) => {
       border-left: 3px solid transparent; transition: background 0.15s; word-break: break-word; width: 100%;
     }
     #sidebar button:hover { background: rgba(255,255,255,0.06); }
-    #sidebar button.active { background: rgba(86,193,188,0.15); border-left-color: #56C1BC; color: #fff; }
+    #sidebar button.active { background: rgba(201,168,76,0.15); border-left-color: #c9a84c; color: #fff; }
 
     /* ── Scroll area + PDF canvases ── */
     #scroll-area { flex: 1; overflow-y: auto; overflow-x: auto; background: #2a2a2a; padding: 20px; text-align: center; cursor: grab; }
@@ -353,7 +353,7 @@ const viewImTemplate = (title, docsJson) => {
     }
     .loading-text { color: rgba(255,255,255,0.6); padding: 40px; font-size: 14px; display: flex; align-items: center; gap: 10px; }
     .loader-spinner {
-      border: 3px solid rgba(255,255,255,0.1); border-top-color: #56C1BC;
+      border: 3px solid rgba(255,255,255,0.1); border-top-color: #c9a84c;
       border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
@@ -365,7 +365,7 @@ const viewImTemplate = (title, docsJson) => {
 <body>
   <header>
     <button id="menu-btn" aria-label="Toggle document list">&#9776;</button>
-    <img src="https://www.abbass.com.au/businessbrokers/assets/logo.png" alt="ABBASS" onerror="this.style.display='none'">
+    <img src="https://www.blackmontadvisory.com/assets/logo.png" alt="Blackmont Advisory" onerror="this.style.display='none'">
     <span class="title">${title}</span>
     <span class="badge">Information Memorandum</span>
     

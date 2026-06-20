@@ -13,7 +13,6 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const logApiUsage = require('../utils/logApiUsage');
-const ApiRequest = require('../models/ApiRequest');
 const { viewImTemplate } = require('../utils/emailTemplates');
 const fetchBusinessNames = require('../utils/fetchBusinessNames');
 const recordImView = require('../utils/recordImView');
@@ -59,15 +58,6 @@ router.get('/external', logApiUsage({ sampleRate: 1 }), async (req, res) => {
       { location: 0, contact: 0 }
     );
     res.json(listings);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-router.get('/api-requests', async (req, res) => {
-  try {
-    const apiRequests = await ApiRequest.find();
-    res.json(apiRequests);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -350,8 +340,8 @@ router.get('/:id/im', async (req, res) => {
             .icon { font-size: 48px; margin-bottom: 20px; }
             h1 { font-size: 24px; color: #333; margin: 0 0 12px; }
             p { color: #666; line-height: 1.6; font-size: 15px; margin: 0 0 24px; }
-            a { display: inline-block; padding: 12px 28px; background: #56C1BC; color: #fff; font-weight: bold; text-decoration: none; border-radius: 6px; font-size: 14px; }
-            a:hover { background: #49b0ab; }
+            a { display: inline-block; padding: 12px 28px; background: #1b2535; color: #fff; font-weight: bold; text-decoration: none; border-radius: 6px; font-size: 14px; }
+            a:hover { background: #0f1623; }
             .footer { color: #999; font-size: 12px; margin-top: 28px; }
           </style>
         </head>

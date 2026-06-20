@@ -1,12 +1,4 @@
-/**
- * Central broker directory — the single source of truth for the "Welcome
- * Message" section of an Information Memorandum and for the broker pickers in
- * the admin. Each broker's welcome copy mirrors their printed memorandum page.
- *
- * The IM welcome section is rendered by matching a template's `brokerEmail`
- * against `email` here. Emails are the join key everywhere, so keep them in
- * sync with the admin User accounts.
- */
+
 export type Broker = {
   name: string;
   email: string;
@@ -21,14 +13,14 @@ export type Broker = {
 };
 
 const OFFICE_PHONE = '(03) 9103 1317';
-const WEBSITE = 'www.abbass.com.au/businessbrokers';
+const WEBSITE = 'www.blackmontadvisory.com';
 
 export const BROKERS: Broker[] = [
   {
     name: 'Tester',
     email: 'mohammadjahid0007@gmail.com',
     title: 'M&A Adviser',
-    image: '/businessbrokers/abbass.jpeg',
+    image: '/abbass.jpeg',
     phone: OFFICE_PHONE,
     mobile: '0433 525 731',
     website: WEBSITE,
@@ -39,9 +31,9 @@ export const BROKERS: Broker[] = [
   },
   {
     name: 'Sadeq Abbass',
-    email: 'sadeq@abbass.group',
+    email: 'sadeq@blackmontadvisory.com',
     title: 'M&A Adviser',
-    image: '/businessbrokers/abbass.jpeg',
+    image: '/abbass.jpeg',
     phone: OFFICE_PHONE,
     mobile: '0433 525 731',
     website: WEBSITE,
@@ -52,9 +44,9 @@ export const BROKERS: Broker[] = [
   },
   {
     name: 'Asif Ahammed',
-    email: 'asif.ahammed@abbass.group',
+    email: 'asif.ahammed@blackmontadvisory.com',
     title: 'Business Broker',
-    image: '/businessbrokers/Asif.jpg',
+    image: '/Asif.jpg',
     phone: OFFICE_PHONE,
     mobile: '0451 918 152',
     website: WEBSITE,
@@ -64,9 +56,9 @@ export const BROKERS: Broker[] = [
   },
   {
     name: 'Freddie Wong',
-    email: 'freddie.wong@abbass.group',
+    email: 'freddie.wong@blackmontadvisory.com',
     title: 'Business Broker',
-    image: '/businessbrokers/Freddie Wong.webp',
+    image: '/Freddie Wong.webp',
     phone: OFFICE_PHONE,
     mobile: '0452 655 608',
     website: WEBSITE,
@@ -76,9 +68,9 @@ export const BROKERS: Broker[] = [
   },
   {
     name: 'Igor Vasiliev',
-    email: 'igor.vasiliev@abbass.group',
+    email: 'igor.vasiliev@blackmontadvisory.com',
     title: 'Business Broker',
-    image: '/businessbrokers/igor.webp',
+    image: '/igor.webp',
     phone: OFFICE_PHONE,
     mobile: '0424 407 612',
     website: WEBSITE,
@@ -90,9 +82,9 @@ export const BROKERS: Broker[] = [
   },
   {
     name: 'Hicham Nahas',
-    email: 'hicham.nahas@abbass.group',
+    email: 'hicham.nahas@blackmontadvisory.com',
     title: 'Business Broker',
-    image: '/businessbrokers/IMG_3531.webp',
+    image: '/IMG_3531.webp',
     phone: OFFICE_PHONE,
     mobile: '0423 241 225',
     website: WEBSITE,
@@ -102,9 +94,9 @@ export const BROKERS: Broker[] = [
   },
   {
     name: 'Fiona Johns',
-    email: 'fiona@abbass.group',
+    email: 'fiona@blackmontadvisory.com',
     title: 'Business Broker',
-    image: '/businessbrokers/fiona.jpg',
+    image: '/fiona.jpg',
     phone: OFFICE_PHONE,
     mobile: '0412 223 179',
     website: WEBSITE,
@@ -116,9 +108,9 @@ export const BROKERS: Broker[] = [
   },
   {
     name: 'Christine Lamani',
-    email: 'christine.lamani@abbass.group',
+    email: 'christine.lamani@blackmontadvisory.com',
     title: 'Business Broker',
-    image: '/businessbrokers/IMG_3391.webp',
+    image: '/IMG_3391.webp',
     phone: OFFICE_PHONE,
     mobile: '',
     website: WEBSITE,
@@ -141,7 +133,7 @@ export const FALLBACK_BROKER: Broker = {
   name: 'Blackmont Advisory',
   email: 'info@blackmontadvisory.com',
   title: 'Business Broker',
-  image: '/businessbrokers/mark.webp',
+  image: '/mark.webp',
   phone: OFFICE_PHONE,
   mobile: '',
   website: WEBSITE,

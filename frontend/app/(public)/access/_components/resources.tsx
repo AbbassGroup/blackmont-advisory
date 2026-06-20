@@ -20,7 +20,7 @@ const resources: Resource[] = [
     apiName: 'Valuation Tool',
     summary:
       'Estimate the potential value of your business using industry-based insights.',
-    image: '/businessbrokers/valuation.webp',
+    image: '/valuation.webp',
     href: '/access/valuation',
     cta: 'Access Tool',
   },
@@ -29,7 +29,7 @@ const resources: Resource[] = [
     apiName: 'Sale Readiness Score',
     summary:
       'Understand what buyers look for before taking your business to market.',
-    image: '/businessbrokers/sale.webp',
+    image: '/sale.webp',
     href: '/access/readiness',
     cta: 'Download Checklist',
   },
@@ -38,7 +38,7 @@ const resources: Resource[] = [
     apiName: 'Industry Benchmark Report',
     summary:
       'Compare your business performance against broader industry standards.',
-    image: '/businessbrokers/benchmark.webp',
+    image: '/benchmark.webp',
     href: '/access/benchmarks',
     cta: 'View Report',
   },
@@ -47,19 +47,19 @@ const resources: Resource[] = [
     apiName: 'Exit Planning Guide',
     summary:
       'Learn how to prepare for a smoother and more profitable business exit.',
-    image: '/businessbrokers/exit-plan.webp',
+    image: '/exit-plan.webp',
     href: '/access/exit-planning',
     cta: 'Get Guide',
   },
 ];
 
 const cardClass =
-  'group flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white text-left shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-brand-primary hover:shadow-xl';
+  'group flex h-full w-full cursor-pointer flex-col overflow-hidden border border-secondary/10 bg-background text-left transition-colors hover:border-accent/40';
 
 function CardInner({ resource }: { resource: Resource }) {
   return (
     <>
-      <div className='relative h-48 w-full overflow-hidden bg-gray-100'>
+      <div className='relative h-48 w-full overflow-hidden bg-muted'>
         <Image
           src={resource.image}
           alt={resource.title}
@@ -69,13 +69,13 @@ function CardInner({ resource }: { resource: Resource }) {
         />
       </div>
       <div className='flex flex-1 flex-col p-6'>
-        <h3 className='mb-3 line-clamp-2 text-lg font-bold text-brand-black transition-colors group-hover:text-brand-primary'>
+        <h3 className='mb-3 line-clamp-2 text-lg font-bold text-secondary transition-colors group-hover:text-accent'>
           {resource.title}
         </h3>
-        <p className='mb-5 line-clamp-3 flex-1 text-sm leading-relaxed text-gray-500'>
+        <p className='mb-5 line-clamp-3 flex-1 text-sm leading-relaxed text-muted-foreground'>
           {resource.summary}
         </p>
-        <div className='mt-auto flex items-center gap-1 text-sm font-semibold text-brand-primary'>
+        <div className='mt-auto flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.12em] text-accent'>
           {resource.cta}
           <ArrowUpRight className='h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5' />
         </div>
@@ -86,11 +86,11 @@ function CardInner({ resource }: { resource: Resource }) {
 
 export function Resources() {
   return (
-    <section id='resources' className='scroll-mt-24 bg-white py-10 lg:py-14'>
-      <div className='max-w-315 mx-auto px-6 lg:px-8'>
+    <section id='resources' className='scroll-mt-24 bg-background py-20 lg:py-28'>
+      <div className='max-w-[1500px] mx-auto px-6 sm:px-10 lg:px-16'>
         <SectionHeading label='Complimentary' title='Business Exit Resources' />
 
-        <div className='mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 md:gap-8 lg:grid-cols-4'>
+        <div className='mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 md:gap-8 lg:grid-cols-4'>
           {resources.map((resource, i) => (
             <ResourceGate
               key={resource.title}

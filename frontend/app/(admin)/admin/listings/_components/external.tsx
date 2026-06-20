@@ -44,13 +44,12 @@ export function External({
 }: ContactTeamProps) {
   const [open, setOpen] = useState(false);
   const [deals, setDeals] = useState<any[]>([]);
-  console.log('🚀 ~ External ~ deals:', deals);
 
   useEffect(() => {
     const fetchDeals = async () => {
       try {
         const res = await apiClient.get(
-          `https://api.nexartechnologies.com/api/v1/deals/get/all/names`,
+          `https://blackmont-api.nexartechnologies.com/deals/get/all/names`,
         );
         if (res.data?.success) {
           setDeals(res.data.data);
@@ -63,9 +62,9 @@ export function External({
   }, []);
 
   return (
-    <div className='bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-6'>
-      <div className='flex items-center gap-2 border-b border-gray-100 pb-4 mb-4'>
-        <h2 className='text-lg font-semibold text-brand-black'>External</h2>
+    <div className='border border-border bg-card p-6 space-y-6'>
+      <div className='flex items-center gap-2 border-b border-border pb-4 mb-4'>
+        <h2 className='text-lg font-semibold text-secondary'>External</h2>
       </div>
 
       <div className='grid grid-cols-1 md:grid-cols-4 gap-6 mb-8'>

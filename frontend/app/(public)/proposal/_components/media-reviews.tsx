@@ -1,7 +1,7 @@
 const reviews = [
   {
     name: 'HUSS KHOSRAVI',
-    text: 'Abbass and his team are highly professional and knowledgeable. He genuinely care about his clients. He provides clear, honest advice and goes the extra mile to help people achieve their property and business goals. His expertise, integrity and dedication make him a trusted advisor in the industry. Highly recommended!',
+    text: 'The Blackmont Advisory team are highly professional and knowledgeable. They genuinely care about their clients, providing clear, honest advice and going the extra mile to help people achieve their property and business goals. Their expertise, integrity and dedication make them a trusted advisor in the industry. Highly recommended!',
     rating: 5,
   },
   {
@@ -16,17 +16,17 @@ const reviews = [
   },
   {
     name: 'DAN LAKI',
-    text: 'My experience with Abbass Group was exceptional. As someone new to the process of purchasing a business, Sadeq made everything smooth and seamless. He was informative, responsive, and took the time to answer all of my questions in detail. I would definitely work with them again.',
+    text: 'My experience with Blackmont Advisory was exceptional. As someone new to the process of purchasing a business, Sadeq made everything smooth and seamless. He was informative, responsive, and took the time to answer all of my questions in detail. I would definitely work with them again.',
     rating: 5,
   },
   {
     name: 'AGUST RYAN',
-    text: 'I had a great experience with the Abbass Group. The team was outstanding! very professional, friendly, and welcoming from the start. They were always willing to help, offering clear advice and support whenever I needed it. I was impressed by how knowledgeable and approachable everyone was, making it easy to learn and feel comfortable. Abbass Group has a fantastic team that truly stands out for their dedication and teamwork. I highly recommend them!',
+    text: 'I had a great experience with the Blackmont Advisory team. They were outstanding! very professional, friendly, and welcoming from the start. They were always willing to help, offering clear advice and support whenever I needed it. I was impressed by how knowledgeable and approachable everyone was, making it easy to learn and feel comfortable. Blackmont Advisory has a fantastic team that truly stands out for their dedication and teamwork. I highly recommend them!',
     rating: 5,
   },
   {
     name: 'ADISHA FERNANDO',
-    text: 'Abbass Brokers was instrumental in helping us find the perfect buyer. Their market knowledge and negotiation skills are on another level. Highly Recommended..!!',
+    text: 'Blackmont Advisory was instrumental in helping us find the perfect buyer. Their market knowledge and negotiation skills are on another level. Highly Recommended..!!',
     rating: 5,
   },
 ];
@@ -35,7 +35,7 @@ const renderStars = (rating: number) => {
   return Array.from({ length: 5 }, (_, index) => (
     <span
       key={index}
-      className={`text-xl ${index < rating ? 'text-[#FFD700]' : 'text-gray-300'} mx-0.5`}
+      className={`text-xl ${index < rating ? 'text-accent' : 'text-gray-300'} mx-0.5`}
     >
       ★
     </span>
@@ -45,15 +45,15 @@ const renderStars = (rating: number) => {
 export function MediaReviews() {
   return (
     <div className='mt-16 mb-12 bg-transparent'>
-      <div className='mb-8 pb-4 border-b border-gray-200'>
-        <h2 className='text-2xl font-bold text-brand-black'>Media & Reviews</h2>
+      <div className='mb-8 pb-4 border-b border-border'>
+        <h2 className='text-2xl font-bold text-secondary'>Media & Reviews</h2>
       </div>
 
       <div className='mb-20'>
         {/* Videos and Logos Grid */}
         <div className='grid grid-cols-1 md:grid-cols-2 gap-8 mb-16'>
           <div className='text-center flex flex-col items-center justify-start'>
-            <h3 className='text-xl font-bold text-brand-primary mb-8 leading-snug'>
+            <h3 className='text-xl font-bold text-accent mb-8 leading-snug'>
               Seek Business
               <br />
               Media Release
@@ -70,7 +70,7 @@ export function MediaReviews() {
           </div>
 
           <div className='text-center flex flex-col items-center justify-start'>
-            <h3 className='text-xl font-bold text-brand-primary mb-8 leading-snug'>
+            <h3 className='text-xl font-bold text-accent mb-8 leading-snug'>
               Top 5 Business
               <br />
               Brokerage (Melbourne)
@@ -85,7 +85,7 @@ export function MediaReviews() {
               }
             >
               <img
-                src='/businessbrokers/tbm.webp'
+                src='/tbm.webp'
                 alt='Top Best Melbourne'
                 className='max-w-[200px] h-[200px] object-contain'
               />
@@ -95,7 +95,7 @@ export function MediaReviews() {
 
         {/* Client Testimonials Pitch */}
         <div className='text-center mb-10'>
-          <h3 className='text-2xl font-bold text-brand-primary'>
+          <h3 className='text-2xl font-bold text-accent'>
             Hear From Our Clients
           </h3>
         </div>
@@ -126,28 +126,28 @@ export function MediaReviews() {
 
         {/* Association Badges */}
         <div className='grid grid-cols-1 md:grid-cols-3 gap-8 mb-12'>
-          <div className='bg-[#333] text-white p-6 rounded-xl flex flex-col justify-center items-start shadow-sm h-full'>
-            <h4 className='font-bold text-lg mb-2'>ABBASS Group</h4>
+          <div className='bg-secondary text-parchment p-6 rounded-xl flex flex-col justify-center items-start shadow-sm h-full'>
+            <h4 className='font-bold text-lg mb-2'>Blackmont Advisory</h4>
             <div className='flex items-center mb-2'>
               <span className='mr-2 font-semibold'>5.0</span>
               <div className='flex'>{renderStars(5)}</div>
             </div>
-            <p className='text-sm text-gray-300'>
+            <p className='text-sm text-parchment/70'>
               Business Broker in South Melbourne, Victoria
             </p>
           </div>
 
-          <div className='bg-white border text-center border-gray-100 rounded-xl p-6 flex items-center justify-center shadow-sm h-full'>
+          <div className='bg-white border text-center border-border rounded-xl p-6 flex items-center justify-center shadow-sm h-full'>
             <img
-              src='/businessbrokers/aibb.png'
+              src='/aibb.png'
               alt='AIBB Logo'
               className='max-w-full max-h-[80px] object-contain'
             />
           </div>
 
-          <div className='bg-white border text-center border-gray-100 rounded-xl p-6 flex items-center justify-center shadow-sm h-full'>
+          <div className='bg-white border text-center border-border rounded-xl p-6 flex items-center justify-center shadow-sm h-full'>
             <img
-              src='/businessbrokers/reiv.png'
+              src='/reiv.png'
               alt='REIV Logo'
               className='max-w-full max-h-[80px] object-contain'
             />
@@ -156,7 +156,7 @@ export function MediaReviews() {
       </div>
 
       <div className='mb-10'>
-        <h3 className='text-2xl font-bold text-brand-primary mb-8 text-center'>
+        <h3 className='text-2xl font-bold text-accent mb-8 text-center'>
           Reviews
         </h3>
 
@@ -164,9 +164,9 @@ export function MediaReviews() {
           {reviews.map((review, index) => (
             <div
               key={index}
-              className='bg-[#f8f9fa] border border-gray-200 rounded-xl p-6 flex flex-col h-full hover:shadow-md transition-shadow'
+              className='bg-muted border border-border rounded-xl p-6 flex flex-col h-full hover:shadow-md transition-shadow'
             >
-              <p className='text-gray-800 text-[15px] leading-relaxed mb-6 italic flex-1'>
+              <p className='text-foreground text-[15px] leading-relaxed mb-6 italic flex-1'>
                 {review.text}
               </p>
 
@@ -174,7 +174,7 @@ export function MediaReviews() {
                 {renderStars(review.rating)}
               </div>
 
-              <p className='font-bold text-center text-gray-600 text-sm tracking-wide uppercase'>
+              <p className='font-bold text-center text-muted-foreground text-sm tracking-wide uppercase'>
                 — {review.name}
               </p>
             </div>

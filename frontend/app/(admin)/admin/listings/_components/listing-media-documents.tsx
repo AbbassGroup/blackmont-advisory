@@ -70,14 +70,13 @@ export function ListingMediaDocuments({
   imTemplateId,
   setImTemplateId,
 }: MediaDocumentsProps) {
-  console.log('🚀 ~ ListingMediaDocuments ~ imTemplates:', imTemplates);
   // Only one IM source at a time: a web template OR uploaded PDFs.
   const hasPdfs = documents.length > 0 || newDocs.length > 0;
   const hasTemplate = !!imTemplateId;
   return (
-    <div className='bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-6'>
-      <div className='flex items-center gap-2 border-b border-gray-100 pb-4 mb-4'>
-        <h2 className='text-lg font-semibold text-brand-black'>
+    <div className='border border-border bg-card p-6 space-y-6'>
+      <div className='flex items-center gap-2 border-b border-border pb-4 mb-4'>
+        <h2 className='text-lg font-semibold text-secondary'>
           Media & Documents
         </h2>
       </div>
@@ -87,7 +86,7 @@ export function ListingMediaDocuments({
         <div className='space-y-4'>
           <Label>Listing Image</Label>
           <div
-            className='border-2 border-dashed border-gray-200 rounded-xl p-4 flex flex-col items-center justify-center gap-4 bg-gray-50/50 hover:bg-gray-50 transition-colors cursor-pointer group relative overflow-hidden h-48'
+            className='border-2 border-dashed border-border rounded-none p-4 flex flex-col items-center justify-center gap-4 bg-muted/40 hover:bg-muted transition-colors cursor-pointer group relative overflow-hidden h-48'
             onClick={() => imageFileRef.current?.click()}
           >
             <input
@@ -103,17 +102,17 @@ export function ListingMediaDocuments({
               <img
                 src={imagePreview}
                 alt='Preview'
-                className='w-full h-full object-cover rounded-lg'
+                className='w-full h-full object-cover'
               />
             ) : (
               <div className='text-center flex flex-col items-center pointer-events-none'>
-                <div className='w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform'>
-                  <ImageIcon className='w-6 h-6 text-brand-primary' />
+                <div className='w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform'>
+                  <ImageIcon className='w-6 h-6 text-accent' />
                 </div>
-                <p className='text-sm font-medium text-brand-black mb-1'>
+                <p className='text-sm font-medium text-secondary mb-1'>
                   Click to upload image
                 </p>
-                <p className='text-xs text-gray-500'>
+                <p className='text-xs text-muted-foreground'>
                   PNG, JPG, WEBP up to 5MB
                 </p>
               </div>
@@ -133,7 +132,7 @@ export function ListingMediaDocuments({
         <div className='space-y-4'>
           <div>
             <Label>Information Memorandum</Label>
-            <p className='mt-1 text-xs text-gray-500'>
+            <p className='mt-1 text-xs text-muted-foreground'>
               Assign a web template or upload PDF documents — only one applies
               at a time.
             </p>
@@ -142,7 +141,7 @@ export function ListingMediaDocuments({
           {/* Web template selector */}
           <div className='space-y-2'>
             <Label className='flex items-center gap-1.5 text-sm font-medium'>
-              <LayoutTemplate className='h-4 w-4 text-brand-primary' /> Web
+              <LayoutTemplate className='h-4 w-4 text-accent' /> Web
               template
             </Label>
             <Select
@@ -166,7 +165,7 @@ export function ListingMediaDocuments({
               </SelectContent>
             </Select>
             {hasPdfs && (
-              <p className='flex items-center gap-1.5 text-xs text-gray-500'>
+              <p className='flex items-center gap-1.5 text-xs text-muted-foreground'>
                 <Info className='h-3.5 w-3.5 shrink-0' />
                 Remove the uploaded PDF(s) below to assign a web template
                 instead.
@@ -178,7 +177,7 @@ export function ListingMediaDocuments({
           <div className='space-y-3'>
             <Label className='text-sm font-medium'>PDF documents</Label>
             {hasTemplate ? (
-              <div className='rounded-lg border border-dashed border-gray-200 bg-gray-50/60 p-4 text-center text-xs text-gray-400'>
+              <div className='border border-dashed border-border bg-muted/60 p-4 text-center text-xs text-muted-foreground'>
                 PDF upload is disabled while a web template is assigned. Clear
                 the template above to upload PDFs.
               </div>
@@ -189,7 +188,7 @@ export function ListingMediaDocuments({
                   variant='outline'
                   onClick={() => docInputRef.current?.click()}
                   disabled={docUploading}
-                  className='w-full border-dashed border-2 py-8 text-gray-500 hover:text-brand-primary'
+                  className='w-full rounded-none border-dashed border-2 py-8 text-muted-foreground hover:text-accent'
                 >
                   {docUploading ? (
                     <Loader2 className='w-4 h-4 mr-2 animate-spin' />
@@ -209,7 +208,7 @@ export function ListingMediaDocuments({
 
                 {/* Existing Docs */}
                 {documents.length > 0 && (
-                  <div className='border border-gray-100 rounded-lg overflow-hidden bg-white'>
+                  <div className='border border-border overflow-hidden bg-card'>
                     {documents.map((doc, idx) => (
                       <div
                         key={doc._id}
@@ -218,16 +217,16 @@ export function ListingMediaDocuments({
                         onDragOver={(e) => handleDragOver(e, idx)}
                         onDragEnter={(e) => e.preventDefault()}
                         onDrop={handleDrop}
-                        className={`flex items-center gap-3 p-3 bg-white hover:bg-gray-50 transition-colors cursor-grab active:cursor-grabbing ${
+                        className={`flex items-center gap-3 p-3 bg-card hover:bg-muted/50 transition-colors cursor-grab active:cursor-grabbing ${
                           idx < documents.length - 1
-                            ? 'border-b border-gray-50'
+                            ? 'border-b border-border'
                             : ''
                         }`}
                       >
-                        <GripVertical className='w-4 h-4 text-gray-400' />
+                        <GripVertical className='w-4 h-4 text-muted-foreground/70' />
                         <FileText className='w-4 h-4 text-red-500' />
                         <div className='flex-1 min-w-0'>
-                          <p className='text-sm font-medium text-gray-700 truncate'>
+                          <p className='text-sm font-medium text-foreground truncate'>
                             {doc.name}
                           </p>
                         </div>
@@ -236,7 +235,7 @@ export function ListingMediaDocuments({
                           variant='ghost'
                           size='icon'
                           onClick={() => handleDocDelete(doc._id)}
-                          className='text-gray-400 hover:text-red-500 h-8 w-8 z-10'
+                          className='text-muted-foreground/70 hover:text-red-500 h-8 w-8 z-10'
                         >
                           <X className='w-4 h-4' />
                         </Button>
@@ -247,15 +246,15 @@ export function ListingMediaDocuments({
 
                 {/* New Docs waiting to upload (Create Mode) */}
                 {isNew && newDocs.length > 0 && (
-                  <div className='border border-blue-100 rounded-lg overflow-hidden bg-blue-50/30'>
+                  <div className='border border-accent/20 overflow-hidden bg-accent/5'>
                     {newDocs.map((doc, idx) => (
                       <div
                         key={idx}
-                        className={`flex items-center gap-3 p-3 ${idx < newDocs.length - 1 ? 'border-b border-blue-100/50' : ''}`}
+                        className={`flex items-center gap-3 p-3 ${idx < newDocs.length - 1 ? 'border-b border-accent/15' : ''}`}
                       >
-                        <FileText className='w-4 h-4 text-blue-400' />
+                        <FileText className='w-4 h-4 text-accent' />
                         <div className='flex-1 min-w-0'>
-                          <p className='text-sm font-medium text-gray-700 truncate'>
+                          <p className='text-sm font-medium text-foreground truncate'>
                             {doc.name}
                           </p>
                         </div>
@@ -264,7 +263,7 @@ export function ListingMediaDocuments({
                           variant='ghost'
                           size='icon'
                           onClick={() => onRemoveNewDoc(idx)}
-                          className='text-gray-400 hover:text-red-500 h-8 w-8'
+                          className='text-muted-foreground/70 hover:text-red-500 h-8 w-8'
                         >
                           <X className='w-4 h-4' />
                         </Button>

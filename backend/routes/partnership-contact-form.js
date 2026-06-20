@@ -52,12 +52,12 @@ router.post('/', async (req, res) => {
     const mailOptions = {
       from: formatFrom(process.env.EMAIL_USER),
       // to: 'mohammadjahid0007@gmail.com',
-      to: 'sadeq@abbass.group',
+      to: 'sadeq@blackmontadvisory.com',
       subject: 'New Business Buyers Advocacy Enquiry - Blackmont Advisory',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
           <div style="text-align: center; margin-bottom: 30px;">
-            <h1 style="color: #56C1BC; margin: 0;">Blackmont Advisory</h1>
+            <h1 style="color: #1b2535; margin: 0;">Blackmont Advisory</h1>
             <h2 style="color: #2c3e50; margin: 10px 0;">Business Buyers Advocacy Enquiry</h2>
           </div>
           
@@ -133,21 +133,32 @@ router.post('/', async (req, res) => {
     await transporter.sendMail(mailOptions);
     console.log('Email sent successfully');
 
+    // {
+    //     stage: 'Enquiry', //
+    //     email: form.email, //
+    //     phone: form.phone,//
+    //     typeOfBusiness: form.industry,
+    //     location: form.location,
+    //     comments: mergedComments,
+    //     ...(form.name.trim() ? { name: form.name.trim() } : {}),
+    //   }
+
     // Post submission to Nexar contacts API (best-effort)
     const prospectData = {
-      firstName: name,
+      stage: 'Enquiry',
+      name: name,
       phone: contactNumber,
       email: email,
       industry: industryInterest,
-      priceRange: budget,
-      contactOwner: 'Buyers Advocacy Enquiry',
-      source: 'Business_Brokers',
+      budget: budget,
+      timeline: timeline,
+      businessUnit: 'Business Buyers',
     };
 
-    const nexarApi = process.env.NEXAR_API_URL || 'https://api.nexartechnologies.com/api/v1';
+    const nexarApi = process.env.NEXAR_API_URL || 'https://blackmont-api.nexartechnologies.com';
 
     try {
-      await axios.post(`${nexarApi}/contacts/create`, prospectData, {
+      await axios.put(`${nexarApi}/deals/update/by-email`, prospectData, {
         headers: {
           'Authorization': `Bearer businessbrokersecret`,
           'Content-Type': 'application/json',
@@ -205,12 +216,12 @@ router.post('/partnership', async (req, res) => {
     const mailOptions = {
       from: formatFrom(process.env.EMAIL_USER),
       // to: 'mohammadjahid0007@gmail.com',
-      to: 'sadeq@abbass.group',
+      to: 'sadeq@blackmontadvisory.com',
       subject: 'New Partnership Inquiry - Blackmont Advisory',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
           <div style="text-align: center; margin-bottom: 30px;">
-            <h1 style="color: #56C1BC; margin: 0;">Blackmont Advisory</h1>
+            <h1 style="color: #1b2535; margin: 0;">Blackmont Advisory</h1>
             <h2 style="color: #2c3e50; margin: 10px 0;">New Partnership Inquiry</h2>
           </div>
           

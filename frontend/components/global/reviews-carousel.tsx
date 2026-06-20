@@ -26,17 +26,17 @@ const reviewsData = [
     position: 'Business Buyer',
   },
   {
-    text: `My experience with Abbass Group was exceptional. As someone new to the process of purchasing a business, Sadeq made everything smooth and seamless. He was informative, responsive, and took the time to answer all of my questions in detail.`,
+    text: `My experience with Blackmont Advisory was exceptional. As someone new to the process of purchasing a business, Sadeq made everything smooth and seamless. He was informative, responsive, and took the time to answer all of my questions in detail.`,
     author: 'Dan',
     position: 'Business Buyer',
   },
   {
-    text: `Abbass and his team are highly professional and knowledgeable. He genuinely cares about his clients. He provides clear, honest advice and goes the extra mile to help people achieve their goals.`,
+    text: `The Blackmont Advisory team are highly professional and knowledgeable. They genuinely care about their clients, providing clear, honest advice and going the extra mile to help people achieve their goals.`,
     author: 'Huss',
     position: 'Business Owner',
   },
   {
-    text: `Definitely recommend Sadeq and the team at Abbass Group for brokerage services for your business. Always clear in their communication with weekly updates, but also candid in the market feedback they observe.`,
+    text: `Definitely recommend Sadeq and the team at Blackmont Advisory for brokerage services for your business. Always clear in their communication with weekly updates, but also candid in the market feedback they observe.`,
     author: 'Jordan',
     position: 'Business Owner',
   },

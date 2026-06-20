@@ -7,7 +7,7 @@ const app = express(); // Define app first
 
 // CORS configuration
 const corsOptions = {
-  origin: ['http://localhost:3000', 'https://www.abbass.com.au', 'http://localhost:5005', 'http://localhost:5006', 'http://localhost:3004', 'http://businessbrokersss.abbass.com.au', 'https://abbass.com.au', 'https://apibusinessbrokers.abbass.com.au', 'https://www.ameerah.com.au', 'https://ameerah.com.au', 'https://www.fionajohns.com', 'https://fionajohns.com', 'https://blackmontadvisory.com', 'https://www.blackmontadvisory.com', 'https://dev.blackmontadvisory.com', 'http://localhost:5059', 'http://localhost:3090'],
+  origin: ['http://localhost:3000', 'http://localhost:5005', 'http://localhost:5006', 'http://localhost:3004', 'https://api.blackmontadvisory.com', 'https://blackmontadvisory.com', 'https://www.blackmontadvisory.com', 'https://dev.blackmontadvisory.com', 'http://localhost:5059', 'http://localhost:3090'],
   credentials: true,
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS']
 };
@@ -32,7 +32,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 
 
 app.get('/', (req, res) => {
-  res.send('Business Brokers API is running now!!!! test');
+  res.send('Blackmont Advisory API is running');
 });
 
 const listingsRoutes = require('./routes/listings');
@@ -50,15 +50,6 @@ app.use('/api/confidentiality', confidentialityRoutes);
 const eoiRoutes = require('./routes/eoi');
 app.use('/api/eoi', eoiRoutes);
 
-const careersRoutes = require('./routes/careers');
-app.use('/api/careers', careersRoutes);
-
-const contactRoute = require('./routes/contact');
-app.use('/api/contact', contactRoute);
-
-const franchiseEoiRoute = require('./routes/franchise-eoi');
-app.use('/api/franchise-eoi', franchiseEoiRoute);
-
 const enquiriesRoute = require('./routes/enquiries');
 app.use('/api/enquiries', enquiriesRoute);
 
@@ -70,9 +61,6 @@ app.use('/api/seekbusiness-email', seekEmailRoutes);
 
 const signNowRoutes = require('./routes/signNow');
 app.use('/api/signnow', signNowRoutes);
-
-const contactFormRoutes = require('./routes/contact-form');
-app.use('/api/contact-form', contactFormRoutes);
 
 const partnershipContactFormRoutes = require('./routes/partnership-contact-form');
 app.use('/api/partnership-contact-form', partnershipContactFormRoutes);

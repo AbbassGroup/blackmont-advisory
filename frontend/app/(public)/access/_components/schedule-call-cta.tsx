@@ -4,6 +4,7 @@ import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { GetStarted } from './get-started';
 import { Suspense } from 'react';
+import { Container, Reveal } from '@/components/landing/primitives';
 
 interface ScheduleCallCtaProps {
   title?: string;
@@ -16,23 +17,27 @@ export function ScheduleCallCta({
 }: ScheduleCallCtaProps) {
   return (
     <Suspense>
-      <section className='relative overflow-hidden bg-brand-black py-14 lg:py-16'>
-        <div className='pointer-events-none absolute left-1/2 top-1/2 h-72 w-[680px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-primary/15 blur-[140px]' />
-
-        <div className='relative z-10 mx-auto max-w-3xl px-6 text-center'>
-          <h3 className='text-2xl font-semibold tracking-tight text-white md:text-3xl'>
-            {title}
-          </h3>
-          <p className='mx-auto mt-3 max-w-xl text-base leading-relaxed text-white/65'>
-            {subtitle}
-          </p>
-          <GetStarted className='mt-7 inline-block'>
-            <Button className='group inline-flex items-center gap-2 rounded-full bg-brand-primary px-7 py-5 text-sm font-semibold text-white shadow-md shadow-black/10 transition-all hover:-translate-y-0.5 hover:bg-brand-primary-dark'>
-              Schedule a Confidential Call
-              <ArrowRight className='h-4 w-4 transition-transform group-hover:translate-x-0.5' />
-            </Button>
-          </GetStarted>
-        </div>
+      <section className='bg-background py-20 lg:py-28'>
+        <Container>
+          <Reveal className='relative border-[1.5px] border-secondary bg-secondary px-6 py-16 text-center sm:px-10 lg:py-20'>
+            <span
+              aria-hidden
+              className='absolute inset-x-10 top-0 h-0.5 bg-gradient-to-r from-transparent via-accent to-transparent'
+            />
+            <h2 className='mx-auto max-w-2xl text-3xl font-bold leading-[1.1] tracking-tight text-parchment sm:text-4xl lg:text-5xl'>
+              {title}
+            </h2>
+            <p className='mx-auto mt-5 max-w-xl text-lg font-light leading-relaxed text-parchment/60'>
+              {subtitle}
+            </p>
+            <GetStarted className='mt-9 inline-block'>
+              <Button className='group inline-flex h-auto items-center gap-2 rounded-none bg-accent px-8 py-4 text-xs font-bold uppercase tracking-[0.14em] text-primary transition-colors hover:bg-accent-light'>
+                Schedule a Confidential Call
+                <ArrowRight className='h-4 w-4 transition-transform group-hover:translate-x-0.5' />
+              </Button>
+            </GetStarted>
+          </Reveal>
+        </Container>
       </section>
     </Suspense>
   );

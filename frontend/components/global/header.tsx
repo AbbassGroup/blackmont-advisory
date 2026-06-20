@@ -14,11 +14,12 @@ import {
 import Image from 'next/image';
 
 const NAV_LINKS = [
-  { label: 'Home', path: '/' },
-  { label: 'Services', path: '/services' },
+  { label: 'About', path: '/#about' },
+  { label: 'Selling', path: '/#selling' },
+  { label: 'Buying', path: '/#buying' },
+  { label: 'Network', path: '/#network' },
+  { label: 'Why Us', path: '/#why' },
   { label: 'Resources', path: '/resources' },
-  { label: 'About', path: '/about' },
-  { label: 'Contact', path: '/contact' },
 ];
 
 function BrandLockup() {
@@ -29,20 +30,13 @@ function BrandLockup() {
       aria-label='Blackmont Advisory home'
     >
       <Image
-        src='/assets/logo.png'
+        unoptimized
+        src='/assets/blackmont-light.png'
         alt='Blackmont Advisory logo'
         width={32}
         height={32}
-        className='h-10 w-10'
+        className='h-10 w-full'
       />
-      <span className='flex flex-col leading-none'>
-        <span className='text-[15px] font-bold uppercase tracking-[0.06em] text-parchment'>
-          Blackmont
-        </span>
-        <span className='mt-0.5 text-[10px] font-normal uppercase tracking-[0.18em] text-parchment/45'>
-          Advisory
-        </span>
-      </span>
     </Link>
   );
 }
@@ -102,7 +96,7 @@ export function Header() {
 
         <div className='flex items-center gap-3'>
           <Link
-            href='/contact'
+            href='/#contact'
             className='hidden whitespace-nowrap bg-accent px-6 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-primary transition-colors hover:bg-accent-light sm:inline-block'
           >
             Begin Confidentially
@@ -146,7 +140,7 @@ export function Header() {
                     );
                   })}
                   <Link
-                    href='/contact'
+                    href='/#contact'
                     onClick={() => setIsOpen(false)}
                     className='mt-4 bg-accent px-4 py-3 text-center text-xs font-bold uppercase tracking-[0.14em] text-primary transition-colors hover:bg-accent-light'
                   >

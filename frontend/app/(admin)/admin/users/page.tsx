@@ -152,53 +152,54 @@ export default function AdminUsersPage() {
       description='Manage admin access and system users.'
       button={
         <Button
-          className='bg-brand-primary hover:bg-brand-primary/90 text-white gap-2'
+          className='gap-2 rounded-none bg-accent font-semibold text-primary hover:bg-accent-light'
           onClick={openCreate}
         >
           <Plus className='w-4 h-4' /> Add User
         </Button>
       }
     >
-      <div className='bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6'>
+      <div className='bg-card border border-border p-4 mb-6'>
         <div className='relative max-w-sm'>
-          <Search className='absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400' />
+          <Search className='absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60' />
           <Input
+            placeholder='Search users...'
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className='pl-9 bg-gray-50 border-gray-200'
+            className='pl-9 rounded-none border-secondary/15 bg-background shadow-none focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-accent/15'
           />
         </div>
       </div>
 
-      <div className='bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden'>
+      <div className='bg-card border border-border overflow-hidden'>
         <div className='overflow-x-auto'>
           <table className='w-full text-sm text-left'>
             <thead>
-              <tr className='bg-gray-50/80 border-b border-gray-100'>
-                <th className='px-6 py-4 font-semibold text-gray-600'>
+              <tr className='bg-muted/60 border-b border-border text-xs uppercase tracking-wider text-muted-foreground'>
+                <th className='px-6 py-4 font-semibold'>
                   Username
                 </th>
-                <th className='px-6 py-4 font-semibold text-gray-600'>Email</th>
-                <th className='px-6 py-4 font-semibold text-gray-600'>Role</th>
-                <th className='px-6 py-4 font-semibold text-gray-600'>
+                <th className='px-6 py-4 font-semibold'>Email</th>
+                <th className='px-6 py-4 font-semibold'>Role</th>
+                <th className='px-6 py-4 font-semibold'>
                   Created
                 </th>
-                <th className='px-6 py-4 font-semibold text-gray-600 text-right'>
+                <th className='px-6 py-4 font-semibold text-right'>
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className='divide-y divide-gray-50'>
+            <tbody className='divide-y divide-border'>
               {loading ? (
                 <tr>
-                  <td colSpan={5} className='text-center py-12 text-gray-400'>
-                    <Loader2 className='w-6 h-6 animate-spin mx-auto mb-2 text-brand-primary' />
+                  <td colSpan={5} className='text-center py-12 text-muted-foreground/60'>
+                    <Loader2 className='w-6 h-6 animate-spin mx-auto mb-2 text-accent' />
                     Loading users...
                   </td>
                 </tr>
               ) : filteredUsers.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className='text-center py-12 text-gray-500'>
+                  <td colSpan={5} className='text-center py-12 text-muted-foreground'>
                     {searchTerm
                       ? 'No users found matching your search.'
                       : 'No users found.'}
@@ -208,15 +209,15 @@ export default function AdminUsersPage() {
                 filteredUsers.map((u) => (
                   <tr
                     key={u._id}
-                    className='hover:bg-gray-50/60 transition-colors'
+                    className='hover:bg-muted/50 transition-colors'
                   >
-                    <td className='px-6 py-4 font-medium text-gray-900 flex items-center gap-2'>
+                    <td className='px-6 py-4 font-medium text-secondary flex items-center gap-2'>
                       {u.role === 'superadmin' && (
-                        <ShieldAlert className='w-4 h-4 text-brand-primary' />
+                        <ShieldAlert className='w-4 h-4 text-accent' />
                       )}
                       {u.username}
                     </td>
-                    <td className='px-6 py-4 text-gray-600'>{u.email}</td>
+                    <td className='px-6 py-4 text-muted-foreground'>{u.email}</td>
                     <td className='px-6 py-4'>
                       <Badge
                         variant={
@@ -231,7 +232,7 @@ export default function AdminUsersPage() {
                         {u.role}
                       </Badge>
                     </td>
-                    <td className='px-6 py-4 text-gray-500'>
+                    <td className='px-6 py-4 text-muted-foreground'>
                       {u.createdAt
                         ? format(new Date(u.createdAt), 'MMM dd, yyyy')
                         : '—'}
@@ -242,7 +243,7 @@ export default function AdminUsersPage() {
                           variant='ghost'
                           size='icon'
                           onClick={() => openEdit(u)}
-                          className='text-gray-400 hover:text-brand-primary hover:bg-brand-primary/10'
+                          className='text-muted-foreground/60 hover:text-accent hover:bg-accent/10'
                           title='Edit user'
                         >
                           <Pencil className='w-4 h-4' />
@@ -255,7 +256,7 @@ export default function AdminUsersPage() {
                             u.role === 'superadmin' ||
                             u.email === user?.user?.email
                           }
-                          className='text-gray-400 hover:text-red-600 hover:bg-red-50 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-gray-400'
+                          className='text-muted-foreground/60 hover:text-red-600 hover:bg-red-50 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-muted-foreground/60'
                           title={
                             u.role === 'superadmin'
                               ? 'Cannot delete superadmin'
@@ -296,7 +297,7 @@ export default function AdminUsersPage() {
               <Label htmlFor='email'>
                 Email Address{' '}
                 {editingId ? (
-                  <span className='text-xs font-normal text-gray-400'>
+                  <span className='text-xs font-normal text-muted-foreground/60'>
                     (cannot be changed)
                   </span>
                 ) : (
@@ -310,14 +311,14 @@ export default function AdminUsersPage() {
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 required={!editingId}
                 disabled={!!editingId}
-                className={editingId ? 'bg-gray-50 text-gray-500' : ''}
+                className={editingId ? 'bg-muted text-muted-foreground' : ''}
               />
             </div>
             <div className='space-y-2'>
               <Label htmlFor='password'>
                 Password{' '}
                 {editingId ? (
-                  <span className='text-xs font-normal text-gray-400'>
+                  <span className='text-xs font-normal text-muted-foreground/60'>
                     (leave blank to keep current)
                   </span>
                 ) : (
@@ -358,7 +359,7 @@ export default function AdminUsersPage() {
               <Button
                 type='submit'
                 disabled={actionLoading}
-                className='bg-brand-primary text-white hover:bg-brand-primary/90 w-24'
+                className='w-24 rounded-none bg-accent font-semibold text-primary hover:bg-accent-light'
               >
                 {actionLoading ? (
                   <Loader2 className='w-4 h-4 animate-spin' />

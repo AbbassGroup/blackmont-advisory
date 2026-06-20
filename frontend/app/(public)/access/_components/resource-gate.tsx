@@ -20,7 +20,7 @@ import { trackAccessEvent } from '@/lib/track';
 
 const NEXAR_API_URL =
   process.env.NEXT_PUBLIC_NEXAR_API_URL ||
-  'https://api.nexartechnologies.com/api/v1';
+  'https://blackmont-api.nexartechnologies.com';
 
 async function submitResourceLead({
   email,
@@ -121,7 +121,7 @@ export function ResourceGate({
       <DialogContent className='gap-0 overflow-hidden p-0 sm:max-w-md'>
         <div className='px-6 pt-7 pb-2 sm:px-7'>
           <DialogHeader className='text-left'>
-            <DialogTitle className='text-lg leading-snug font-semibold text-brand-black sm:text-xl'>
+            <DialogTitle className='text-lg leading-snug font-semibold text-secondary sm:text-xl'>
               Unlock {resourceTitle}
             </DialogTitle>
           </DialogHeader>
@@ -138,7 +138,7 @@ export function ResourceGate({
           <div className='space-y-1.5'>
             <Label
               htmlFor='rg-email'
-              className='text-[13px] font-medium text-brand-black'
+              className='text-[13px] font-medium text-secondary'
             >
               Email <span className='text-red-500'>*</span>
             </Label>
@@ -167,7 +167,7 @@ export function ResourceGate({
           <Button
             type='submit'
             disabled={loading}
-            className='h-12 w-full rounded-lg bg-brand-primary text-base font-semibold hover:bg-brand-primary-dark'
+            className='h-12 w-full rounded-lg bg-primary text-base font-semibold'
           >
             {loading ? (
               <>
@@ -179,12 +179,12 @@ export function ResourceGate({
             )}
           </Button>
 
-          <p className='text-center text-[11px] leading-relaxed text-gray-400'>
+          <p className='text-center text-[11px] leading-relaxed text-muted-foreground'>
             By submitting, you agree to our{' '}
             <Link
               href='/privacy'
               target='_blank'
-              className='text-brand-primary underline-offset-2 hover:underline'
+              className='text-blue-600 underline-offset-2 hover:underline'
             >
               Privacy Policy
             </Link>{' '}
@@ -192,7 +192,7 @@ export function ResourceGate({
             <Link
               href='/terms-and-conditions'
               target='_blank'
-              className='text-brand-primary underline-offset-2 hover:underline'
+              className='text-blue-600 underline-offset-2 hover:underline'
             >
               Terms &amp; Conditions
             </Link>

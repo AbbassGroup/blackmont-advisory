@@ -45,24 +45,24 @@ function ValueColumn({
     <div className='flex flex-col h-full'>
       <div className='flex items-center gap-4 mb-4'>
         <div
-          className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 ${accentBg}`}
+          className={`w-14 h-14  flex items-center justify-center shrink-0 ${accentBg}`}
         >
           <Icon className={`w-7 h-7 ${accentColor}`} />
         </div>
-        <h3 className='text-xl lg:text-2xl font-bold text-brand-black leading-snug'>
+        <h3 className='text-xl lg:text-2xl font-bold text-secondary leading-snug'>
           {title}
         </h3>
       </div>
 
       <div className='pl-18 flex-1'>
-        <p className='text-gray-600 font-medium mb-4'>{subtitle}</p>
+        <p className='text-muted-foreground font-medium mb-4'>{subtitle}</p>
         <div className={`w-12 h-1 rounded-full mb-6 ${accentBg}`} />
 
         <div className='flex flex-wrap gap-2 mb-8'>
           {points.map((point) => (
             <div
               key={point}
-              className={`px-4 py-2 rounded-xl text-sm font-semibold border ${accentBorder} ${accentBg} text-brand-black`}
+              className={`px-4 py-2  text-sm font-semibold border ${accentBorder} ${accentBg} text-secondary`}
             >
               {point}
             </div>
@@ -71,7 +71,7 @@ function ValueColumn({
 
         <div className='flex items-start gap-3 mt-auto'>
           <Lightbulb className={`w-6 h-6 shrink-0 mt-0.5 ${accentColor}`} />
-          <p className='text-gray-600 italic leading-relaxed'>{resultText}</p>
+          <p className='text-muted-foreground italic leading-relaxed'>{resultText}</p>
         </div>
       </div>
     </div>
@@ -80,9 +80,8 @@ function ValueColumn({
 
 export function HowAddValue() {
   return (
-    <section className='py-20 lg:py-28 relative overflow-hidden'>
-      <div className="absolute inset-0 bg-[url('/businessbrokers/dotted-abbass.png')] bg-cover bg-center opacity-20 "></div>
-      <div className='max-w-[1260px] mx-auto px-6 lg:px-8 relative z-10'>
+    <section className='relative overflow-hidden bg-background py-20 lg:py-28'>
+      <div className='relative z-10 mx-auto max-w-[1500px] px-6 sm:px-10 lg:px-16'>
         <SectionHeading
           title='How We Add Value to Your Clients'
           className='mb-16'
@@ -95,16 +94,16 @@ export function HowAddValue() {
             subtitle='We provide:'
             points={sellingPoints}
             resultText='Greater sales confidence, smoother transactions, and stronger outcomes.'
-            accentColor='text-[#56C1BC]'
-            accentBg='bg-[#56C1BC]/10'
-            accentBorder='border-[#56C1BC]/20'
+            accentColor='text-[#c9a84c]'
+            accentBg='bg-[#c9a84c]/10'
+            accentBorder='border-[#c9a84c]/20'
           />
 
           {/* Divider visible only on md+ */}
-          <div className='hidden md:block absolute left-1/2 top-48 bottom-12 w-px border-l-2 border-dashed border-brand-primary/20 -translate-x-1/2' />
+          <div className='hidden md:block absolute left-1/2 top-48 bottom-12 w-px border-l-2 border-dashed border-accent/20 -translate-x-1/2' />
 
           {/* Divider visible only on mobile */}
-          <div className='block md:hidden w-full border-t-2 border-dashed border-brand-primary/20 my-4' />
+          <div className='block md:hidden w-full border-t-2 border-dashed border-accent/20 my-4' />
 
           <ValueColumn
             icon={ShoppingBag}
@@ -112,9 +111,9 @@ export function HowAddValue() {
             subtitle='We assist with:'
             points={buyingPoints}
             resultText='We work collaboratively with you to ensure the deal is structured correctly for our mutual client.'
-            accentColor='text-[#4A9B94]'
-            accentBg='bg-[#4A9B94]/10'
-            accentBorder='border-[#4A9B94]/20'
+            accentColor='text-[#c9a84c]'
+            accentBg='bg-[#c9a84c]/10'
+            accentBorder='border-[#c9a84c]/20'
           />
         </div>
       </div>

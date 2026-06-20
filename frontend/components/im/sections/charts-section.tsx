@@ -104,11 +104,11 @@ const PIE_PALETTE = [
 // KPI row colour presets (card background + text shades + sideways-label bar).
 const KPI_STYLES: Record<KpiStyle, { card: string; big: string; sub: string; side: string; div: string }> = {
   plain: {
-    card: 'bg-white ring-1 ring-gray-200',
-    big: 'text-brand-black',
-    sub: 'text-gray-400',
-    side: 'bg-gray-100 text-gray-500',
-    div: 'border-gray-100',
+    card: 'bg-card ring-1 ring-border',
+    big: 'text-secondary',
+    sub: 'text-muted-foreground/60',
+    side: 'bg-muted text-muted-foreground',
+    div: 'border-border',
   },
   dark: {
     card: 'bg-[#1f3a5f]',
@@ -125,18 +125,18 @@ const KPI_STYLES: Record<KpiStyle, { card: string; big: string; sub: string; sid
     div: 'border-white/20',
   },
   teal: {
-    card: 'bg-brand-primary',
-    big: 'text-white',
-    sub: 'text-white/80',
-    side: 'bg-black/15 text-white/85',
-    div: 'border-white/20',
+    card: 'bg-accent',
+    big: 'text-primary',
+    sub: 'text-primary/70',
+    side: 'bg-black/10 text-primary/80',
+    div: 'border-primary/15',
   },
 };
 const KPI_STYLE_OPTIONS: { value: KpiStyle; label: string }[] = [
   { value: 'plain', label: 'Light' },
   { value: 'dark', label: 'Navy' },
   { value: 'gold', label: 'Gold' },
-  { value: 'teal', label: 'Teal' },
+  { value: 'teal', label: 'Gilt' },
 ];
 
 const MAX_ROWS = 12;
@@ -230,20 +230,20 @@ function MoneyTooltip({
 }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="grid min-w-44 gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs shadow-xl">
-      <div className="font-semibold text-brand-black">{label}</div>
+    <div className="grid min-w-44 gap-1.5 rounded-lg border border-border bg-white px-3 py-2 text-xs shadow-xl">
+      <div className="font-semibold text-secondary">{label}</div>
       {payload.map((p) => {
         const key = String(p.dataKey) as SeriesKey;
         return (
           <div key={key} className="flex items-center justify-between gap-4">
-            <span className="flex items-center gap-1.5 text-gray-500">
+            <span className="flex items-center gap-1.5 text-muted-foreground">
               <span
                 className="h-2.5 w-2.5 rounded-[3px]"
                 style={{ background: COLOR[key] ?? '#999' }}
               />
               {p.name}
             </span>
-            <span className="font-mono font-medium tabular-nums text-brand-black">
+            <span className="font-mono font-medium tabular-nums text-secondary">
               {fmtMoney(Number(p.value) || 0, unit)}
             </span>
           </div>
@@ -350,7 +350,7 @@ function FinanceLegend() {
   return (
     <div className="mt-3 flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
       {SERIES.map((s) => (
-        <span key={s.key} className="flex items-center gap-1.5 text-xs font-medium text-gray-600">
+        <span key={s.key} className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
           <span className="h-2.5 w-2.5 rounded-[3px]" style={{ background: s.color }} />
           {s.label}
         </span>
@@ -405,10 +405,10 @@ function RoiChartView({ chart }: { chart: ChartItem }) {
           </PieChart>
         </ChartContainer>
         <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
-          <span className={cn('font-bold leading-none tabular-nums text-brand-black', pctSize)}>
+          <span className={cn('font-bold leading-none tabular-nums text-secondary', pctSize)}>
             {pctStr}
           </span>
-          <span className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+          <span className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground/60">
             ROI
           </span>
         </div>
@@ -416,15 +416,15 @@ function RoiChartView({ chart }: { chart: ChartItem }) {
 
       <div className="min-w-0 flex-1 text-center sm:text-left">
         {chart.caption?.trim() && (
-          <p className="text-base leading-relaxed text-gray-600">{chart.caption}</p>
+          <p className="text-base leading-relaxed text-muted-foreground">{chart.caption}</p>
         )}
         <div className="mt-4 flex flex-wrap justify-center gap-x-6 gap-y-2 sm:justify-start">
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-muted-foreground">
             Asking Price{' '}
-            <b className="font-semibold text-brand-black">{fmtMoney(asking, unit)}</b>
+            <b className="font-semibold text-secondary">{fmtMoney(asking, unit)}</b>
           </span>
-          <span className="text-sm text-gray-500">
-            SDE <b className="font-semibold text-brand-black">{fmtMoney(sde, unit)}</b>
+          <span className="text-sm text-muted-foreground">
+            SDE <b className="font-semibold text-secondary">{fmtMoney(sde, unit)}</b>
           </span>
         </div>
       </div>
@@ -520,12 +520,12 @@ function GrowthTooltip({
   const v = Number(payload[0]?.value) || 0;
   const phase: GrowthPhase = payload[0]?.payload?.phase === 'trajectory' ? 'trajectory' : 'actual';
   return (
-    <div className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs shadow-xl">
-      <div className="font-semibold text-brand-black">{label}</div>
-      <div className="mt-1 flex items-center gap-1.5 text-gray-500">
+    <div className="rounded-lg border border-border bg-white px-3 py-2 text-xs shadow-xl">
+      <div className="font-semibold text-secondary">{label}</div>
+      <div className="mt-1 flex items-center gap-1.5 text-muted-foreground">
         <span className="h-2.5 w-2.5 rounded-[3px]" style={{ background: PHASE[phase] }} />
         {PHASE_LABEL[phase]}
-        <b className="ml-2 font-mono font-medium text-brand-black">{fmtMoney(v, unit)}</b>
+        <b className="ml-2 font-mono font-medium text-secondary">{fmtMoney(v, unit)}</b>
       </div>
     </div>
   );
@@ -569,7 +569,7 @@ function GrowthLegend() {
   return (
     <div className="mt-3 flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
       {(['actual', 'trajectory'] as const).map((p) => (
-        <span key={p} className="flex items-center gap-1.5 text-xs font-medium text-gray-600">
+        <span key={p} className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
           <span className="h-2.5 w-2.5 rounded-[3px]" style={{ background: PHASE[p] }} />
           {PHASE_LABEL[p]}
         </span>
@@ -625,9 +625,9 @@ function PieTooltip({
   const v = Number(p?.value) || 0;
   const pct = total > 0 ? (v / total) * 100 : 0;
   return (
-    <div className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs shadow-xl">
-      <span className="font-semibold text-brand-black">{p?.name}</span>
-      <span className="ml-2 text-gray-500">
+    <div className="rounded-lg border border-border bg-white px-3 py-2 text-xs shadow-xl">
+      <span className="font-semibold text-secondary">{p?.name}</span>
+      <span className="ml-2 text-muted-foreground">
         {fmtPct(pct)} · {v.toLocaleString()}
       </span>
     </div>
@@ -641,7 +641,7 @@ function PieChartView({ chart }: { chart: ChartItem }) {
 
   if (data.length === 0) {
     return (
-      <div className="flex h-70 items-center justify-center text-center text-sm text-gray-400 sm:h-90">
+      <div className="flex h-70 items-center justify-center text-center text-sm text-muted-foreground/60 sm:h-90">
         Enter options with values to preview the chart.
       </div>
     );
@@ -678,14 +678,14 @@ function PieChartView({ chart }: { chart: ChartItem }) {
           return (
             <li
               key={s.id}
-              className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm transition-colors hover:bg-gray-50"
+              className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm transition-colors hover:bg-muted"
             >
               <span
                 className="h-3 w-3 shrink-0 rounded-full"
                 style={{ background: PIE_PALETTE[i % PIE_PALETTE.length] }}
               />
-              <span className="min-w-0 flex-1 truncate text-gray-700">{s.label || '—'}</span>
-              <span className="shrink-0 font-semibold tabular-nums text-brand-black">
+              <span className="min-w-0 flex-1 truncate text-foreground">{s.label || '—'}</span>
+              <span className="shrink-0 font-semibold tabular-nums text-secondary">
                 {fmtPct(pct)}
               </span>
             </li>
@@ -701,7 +701,7 @@ function KpiView({ chart }: { chart: ChartItem }) {
   const rows = (chart.kpiRows ?? []).filter(rowHasContent);
   if (rows.length === 0) {
     return (
-      <div className="flex items-center justify-center py-10 text-center text-sm text-gray-400">
+      <div className="flex items-center justify-center py-10 text-center text-sm text-muted-foreground/60">
         Fill in the rows below to preview the indicators.
       </div>
     );
@@ -777,7 +777,7 @@ function NumberInput({
   return (
     <div className="relative">
       {prefix ? (
-        <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-sm text-gray-400">
+        <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground/60">
           {prefix}
         </span>
       ) : null}
@@ -792,7 +792,7 @@ function NumberInput({
         onBlur={() => setDraft(null)}
         placeholder={placeholder}
         className={cn(
-          'w-full rounded-lg border border-gray-200 bg-white py-1.5 text-sm tabular-nums text-brand-black outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20',
+          'w-full rounded-lg border border-border bg-white py-1.5 text-sm tabular-nums text-secondary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/15',
           prefix ? 'pl-6 pr-2.5' : 'px-2.5',
           className,
         )}
@@ -814,7 +814,7 @@ function NumField({
 }) {
   return (
     <label className="block">
-      <span className="mb-1 flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-gray-400">
+      <span className="mb-1 flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground/60">
         <span className="h-1.5 w-1.5 rounded-full" style={{ background: color }} />
         {label}
       </span>
@@ -825,12 +825,12 @@ function NumField({
 
 function UnitSelect({ unit, onChange }: { unit: ChartUnit; onChange: (u: ChartUnit) => void }) {
   return (
-    <label className="flex items-center gap-2 text-xs text-gray-500">
+    <label className="flex items-center gap-2 text-xs text-muted-foreground">
       <span>Figures in</span>
       <select
         value={unit}
         onChange={(e) => onChange(e.target.value as ChartUnit)}
-        className="rounded-lg border border-gray-200 bg-white px-2 py-1 text-xs font-medium text-brand-black outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+        className="rounded-lg border border-border bg-white px-2 py-1 text-xs font-medium text-secondary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/15"
       >
         {UNIT_OPTIONS.map((o) => (
           <option key={o.value} value={o.value}>
@@ -850,7 +850,7 @@ function VariantSwitch({
   onChange: (v: ChartVariant) => void;
 }) {
   return (
-    <div className="flex items-center gap-0.5 rounded-lg border border-gray-200 bg-gray-50 p-0.5">
+    <div className="flex items-center gap-0.5 rounded-lg border border-border bg-muted p-0.5">
       {VARIANTS.map((v) => {
         const Icon = v.icon;
         const active = variant === v.value;
@@ -862,7 +862,7 @@ function VariantSwitch({
             onClick={() => onChange(v.value)}
             className={cn(
               'flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition',
-              active ? 'bg-white text-brand-primary shadow-xs' : 'text-gray-400 hover:text-gray-700',
+              active ? 'bg-card text-accent shadow-xs' : 'text-muted-foreground/60 hover:text-foreground',
             )}
           >
             <Icon className="h-3.5 w-3.5" />
@@ -882,7 +882,7 @@ function PhaseToggle({
   onChange: (p: GrowthPhase) => void;
 }) {
   return (
-    <div className="flex shrink-0 items-center gap-0.5 rounded-lg border border-gray-200 bg-gray-50 p-0.5">
+    <div className="flex shrink-0 items-center gap-0.5 rounded-lg border border-border bg-muted p-0.5">
       {(['actual', 'trajectory'] as const).map((p) => {
         const active = phase === p;
         return (
@@ -892,7 +892,7 @@ function PhaseToggle({
             onClick={() => onChange(p)}
             className={cn(
               'flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition',
-              active ? 'bg-white shadow-xs' : 'text-gray-400 hover:text-gray-700',
+              active ? 'bg-white shadow-xs' : 'text-muted-foreground/60 hover:text-foreground',
             )}
             style={active ? { color: PHASE[p] } : undefined}
           >
@@ -936,9 +936,9 @@ function FinanceBody({
       <FinanceChartView chart={chart} />
       <FinanceLegend />
 
-      <div className="mt-5 border-t border-gray-100 pt-5">
+      <div className="mt-5 border-t border-border pt-5">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/60">
             Financial figures
           </p>
           <UnitSelect
@@ -952,20 +952,20 @@ function FinanceBody({
 
         <div className="space-y-2">
           {rows.map((r) => (
-            <div key={r.id} className="rounded-xl border border-gray-200 bg-gray-50/60 p-3">
+            <div key={r.id} className="rounded-xl border border-border bg-muted/40 p-3">
               <div className="mb-2 flex items-center gap-2">
                 <input
                   value={r.label}
                   onChange={(e) => updateRow(r.id, { label: e.target.value })}
                   placeholder="Period (e.g. 2024)"
-                  className="min-w-0 flex-1 rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-sm font-semibold text-brand-black outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+                  className="min-w-0 flex-1 rounded-lg border border-border bg-white px-2.5 py-1.5 text-sm font-semibold text-secondary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/15"
                 />
                 <button
                   type="button"
                   onClick={() => removeRow(r.id)}
                   disabled={rows.length <= 1}
                   title="Remove period"
-                  className="shrink-0 rounded-lg p-1.5 text-gray-300 transition hover:bg-red-50 hover:text-red-500 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-gray-300"
+                  className="shrink-0 rounded-lg p-1.5 text-muted-foreground/50 transition hover:bg-red-50 hover:text-red-500 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-muted-foreground/50"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -997,7 +997,7 @@ function FinanceBody({
             <button
               type="button"
               onClick={addRow}
-              className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-500 transition hover:border-brand-primary hover:bg-brand-primary/5 hover:text-brand-primary"
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border px-4 py-2.5 text-sm font-medium text-muted-foreground transition hover:border-accent hover:bg-accent/5 hover:text-accent"
             >
               <Plus className="h-4 w-4" /> Add period
             </button>
@@ -1023,9 +1023,9 @@ function RoiBody({
     <>
       <RoiChartView chart={chart} />
 
-      <div className="mt-5 space-y-3 border-t border-gray-100 pt-5">
+      <div className="mt-5 space-y-3 border-t border-border pt-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">Figures</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/60">Figures</p>
           <UnitSelect
             unit={unit}
             onChange={(u) => {
@@ -1051,7 +1051,7 @@ function RoiBody({
         </div>
 
         <label className="block">
-          <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wide text-gray-400">
+          <span className="mb-1 block text-[10px] font-semibold uppercase tracking-wide text-muted-foreground/60">
             Caption
           </span>
           <textarea
@@ -1059,7 +1059,7 @@ function RoiBody({
             onChange={(e) => onChange({ caption: e.target.value })}
             rows={2}
             placeholder="e.g. R.O.I (Return on Owner's Investment) Rate, calculated based on Average SDE between FY 2023–2025"
-            className="w-full resize-y rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-sm leading-relaxed text-brand-black outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+            className="w-full resize-y rounded-lg border border-border bg-white px-2.5 py-1.5 text-sm leading-relaxed text-secondary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/15"
           />
         </label>
       </div>
@@ -1099,9 +1099,9 @@ function GrowthBody({
       <GrowthChartView chart={chart} />
       <GrowthLegend />
 
-      <div className="mt-5 border-t border-gray-100 pt-5">
+      <div className="mt-5 border-t border-border pt-5">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/60">
             Figures &amp; phases
           </p>
           <UnitSelect
@@ -1115,13 +1115,13 @@ function GrowthBody({
 
         <div className="space-y-2">
           {rows.map((r) => (
-            <div key={r.id} className="rounded-xl border border-gray-200 bg-gray-50/60 p-3">
+            <div key={r.id} className="rounded-xl border border-border bg-muted/40 p-3">
               <div className="mb-2 flex items-center gap-2">
                 <input
                   value={r.label}
                   onChange={(e) => updateRow(r.id, { label: e.target.value })}
                   placeholder="Year (e.g. 2024)"
-                  className="min-w-0 flex-1 rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-sm font-semibold text-brand-black outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+                  className="min-w-0 flex-1 rounded-lg border border-border bg-white px-2.5 py-1.5 text-sm font-semibold text-secondary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/15"
                 />
                 <PhaseToggle
                   phase={r.phase}
@@ -1135,7 +1135,7 @@ function GrowthBody({
                   onClick={() => removeRow(r.id)}
                   disabled={rows.length <= 1}
                   title="Remove year"
-                  className="shrink-0 rounded-lg p-1.5 text-gray-300 transition hover:bg-red-50 hover:text-red-500 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-gray-300"
+                  className="shrink-0 rounded-lg p-1.5 text-muted-foreground/50 transition hover:bg-red-50 hover:text-red-500 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-muted-foreground/50"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -1153,7 +1153,7 @@ function GrowthBody({
             <button
               type="button"
               onClick={addRow}
-              className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-500 transition hover:border-brand-primary hover:bg-brand-primary/5 hover:text-brand-primary"
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border px-4 py-2.5 text-sm font-medium text-muted-foreground transition hover:border-accent hover:bg-accent/5 hover:text-accent"
             >
               <Plus className="h-4 w-4" /> Add year
             </button>
@@ -1190,8 +1190,8 @@ function PieBody({
     <>
       <PieChartView chart={chart} />
 
-      <div className="mt-5 border-t border-gray-100 pt-5">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-400">Options</p>
+      <div className="mt-5 border-t border-border pt-5">
+        <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground/60">Options</p>
         <div className="space-y-2">
           {slices.map((s, i) => (
             <div key={s.id} className="flex items-center gap-2">
@@ -1203,7 +1203,7 @@ function PieBody({
                 value={s.label}
                 onChange={(e) => updateSlice(s.id, { label: e.target.value })}
                 placeholder="Option name"
-                className="min-w-0 flex-1 rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-sm text-brand-black outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+                className="min-w-0 flex-1 rounded-lg border border-border bg-white px-2.5 py-1.5 text-sm text-secondary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/15"
               />
               <div className="w-24 shrink-0">
                 <NumberInput
@@ -1217,7 +1217,7 @@ function PieBody({
                 onClick={() => removeSlice(s.id)}
                 disabled={slices.length <= 1}
                 title="Remove option"
-                className="shrink-0 rounded-lg p-1.5 text-gray-300 transition hover:bg-red-50 hover:text-red-500 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-gray-300"
+                className="shrink-0 rounded-lg p-1.5 text-muted-foreground/50 transition hover:bg-red-50 hover:text-red-500 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-muted-foreground/50"
               >
                 <Trash2 className="h-4 w-4" />
               </button>
@@ -1227,7 +1227,7 @@ function PieBody({
           <button
             type="button"
             onClick={addSlice}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-500 transition hover:border-brand-primary hover:bg-brand-primary/5 hover:text-brand-primary"
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border px-4 py-2.5 text-sm font-medium text-muted-foreground transition hover:border-accent hover:bg-accent/5 hover:text-accent"
           >
             <Plus className="h-4 w-4" /> Add option
           </button>
@@ -1271,16 +1271,16 @@ function KpiBody({
     <>
       <KpiView chart={chart} />
 
-      <div className="mt-5 space-y-3 border-t border-gray-100 pt-5">
-        <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">Rows</p>
+      <div className="mt-5 space-y-3 border-t border-border pt-5">
+        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/60">Rows</p>
         {rows.map((row) => (
-          <div key={row.id} className="rounded-xl border border-gray-200 bg-gray-50/60 p-3">
+          <div key={row.id} className="rounded-xl border border-border bg-muted/40 p-3">
             <div className="mb-2 flex items-center gap-2">
               <input
                 value={row.category}
                 onChange={(e) => updateRow(row.id, { category: e.target.value })}
                 placeholder="Row label (shown sideways)"
-                className="min-w-0 flex-1 rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-sm font-semibold text-brand-black outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+                className="min-w-0 flex-1 rounded-lg border border-border bg-white px-2.5 py-1.5 text-sm font-semibold text-secondary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/15"
               />
               <select
                 value={row.style}
@@ -1288,7 +1288,7 @@ function KpiBody({
                   updateRow(row.id, { style: e.target.value as KpiStyle });
                   onCommit?.();
                 }}
-                className="shrink-0 rounded-lg border border-gray-200 bg-white px-2 py-1.5 text-xs font-medium text-brand-black outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+                className="shrink-0 rounded-lg border border-border bg-white px-2 py-1.5 text-xs font-medium text-secondary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/15"
               >
                 {KPI_STYLE_OPTIONS.map((o) => (
                   <option key={o.value} value={o.value}>
@@ -1301,25 +1301,25 @@ function KpiBody({
                 onClick={() => removeRow(row.id)}
                 disabled={rows.length <= 1}
                 title="Remove row"
-                className="shrink-0 rounded-lg p-1.5 text-gray-300 transition hover:bg-red-50 hover:text-red-500 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-gray-300"
+                className="shrink-0 rounded-lg p-1.5 text-muted-foreground/50 transition hover:bg-red-50 hover:text-red-500 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-muted-foreground/50"
               >
                 <Trash2 className="h-4 w-4" />
               </button>
             </div>
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
               {row.cells.map((c, i) => (
-                <div key={i} className="space-y-1.5 rounded-lg border border-gray-200 bg-white p-2">
+                <div key={i} className="space-y-1.5 rounded-lg border border-border bg-white p-2">
                   <input
                     value={c.big}
                     onChange={(e) => updateCell(row.id, i, { big: e.target.value })}
                     placeholder="Value (e.g. 20%)"
-                    className="w-full rounded-md border border-gray-200 bg-white px-2 py-1.5 text-sm font-bold text-brand-black outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+                    className="w-full rounded-md border border-border bg-white px-2 py-1.5 text-sm font-bold text-secondary outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/15"
                   />
                   <input
                     value={c.small}
                     onChange={(e) => updateCell(row.id, i, { small: e.target.value })}
                     placeholder="Caption"
-                    className="w-full rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+                    className="w-full rounded-md border border-border bg-white px-2 py-1.5 text-xs text-muted-foreground outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/15"
                   />
                 </div>
               ))}
@@ -1330,7 +1330,7 @@ function KpiBody({
         <button
           type="button"
           onClick={addRow}
-          className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-500 transition hover:border-brand-primary hover:bg-brand-primary/5 hover:text-brand-primary"
+          className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border px-4 py-2.5 text-sm font-medium text-muted-foreground transition hover:border-accent hover:bg-accent/5 hover:text-accent"
         >
           <Plus className="h-4 w-4" /> Add row
         </button>
@@ -1358,7 +1358,7 @@ function ChartEditor({
   onCommit?: () => void;
 }) {
   return (
-    <div className="rounded-2xl bg-white p-4 shadow-xs ring-1 ring-gray-100 sm:p-6">
+    <div className="border border-border bg-card p-4 shadow-xs sm:p-6">
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <InlineText
@@ -1368,7 +1368,7 @@ function ChartEditor({
             value={chart.title}
             onChange={(v) => onChange({ title: v })}
             placeholder="Chart title"
-            className="text-lg font-semibold text-brand-black sm:text-xl"
+            className="text-lg font-semibold text-secondary sm:text-xl"
           />
         </div>
         <div className="flex items-center gap-1.5">
@@ -1387,7 +1387,7 @@ function ChartEditor({
               onClick={() => onMove(-1)}
               disabled={index === 0}
               title="Move up"
-              className="rounded-lg p-1.5 text-gray-400 transition hover:bg-gray-100 hover:text-gray-700 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-gray-400"
+              className="rounded-lg p-1.5 text-muted-foreground/60 transition hover:bg-muted hover:text-foreground disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-muted-foreground/60"
             >
               <ChevronUp className="h-4 w-4" />
             </button>
@@ -1396,7 +1396,7 @@ function ChartEditor({
               onClick={() => onMove(1)}
               disabled={index === total - 1}
               title="Move down"
-              className="rounded-lg p-1.5 text-gray-400 transition hover:bg-gray-100 hover:text-gray-700 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-gray-400"
+              className="rounded-lg p-1.5 text-muted-foreground/60 transition hover:bg-muted hover:text-foreground disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-muted-foreground/60"
             >
               <ChevronDown className="h-4 w-4" />
             </button>
@@ -1404,7 +1404,7 @@ function ChartEditor({
               type="button"
               onClick={onRemove}
               title="Remove chart"
-              className="rounded-lg p-1.5 text-gray-400 transition hover:bg-red-50 hover:text-red-500"
+              className="rounded-lg p-1.5 text-muted-foreground/60 transition hover:bg-red-50 hover:text-red-500"
             >
               <Trash2 className="h-4 w-4" />
             </button>
@@ -1440,7 +1440,7 @@ function AddChartButton({
     <button
       type="button"
       onClick={onClick}
-      className="flex items-center justify-center gap-2 rounded-2xl border border-dashed border-gray-300 px-3 py-3 text-sm font-medium text-gray-500 transition hover:border-brand-primary hover:bg-brand-primary/5 hover:text-brand-primary"
+      className="flex items-center justify-center gap-2 rounded-2xl border border-dashed border-border px-3 py-3 text-sm font-medium text-muted-foreground transition hover:border-accent hover:bg-accent/5 hover:text-accent"
     >
       {icon} {label}
     </button>
@@ -1513,10 +1513,10 @@ export function ChartsSection({
           : shown.map((c) => (
               <figure
                 key={c.id}
-                className="rounded-2xl bg-white p-4 shadow-xs ring-1 ring-gray-100 sm:p-6"
+                className="border border-border bg-card p-4 shadow-xs sm:p-6"
               >
                 {c.title?.trim() && (
-                  <figcaption className="mb-4 text-lg font-semibold text-brand-black sm:text-xl">
+                  <figcaption className="mb-4 text-lg font-semibold text-secondary sm:text-xl">
                     {c.title}
                   </figcaption>
                 )}

@@ -67,7 +67,7 @@ export function BenchmarksPdf(props: BenchmarksPdfProps) {
           ))}
         </View>
 
-        <Text style={styles.h2}>ABBASS market insight</Text>
+        <Text style={styles.h2}>Blackmont market insight</Text>
         <Text style={styles.paragraph}>{insight}</Text>
 
         <CTA />

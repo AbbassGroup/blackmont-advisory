@@ -35,8 +35,8 @@ export default function PublicImViewer() {
   if (loading) {
     return (
       <div className='flex min-h-screen flex-col items-center justify-center gap-3'>
-        <Loader2 className='h-10 w-10 animate-spin text-brand-primary' />
-        <p className='text-gray-500'>Loading memorandum...</p>
+        <Loader2 className='h-10 w-10 animate-spin text-accent' />
+        <p className='text-muted-foreground'>Loading memorandum...</p>
       </div>
     );
   }
@@ -48,11 +48,11 @@ export default function PublicImViewer() {
           <AlertCircle className='h-5 w-5' />
           <span className='text-sm font-medium'>{error || 'Not found'}</span>
         </div>
-        <p className='text-gray-500'>
+        <p className='text-muted-foreground'>
           Please contact your broker at{' '}
           <a
             href='mailto:info@blackmontadvisory.com'
-            className='text-brand-primary underline'
+            className='text-accent underline'
           >
             info@blackmontadvisory.com
           </a>{' '}
