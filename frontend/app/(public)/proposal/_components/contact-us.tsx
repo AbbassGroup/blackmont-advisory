@@ -25,19 +25,19 @@ export function ContactUs() {
           </h2>
 
           <div className='space-y-5 text-left ml-2'>
-            <div className='flex items-center'>
+            {/* <div className='flex items-center'>
               <Phone className='w-5 h-5 mr-4 shrink-0 text-accent' />
               <span className='text-base font-medium'>(03) 9103 1317</span>
-            </div>
+            </div> */}
 
-            <div className='flex items-start'>
+            {/* <div className='flex items-start'>
               <MapPin className='w-5 h-5 mr-4 mt-0.5 shrink-0 text-accent' />
               <span className='text-base font-medium leading-snug'>
                 101 Moray St, South
                 <br />
                 Melbourne, VIC 3205
               </span>
-            </div>
+            </div> */}
 
             <div className='flex items-center'>
               <Mail className='w-5 h-5 mr-4 shrink-0 text-accent' />

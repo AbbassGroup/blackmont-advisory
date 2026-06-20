@@ -86,12 +86,12 @@ export function MakeOfferSection({
       {submitted ? (
         <div
           ref={successRef}
-          className='flex max-w-full items-center gap-3 rounded-2xl border border-green-100 bg-green-50 p-5 text-green-700'
+          className='flex max-w-full items-center gap-3 rounded-2xl border border-[#E9A23B]/25 bg-[#faf5e8] p-5 text-[#E9A23B]'
         >
           <CheckCircle2 className='h-5 w-5 shrink-0' />
           <div className='flex-1'>
             <p className='font-semibold'>Offer received</p>
-            <p className='text-sm text-green-600/80'>
+            <p className='text-sm text-[#E9A23B]/80'>
               Thank you. Your broker will be in touch shortly.
             </p>
           </div>

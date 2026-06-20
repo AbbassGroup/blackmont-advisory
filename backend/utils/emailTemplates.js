@@ -80,7 +80,6 @@ If you have any questions about your appraisal or would like to discuss next ste
 
 Regards,
 Blackmont Advisory
-Phone: (03) 9103 1317
 Email: info@blackmontadvisory.com
 Website: www.blackmontadvisory.com`,
     html: `
@@ -103,7 +102,6 @@ Website: www.blackmontadvisory.com`,
         <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
           <p style="color: #333; line-height: 1.6; margin-bottom: 5px;"><strong>Regards,</strong></p>
           <p style="color: #333; line-height: 1.6; margin-bottom: 5px;">Blackmont Advisory</p>
-          <p style="color: #333; line-height: 1.6; margin-bottom: 5px;">Phone: (03) 9103 1317</p>
           <p style="color: #333; line-height: 1.6; margin-bottom: 5px;">Email: info@blackmontadvisory.com</p>
           <p style="color: #333; line-height: 1.6; margin-bottom: 0;">Website: <a href="https://www.blackmontadvisory.com" style="color: #c9a84c;">www.blackmontadvisory.com</a></p>
         </div>
@@ -587,7 +585,7 @@ const createImViewedEmail = ({ prospectName, businessName, timeOpened, brokerEma
     from: formatFrom(process.env.EMAIL_FROM),
     email: brokerEmail,
     subject: `${subjectPrefix}: ${prospectName} (${businessName})`,
-    text: `IM Viewed\n\nProspect: ${prospectName}\nBusiness: ${businessName}\nTime opened: ${timeOpened}\n\n— Blackmont Advisory\n(03) 9103 1317 • info@blackmontadvisory.com`,
+    text: `IM Viewed\n\nProspect: ${prospectName}\nBusiness: ${businessName}\nTime opened: ${timeOpened}\n\n— Blackmont Advisory\n• info@blackmontadvisory.com`,
     html: `
 <!DOCTYPE html>
 <html>
@@ -619,7 +617,7 @@ const createImViewedEmail = ({ prospectName, businessName, timeOpened, brokerEma
     <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0 16px;">
     <p style="margin: 0; color: #999; font-size: 12px;">
       Blackmont Advisory<br/>
-      (03) 9103 1317 &bull; info@blackmontadvisory.com
+      info@blackmontadvisory.com
     </p>
   </div>
 </body>

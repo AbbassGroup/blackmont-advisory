@@ -13,7 +13,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       className="toaster group"
       icons={{
         success: (
-          <CircleCheckIcon className="size-4" />
+          <CircleCheckIcon className="size-4 text-[#E9A23B]" />
         ),
         info: (
           <InfoIcon className="size-4" />
@@ -38,7 +38,11 @@ const Toaster = ({ ...props }: ToasterProps) => {
       }
       toastOptions={{
         classNames: {
-          toast: "cn-toast",
+          toast: 'cn-toast',
+          success:
+            '!border-[#E9A23B] !bg-[#faf5e8] !text-[#E9A23B] [&_[data-title]]:!text-[#E9A23B] [&_[data-description]]:!text-[#E9A23B]/80',
+          error:
+            '!border-red-200 !bg-red-50 !text-red-700 [&_[data-title]]:!text-red-700',
         },
       }}
       {...props}
