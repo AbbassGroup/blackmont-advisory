@@ -76,13 +76,13 @@ const COLOR: Record<SeriesKey, string> = Object.fromEntries(
 ) as Record<SeriesKey, string>;
 
 // ROI doughnut colours.
-const ROI_ARC = '#E9A23B'; // brand teal — the achieved ROI
+const ROI_ARC = '#c9a84c'; // brand teal — the achieved ROI
 const ROI_TRACK = '#EDEFF2'; // light grey — the remainder
 const ROI_CONFIG: ChartConfig = { roi: { label: 'ROI', color: ROI_ARC } };
 
 // Growth-trajectory colours: actual results vs future projection, plus the
 // trend line/arrow drawn over the bars.
-const PHASE: Record<GrowthPhase, string> = { actual: '#1f2937', trajectory: '#E9A23B' };
+const PHASE: Record<GrowthPhase, string> = { actual: '#1f2937', trajectory: '#c9a84c' };
 const PHASE_LABEL: Record<GrowthPhase, string> = { actual: 'Actual', trajectory: 'Trajectory' };
 const TREND = '#1f2937';
 const GROWTH_CONFIG: ChartConfig = { value: { label: 'Value' } };
