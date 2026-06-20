@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Building2, Edit, Loader2, Trash2, Plus } from 'lucide-react';
 import { apiClient } from '@/lib/api';
+import { formatReferenceId } from '@/lib/utils';
 import { useAdminAuth } from '@/context/admin-auth-context';
 import { Button } from '@/components/ui/button';
 import DashboardLayout from '@/components/global/dashboard-layout';
@@ -78,7 +79,7 @@ export default function ListingsPage() {
             <thead>
               <tr className='bg-muted/60 border-b border-border text-xs uppercase tracking-wider text-muted-foreground'>
                 <th className='px-6 py-4 font-semibold'>Reference ID</th>
-                <th className='px-6 py-4 font-semibold'>Title</th>
+                <th className='px-6 py-4 font-semibold'>Business Name</th>
                 <th className='px-6 py-4 font-semibold'>Location</th>
                 <th className='px-6 py-4 font-semibold'>Price</th>
                 <th className='px-6 py-4 font-semibold text-right'>Actions</th>
@@ -124,7 +125,7 @@ export default function ListingsPage() {
                     className='hover:bg-muted/50 transition-colors'
                   >
                     <td className='px-6 py-4 font-medium text-secondary max-w-xs truncate'>
-                      {listing.referenceId || '—'}
+                      {formatReferenceId(listing.referenceId) || '—'}
                     </td>
                     <td className='px-6 py-4 font-medium text-secondary max-w-xs truncate'>
                       {listing.title || 'Untitled'}

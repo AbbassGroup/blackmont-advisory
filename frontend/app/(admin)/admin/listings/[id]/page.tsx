@@ -9,6 +9,7 @@ import { useAdminAuth } from '@/context/admin-auth-context';
 import { Button } from '@/components/ui/button';
 import DashboardLayout from '@/components/global/dashboard-layout';
 import { scrollToError } from '@/lib/scroll-to-error';
+import { formatReferenceId } from '@/lib/utils';
 
 import { ListingBasicDetails } from '../_components/listing-basic-details';
 import { ListingMediaDocuments } from '../_components/listing-media-documents';
@@ -94,7 +95,7 @@ export default function ListingFormPage() {
           setBusinessType(data.businessType || '');
           setPriceRange(data.priceRange || '');
           setSelectedDeal(data.deal || '');
-          setReferenceId(data.referenceId || '');
+          setReferenceId(formatReferenceId(data.referenceId));
 
           if (data.brokers && Array.isArray(data.brokers)) {
             setSelectedBrokers(

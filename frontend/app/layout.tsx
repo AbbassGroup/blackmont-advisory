@@ -12,7 +12,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.blackmontadvisory.com'),
-  title: 'Buy & Sell Businesses in Australia | Blackmont Advisory',
+  title: 'M&A Advisory Australia | Blackmont Advisory',
   description:
     'Australia’s trusted boutique business brokerage, helping owners achieve the best outcomes when buying or selling businesses across Melbourne, Sydney, and beyond.',
   icons: {
@@ -72,7 +72,7 @@ export default function RootLayout({
           `}
         </Script>
         {children}
-        <Toaster richColors position='top-center' />
+        <Toaster position='top-center' />
       </body>
     </html>
   );

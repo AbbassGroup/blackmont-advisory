@@ -45,13 +45,12 @@ const renderStars = (rating: number) => {
 export function MediaReviews() {
   return (
     <div className='mt-16 mb-12 bg-transparent'>
-      <div className='mb-8 pb-4 border-b border-border'>
+      {/* <div className='mb-8 pb-4 border-b border-border'>
         <h2 className='text-2xl font-bold text-secondary'>Media & Reviews</h2>
-      </div>
+      </div> */}
 
       <div className='mb-20'>
-        {/* Videos and Logos Grid */}
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-8 mb-16'>
+        {/* <div className='grid grid-cols-1 md:grid-cols-2 gap-8 mb-16'>
           <div className='text-center flex flex-col items-center justify-start'>
             <h3 className='text-xl font-bold text-accent mb-8 leading-snug'>
               Seek Business
@@ -91,10 +90,10 @@ export function MediaReviews() {
               />
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Client Testimonials Pitch */}
-        <div className='text-center mb-10'>
+        {/* <div className='text-center mb-10'>
           <h3 className='text-2xl font-bold text-accent'>
             Hear From Our Clients
           </h3>
@@ -122,7 +121,7 @@ export function MediaReviews() {
               />
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Association Badges */}
         <div className='grid grid-cols-1 md:grid-cols-3 gap-8 mb-12'>
@@ -155,7 +154,7 @@ export function MediaReviews() {
         </div>
       </div>
 
-      <div className='mb-10'>
+      {/* <div className='mb-10'>
         <h3 className='text-2xl font-bold text-accent mb-8 text-center'>
           Reviews
         </h3>
@@ -180,7 +179,7 @@ export function MediaReviews() {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

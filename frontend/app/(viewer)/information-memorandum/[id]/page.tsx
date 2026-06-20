@@ -55,8 +55,7 @@ export default function PublicImViewer() {
             className='text-accent underline'
           >
             info@blackmontadvisory.com
-          </a>{' '}
-          or (03) 9103 1317.
+          </a>
         </p>
       </div>
     );

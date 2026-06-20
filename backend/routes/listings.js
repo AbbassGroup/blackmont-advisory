@@ -108,7 +108,7 @@ router.put('/:id', auth, upload.single('image'), multerErrorHandler, async (req,
     });
 
     // Reference ID: keep the existing value when one is supplied, otherwise
-    // generate the next sequential ID (ABB001, ABB002, ...). Handled after the
+    // generate a random numeric ID. Handled after the
     // loop so an empty submitted value can't overwrite a freshly generated ID.
     if (req.body.referenceId) {
       updateData.referenceId = req.body.referenceId;
@@ -351,7 +351,7 @@ router.get('/:id/im', async (req, res) => {
             <h1>This Link Has Expired</h1>
             <p>This Information Memorandum is no longer available. The link you used has expired or is no longer active.</p>
             <p style="font-size:14px;color:#888;margin:0">If you believe this is an error, please contact the broker directly.</p>
-            <p class="footer">Blackmont Advisory<br/>(03) 9103 1317 &bull; info@blackmontadvisory.com</p>
+            <p class="footer">Blackmont Advisory<br/>info@blackmontadvisory.com</p>
           </div>
         </body>
         </html>

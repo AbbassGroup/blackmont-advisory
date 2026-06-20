@@ -9,6 +9,7 @@ const Listing = require('../models/Listing');
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
 const recordImView = require('../utils/recordImView');
+const { stampCaBranding } = require('../utils/caPdfBranding');
 
 
 // Middleware to check admin auth
@@ -75,8 +76,9 @@ router.post('/', async (req, res) => {
     // Add a new page for the user's info
     const page = pdfDoc.addPage();
     const { width, height } = page.getSize();
+    const { headerH, footerH } = await stampCaBranding(pdfDoc, page);
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    let y = height - 60;
+    let y = height - headerH - 40;
     page.drawText('Information submitted', { x: 50, y, size: 16, font, color: rgb(0, 0, 0) });
     y -= 40;
 
@@ -104,7 +106,8 @@ router.post('/', async (req, res) => {
       let listingPage = pdfDoc.addPage();
       let lWidth = listingPage.getWidth();
       let lHeight = listingPage.getHeight();
-      let lY = lHeight - 60;
+      const { headerH: listingHeaderH, footerH: listingFooterH } = await stampCaBranding(pdfDoc, listingPage);
+      let lY = lHeight - listingHeaderH - 40;
 
       const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
       const regularFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
@@ -199,9 +202,11 @@ router.post('/', async (req, res) => {
       if (cleanAbout) {
         const aboutLines = wrapText(cleanAbout, lWidth - 100, regularFont, 12);
         for (const line of aboutLines) {
-          if (lY < 50) {
+          if (lY < listingFooterH + 50) {
             listingPage = pdfDoc.addPage();
-            lY = listingPage.getHeight() - 60;
+            lWidth = listingPage.getWidth();
+            const nextBranding = await stampCaBranding(pdfDoc, listingPage);
+            lY = listingPage.getHeight() - nextBranding.headerH - 40;
           }
           if (line.trim() !== '') {
             listingPage.drawText(line, { x: 50, y: lY, size: 12, font: regularFont, color: rgb(0, 0, 0) });
@@ -284,8 +289,8 @@ router.post('/', async (req, res) => {
       to: email,
       from: process.env.SENDGRID_FROM || 'info@blackmontadvisory.com',
       subject: 'Your Confidentiality Agreement with Blackmont Advisory',
-      text: `Hi ${firstName} ${lastName},\n\nThank you for your enquiry on one of our listings. See attached a copy of the Confidentiality Agreement you have just signed for your records.\n\nYou have entered into an important and legally binding agreement. Please seek legal advice if you have any questions in relation to this agreement to ensure you read and understand the terms of Confidentiality.\n\nWe will be in touch, to provide you with more information regarding this business.\n\nRegards,\nBlackmont Advisory\nhttp://www.blackmontadvisory.com\ninfo@blackmontadvisory.com\n(03) 9103 1317`,
-      html: `<p>Hi ${firstName} ${lastName},</p><p>Thank you for your enquiry on one of our listings. See attached a copy of the Confidentiality Agreement you have just signed for your records.</p><p>You have entered into an important and legally binding agreement. Please seek legal advice if you have any questions in relation to this agreement to ensure you read and understand the terms of Confidentiality.</p><p>We will be in touch, to provide you with more information regarding this business.</p><p>Regards,<br/>Blackmont Advisory<br/><a href="http://www.blackmontadvisory.com">blackmontadvisory.com</a><br/>info@blackmontadvisory.com<br/>(03) 9103 1317</p>`,
+      text: `Hi ${firstName} ${lastName},\n\nThank you for your enquiry on one of our listings. See attached a copy of the Confidentiality Agreement you have just signed for your records.\n\nYou have entered into an important and legally binding agreement. Please seek legal advice if you have any questions in relation to this agreement to ensure you read and understand the terms of Confidentiality.\n\nWe will be in touch, to provide you with more information regarding this business.\n\nRegards,\nBlackmont Advisory\nhttp://www.blackmontadvisory.com\ninfo@blackmontadvisory.com`,
+      html: `<p>Hi ${firstName} ${lastName},</p><p>Thank you for your enquiry on one of our listings. See attached a copy of the Confidentiality Agreement you have just signed for your records.</p><p>You have entered into an important and legally binding agreement. Please seek legal advice if you have any questions in relation to this agreement to ensure you read and understand the terms of Confidentiality.</p><p>We will be in touch, to provide you with more information regarding this business.</p><p>Regards,<br/>Blackmont Advisory<br/><a href="http://www.blackmontadvisory.com">www.blackmontadvisory.com</a><br/>info@blackmontadvisory.com</p>`,
       attachments: [
         {
           content: Buffer.from(pdfBytes).toString('base64'),
@@ -403,7 +408,7 @@ router.get('/approve', async (req, res) => {
       // to: "jahid.dev8@gmail.com",
       from: process.env.SENDGRID_FROM || 'info@blackmontadvisory.com',
       subject: 'Information Memorandum | Blackmont Advisory',
-      text: `Hi ${clientName},\n\nThank you for completing the NDA. Please see the Information Memorandum at the link below:\n${imUrl}\n\nIf you have any questions, please feel free to contact the broker directly.\n\nRegards,\nBlackmont Advisory\n(03) 9103 1317\ninfo@blackmontadvisory.com\nwww.blackmontadvisory.com`,
+      text: `Hi ${clientName},\n\nThank you for completing the NDA. Please see the Information Memorandum at the link below:\n${imUrl}\n\nIf you have any questions, please feel free to contact the broker directly.\n\nRegards,\nBlackmont Advisory\ninfo@blackmontadvisory.com\nwww.blackmontadvisory.com`,
       html: `
         <div style="font-family:Arial,sans-serif;max-width:600px;">
           <p>Hi ${clientName},</p>
@@ -415,7 +420,7 @@ router.get('/approve', async (req, res) => {
             </a>
           </div>
           <p>If you have any questions, please feel free to contact the broker directly.</p>
-          <p style="margin-top:32px">Regards,<br/>Blackmont Advisory<br/>(03) 9103 1317<br/><a href="mailto:info@blackmontadvisory.com">info@blackmontadvisory.com</a><br/><a href="https://www.blackmontadvisory.com">www.blackmontadvisory.com</a></p>
+          <p style="margin-top:32px">Regards,<br/>Blackmont Advisory<br/><a href="mailto:info@blackmontadvisory.com">info@blackmontadvisory.com</a><br/><a href="https://www.blackmontadvisory.com">www.blackmontadvisory.com</a></p>
         </div>
       `,
     };
@@ -480,12 +485,12 @@ router.get('/reject', async (req, res) => {
       cc: brokersEmails,
       from: process.env.SENDGRID_FROM || 'info@blackmontadvisory.com',
       subject: 'NDA Not Accepted | Blackmont Advisory',
-      text: `Hi ${clientName},\n\nThank you for completing the NDA. Unfortunately the NDA you completed was not accepted. This may be due to the fact that your legal name or full residential address was not used. Note we do not accept PO Box addresses.\n\nRegards,\nBlackmont Advisory\n(03) 9103 1317\ninfo@blackmontadvisory.com\nwww.blackmontadvisory.com`,
+      text: `Hi ${clientName},\n\nThank you for completing the NDA. Unfortunately the NDA you completed was not accepted. This may be due to the fact that your legal name or full residential address was not used. Note we do not accept PO Box addresses.\n\nRegards,\nBlackmont Advisory\ninfo@blackmontadvisory.com\nwww.blackmontadvisory.com`,
       html: `
         <div style="font-family:Arial,sans-serif;">
           <p>Hi ${clientName},</p>
           <p>Thank you for completing the NDA. Unfortunately the NDA you completed was not accepted. This may be due to the fact that your legal name or full residential address was not used. Note we do not accept PO Box addresses.</p>
-          <p style="margin-top:32px">Regards,<br/>Blackmont Advisory<br/>(03) 9103 1317<br/><a href="mailto:info@blackmontadvisory.com">info@blackmontadvisory.com</a><br/><a href="https://www.blackmontadvisory.com">www.blackmontadvisory.com</a></p>
+          <p style="margin-top:32px">Regards,<br/>Blackmont Advisory<br/><a href="mailto:info@blackmontadvisory.com">info@blackmontadvisory.com</a><br/><a href="https://www.blackmontadvisory.com">www.blackmontadvisory.com</a></p>
         </div>
       `,
     };

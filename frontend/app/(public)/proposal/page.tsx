@@ -35,9 +35,9 @@ function ProposalSuccessPage({ businessName }: { businessName?: string }) {
             <p className='text-muted-foreground text-[13px] uppercase tracking-wider mb-2 font-bold'>
               Questions?
             </p>
-            <p className='text-foreground text-[14px] mb-1'>
+            {/* <p className='text-foreground text-[14px] mb-1'>
               <strong>Phone:</strong> (03) 9103 1317
-            </p>
+            </p> */}
             <p className='text-foreground text-[14px]'>
               <strong>Email:</strong> info@blackmontadvisory.com
             </p>
@@ -291,7 +291,7 @@ function ProposalContent() {
           If you believe this is an error, please contact us at:
         </p>
         <p className='text-muted-foreground'>Email: info@blackmontadvisory.com</p>
-        <p className='text-muted-foreground'>Phone: (03) 9103 1317</p>
+        {/* <p className='text-muted-foreground'>Phone: (03) 9103 1317</p> */}
       </div>
     );
   }
@@ -306,7 +306,7 @@ function ProposalContent() {
           </p>
         </div>
         <p className='text-muted-foreground'>Email: info@blackmontadvisory.com</p>
-        <p className='text-muted-foreground'>Phone: (03) 9103 1317</p>
+        {/* <p className='text-muted-foreground'>Phone: (03) 9103 1317</p> */}
       </div>
     );
   }

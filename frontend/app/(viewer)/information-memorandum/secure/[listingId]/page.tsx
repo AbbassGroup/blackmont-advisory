@@ -163,7 +163,7 @@ function ContactLine() {
       >
         info@blackmontadvisory.com
       </a>{' '}
-      &middot; (03) 9103 1317
+      {/* &middot; (03) 9103 1317 */}
     </p>
   );
 }

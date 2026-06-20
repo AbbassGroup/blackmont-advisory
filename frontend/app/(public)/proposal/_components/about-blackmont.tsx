@@ -62,7 +62,7 @@ export function AboutBlackmont() {
           ))}
         </ul>
 
-        <div className='flex gap-4 mt-6'>
+        {/* <div className='flex gap-4 mt-6'>
           {socialLinks.map((link, index) => {
             const Icon = link.icon;
             return (
@@ -77,7 +77,7 @@ export function AboutBlackmont() {
               </a>
             );
           })}
-        </div>
+        </div> */}
       </div>
     </div>
   );

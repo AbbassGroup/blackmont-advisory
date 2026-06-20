@@ -1,6 +1,6 @@
 /**
  * One-off backfill: regenerate every listing's `referenceId` as a random,
- * unique 6-digit value (e.g. ABB482917), replacing the old sequential
+ * unique 6-digit value (e.g. 482917), replacing the old sequential
  * ABB001/ABB002 IDs.
  *
  * Usage (from the backend/ folder):
@@ -13,22 +13,21 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const Listing = require('../models/Listing');
 
-const PREFIX = 'ABB';
 const DIGITS = 6;
 const MIN = 10 ** (DIGITS - 1); // 100000
 const MAX = 10 ** DIGITS - 1; // 999999
 
 const DRY_RUN = process.argv.includes('--dry');
 
-/** A random ABB###### not present in `used`. */
+/** A random 6-digit ID not present in `used`. */
 function uniqueRef(used) {
   for (let i = 0; i < 50; i++) {
     const num = Math.floor(MIN + Math.random() * (MAX - MIN + 1));
-    const candidate = `${PREFIX}${num}`;
+    const candidate = String(num);
     if (!used.has(candidate)) return candidate;
   }
   // Fallback — guaranteed-unique timestamp-based suffix.
-  return `${PREFIX}${Date.now().toString().slice(-8)}`;
+  return Date.now().toString().slice(-8);
 }
 
 async function main() {
