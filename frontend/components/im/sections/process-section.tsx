@@ -24,7 +24,7 @@ const STEPS = [
   },
   {
     title: 'Q&A',
-    desc: 'Contact your business broker with any clarification questions you may have.',
+    desc: 'Reach out with any clarification questions you may have.',
   },
   {
     title: 'Inspection / Meet & Greet',
@@ -32,7 +32,7 @@ const STEPS = [
   },
   {
     title: 'Submit EOI',
-    desc: 'Submit your offer via a non-binding expression of interest with the offer amount and any conditions. A small, fully refundable deposit is paid before signing the contract of sale.',
+    desc: 'Submit your offer via the offer section of this form along with any conditions.',
   },
   {
     title: 'Conduct Due Diligence',

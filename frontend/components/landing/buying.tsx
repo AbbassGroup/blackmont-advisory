@@ -52,7 +52,7 @@ export function Buying() {
     <section id='buying' className='bg-linen py-20 lg:py-28'>
       <Container>
         <SectionHeader
-          eyebrow='Buyer Advocacy'
+          eyebrow='Business Buyer Advocacy'
           heading={<>We search, assess and negotiate for you.</>}
         />
 

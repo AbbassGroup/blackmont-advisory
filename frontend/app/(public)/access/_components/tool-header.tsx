@@ -1,5 +1,6 @@
-import Link from 'next/link';
+'use client';
 import { ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface ToolHeaderProps {
   eyebrow?: string;
@@ -16,13 +17,13 @@ export function ToolHeader({ eyebrow, title, subtitle }: ToolHeaderProps) {
       />
 
       <div className='relative z-10 mx-auto max-w-[1100px] px-6 sm:px-10 lg:px-16'>
-        <Link
-          href='/access'
+        <Button
+          onClick={() => window.history.back()}
           className='group inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-parchment/60 transition-colors hover:text-accent'
         >
           <ArrowLeft className='h-4 w-4 transition-transform group-hover:-translate-x-1' />
           Back to resources
-        </Link>
+        </Button>
 
         {eyebrow && (
           <span className='mt-7 block text-xs font-bold uppercase tracking-[0.2em] text-accent'>

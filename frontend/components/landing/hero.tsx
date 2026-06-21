@@ -37,7 +37,7 @@ export function Hero() {
         {/* Left: headline */}
         <Reveal>
           <h1 className='mb-7 text-[2.75rem] font-bold leading-[1.08] tracking-tight text-secondary sm:text-6xl lg:text-7xl'>
-            Your trusted
+            Your Boutique
             <br />
             M&amp;A <span className='font-light text-accent'>Advisory.</span>
           </h1>

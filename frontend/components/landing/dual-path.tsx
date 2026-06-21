@@ -8,9 +8,9 @@ const PATHS = [
     heading: <>Exit on your terms.</>,
     body: 'You deserve more than a listing. You deserve a managed exit with a trusted specialist in your corner.',
     points: [
-      'Confidential process, no public listings',
+      'Confidential process from the start',
       'Pre-qualified private buyer network',
-      'Investment-grade IM prepared for you',
+      'Investment-grade Information Memorandums',
       'Deal structuring to maximise your outcome',
     ],
     cta: { label: 'How we manage your sale', href: '#selling' },
@@ -25,7 +25,7 @@ const PATHS = [
     heading: <>We work exclusively for you.</>,
     body: "Whether it's your first business or a strategic acquisition, Blackmont sources and negotiates firmly in your corner.",
     points: [
-      'Off-market sourcing matched to your brief',
+      'On-market or off-market sourcing matched to your brief',
       'Independent assessment and due diligence',
       'Negotiation with your interests only',
       'Guidance for first-time buyers through every step',

@@ -4,7 +4,7 @@ import { CheckCircle2 } from 'lucide-react';
 
 const bulletPoints = [
   'Selling their business',
-  'Buying a business',
+  'Strategic Acquisitions',
   'Succession planning',
   'Business valuation',
   'Strategic exit timing',
@@ -22,7 +22,7 @@ export function WhyMatters() {
             Why It Matters
           </h2>
           <h3 className='text-xl font-bold text-parchment/90 md:text-2xl'>
-            Your Clients Will Eventually Ask About Buying or Selling
+            Your Clients Will Eventually Ask About Exiting or Acquiring
           </h3>
         </div>
 

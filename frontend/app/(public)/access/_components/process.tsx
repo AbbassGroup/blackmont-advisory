@@ -17,7 +17,7 @@ const steps = [
   {
     number: '03',
     title: 'Receive tailored advice',
-    description: 'Hear directly from the Blackmont Advisory advisory team.',
+    description: 'Hear directly from the Blackmont Advisory team.',
   },
 ];
 

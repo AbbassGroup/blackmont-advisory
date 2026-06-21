@@ -25,7 +25,7 @@ const reasons = [
   {
     title: 'Strengthens Client Loyalty',
     description:
-      'Clients appreciate when their accountant connects them with the right specialist at the right time.',
+      'Clients appreciate when their advisor connects them with the right specialist at the right time.',
     icon: Heart,
   },
 ];

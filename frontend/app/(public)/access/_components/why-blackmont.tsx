@@ -9,7 +9,6 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { SectionHeading } from './section-heading';
-import { CountUp } from './count-up';
 import { Reveal } from '@/components/landing/primitives';
 
 const reasons = [
@@ -46,13 +45,6 @@ const reasons = [
   },
 ];
 
-const stats = [
-  { to: 40, suffix: '+', label: 'Years of combined industry experience' },
-  { to: 5000, suffix: '+', label: 'Qualified buyers in our database' },
-  { to: 20000, suffix: '+', label: 'Monthly marketing reach' },
-  { to: 10, suffix: '+', label: 'Industry sectors served' },
-];
-
 export function WhyBlackmont() {
   return (
     <section className='bg-background py-20 lg:py-28'>
@@ -87,23 +79,6 @@ export function WhyBlackmont() {
             );
           })}
         </Reveal>
-
-        {/* Stats band */}
-        <div className='mt-16 grid grid-cols-2 gap-y-10  bg-accent/8 px-6 py-12 lg:mt-20 lg:grid-cols-4 lg:px-8'>
-          {stats.map((s, i) => (
-            <div
-              key={s.label}
-              className={`px-6 text-center lg:px-8 ${
-                i !== 0 ? 'lg:border-l lg:border-accent/15' : ''
-              }`}
-            >
-              <div className='text-4xl font-semibold tracking-tight text-secondary lg:text-5xl'>
-                <CountUp to={s.to} suffix={s.suffix} />
-              </div>
-              <div className='mt-2 text-sm text-muted-foreground'>{s.label}</div>
-            </div>
-          ))}
-        </div>
       </div>
     </section>
   );
