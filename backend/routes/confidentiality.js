@@ -324,7 +324,7 @@ router.post('/', async (req, res) => {
     const nexarApi = process.env.NEXAR_API_URL || 'https://blackmont-api.nexartechnologies.com';
 
     // Execute all independent async operations concurrently
-    await Promise.all([
+    const [enquiryUpdate, nexarResponse, adminEmail, userEmail] = await Promise.all([
       Enquiry.findOneAndUpdate(
         { _id: savedEnquiry._id },
         {
@@ -343,6 +343,8 @@ router.post('/', async (req, res) => {
       sendMail(adminMsg),
       sendMail(userMsg), // Send PDF copy to client immediately on submission
     ]);
+
+    console.log({ adminEmail, userEmail })
 
     res.json({ message: 'NDA received. Broker notification sent.' });
   } catch (err) {
