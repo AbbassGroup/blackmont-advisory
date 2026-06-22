@@ -77,6 +77,9 @@ app.use('/api/access-analytics', accessAnalyticsRoutes);
 const imFollowUpRoutes = require('./routes/imFollowUp');
 app.use('/api/im-follow-up', imFollowUpRoutes);
 
+const vendorRoutes = require('./routes/vendor');
+app.use('/api/vendor', vendorRoutes);
+
 app.use('/uploads', express.static('uploads'));
 
 const PORT = process.env.PORT || 5059;

@@ -48,6 +48,13 @@ interface ImHistoryDialogProps {
   loading: boolean;
   token: string;
   onRevokeToggle?: (enquiryId: string, revoked: boolean) => void;
+  /** Hide the Email column (vendors must not see prospect PII). */
+  hideEmail?: boolean;
+  /**
+   * Builds the revoke endpoint for an enquiry. Defaults to the broker endpoint;
+   * the vendor portal passes its own scoped path.
+   */
+  revokePath?: (enquiryId: string) => string;
 }
 
 const TZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -109,14 +116,18 @@ function groupLogsByPerson(logs: ImViewLog[]): GroupedPerson[] {
 
     person.viewCount += 1;
     person.views.push(log);
-    if (!person.lastViewedAt || new Date(log.createdAt) > new Date(person.lastViewedAt)) {
+    if (
+      !person.lastViewedAt ||
+      new Date(log.createdAt) > new Date(person.lastViewedAt)
+    ) {
       person.lastViewedAt = log.createdAt;
     }
   }
 
   return Array.from(map.values()).sort(
     (a, b) =>
-      new Date(b.lastActivityAt).getTime() - new Date(a.lastActivityAt).getTime(),
+      new Date(b.lastActivityAt).getTime() -
+      new Date(a.lastActivityAt).getTime(),
   );
 }
 
@@ -161,12 +172,16 @@ export function ImHistoryDialog({
   loading,
   token,
   onRevokeToggle,
+  hideEmail = false,
+  revokePath = (enquiryId: string) => `/api/listings/im-revoke/${enquiryId}`,
 }: ImHistoryDialogProps) {
   const [expandedPerson, setExpandedPerson] = useState<string | null>(null);
   const [togglingIds, setTogglingIds] = useState<Set<string>>(new Set());
   const [localRevoked, setLocalRevoked] = useState<Record<string, boolean>>({});
 
   const grouped = groupLogsByPerson(logs);
+  // Columns between the leading expand-toggle and the trailing Access column.
+  const midColSpan = hideEmail ? 5 : 6;
 
   const isRevoked = (person: GroupedPerson) => {
     if (person.enquiryId in localRevoked) return localRevoked[person.enquiryId];
@@ -183,7 +198,7 @@ export function ImHistoryDialog({
 
     try {
       await apiClient.patch(
-        `/api/listings/im-revoke/${person.enquiryId}`,
+        revokePath(person.enquiryId),
         { revoked: newRevoked },
         { headers: { Authorization: `Bearer ${token}` } },
       );
@@ -236,16 +251,32 @@ export function ImHistoryDialog({
             </div>
           ) : (
             <table className='w-full text-sm text-left'>
-              <thead className='bg-muted/60 border-b border-border sticky top-0 z-10 text-xs uppercase tracking-wider text-muted-foreground'>
+              <thead className='bg-muted/60 border-b border-border sticky top-0 z-10'>
                 <tr>
                   <th className='w-8 px-3 py-3'></th>
-                  <th className='px-4 py-3 font-semibold'>Deal</th>
-                  <th className='px-4 py-3 font-semibold'>Name</th>
-                  <th className='px-4 py-3 font-semibold'>Email</th>
-                  <th className='px-4 py-3 font-semibold'>Views</th>
-                  <th className='px-4 py-3 font-semibold'>Last Viewed</th>
-                  <th className='px-4 py-3 font-semibold'>Expiry</th>
-                  <th className='px-4 py-3 font-semibold text-center'>Access</th>
+                  <th className='px-4 py-3 font-semibold text-muted-foreground'>
+                    Deal
+                  </th>
+                  <th className='px-4 py-3 font-semibold text-muted-foreground'>
+                    Name
+                  </th>
+                  {!hideEmail && (
+                    <th className='px-4 py-3 font-semibold text-muted-foreground'>
+                      Email
+                    </th>
+                  )}
+                  <th className='px-4 py-3 font-semibold text-muted-foreground'>
+                    Views
+                  </th>
+                  <th className='px-4 py-3 font-semibold text-muted-foreground'>
+                    Last Viewed
+                  </th>
+                  <th className='px-4 py-3 font-semibold text-muted-foreground'>
+                    Expiry
+                  </th>
+                  <th className='px-4 py-3 font-semibold text-muted-foreground text-center'>
+                    Access
+                  </th>
                 </tr>
               </thead>
               <tbody className='divide-y divide-border'>
@@ -268,7 +299,7 @@ export function ImHistoryDialog({
                           person.viewCount > 1 && toggleExpand(person.enquiryId)
                         }
                       >
-                        <td className='px-3 py-3 text-muted-foreground/60'>
+                        <td className='px-3 py-3 text-muted-foreground'>
                           {person.viewCount > 1 &&
                             (isExpanded ? (
                               <ChevronDown className='w-4 h-4' />
@@ -278,31 +309,33 @@ export function ImHistoryDialog({
                         </td>
                         <td
                           className={`px-4 py-3 font-medium ${
-                            revoked ? 'text-muted-foreground/60' : 'text-secondary'
+                            revoked ? 'text-muted-foreground' : 'text-secondary'
                           }`}
                         >
                           {person.businessName}
                         </td>
                         <td
                           className={`px-4 py-3 ${
-                            revoked ? 'text-muted-foreground/60' : 'text-foreground'
+                            revoked ? 'text-muted-foreground' : 'text-foreground'
                           }`}
                         >
                           {person.name}
                         </td>
-                        <td
-                          className={`px-4 py-3 ${
-                            revoked ? 'text-muted-foreground/60' : 'text-muted-foreground'
-                          }`}
-                        >
-                          {person.email}
-                        </td>
+                        {!hideEmail && (
+                          <td
+                            className={`px-4 py-3 ${
+                              revoked ? 'text-muted-foreground' : 'text-muted-foreground'
+                            }`}
+                          >
+                            {person.email}
+                          </td>
+                        )}
                         <td className='px-4 py-3'>
                           <span
                             className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
                               revoked || person.viewCount === 0
-                                ? 'bg-muted text-muted-foreground/70'
-                                : 'bg-accent/15 text-accent'
+                                ? 'bg-muted text-muted-foreground'
+                                : 'bg-accent/10 text-accent'
                             }`}
                           >
                             {person.viewCount}{' '}
@@ -311,13 +344,15 @@ export function ImHistoryDialog({
                         </td>
                         <td
                           className={`px-4 py-3 ${
-                            revoked ? 'text-muted-foreground/60' : 'text-muted-foreground'
+                            revoked ? 'text-muted-foreground' : 'text-muted-foreground'
                           }`}
                         >
                           {person.lastViewedAt ? (
                             <FormatLocalTime dateStr={person.lastViewedAt} />
                           ) : (
-                            <span className='text-muted-foreground/60'>Not viewed yet</span>
+                            <span className='text-muted-foreground'>
+                              Not viewed yet
+                            </span>
                           )}
                         </td>
                         <td className='px-4 py-3'>
@@ -338,7 +373,7 @@ export function ImHistoryDialog({
                         >
                           <div className='flex items-center justify-center gap-2'>
                             {isToggling ? (
-                              <Loader2 className='w-4 h-4 animate-spin text-muted-foreground/60' />
+                              <Loader2 className='w-4 h-4 animate-spin text-muted-foreground' />
                             ) : (
                               <Switch
                                 size='sm'
@@ -367,8 +402,8 @@ export function ImHistoryDialog({
                           >
                             <td className='px-3 py-2'></td>
                             <td
-                              colSpan={6}
-                              className='px-4 py-2 text-xs text-muted-foreground/60 pl-8 flex items-center gap-2'
+                              colSpan={midColSpan}
+                              className='px-4 py-2 text-xs text-muted-foreground pl-8 flex items-center gap-2'
                             >
                               <span>View #{person.views.length - idx} — </span>
                               <FormatLocalTime dateStr={view.createdAt} />

@@ -2,7 +2,16 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { ArrowLeft, Loader2, ChevronDown, Eye, Bell, BellOff } from 'lucide-react';
+import {
+  ArrowLeft,
+  Loader2,
+  ChevronDown,
+  Eye,
+  Bell,
+  BellOff,
+  UserCog,
+  StickyNote,
+} from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { useAdminAuth } from '@/context/admin-auth-context';
 import { Button } from '@/components/ui/button';
@@ -14,6 +23,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import DashboardLayout from '@/components/global/dashboard-layout';
 import { ImHistoryDialog } from '@/components/admin/im-history-dialog';
+import { VendorAccessDialog } from '@/components/admin/vendor-access-dialog';
+import {
+  ProspectNotesDialog,
+  type ProspectNote,
+} from '@/components/admin/prospect-notes-dialog';
 import { ImViewLog } from '../_components/deals';
 import { toast } from 'sonner';
 
@@ -69,6 +83,15 @@ export default function ProspectsPage() {
   const [categories, setCategories] = useState<Record<string, string>>({});
   const [dealTitle, setDealTitle] = useState('Deal');
   const [loading, setLoading] = useState(true);
+
+  // Vendor access management
+  const [vendorDialogOpen, setVendorDialogOpen] = useState(false);
+
+  // Prospect notes
+  const [notesMap, setNotesMap] = useState<Record<string, ProspectNote[]>>({});
+  const [notesOpen, setNotesOpen] = useState(false);
+  const [activeProspect, setActiveProspect] = useState<Prospect | null>(null);
+  const [notesSaving, setNotesSaving] = useState(false);
 
   useEffect(() => {
     const fetchDealData = async () => {
@@ -161,6 +184,84 @@ export default function ProspectsPage() {
     }
   };
 
+  // Fetch prospect notes for this deal
+  useEffect(() => {
+    const fetchNotes = async () => {
+      if (!user?.token || !dealId) return;
+      try {
+        const res = await apiClient.get(`/api/deals/${dealId}/notes`, {
+          headers: { Authorization: `Bearer ${user.token}` },
+        });
+        setNotesMap(res.data || {});
+      } catch (error) {
+        console.error('Failed to fetch notes:', error);
+      }
+    };
+    fetchNotes();
+  }, [dealId, user?.token]);
+
+  const handleCreateNote = async (body: string) => {
+    if (!user?.token || !activeProspect) return;
+    setNotesSaving(true);
+    try {
+      const res = await apiClient.post(
+        `/api/deals/${dealId}/notes/${activeProspect._id}`,
+        { body },
+        { headers: { Authorization: `Bearer ${user.token}` } },
+      );
+      setNotesMap((prev) => ({
+        ...prev,
+        [activeProspect._id]: [res.data, ...(prev[activeProspect._id] || [])],
+      }));
+    } catch {
+      toast.error('Failed to add note');
+    } finally {
+      setNotesSaving(false);
+    }
+  };
+
+  const handleUpdateNote = async (noteId: string, body: string) => {
+    if (!user?.token || !activeProspect) return;
+    setNotesSaving(true);
+    try {
+      const res = await apiClient.put(
+        `/api/deals/${dealId}/notes/${noteId}`,
+        { body },
+        { headers: { Authorization: `Bearer ${user.token}` } },
+      );
+      setNotesMap((prev) => ({
+        ...prev,
+        [activeProspect._id]: (prev[activeProspect._id] || []).map((n) =>
+          n._id === noteId ? res.data : n,
+        ),
+      }));
+    } catch {
+      toast.error('Failed to update note');
+    } finally {
+      setNotesSaving(false);
+    }
+  };
+
+  const handleDeleteNote = async (noteId: string) => {
+    if (!user?.token || !activeProspect) return;
+    setNotesSaving(true);
+    try {
+      await apiClient.delete(`/api/deals/${dealId}/notes/${noteId}`, {
+        headers: { Authorization: `Bearer ${user.token}` },
+      });
+      setNotesMap((prev) => ({
+        ...prev,
+        [activeProspect._id]: (prev[activeProspect._id] || []).filter(
+          (n) => n._id !== noteId,
+        ),
+      }));
+    } catch {
+      toast.error('Failed to delete note');
+    } finally {
+      setNotesSaving(false);
+    }
+  };
+
   const handleCategorySelect = async (prospectId: string, label: string) => {
     if (!user?.token) return;
 
@@ -215,8 +316,8 @@ export default function ProspectsPage() {
 
   return (
     <DashboardLayout
-      title={`${dealTitle} Prospects`}
-      description='Manage prospects and categorize their interest levels'
+      title={`${dealTitle} Registered Buyers`}
+      description=''
       button={
         <div className='flex gap-3'>
           <Button
@@ -232,6 +333,13 @@ export default function ProspectsPage() {
             className='gap-2 rounded-none text-accent border-accent/30 hover:bg-accent/5 hover:text-accent'
           >
             <Eye className='w-4 h-4' /> View IM History
+          </Button>
+          <Button
+            variant='outline'
+            onClick={() => setVendorDialogOpen(true)}
+            className='gap-2 rounded-none'
+          >
+            <UserCog className='w-4 h-4' /> Vendor Access
           </Button>
           <Button
             variant='outline'
@@ -259,27 +367,25 @@ export default function ProspectsPage() {
         <div className='overflow-x-auto'>
           <table className='w-full text-sm text-left'>
             <thead>
-              <tr className='border-b border-border bg-muted/60 text-xs uppercase tracking-wider text-muted-foreground'>
+              <tr className='bg-muted/60 border-b border-border text-xs uppercase tracking-wider text-muted-foreground'>
                 <th className='px-6 py-4 font-semibold'>Name</th>
                 <th className='px-6 py-4 font-semibold'>Phone</th>
                 <th className='px-6 py-4 font-semibold'>Email</th>
                 <th className='px-6 py-4 font-semibold'>Category</th>
+                <th className='px-6 py-4 font-semibold'>Notes</th>
               </tr>
             </thead>
             <tbody className='divide-y divide-border'>
               {loading ? (
                 <tr>
-                  <td colSpan={4} className='text-center py-12'>
+                  <td colSpan={5} className='text-center py-12'>
                     <Loader2 className='w-6 h-6 animate-spin text-accent mx-auto mb-2' />
                     <p className='text-muted-foreground'>Loading prospects...</p>
                   </td>
                 </tr>
               ) : sortedProspects.length === 0 ? (
                 <tr>
-                  <td
-                    colSpan={4}
-                    className='text-center py-12 text-muted-foreground'
-                  >
+                  <td colSpan={5} className='text-center py-12 text-muted-foreground'>
                     No prospects found for this deal.
                   </td>
                 </tr>
@@ -307,7 +413,7 @@ export default function ProspectsPage() {
                               className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-colors focus:outline-none ${
                                 meta
                                   ? meta.color
-                                  : 'bg-muted text-muted-foreground hover:bg-linen'
+                                  : 'bg-muted text-muted-foreground hover:bg-muted/80'
                               }`}
                             >
                               {meta ? meta.label : 'Set Category'}
@@ -334,6 +440,22 @@ export default function ProspectsPage() {
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </td>
+                      <td className='px-6 py-4'>
+                        <button
+                          onClick={() => {
+                            setActiveProspect(prospect);
+                            setNotesOpen(true);
+                          }}
+                          className='inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-accent transition-colors'
+                        >
+                          <StickyNote className='w-4 h-4' />
+                          {notesMap[prospect._id]?.length
+                            ? `${notesMap[prospect._id].length} note${
+                                notesMap[prospect._id].length > 1 ? 's' : ''
+                              }`
+                            : 'Add note'}
+                        </button>
+                      </td>
                     </tr>
                   );
                 })
@@ -349,6 +471,28 @@ export default function ProspectsPage() {
         loading={imLoading}
         // dealId={dealId}
         token={user?.token || ''}
+      />
+
+      <VendorAccessDialog
+        open={vendorDialogOpen}
+        onOpenChange={setVendorDialogOpen}
+        listingId={dealId}
+        token={user?.token || ''}
+      />
+
+      <ProspectNotesDialog
+        open={notesOpen}
+        onOpenChange={setNotesOpen}
+        prospectName={
+          activeProspect
+            ? `${activeProspect.firstName} ${activeProspect.lastName}`.trim()
+            : ''
+        }
+        notes={activeProspect ? notesMap[activeProspect._id] || [] : []}
+        saving={notesSaving}
+        onCreate={handleCreateNote}
+        onUpdate={handleUpdateNote}
+        onDelete={handleDeleteNote}
       />
     </DashboardLayout>
   );
