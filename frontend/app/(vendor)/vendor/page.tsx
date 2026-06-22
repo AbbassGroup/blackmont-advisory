@@ -126,7 +126,7 @@ export default function VendorDashboardPage() {
               className='gap-2 rounded-none bg-accent text-primary hover:bg-accent-light'
             >
               <a
-                href={`/businessbrokers/information-memorandum/${imTemplateId}`}
+                href={`/information-memorandum/${imTemplateId}`}
                 target='_blank'
                 rel='noopener noreferrer'
               >
@@ -156,12 +156,17 @@ export default function VendorDashboardPage() {
                 <tr>
                   <td colSpan={3} className='text-center py-12'>
                     <Loader2 className='w-6 h-6 animate-spin text-accent mx-auto mb-2' />
-                    <p className='text-muted-foreground'>Loading prospects...</p>
+                    <p className='text-muted-foreground'>
+                      Loading prospects...
+                    </p>
                   </td>
                 </tr>
               ) : sortedProspects.length === 0 ? (
                 <tr>
-                  <td colSpan={3} className='text-center py-12 text-muted-foreground'>
+                  <td
+                    colSpan={3}
+                    className='text-center py-12 text-muted-foreground'
+                  >
                     No prospects found for this deal.
                   </td>
                 </tr>
@@ -169,7 +174,10 @@ export default function VendorDashboardPage() {
                 sortedProspects.map((p) => {
                   const noteCount = notesMap[p._id]?.length || 0;
                   return (
-                    <tr key={p._id} className='hover:bg-muted/50 transition-colors'>
+                    <tr
+                      key={p._id}
+                      className='hover:bg-muted/50 transition-colors'
+                    >
                       <td className='px-6 py-4 font-medium text-secondary'>
                         {p.firstName} {p.lastName}
                       </td>
@@ -184,7 +192,9 @@ export default function VendorDashboardPage() {
                             {p.category}
                           </span>
                         ) : (
-                          <span className='text-muted-foreground/50 text-xs'>—</span>
+                          <span className='text-muted-foreground/50 text-xs'>
+                            —
+                          </span>
                         )}
                       </td>
                       <td className='px-6 py-4'>
@@ -193,7 +203,9 @@ export default function VendorDashboardPage() {
                           className='inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-accent transition-colors'
                         >
                           <StickyNote className='w-4 h-4' />
-                          {noteCount > 0 ? `${noteCount} note${noteCount > 1 ? 's' : ''}` : 'View'}
+                          {noteCount > 0
+                            ? `${noteCount} note${noteCount > 1 ? 's' : ''}`
+                            : 'View'}
                         </button>
                       </td>
                     </tr>
