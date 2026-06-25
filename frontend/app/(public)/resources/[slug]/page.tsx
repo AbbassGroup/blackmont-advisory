@@ -5,7 +5,7 @@ import { ArrowLeft } from 'lucide-react';
 import { blogs } from '@/data/blog-data';
 import { JsonLd } from '@/components/seo/json-ld';
 
-const SITE_URL = 'https://blackmontadvisory.com';
+const SITE_URL = 'https://www.blackmontadvisory.com';
 
 export function generateStaticParams() {
   return blogs.map((blog) => ({

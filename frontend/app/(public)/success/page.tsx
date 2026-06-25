@@ -1,4 +1,10 @@
+import type { Metadata } from 'next';
 import { Check } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: 'Thank You | Blackmont Advisory',
+  robots: { index: false, follow: true },
+};
 
 export default function SuccessPage() {
   return (

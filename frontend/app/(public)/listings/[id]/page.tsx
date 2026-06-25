@@ -9,6 +9,9 @@ import {
 import { AcquisitionInterestForm } from '../_components/acquisition-interest-form';
 import ListingActions from '../_components/listing-actions';
 import { PageBanner } from '@/components/global/page-banner';
+import { JsonLd } from '@/components/seo/json-ld';
+
+const SITE_URL = 'https://www.blackmontadvisory.com';
 
 export async function generateMetadata({
   params,
@@ -32,6 +35,7 @@ export async function generateMetadata({
   return {
     title: `${listing.title} | Blackmont Advisory`,
     description: seoDescription.slice(0, 160),
+    alternates: { canonical: `/listings/${id}` },
     openGraph: {
       title: listing.title,
       description: seoDescription.slice(0, 160),
@@ -92,9 +96,43 @@ export default async function ListingDetailPage({
   const isPinnedAcquisitionListing =
     listing._id === PINNED_ACQUISITION_LISTING_ID;
 
+  const listingUrl = `${SITE_URL}/listings/${listing._id}`;
+  const structuredData = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      name: listing.title,
+      description: listing.summary || listing.description || listing.title,
+      ...(listing.image ? { image: listing.image } : {}),
+      category: listing.category,
+      url: listingUrl,
+      brand: { '@type': 'Brand', name: 'Blackmont Advisory' },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: 'Listings',
+          item: `${SITE_URL}/listings`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          name: listing.title,
+          item: listingUrl,
+        },
+      ],
+    },
+  ];
+
   if (isPinnedAcquisitionListing) {
     return (
       <main className='min-h-screen bg-muted'>
+        <JsonLd data={structuredData} />
         <PageBanner
           eyebrow='Confidential Acquisition Access'
           title={listing.title}
@@ -150,6 +188,7 @@ export default async function ListingDetailPage({
 
   return (
     <main className='min-h-screen bg-muted'>
+      <JsonLd data={structuredData} />
       <PageBanner
         title={listing.title}
         description={

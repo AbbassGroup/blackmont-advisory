@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Linkedin, Instagram, Facebook } from 'lucide-react';
 
 const exploreLinks = [
   { label: 'About', to: '/#about' },
@@ -8,7 +7,7 @@ const exploreLinks = [
   { label: 'Buying', to: '/#buying' },
   { label: 'Network', to: '/#network' },
   { label: 'Why Blackmont', to: '/#why' },
-  { label: 'Resources', to: '/resources' },
+  // { label: 'Resources', to: '/resources' },
   { label: 'Begin Confidentially', to: '/#contact' },
 ];
 
@@ -18,7 +17,7 @@ export function Footer() {
       <div className='mx-auto max-w-[1500px] px-6 sm:px-10 lg:px-16'>
         <div className='grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8'>
           {/* Logo + Brand */}
-          <div className='flex flex-col items-start gap-4 lg:col-span-5'>
+          <div className='flex flex-col items-start gap-4 lg:col-span-4'>
             <div className='flex items-center gap-3'>
               <Image
                 unoptimized
@@ -86,7 +85,7 @@ export function Footer() {
           </div>
 
           {/* Get in touch */}
-          <div className='lg:col-span-4'>
+          <div className='lg:col-span-5'>
             <h3 className='mb-4 text-[0.8rem] font-bold uppercase tracking-[0.14em] text-accent'>
               Get in touch
             </h3>

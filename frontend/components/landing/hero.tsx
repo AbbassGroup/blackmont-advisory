@@ -26,7 +26,7 @@ export function Hero() {
       {/* Subtle background texture with cream overlay */}
       <div
         aria-hidden
-        className="absolute inset-0 z-0 bg-[url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1920&q=80')] bg-cover bg-[center_30%] opacity-30"
+        className="absolute inset-0 z-0 bg-[url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1920&q=80')] bg-cover bg-position-[center_30%] opacity-55"
       />
       <div
         aria-hidden
