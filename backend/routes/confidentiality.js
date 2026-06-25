@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
 const { sendMail } = require('../utils/mailer');
 const { PDFDocument, rgb, StandardFonts } = require('pdf-lib');
 const fs = require('fs');
@@ -11,6 +12,16 @@ const axios = require('axios');
 const recordImView = require('../utils/recordImView');
 const { stampCaBranding } = require('../utils/caPdfBranding');
 
+
+// In-memory upload for the purchaser's $1,000 deposit screenshot (emailed to broker).
+const depositUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 15 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/') || file.mimetype === 'application/pdf') cb(null, true);
+    else cb(new Error('Only image or PDF files are allowed.'), false);
+  },
+});
 
 // Middleware to check admin auth
 function adminAuth(req, res, next) {
@@ -25,9 +36,9 @@ function adminAuth(req, res, next) {
 }
 
 // POST /api/confidentiality
-router.post('/', async (req, res) => {
+router.post('/', depositUpload.single('deposit'), async (req, res) => {
   try {
-    const { firstName, lastName, email, phone, country, address, suburb, state, postalCode, businessTitle, listingId } = req.body;
+    const { firstName, lastName, email, phone, country, address, suburb, state, postalCode, businessTitle, listingId, accountName, bsb, accountNumber } = req.body;
     if (!firstName || !lastName || !email || !phone || !businessTitle) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
@@ -60,7 +71,10 @@ router.post('/', async (req, res) => {
         address,
         suburb,
         state,
-        postalCode
+        postalCode,
+        accountName,
+        bsb,
+        accountNumber
       }
     });
     const savedEnquiry = await enquiry.save();
@@ -254,7 +268,7 @@ router.post('/', async (req, res) => {
       to: brokersEmails,
       from: process.env.SENDGRID_FROM || 'info@blackmontadvisory.com',
       subject: `NDA Completed – ${firstName} ${lastName} – ${businessTitle}`,
-      text: `NDA Submitted\n\nClient: ${firstName} ${lastName}\nEmail: ${email}\nPhone: ${phone}\nBusiness: ${businessTitle}\n\nApprove NDA: ${approveUrl}\nReject NDA: ${rejectUrl}`,
+      text: `NDA Submitted\n\nClient: ${firstName} ${lastName}\nEmail: ${email}\nPhone: ${phone}\nBusiness: ${businessTitle}\n\nPurchaser Refund Details\nAccount Name: ${accountName || '—'}\nBSB: ${bsb || '—'}\nAccount Number: ${accountNumber || '—'}\n\nApprove NDA: ${approveUrl}\nReject NDA: ${rejectUrl}`,
       html: `
         <div style="font-family:Arial,sans-serif;max-width:600px;">
           <p>A client has completed a Confidentiality Agreement and is awaiting your response.</p>
@@ -266,6 +280,13 @@ router.post('/', async (req, res) => {
             <strong>Address:</strong> ${address || '—'}, ${suburb || ''} ${state || ''} ${postalCode || ''}<br/>
             <strong>Business:</strong> ${businessTitle}
           </p>
+          <p style="margin-top:16px">
+            <strong>Purchaser Refund Details</strong><br/>
+            <strong>Account Name:</strong> ${accountName || '—'}<br/>
+            <strong>BSB:</strong> ${bsb || '—'}<br/>
+            <strong>Account Number:</strong> ${accountNumber || '—'}
+          </p>
+          ${req.file ? '<p style="margin-top:8px;color:#666;font-size:13px">A $1,000 deposit screenshot is attached.</p>' : ''}
           <p>Please review the NDA and take action:</p>
           <p>
             <a href="${rejectUrl}" style="display:inline-block;padding:12px 28px;background:#dc3545;color:#fff;font-weight:bold;text-decoration:none;border-radius:6px">Reject</a>
@@ -280,7 +301,17 @@ router.post('/', async (req, res) => {
           filename: 'Confidentiality-Agreement.pdf',
           type: 'application/pdf',
           disposition: 'attachment',
-        }
+        },
+        ...(req.file
+          ? [
+            {
+              content: req.file.buffer.toString('base64'),
+              filename: req.file.originalname || 'deposit',
+              type: req.file.mimetype,
+              disposition: 'attachment',
+            },
+          ]
+          : []),
       ]
     };
 
@@ -323,8 +354,13 @@ router.post('/', async (req, res) => {
 
     const nexarApi = process.env.NEXAR_API_URL || 'https://blackmont-api.nexartechnologies.com';
 
-    // Execute all independent async operations concurrently
-    const [enquiryUpdate, nexarResponse, adminEmail, userEmail] = await Promise.all([
+
+    await sendMail(adminMsg);
+
+
+    res.json({ message: 'NDA received. Broker notification sent.' });
+
+    Promise.all([
       Enquiry.findOneAndUpdate(
         { _id: savedEnquiry._id },
         {
@@ -340,13 +376,10 @@ router.post('/', async (req, res) => {
           'Content-Type': 'application/json',
         },
       }),
-      sendMail(adminMsg),
       sendMail(userMsg), // Send PDF copy to client immediately on submission
-    ]);
-
-    console.log({ adminEmail, userEmail })
-
-    res.json({ message: 'NDA received. Broker notification sent.' });
+    ]).catch((bgErr) => {
+      console.error('Confidentiality post-response error:', bgErr.response?.body?.errors || bgErr.message);
+    });
   } catch (err) {
     console.error('Confidentiality POST error:', err.response?.body?.errors || err);
     res.status(500).json({ error: 'Failed to send email', details: err.response?.body?.errors || err.message });

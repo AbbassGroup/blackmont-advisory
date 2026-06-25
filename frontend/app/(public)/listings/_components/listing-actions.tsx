@@ -19,7 +19,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import NDAForm from './nda-form';
 import EOIForm from './eoi-form';
 
 interface Props {
@@ -99,7 +98,6 @@ function ShareDialog({
 }
 
 export default function ListingActions({ listingId, listingTitle }: Props) {
-  const [ndaOpen, setNdaOpen] = useState(false);
   const [eoiOpen, setEoiOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
@@ -117,10 +115,10 @@ export default function ListingActions({ listingId, listingTitle }: Props) {
           </Link>
         </Button>
         <Button
-          onClick={() => setNdaOpen(true)}
+          asChild
           className='rounded-none bg-accent hover:bg-accent-light text-primary font-bold uppercase tracking-[0.12em]  px-5'
         >
-          Sign NDA
+          <Link href={`/listings/${listingId}/nda`}>Sign NDA</Link>
         </Button>
         {/* <Button onClick={() => setEoiOpen(true)}
           className='bg-[#1c2434] hover:bg-[#1c2434]/90 text-white font-semibold  px-5'>
@@ -142,12 +140,6 @@ export default function ListingActions({ listingId, listingTitle }: Props) {
         </Button>
       </div>
 
-      <NDAForm
-        open={ndaOpen}
-        onClose={() => setNdaOpen(false)}
-        listingTitle={listingTitle}
-        listingId={listingId}
-      />
       <EOIForm
         open={eoiOpen}
         onClose={() => setEoiOpen(false)}
