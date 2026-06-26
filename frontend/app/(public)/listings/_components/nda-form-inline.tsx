@@ -186,17 +186,6 @@ export default function NDAFormInline({ listingTitle, listingId }: Props) {
           </select>
         </div>
 
-        {/* Business (pre-filled, disabled) */}
-        <div>
-          <Label>Business</Label>
-          <Input
-            className={`${inputCls} opacity-60 cursor-not-allowed`}
-            value={form.business}
-            onChange={set('business')}
-            disabled={!!listingTitle}
-          />
-        </div>
-
         {/* Address */}
         <div>
           <Label>Address *</Label>
@@ -240,10 +229,31 @@ export default function NDAFormInline({ listingTitle, listingId }: Props) {
             </div>
           </div>
         </div>
+        {/* Business (pre-filled, disabled) */}
+        <div>
+          <Label>Business</Label>
+          <Input
+            className={`${inputCls} opacity-60 cursor-not-allowed`}
+            value={form.business}
+            onChange={set('business')}
+            disabled={!!listingTitle}
+          />
+        </div>
+        {/* Trust account — predefined */}
+        <div className='max-w-full border border-secondary/10 bg-card p-5'>
+          <p className='font-semibold text-secondary'>
+            {TRUST_ACCOUNT.bankName}
+          </p>
+          <div className='mt-3 space-y-1.5 text-sm text-muted-foreground'>
+            <DetailRow label='BSB' value={TRUST_ACCOUNT.bsb} />
+            <DetailRow label='ACC' value={TRUST_ACCOUNT.acc} />
+            <DetailRow label='REF' value={TRUST_ACCOUNT.ref} />
+          </div>
+        </div>
 
         {/* Deposit screenshot */}
         <div>
-          <Label>Attach screenshot of $1,000 deposit</Label>
+          <Label>Attach screenshot of $500 deposit</Label>
           <Input
             name='deposit'
             type='file'
@@ -262,10 +272,10 @@ export default function NDAFormInline({ listingTitle, listingId }: Props) {
             In the event a refund is required
           </p>
           <p className='mt-4 text-sm leading-relaxed text-muted-foreground'>
-            Please note, in the event you are not successful and you have
-            provided a holding deposit, we will refund your deposit as soon as
-            it clears into the trust account. Please provide your bank details
-            below:
+            In the event the business is no longer of interest and you have
+            requested a refund of your holding deposit, we will refund your
+            deposit as soon as it clears into the trust account. Please provide
+            your bank details below:
           </p>
         </div>
 
@@ -317,16 +327,6 @@ export default function NDAFormInline({ listingTitle, listingId }: Props) {
           {loading ? 'Submitting…' : 'Submit Agreement'}
         </Button>
       </form>
-
-      {/* Trust account — predefined */}
-      <div className='max-w-full border border-secondary/10 bg-card p-5'>
-        <p className='font-semibold text-secondary'>{TRUST_ACCOUNT.bankName}</p>
-        <div className='mt-3 space-y-1.5 text-sm text-muted-foreground'>
-          <DetailRow label='BSB' value={TRUST_ACCOUNT.bsb} />
-          <DetailRow label='ACC' value={TRUST_ACCOUNT.acc} />
-          <DetailRow label='REF' value={TRUST_ACCOUNT.ref} />
-        </div>
-      </div>
     </div>
   );
 }
