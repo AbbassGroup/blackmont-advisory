@@ -11,6 +11,8 @@ import {
   BellOff,
   UserCog,
   StickyNote,
+  Copy,
+  Check,
 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { useAdminAuth } from '@/context/admin-auth-context';
@@ -76,6 +78,21 @@ export default function ProspectsPage() {
   // IM Notification State
   const [notifEnabled, setNotifEnabled] = useState(false);
   const [notifToggling, setNotifToggling] = useState(false);
+  // Copy public URL
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyUrl = async () => {
+    const url = `https://blackmontadvisory.com/listings/${dealId}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      toast.success('Public listing URL copied');
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      console.error('Failed to copy URL', error);
+      toast.error('Failed to copy URL');
+    }
+  };
 
   const { user } = useAdminAuth();
 
@@ -326,6 +343,18 @@ export default function ProspectsPage() {
             className='gap-2 rounded-none'
           >
             <ArrowLeft className='w-4 h-4' /> Back to Deals
+          </Button>
+          <Button
+            variant='outline'
+            onClick={handleCopyUrl}
+            className='gap-2 rounded-none'
+          >
+            {copied ? (
+              <Check className='w-4 h-4 text-green-600' />
+            ) : (
+              <Copy className='w-4 h-4' />
+            )}
+            Copy Listing URL
           </Button>
           <Button
             variant='outline'

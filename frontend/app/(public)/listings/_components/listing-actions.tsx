@@ -107,15 +107,6 @@ export default function ListingActions({ listingId, listingTitle }: Props) {
       <div className='flex flex-wrap gap-3 mb-8'>
         <Button
           asChild
-          variant='outline'
-          className='gap-2  border-secondary/15 text-muted-foreground hover:border-accent hover:text-accent font-semibold'
-        >
-          <Link href='/listings'>
-            <ArrowLeft className='w-4 h-4' /> Back to Listings
-          </Link>
-        </Button>
-        <Button
-          asChild
           className='rounded-none bg-accent hover:bg-accent-light text-primary font-bold uppercase tracking-[0.12em]  px-5'
         >
           <Link href={`/listings/${listingId}/nda`}>Sign NDA</Link>

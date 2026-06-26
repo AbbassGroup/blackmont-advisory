@@ -147,16 +147,6 @@ export default async function ListingDetailPage({
         />
 
         <div className='mx-auto max-w-[1040px] px-6 py-12 sm:px-10 lg:px-16'>
-          <div className='mb-8 flex flex-wrap gap-3'>
-            <Link
-              href='/listings'
-              className='inline-flex items-center gap-2  border border-secondary/15 bg-background px-4 py-2.5 text-sm font-semibold text-muted-foreground transition-colors hover:border-accent hover:text-accent'
-            >
-              <ArrowLeft className='h-4 w-4' />
-              Back to Listings
-            </Link>
-          </div>
-
           <div className=' border border-secondary/10 bg-background shadow-sm'>
             <div className='flex flex-wrap gap-6 border-b border-secondary/10 px-6 py-5 md:px-8'>
               <div className='flex items-center gap-2'>
