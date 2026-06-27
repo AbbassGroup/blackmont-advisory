@@ -1,21 +1,8 @@
 const express = require('express');
-const nodemailer = require('nodemailer');
 const axios = require('axios');
 const { formatFrom } = require('../utils/emailFrom');
+const { sendMail } = require('../utils/mailer');
 const router = express.Router();
-
-
-const createTransporter = () => {
-  return nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: process.env.EMAIL_PORT,
-    secure: false,
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
-};
 
 // POST route for contact form submission
 router.post('/', async (req, res) => {
@@ -45,9 +32,6 @@ router.post('/', async (req, res) => {
         message: 'Please provide a valid email address'
       });
     }
-
-    const transporter = createTransporter();
-
     // Email content
     const mailOptions = {
       from: formatFrom(process.env.EMAIL_USER),
@@ -130,7 +114,7 @@ router.post('/', async (req, res) => {
     };
 
     // Send email
-    await transporter.sendMail(mailOptions);
+    await sendMail(mailOptions);
     console.log('Email sent successfully');
 
     // {
@@ -209,9 +193,6 @@ router.post('/partnership', async (req, res) => {
         message: 'Please provide a valid email address'
       });
     }
-
-    const transporter = createTransporter();
-
     // Email content
     const mailOptions = {
       from: formatFrom(process.env.EMAIL_USER),
@@ -284,7 +265,7 @@ router.post('/partnership', async (req, res) => {
     };
 
     // Send email
-    await transporter.sendMail(mailOptions);
+    await sendMail(mailOptions);
 
     console.log('Email sent successfully');
     res.status(200).json({

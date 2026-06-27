@@ -1,54 +1,37 @@
-const nodemailer = require('nodemailer');
+const formData = require('form-data');
+const Mailgun = require('mailgun.js');
 const { formatFrom } = require('./emailFrom');
 
-/**
- * Shared Nodemailer transporter for all email sending.
- * Uses SMTP credentials from environment variables.
- */
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: parseInt(process.env.EMAIL_PORT, 10) || 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
+const mailgun = new Mailgun(formData);
+const mg = mailgun.client({
+  username: 'api',
+  key: process.env.MAILGUN_API_KEY || '',
+  timeout: 30000,
+  retry: 0,
 });
 
-/**
- * Send an email using the shared transporter.
- * Accepts SendGrid-style msg objects for easy migration:
- *   { to, from, subject, text, html, attachments }
- *
- * Nodemailer attachments use { filename, content, encoding } instead of
- * SendGrid's { filename, content (base64), type, disposition }, so this
- * function auto-converts base64 string attachments.
- */
 async function sendMail(msg) {
-  const mailOptions = {
+  const data = {
     from: formatFrom(msg.from),
-    to: Array.isArray(msg.to) ? msg.to.join(', ') : msg.to,
+    to: msg.to,
     subject: msg.subject,
-    text: msg.text || undefined,
-    html: msg.html || undefined,
   };
 
-  // Add CC if present
-  if (msg.cc) {
-    mailOptions.cc = Array.isArray(msg.cc) ? msg.cc.join(', ') : msg.cc;
-  }
+  if (msg.text) data.text = msg.text;
+  if (msg.html) data.html = msg.html;
+  if (msg.cc) data.cc = msg.cc;
 
-  // Convert attachments from SendGrid format to Nodemailer format
   if (msg.attachments && msg.attachments.length > 0) {
-    mailOptions.attachments = msg.attachments.map(att => ({
+    data.attachment = msg.attachments.map(att => ({
       filename: att.filename,
-      content: att.content,
-      encoding: 'base64',
+      data: Buffer.isBuffer(att.content)
+        ? att.content
+        : Buffer.from(att.content, 'base64'),
       contentType: att.type || undefined,
     }));
   }
 
-  return transporter.sendMail(mailOptions);
+  return mg.messages.create(process.env.MAILGUN_DOMAIN, data);
 }
 
-module.exports = { transporter, sendMail };
+module.exports = { mg, sendMail };

@@ -1,19 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const nodemailer = require('nodemailer');
 const DigitalProposal = require('../models/DigitalProposal');
 const { createProposalAcceptanceEmail } = require('../utils/emailTemplates');
-
-// Configure Nodemailer transporter
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: process.env.EMAIL_PORT,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+const { sendMail } = require('../utils/mailer');
 
 
 // Helper function to format amount with unit
@@ -52,7 +41,7 @@ router.post('/accept-proposal', async (req, res) => {
     // Send notification email to sadeq@blackmontadvisory.com and the broker
     try {
       const emailMsg = createProposalAcceptanceEmail(proposal, selectedAdvertisement, selectedSuccessFee);
-      await transporter.sendMail(emailMsg);
+      await sendMail(emailMsg);
       console.log('Proposal acceptance notification email sent for proposal:', proposal._id);
     } catch (emailError) {
       console.error('Failed to send proposal acceptance email:', emailError);
