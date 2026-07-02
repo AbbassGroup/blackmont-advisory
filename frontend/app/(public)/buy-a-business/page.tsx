@@ -29,7 +29,7 @@ export default function BuyBusinessPage() {
             <span className='font-light text-accent'>With Confidence</span>
           </>
         }
-        description='Business Buyer Representation by Blackmont Advisory'
+        description='Buy Side Deal Origination by Blackmont Advisory'
         image='/buy-a-business.webp'
       />
 
