@@ -14,11 +14,13 @@ The frontend talks to the backend over HTTP via `NEXT_PUBLIC_API_URL`; they are 
 ## Commands
 
 **Frontend** (`cd frontend`):
+
 - `npm run dev` — Next dev server (port 3000).
 - `npm run build` / `npm run start` — production build / serve (start runs on port **3090**).
 - `npm run lint` — ESLint (flat config, `eslint.config.mjs`).
 
 **Backend** (`cd backend`):
+
 - `npm run dev` — nodemon (`index.js`), default port **5059** (override with `PORT`).
 - `npm start` — `node index.js`.
 - No test runner is configured in either app.
@@ -44,7 +46,7 @@ View/access tracking flows through `ImViewLog` / `AccessEvent` (`utils/recordImV
 - **Auth — two separate JWT systems**:
   - Staff/admin: `middleware/auth.middleware.js` (`authMiddleware`) verifies `decoded.userId` against the `User` model. Some routes also inline-verify tokens for role checks (e.g. `confidentiality.js` `adminAuth`).
   - Vendors (business sellers viewing their own deal's analytics): `middleware/vendorAuth.middleware.js`, used by `routes/vendor.js`.
-- **Email**: always send via `utils/mailer.js` `sendMail(msg)`. It accepts **SendGrid-style** objects (`{ to, from, subject, text, html, attachments }`, attachments base64) but sends through **Nodemailer/SMTP** — it converts the shapes for you. `from` defaults to `SENDGRID_FROM`.
+- **Email**: always send via `utils/mailer.js` `sendMail(msg)`. It accepts **SendGrid-style** objects (`{ to, from, subject, text, html, attachments }`, attachments base64) but sends through **Nodemailer/SMTP** — it converts the shapes for you. `from` defaults to `FROM_EMAIL`.
 - **File uploads**: `multer`. Use `memoryStorage` when the file is only emailed as an attachment (see the deposit-screenshot uploads in `confidentiality.js` / `imTemplates.js`); use `diskStorage` into `backend/uploads/**` when it must be served later (`/uploads` is statically served).
 - **External CRM**: prospects are pushed to the Nexar API (`NEXAR_API_URL`, bearer `businessbrokersecret`).
 
@@ -62,6 +64,6 @@ View/access tracking flows through `ImViewLog` / `AccessEvent` (`utils/recordImV
 
 ## Environment
 
-- **Backend `.env`**: `MONGODB_URI`, `JWT_SECRET`, `EMAIL_HOST/EMAIL_PORT/EMAIL_USER/EMAIL_PASS`, `SENDGRID_FROM`, `BACKEND_URL`, `FRONTEND_URL`, `NEXAR_API_URL`, `PORT`.
+- **Backend `.env`**: `MONGODB_URI`, `JWT_SECRET`, `EMAIL_HOST/EMAIL_PORT/EMAIL_USER/EMAIL_PASS`, `FROM_EMAIL`, `BACKEND_URL`, `FRONTEND_URL`, `NEXAR_API_URL`, `PORT`.
 - **Frontend `.env.local`**: `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID`.
 - **Port mismatch gotcha**: the backend defaults to `5059`, but `lib/api.ts` and several backend `*_URL` defaults fall back to `localhost:5005`. Set `NEXT_PUBLIC_API_URL` / `BACKEND_URL` explicitly rather than relying on defaults. CORS origins are an allow-list hardcoded in `backend/index.js` — add new frontend origins there.

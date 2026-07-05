@@ -2,7 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-
+const { notifyError } = require('./utils/errorNotifier');
+const { errorAlert, errorHandler } = require('./middleware/errorAlert.middleware');
 const app = express(); // Define app first
 
 // CORS configuration
@@ -15,6 +16,9 @@ app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
 app.use(express.json());
+
+app.use(errorAlert);
+
 
 // MongoDB Connection
 console.log('MONGODB_URI:', process.env.MONGODB_URI);
@@ -81,6 +85,20 @@ const vendorRoutes = require('./routes/vendor');
 app.use('/api/vendor', vendorRoutes);
 
 app.use('/uploads', express.static('uploads'));
+
+
+app.use(errorHandler);
+
+
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled Rejection:', reason);
+  notifyError({ source: 'unhandledRejection', error: reason });
+});
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  notifyError({ source: 'uncaughtException', error: err });
+});
+
 
 const PORT = process.env.PORT || 5059;
 app.listen(PORT, () => {

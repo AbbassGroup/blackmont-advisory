@@ -43,6 +43,9 @@ router.post('/', depositUpload.single('deposit'), async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
+    // TEMP DEMO: force a 500 to test the error-alert email. Remove after testing.
+    throw new Error('DEMO ERROR: testing error notification email');
+
     const listing = await Listing.findById(listingId);
 
 
@@ -266,7 +269,7 @@ router.post('/', depositUpload.single('deposit'), async (req, res) => {
     const adminMsg = {
       // to: ['jahid.dev8@gmail.com'],
       to: brokersEmails,
-      from: process.env.SENDGRID_FROM || 'info@blackmontadvisory.com',
+      from: process.env.FROM_EMAIL || 'info@blackmontadvisory.com',
       subject: `NDA Completed – ${firstName} ${lastName} – ${businessTitle}`,
       text: `NDA Submitted\n\nClient: ${firstName} ${lastName}\nEmail: ${email}\nPhone: ${phone}\nBusiness: ${businessTitle}\n\nPurchaser Refund Details\nAccount Name: ${accountName || '—'}\nBSB: ${bsb || '—'}\nAccount Number: ${accountNumber || '—'}\n\nApprove NDA: ${approveUrl}\nReject NDA: ${rejectUrl}`,
       html: `
@@ -318,7 +321,7 @@ router.post('/', depositUpload.single('deposit'), async (req, res) => {
     // Send email to user
     const userMsg = {
       to: email,
-      from: process.env.SENDGRID_FROM || 'info@blackmontadvisory.com',
+      from: process.env.FROM_EMAIL || 'info@blackmontadvisory.com',
       subject: 'Your Confidentiality Agreement with Blackmont Advisory',
       text: `Hi ${firstName} ${lastName},\n\nThank you for your enquiry on one of our listings. See attached a copy of the Confidentiality Agreement you have just signed for your records.\n\nYou have entered into an important and legally binding agreement. Please seek legal advice if you have any questions in relation to this agreement to ensure you read and understand the terms of Confidentiality.\n\nWe will be in touch, to provide you with more information regarding this business.\n\nRegards,\nBlackmont Advisory\nhttp://www.blackmontadvisory.com\ninfo@blackmontadvisory.com`,
       html: `<p>Hi ${firstName} ${lastName},</p><p>Thank you for your enquiry on one of our listings. See attached a copy of the Confidentiality Agreement you have just signed for your records.</p><p>You have entered into an important and legally binding agreement. Please seek legal advice if you have any questions in relation to this agreement to ensure you read and understand the terms of Confidentiality.</p><p>We will be in touch, to provide you with more information regarding this business.</p><p>Regards,<br/>Blackmont Advisory<br/><a href="http://www.blackmontadvisory.com">www.blackmontadvisory.com</a><br/>info@blackmontadvisory.com</p>`,
@@ -441,7 +444,7 @@ router.get('/approve', async (req, res) => {
       to: clientEmail,
       cc: brokersEmails,
       // to: "jahid.dev8@gmail.com",
-      from: process.env.SENDGRID_FROM || 'info@blackmontadvisory.com',
+      from: process.env.FROM_EMAIL || 'info@blackmontadvisory.com',
       subject: 'Information Memorandum | Blackmont Advisory',
       text: `Hi ${clientName},\n\nThank you for completing the NDA. Please see the Information Memorandum at the link below:\n${imUrl}\n\nIf you have any questions, please feel free to contact the broker directly.\n\nRegards,\nBlackmont Advisory\ninfo@blackmontadvisory.com\nwww.blackmontadvisory.com`,
       html: `
@@ -518,7 +521,7 @@ router.get('/reject', async (req, res) => {
     const rejectedMsg = {
       to: clientEmail,
       cc: brokersEmails,
-      from: process.env.SENDGRID_FROM || 'info@blackmontadvisory.com',
+      from: process.env.FROM_EMAIL || 'info@blackmontadvisory.com',
       subject: 'NDA Not Accepted | Blackmont Advisory',
       text: `Hi ${clientName},\n\nThank you for completing the NDA. Unfortunately the NDA you completed was not accepted. This may be due to the fact that your legal name or full residential address was not used. Note we do not accept PO Box addresses.\n\nRegards,\nBlackmont Advisory\ninfo@blackmontadvisory.com\nwww.blackmontadvisory.com`,
       html: `
