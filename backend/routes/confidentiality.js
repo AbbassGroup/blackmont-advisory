@@ -43,8 +43,6 @@ router.post('/', depositUpload.single('deposit'), async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    // TEMP DEMO: force a 500 to test the error-alert email. Remove after testing.
-    throw new Error('DEMO ERROR: testing error notification email');
 
     const listing = await Listing.findById(listingId);
 
