@@ -16,19 +16,7 @@ const OFFICE_PHONE = '(03) 9103 1317';
 const WEBSITE = 'www.blackmontadvisory.com';
 
 export const BROKERS: Broker[] = [
-  {
-    name: 'Tester',
-    email: 'mohammadjahid0007@gmail.com',
-    title: 'M&A Adviser',
-    image: '/abbass.jpeg',
-    phone: OFFICE_PHONE,
-    mobile: '0433 525 731',
-    website: WEBSITE,
-    welcome: [
-      'With extensive experience as a Principal M&A Adviser and deal structuring, Sadeq helps clients identify, evaluate and acquire businesses that align with their strategic objectives. He manages the deal process end-to-end with insight, transparency and access to a trusted network of professionals.',
-      'Sadeq is recognised for his business deal advisory and has successfully facilitated numerous transactions across Australia and UAE.',
-    ],
-  },
+  
   {
     name: 'Sadeq Abbass',
     email: 'sadeq@blackmontadvisory.com',
@@ -42,6 +30,19 @@ export const BROKERS: Broker[] = [
       'Sadeq is recognised for his business deal advisory and has successfully facilitated numerous transactions across Australia and UAE.',
     ],
   },
+  {
+    name: 'Lucas Scarla',
+    email: 'Business Broker',
+    title: 'M&A Adviser',
+    image: '/assets/dummy.png',
+    phone: OFFICE_PHONE,
+    mobile: 'N/A',
+    website: WEBSITE,
+    welcome: [
+      'N/A',
+    ],
+  },
+  
   {
     name: 'Asif Ahammed',
     email: 'asif.ahammed@blackmontadvisory.com',

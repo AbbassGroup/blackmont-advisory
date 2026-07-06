@@ -23,6 +23,12 @@ const userSchema = new mongoose.Schema(
       enum: ["superadmin", "admin"],
       default: "admin",
     },
+    // Keys of the admin pages this user may access (see frontend/lib/admin-pages.ts).
+    // Only meaningful for `admin`; superadmins implicitly have access to every page.
+    allowedPages: {
+      type: [String],
+      default: [],
+    },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
   },

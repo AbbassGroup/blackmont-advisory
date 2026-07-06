@@ -2,18 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import {
-  LayoutDashboard,
-  FileText,
-  ScrollText,
-  Building2,
-  MessageSquare,
-  Shield,
-  Users,
-  Handshake,
-  BarChart3,
-  LogOut,
-} from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -27,72 +16,16 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { useAdminAuth } from '@/context/admin-auth-context';
+import { getAllowedPagesForUser } from '@/lib/admin-pages';
 import Image from 'next/image';
-
-const NAV_ITEMS = [
-  {
-    label: 'Overview',
-    href: '/admin',
-    icon: LayoutDashboard,
-    superAdminOnly: true,
-  },
-  {
-    label: 'Digital Proposals',
-    href: '/admin/proposals',
-    icon: FileText,
-    superAdminOnly: false,
-  },
-  {
-    label: 'Information Memorandum',
-    href: '/admin/information-memorandum',
-    icon: ScrollText,
-    superAdminOnly: false,
-  },
-  {
-    label: 'Deals',
-    href: '/admin/deals',
-    icon: Handshake,
-    superAdminOnly: false,
-  },
-  {
-    label: 'Listings',
-    href: '/admin/listings',
-    icon: Building2,
-    superAdminOnly: true,
-  },
-  {
-    label: 'Enquiries',
-    href: '/admin/enquiries',
-    icon: MessageSquare,
-    superAdminOnly: true,
-  },
-  {
-    label: 'Resource Analytics',
-    href: '/admin/access',
-    icon: BarChart3,
-    superAdminOnly: true,
-  },
-  {
-    label: 'Confidentiality',
-    href: '/admin/confidentiality',
-    icon: Shield,
-    superAdminOnly: true,
-  },
-  {
-    label: 'Users',
-    href: '/admin/users',
-    icon: Users,
-    superAdminOnly: true,
-  },
-];
 
 export function AdminSidebar() {
   const pathname = usePathname();
   const { user, logout } = useAdminAuth();
-  const isSuperAdmin = user?.user?.role === 'superadmin';
 
-  const visibleItems = NAV_ITEMS.filter(
-    (item) => !item.superAdminOnly || isSuperAdmin,
+  const visibleItems = getAllowedPagesForUser(
+    user?.user?.role,
+    user?.user?.allowedPages,
   );
 
   return (

@@ -18,7 +18,7 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    const { username, email, password, role } = req.body;
+    const { username, email, password, role, allowedPages } = req.body;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -33,6 +33,7 @@ router.post("/register", async (req, res) => {
       email,
       password,
       role: role || "admin",
+      allowedPages: Array.isArray(allowedPages) ? allowedPages : [],
     });
 
     res.status(201).json({
@@ -43,6 +44,7 @@ router.post("/register", async (req, res) => {
         username: newUser.username,
         email: newUser.email,
         role: newUser.role,
+        allowedPages: newUser.allowedPages,
       },
     });
   } catch (err) {
@@ -92,6 +94,7 @@ router.post("/login", async (req, res) => {
         username: user.username,
         email: user.email,
         role: user.role,
+        allowedPages: user.allowedPages || [],
       },
     });
   } catch (err) {
@@ -127,6 +130,7 @@ router.get("/me", authMiddleware, async (req, res) => {
         username: req.user.username,
         email: req.user.email,
         role: req.user.role,
+        allowedPages: req.user.allowedPages || [],
       },
     });
   } catch (err) {
@@ -172,7 +176,7 @@ router.put("/update/user/:id", authMiddleware, async (req, res) => {
 
     const { id } = req.params;
     // Email is intentionally not updatable.
-    const { username, password, role } = req.body;
+    const { username, password, role, allowedPages } = req.body;
 
     const user = await User.findById(id);
     if (!user) {
@@ -183,6 +187,8 @@ router.put("/update/user/:id", authMiddleware, async (req, res) => {
     if (role) user.role = role;
     // Only set when provided — the pre-save hook hashes it.
     if (password) user.password = password;
+    // An explicit array (including empty) replaces the allow-list.
+    if (Array.isArray(allowedPages)) user.allowedPages = allowedPages;
 
     await user.save();
 
@@ -194,6 +200,7 @@ router.put("/update/user/:id", authMiddleware, async (req, res) => {
         username: user.username,
         email: user.email,
         role: user.role,
+        allowedPages: user.allowedPages,
       },
     });
   } catch (err) {

@@ -18,6 +18,7 @@ type User = {
     username: string;
     email: string;
     role: string;
+    allowedPages?: string[];
   };
   token: string;
 };
