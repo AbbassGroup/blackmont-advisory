@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 
-// The Information Memorandum viewer is a standalone, distraction-free page —
-// no site header or footer, just the document.
+// The document viewer (Information Memorandum / Acquisition Report) is a
+// standalone, distraction-free page — no site header or footer, just the document.
 export const metadata: Metadata = {
-  title: 'Information Memorandum | Blackmont Advisory',
+  title: 'Blackmont Advisory',
   robots: { index: false, follow: false },
 };
 

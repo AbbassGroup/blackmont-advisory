@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { apiClient } from '@/lib/api';
 import { SectionHeading } from '../section-chrome';
+import { getReportConfig, type ReportKind } from '../report-kind';
 import type { MakeOfferData } from '../types';
 
 const TRUST_ACCOUNT = {
@@ -25,12 +26,14 @@ export function MakeOfferSection({
   onChange,
   brokerEmail,
   businessName,
+  kind = 'im',
 }: {
   data: MakeOfferData;
   editable?: boolean;
   onChange?: (patch: Partial<MakeOfferData>) => void;
   brokerEmail?: string;
   businessName?: string;
+  kind?: ReportKind;
 }) {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -61,7 +64,7 @@ export function MakeOfferSection({
       const fd = new FormData(e.currentTarget);
       fd.append('brokerEmail', brokerEmail || '');
       fd.append('businessName', businessName || '');
-      await apiClient.post('/api/im-templates/public/offer', fd, {
+      await apiClient.post(`${getReportConfig(kind).apiBase}/public/offer`, fd, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setSubmitted(true);

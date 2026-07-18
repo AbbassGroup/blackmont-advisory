@@ -75,6 +75,12 @@ app.use('/api/deals', dealsRoutes);
 const imTemplatesRoutes = require('./routes/imTemplates');
 app.use('/api/im-templates', imTemplatesRoutes);
 
+const acquisitionReportsRoutes = require('./routes/acquisitionReports');
+app.use('/api/acquisition-reports', acquisitionReportsRoutes);
+
+const acquisitionRoutes = require('./routes/acquisition');
+app.use('/api/acquisition', acquisitionRoutes);
+
 const accessAnalyticsRoutes = require('./routes/accessAnalytics');
 app.use('/api/access-analytics', accessAnalyticsRoutes);
 

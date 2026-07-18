@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/sheet';
 import { ImDocument, getNavItems } from './im-document';
 import type { ImSection } from './types';
+import type { ReportKind } from './report-kind';
 
 /**
  * Read-only presentation of a memorandum: a sticky section sidebar on the left
@@ -21,9 +22,11 @@ import type { ImSection } from './types';
 export function ImReader({
   sections,
   brokerEmail,
+  kind = 'im',
 }: {
   sections: ImSection[];
   brokerEmail?: string;
+  kind?: ReportKind;
 }) {
   const navItems = getNavItems(sections);
   const navKey = navItems.map((n) => n.id).join(',');
@@ -138,7 +141,7 @@ export function ImReader({
 
         <div className="min-w-0 flex-1">
           <div className="overflow-hidden bg-card sm:border sm:border-border sm:shadow-xs">
-            <ImDocument sections={sections} editable={false} brokerEmail={brokerEmail} />
+            <ImDocument sections={sections} editable={false} kind={kind} brokerEmail={brokerEmail} />
           </div>
         </div>
       </div>

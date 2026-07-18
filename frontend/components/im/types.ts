@@ -8,6 +8,8 @@
  * `makeDefaultSection`, and render it in `<ImDocument>`.
  */
 
+import { REPORT_KINDS, type ReportKind } from './report-kind';
+
 export type SectionType =
   | 'banner'
   | 'confidentiality'
@@ -301,6 +303,9 @@ export interface ImTemplate {
   businessName: string;
   /** The broker who owns the memorandum (single owner field). */
   brokerEmail: string;
+  /** Acquisition Reports only — linked Nexar "Business Buyers" deal + its name. */
+  deal?: string;
+  dealName?: string;
   status: 'draft' | 'published';
   publishedAt?: string | null;
   archived?: boolean;
@@ -640,9 +645,22 @@ export function makeDefaultSection(type: SectionType): ImSection {
 }
 
 /** The sections every new template starts with, in order. */
-export function buildDefaultSections(): ImSection[] {
+export function buildDefaultSections(kind: ReportKind = 'im'): ImSection[] {
+  // Seed the banner headline with the product's default title (editable later).
+  const banner = makeDefaultSection('banner');
+  (banner.data as unknown as BannerData).title = REPORT_KINDS[kind].docTitle;
+
+  // Acquisition Reports start lean — just the cover, disclaimer and About; the
+  // broker adds any other sections from the Sections panel.
+  if (kind === 'acquisition') {
+    const conditions = makeDefaultSection('confidentiality');
+    // Drives the "Conditions of Acceptance" label in the preview nav.
+    (conditions.data as { title?: string }).title = 'Conditions of Acceptance';
+    return [banner, conditions, makeDefaultSection('about')];
+  }
+
   return [
-    makeDefaultSection('banner'),
+    banner,
     makeDefaultSection('confidentiality'),
     makeDefaultSection('about'),
     makeDefaultSection('highlights'),
