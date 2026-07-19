@@ -32,7 +32,10 @@ export interface ReportKindConfig {
   listTitle: string;
   listDescription: string;
   newButtonLabel: string;
+  /** Header for the name column (shows the report's businessName). */
   columnLabel: string;
+  /** When set, the list gets a leading column showing the banner title. */
+  titleColumnLabel?: string;
   searchPlaceholder: string;
 }
 
@@ -70,7 +73,8 @@ export const REPORT_KINDS: Record<ReportKind, ReportKindConfig> = {
     listTitle: 'Acquisition Reports',
     listDescription: 'Create and manage Acquisition Report templates',
     newButtonLabel: 'New Report',
-    columnLabel: 'Report',
+    columnLabel: 'Customer Name',
+    titleColumnLabel: 'Acquisition Report',
     searchPlaceholder: 'Search by customer or broker...',
   },
 };

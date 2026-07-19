@@ -6,6 +6,7 @@ import { FileText, Loader2 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { useAcquirerAuth } from '@/context/acquirer-auth-context';
 import { DEFAULT_BANNER_IMAGE } from '@/components/im';
+import Image from 'next/image';
 
 type ReportCard = {
   _id: string;
@@ -18,6 +19,7 @@ export default function AcquisitionDashboardPage() {
   const { token } = useAcquirerAuth();
   const [reports, setReports] = useState<ReportCard[]>([]);
   const [loading, setLoading] = useState(true);
+  console.log('🚀 ~ AcquisitionDashboardPage ~ reports:', reports);
 
   useEffect(() => {
     if (!token) return;
@@ -43,7 +45,9 @@ export default function AcquisitionDashboardPage() {
   return (
     <div className='mx-auto max-w-6xl space-y-6'>
       <div>
-        <h1 className='text-2xl font-bold text-secondary'>Your Acquisition Reports</h1>
+        <h1 className='text-2xl font-bold text-secondary'>
+          Your Acquisition Reports
+        </h1>
         <p className='mt-0.5 text-sm text-muted-foreground'>
           Select a report to view it.
         </p>
@@ -56,7 +60,9 @@ export default function AcquisitionDashboardPage() {
       ) : reports.length === 0 ? (
         <div className='flex flex-col items-center justify-center border border-border bg-card p-16 text-center'>
           <FileText className='mb-4 h-12 w-12 text-border' />
-          <h3 className='text-lg font-semibold text-secondary'>No reports yet</h3>
+          <h3 className='text-lg font-semibold text-secondary'>
+            No reports yet
+          </h3>
           <p className='mt-1 text-muted-foreground'>
             Your acquisition reports will appear here once they are available.
           </p>
@@ -69,11 +75,12 @@ export default function AcquisitionDashboardPage() {
               href={`/acquisition-report/${report._id}`}
               className='group flex flex-col overflow-hidden border border-border bg-card transition-all duration-300 hover:border-accent/40 hover:shadow-md'
             >
-              <div className='relative aspect-[16/10] w-full overflow-hidden bg-muted'>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+              <div className='relative aspect-16/10 w-full overflow-hidden bg-muted'>
+                <Image
                   src={report.bannerImage || DEFAULT_BANNER_IMAGE}
                   alt={report.businessName}
+                  width={600}
+                  height={400}
                   loading='lazy'
                   decoding='async'
                   className='h-full w-full object-cover transition-transform duration-500 group-hover:scale-105'

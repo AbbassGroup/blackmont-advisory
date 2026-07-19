@@ -30,7 +30,7 @@ export function SettingsPanel({
   noun?: string;
   linkDeals?: boolean;
   dealBusinessUnit?: string;
-  onChangeDeal?: (dealId: string, dealName: string) => void;
+  onChangeDeal?: (dealId: string, personName: string, businessName: string) => void;
   onManageAccess?: () => void;
 }) {
   return (
@@ -71,7 +71,7 @@ export function SettingsPanel({
           <DealSelect
             businessUnit={dealBusinessUnit}
             value={template.deal}
-            valueName={template.dealName}
+            valueName={template.businessName}
             onChange={onChangeDeal}
           />
 

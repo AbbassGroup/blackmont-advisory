@@ -22,7 +22,13 @@ import { apiClient } from '@/lib/api';
 const NEXAR_NAMES_URL =
   'https://blackmont-api.nexartechnologies.com/api/v1/deals/get/all/names';
 
-type Deal = { _id: string; name: string };
+// `name` is the deal contact/person; `businessName` is their business. The
+// dropdown lists deals by the person name, but selecting one reports both so the
+// report's customer name can be prefilled from the business name.
+type Deal = { _id: string; name?: string; businessName?: string };
+
+const personLabel = (d: Deal) => d.name || d.businessName || 'Unnamed deal';
+const businessLabel = (d: Deal) => d.businessName || d.name || '';
 
 export function DealSelect({
   businessUnit,
@@ -32,9 +38,9 @@ export function DealSelect({
 }: {
   businessUnit: string;
   value?: string;
-  /** Cached name so the trigger shows a label before the list loads. */
+  /** Cached person name so the trigger shows a label before the list loads. */
   valueName?: string;
-  onChange: (dealId: string, dealName: string) => void;
+  onChange: (dealId: string, personName: string, businessName: string) => void;
 }) {
   const [open, setOpen] = useState(false);
   const [deals, setDeals] = useState<Deal[]>([]);
@@ -54,8 +60,9 @@ export function DealSelect({
     };
   }, [businessUnit]);
 
+  const found = value ? deals.find((d) => d._id === value) : undefined;
   const selectedName = value
-    ? deals.find((d) => d._id === value)?.name || valueName || 'Loading...'
+    ? (found ? personLabel(found) : valueName) || 'Loading...'
     : '';
 
   return (
@@ -84,7 +91,7 @@ export function DealSelect({
                 <CommandItem
                   value='__clear__'
                   onSelect={() => {
-                    onChange('', '');
+                    onChange('', '', '');
                     setOpen(false);
                   }}
                   className='text-muted-foreground'
@@ -96,10 +103,10 @@ export function DealSelect({
               {deals.map((deal) => (
                 <CommandItem
                   key={deal._id}
-                  value={deal.name}
+                  value={`${personLabel(deal)} ${businessLabel(deal)} ${deal._id}`}
                   onSelect={() => {
-                    if (deal._id === value) onChange('', '');
-                    else onChange(deal._id, deal.name);
+                    if (deal._id === value) onChange('', '', '');
+                    else onChange(deal._id, personLabel(deal), businessLabel(deal));
                     setOpen(false);
                   }}
                 >
@@ -109,7 +116,7 @@ export function DealSelect({
                       value === deal._id ? 'opacity-100' : 'opacity-0',
                     )}
                   />
-                  {deal.name}
+                  {personLabel(deal)}
                 </CommandItem>
               ))}
             </CommandGroup>

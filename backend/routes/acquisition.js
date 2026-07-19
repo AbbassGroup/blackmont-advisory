@@ -108,10 +108,13 @@ router.get('/reports', acquirerAuth, async (req, res) => {
 
     const cards = reports.map((r) => {
       const banner = (r.sections || []).find((s) => s.type === 'banner');
+      const bannerData = (banner && banner.data) || {};
       return {
         _id: r._id,
-        businessName: r.businessName || 'Acquisition Report',
-        bannerImage: (banner && banner.data && banner.data.backgroundImage) || null,
+        // The card shows the banner's gold heading (the business name the broker
+        // types), NOT the customer/person name in the white heading.
+        businessName: bannerData.title || r.businessName || 'Acquisition Report',
+        bannerImage: bannerData.backgroundImage || null,
         updatedAt: r.updatedAt,
       };
     });

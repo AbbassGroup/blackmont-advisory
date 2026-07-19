@@ -32,6 +32,13 @@ import { cn } from '@/lib/utils';
 
 type Tab = 'active' | 'archived';
 
+/** The banner's gold heading (its `title`) — the business name for a report. */
+function bannerTitle(t: ImTemplate): string {
+  const banner = t.sections?.find((s) => s.type === 'banner');
+  const title = (banner?.data as { title?: string } | undefined)?.title;
+  return typeof title === 'string' && title.trim() ? title : '—';
+}
+
 /**
  * Admin list for a report product (Information Memorandum or Acquisition
  * Report). All behaviour is identical; `config` supplies the API scope, routes
@@ -44,6 +51,7 @@ export function ReportList({ config }: { config: ReportKindConfig }) {
 
   const [tab, setTab] = useState<Tab>('active');
   const [templates, setTemplates] = useState<ImTemplate[]>([]);
+  console.log('🚀 ~ ReportList ~ templates:', templates);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -144,6 +152,7 @@ export function ReportList({ config }: { config: ReportKindConfig }) {
   };
 
   const isArchived = tab === 'archived';
+  const colCount = config.titleColumnLabel ? 6 : 5;
 
   return (
     <DashboardLayout
@@ -202,6 +211,7 @@ export function ReportList({ config }: { config: ReportKindConfig }) {
           <table className='w-full text-sm'>
             <thead>
               <tr className='border-b border-border bg-muted/60'>
+                {config.titleColumnLabel && <Th>{config.titleColumnLabel}</Th>}
                 <Th>{config.columnLabel}</Th>
                 <Th>Broker</Th>
                 <Th>Status</Th>
@@ -214,14 +224,20 @@ export function ReportList({ config }: { config: ReportKindConfig }) {
             <tbody className='divide-y divide-gray-50'>
               {loading ? (
                 <tr>
-                  <td colSpan={5} className='py-12 text-center text-muted-foreground/60'>
+                  <td
+                    colSpan={colCount}
+                    className='py-12 text-center text-muted-foreground/60'
+                  >
                     <Loader2 className='mx-auto mb-2 h-6 w-6 animate-spin' />
                     Loading templates...
                   </td>
                 </tr>
               ) : templates.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className='py-12 text-center text-muted-foreground/60'>
+                  <td
+                    colSpan={colCount}
+                    className='py-12 text-center text-muted-foreground/60'
+                  >
                     {isArchived ? (
                       'No archived templates.'
                     ) : (
@@ -241,6 +257,13 @@ export function ReportList({ config }: { config: ReportKindConfig }) {
                     key={t._id}
                     className='transition-colors hover:bg-muted/50'
                   >
+                    {config.titleColumnLabel && (
+                      <td className='px-5 py-4'>
+                        <p className='font-semibold text-secondary'>
+                          {bannerTitle(t)}
+                        </p>
+                      </td>
+                    )}
                     <td className='px-5 py-4'>
                       <p className='font-semibold text-secondary'>
                         {t.businessName || 'Untitled'}
@@ -252,7 +275,9 @@ export function ReportList({ config }: { config: ReportKindConfig }) {
                           t.brokerEmail ||
                           '-'}
                       </p>
-                      <p className='text-xs text-muted-foreground/60'>{t.brokerEmail}</p>
+                      <p className='text-xs text-muted-foreground/60'>
+                        {t.brokerEmail}
+                      </p>
                     </td>
                     <td className='px-5 py-4'>
                       <span

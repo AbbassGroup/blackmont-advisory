@@ -31,7 +31,10 @@ import { SectionsPanel } from './sections-panel';
 import { SettingsPanel } from './settings-panel';
 
 const PANEL_META: Record<PanelKey, { title: string; description: string }> = {
-  sections: { title: 'Sections', description: 'Add, reorder, hide or remove sections.' },
+  sections: {
+    title: 'Sections',
+    description: 'Add, reorder, hide or remove sections.',
+  },
   settings: { title: 'Settings', description: 'Publish status and deletion.' },
 };
 
@@ -71,10 +74,12 @@ export function ReportEditor({ config }: { config: ReportKindConfig }) {
       .then(({ data }) => {
         if (!active) return;
         // Ensure every section has a stable client id for React keys/identity.
-        const sections: ImSection[] = (data.sections ?? []).map((s: ImSection) => ({
-          ...s,
-          uid: s.uid || s._id || makeDefaultSection(s.type).uid,
-        }));
+        const sections: ImSection[] = (data.sections ?? []).map(
+          (s: ImSection) => ({
+            ...s,
+            uid: s.uid || s._id || makeDefaultSection(s.type).uid,
+          }),
+        );
         const loaded = { ...data, sections } as ImTemplate;
         templateRef.current = loaded;
         setTemplate(loaded);
@@ -194,7 +199,10 @@ export function ReportEditor({ config }: { config: ReportKindConfig }) {
 
   const removeSection = useCallback(
     (index: number) =>
-      patchCommit((prev) => ({ ...prev, sections: prev.sections.filter((_, i) => i !== index) })),
+      patchCommit((prev) => ({
+        ...prev,
+        sections: prev.sections.filter((_, i) => i !== index),
+      })),
     [patchCommit],
   );
 
@@ -235,18 +243,18 @@ export function ReportEditor({ config }: { config: ReportKindConfig }) {
     [patchCommit],
   );
 
-  // Link/unlink a Nexar deal (Acquisition Reports). Selecting a deal prefills the
-  // customer name — on both the top-level field and the banner section, so the
-  // document shows it. Clearing the deal leaves the name untouched.
+  // `dealName` stores the deal's business name (shown on the portal card); the
+  // banner customer name is prefilled with the deal person's name — on both the
+  // top-level field and the banner section, so the document shows it.
   const setDeal = useCallback(
-    (dealId: string, dealName: string) =>
+    (dealId: string, personName: string, businessName: string) =>
       patchCommit((prev) => {
-        const next: ImTemplate = { ...prev, deal: dealId, dealName };
-        if (dealName) {
-          next.businessName = dealName;
+        const next: ImTemplate = { ...prev, deal: dealId, dealName: businessName };
+        if (personName) {
+          next.businessName = personName;
           next.sections = prev.sections.map((s) =>
             s.type === 'banner'
-              ? { ...s, data: { ...s.data, businessName: dealName } }
+              ? { ...s, data: { ...s.data, businessName: personName } }
               : s,
           );
         }
@@ -300,21 +308,23 @@ export function ReportEditor({ config }: { config: ReportKindConfig }) {
   // ── Render ──────────────────────────────────────────────────────────────────
   if (loading) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-accent" />
+      <div className='flex min-h-[60vh] items-center justify-center'>
+        <Loader2 className='h-6 w-6 animate-spin text-accent' />
       </div>
     );
   }
 
   if (loadError || !template) {
     return (
-      <div className="mx-auto flex min-h-[60vh] max-w-md flex-col items-center justify-center gap-4 text-center">
-        <div className="flex items-center gap-2 border border-red-100 bg-red-50 px-5 py-4 text-red-600">
-          <AlertCircle className="h-5 w-5" />
-          <span className="text-sm font-medium">{loadError || 'Not found'}</span>
+      <div className='mx-auto flex min-h-[60vh] max-w-md flex-col items-center justify-center gap-4 text-center'>
+        <div className='flex items-center gap-2 border border-red-100 bg-red-50 px-5 py-4 text-red-600'>
+          <AlertCircle className='h-5 w-5' />
+          <span className='text-sm font-medium'>
+            {loadError || 'Not found'}
+          </span>
         </div>
         <Link href={config.basePath}>
-          <Button variant="outline" className="rounded-none">
+          <Button variant='outline' className='rounded-none'>
             Back to list
           </Button>
         </Link>
@@ -323,19 +333,19 @@ export function ReportEditor({ config }: { config: ReportKindConfig }) {
   }
 
   return (
-    <div className="-m-6">
+    <div className='-m-6'>
       {/* Saved indicator */}
-      <div className="fixed right-6 top-20 z-40">
+      <div className='fixed right-6 top-20 z-40'>
         <SavedIndicator state={saveState} lastSavedAt={lastSavedAt} />
       </div>
 
       {/* Document — continuous web-page flow, edited inline */}
-      <div className="min-h-[calc(100vh-3.5rem)] bg-muted/40 pb-32">
-        <div className="mx-auto max-w-4xl px-4 py-8">
+      <div className='min-h-[calc(100vh-3.5rem)] bg-muted/40 pb-32'>
+        <div className='mx-auto max-w-4xl px-4 py-8'>
           {/* onBlur bubbles (focusout) — typed inline edits save when focus leaves a field. */}
           <div
             onBlur={commit}
-            className="overflow-hidden border border-border bg-card shadow-sm"
+            className='overflow-hidden border border-border bg-card shadow-sm'
           >
             <ImDocument
               sections={template.sections}
@@ -368,14 +378,16 @@ export function ReportEditor({ config }: { config: ReportKindConfig }) {
         onOpenChange={(o) => !o && setActivePanel(null)}
         direction={isMobile ? 'bottom' : 'right'}
       >
-        <DrawerContent className="data-[vaul-drawer-direction=right]:sm:max-w-md">
+        <DrawerContent className='data-[vaul-drawer-direction=right]:sm:max-w-md'>
           {activePanel && (
-            <DrawerHeader className="border-b border-border">
+            <DrawerHeader className='border-b border-border'>
               <DrawerTitle>{PANEL_META[activePanel].title}</DrawerTitle>
-              <DrawerDescription>{PANEL_META[activePanel].description}</DrawerDescription>
+              <DrawerDescription>
+                {PANEL_META[activePanel].description}
+              </DrawerDescription>
             </DrawerHeader>
           )}
-          <div className="flex-1 overflow-y-auto p-4">
+          <div className='flex-1 overflow-y-auto p-4'>
             {activePanel === 'sections' && (
               <SectionsPanel
                 sections={template.sections}
@@ -422,26 +434,27 @@ export function ReportEditor({ config }: { config: ReportKindConfig }) {
 
       {/* Delete confirm */}
       {confirmDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-secondary/40 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-sm border border-border bg-card p-6 shadow-xl">
-            <h3 className="mb-2 text-lg font-bold text-secondary">
+        <div className='fixed inset-0 z-50 flex items-center justify-center bg-secondary/40 p-4 backdrop-blur-sm'>
+          <div className='w-full max-w-sm border border-border bg-card p-6 shadow-xl'>
+            <h3 className='mb-2 text-lg font-bold text-secondary'>
               Delete {config.docNoun}?
             </h3>
-            <p className="mb-6 text-sm text-muted-foreground">
-              This {config.docNoun} will be removed from your list. It is archived (kept in the
-              database) rather than permanently erased, so it can be recovered if needed.
+            <p className='mb-6 text-sm text-muted-foreground'>
+              This {config.docNoun} will be removed from your list. It is
+              archived (kept in the database) rather than permanently erased, so
+              it can be recovered if needed.
             </p>
-            <div className="flex justify-end gap-3">
+            <div className='flex justify-end gap-3'>
               <Button
-                variant="outline"
-                className="rounded-none"
+                variant='outline'
+                className='rounded-none'
                 onClick={() => setConfirmDelete(false)}
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleDelete}
-                className="rounded-none bg-red-600 text-white hover:bg-red-700"
+                className='rounded-none bg-red-600 text-white hover:bg-red-700'
               >
                 Delete
               </Button>

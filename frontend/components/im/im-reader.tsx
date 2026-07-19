@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { ChevronRight, List } from 'lucide-react';
+import { ArrowLeft, ChevronRight, List } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   Sheet,
@@ -13,12 +13,9 @@ import {
 import { ImDocument, getNavItems } from './im-document';
 import type { ImSection } from './types';
 import type { ReportKind } from './report-kind';
+import { Button } from '../ui/button';
+import Link from 'next/link';
 
-/**
- * Read-only presentation of a memorandum: a sticky section sidebar on the left
- * (scroll-spy — highlights the section in view, click to jump) and the document
- * flowing on the right. Used by the editor's Preview mode and the public viewer.
- */
 export function ImReader({
   sections,
   brokerEmail,
@@ -57,7 +54,9 @@ export function ImReader({
   }, [navKey]);
 
   const go = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document
+      .getElementById(id)
+      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     setActiveId(id);
   };
 
@@ -66,33 +65,37 @@ export function ImReader({
       {/* Mobile contents — a slide-out sheet (the desktop sidebar is hidden below lg) */}
       {navItems.length > 0 && (
         <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
-          <div className="sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur lg:hidden">
+          <div className='sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur lg:hidden'>
             <SheetTrigger asChild>
               <button
-                type="button"
-                className="flex w-full items-center justify-between gap-3 px-5 py-3"
+                type='button'
+                className='flex w-full items-center justify-between gap-3 px-5 py-3'
               >
-                <span className="flex min-w-0 items-center gap-2">
-                  <List className="h-4 w-4 shrink-0 text-accent" />
-                  <span className="text-sm font-semibold text-secondary">Contents</span>
+                <span className='flex min-w-0 items-center gap-2'>
+                  <List className='h-4 w-4 shrink-0 text-accent' />
+                  <span className='text-sm font-semibold text-secondary'>
+                    Contents
+                  </span>
                   {activeLabel && (
-                    <span className="truncate text-xs text-muted-foreground/60">· {activeLabel}</span>
+                    <span className='truncate text-xs text-muted-foreground/60'>
+                      · {activeLabel}
+                    </span>
                   )}
                 </span>
-                <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground/60" />
+                <ChevronRight className='h-4 w-4 shrink-0 text-muted-foreground/60' />
               </button>
             </SheetTrigger>
           </div>
 
-          <SheetContent side="left" className="flex w-72 flex-col gap-0 p-0">
-            <SheetHeader className="shrink-0 border-b border-border">
+          <SheetContent side='left' className='flex w-72 flex-col gap-0 p-0'>
+            <SheetHeader className='shrink-0 border-b border-border'>
               <SheetTitle>Contents</SheetTitle>
             </SheetHeader>
-            <ul className="min-h-0 flex-1 space-y-0.5 overflow-y-auto overscroll-contain p-2">
+            <ul className='min-h-0 flex-1 space-y-0.5 overflow-y-auto overscroll-contain p-2'>
               {navItems.map((item) => (
                 <li key={item.id}>
                   <button
-                    type="button"
+                    type='button'
                     onClick={() => {
                       go(item.id);
                       setMenuOpen(false);
@@ -113,13 +116,19 @@ export function ImReader({
         </Sheet>
       )}
 
-      <div className="mx-auto flex max-w-6xl gap-8 py-0 sm:px-4 sm:py-8">
+      <div className='mx-auto flex max-w-6xl gap-8 py-0 sm:px-4 sm:py-8'>
         {navItems.length > 0 && (
-          <nav className="sticky top-6 hidden max-h-[calc(100vh-4rem)] w-56 shrink-0 flex-col lg:flex">
-            <p className="mb-3 shrink-0 px-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground/60">
+          <nav className='sticky top-6 hidden max-h-[calc(100vh-4rem)] w-56 shrink-0 flex-col lg:flex'>
+            <Link
+              href='/acquisition'
+              className='inline-flex items-center gap-2 px-3 pb-7 text-sm font-semibold text-accent hover:text-accent/80'
+            >
+              <ArrowLeft className='size-4' /> Back to reports
+            </Link>
+            <p className='mb-3 shrink-0 px-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground/60'>
               Contents
             </p>
-            <ul className="min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-contain pr-1">
+            <ul className='min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-contain pr-1'>
               {navItems.map((item) => (
                 <li key={item.id}>
                   <button
@@ -139,9 +148,14 @@ export function ImReader({
           </nav>
         )}
 
-        <div className="min-w-0 flex-1">
-          <div className="overflow-hidden bg-card sm:border sm:border-border sm:shadow-xs">
-            <ImDocument sections={sections} editable={false} kind={kind} brokerEmail={brokerEmail} />
+        <div className='min-w-0 flex-1'>
+          <div className='overflow-hidden bg-card sm:border sm:border-border sm:shadow-xs'>
+            <ImDocument
+              sections={sections}
+              editable={false}
+              kind={kind}
+              brokerEmail={brokerEmail}
+            />
           </div>
         </div>
       </div>
