@@ -38,11 +38,6 @@ const PANEL_META: Record<PanelKey, { title: string; description: string }> = {
   settings: { title: 'Settings', description: 'Publish status and deletion.' },
 };
 
-/**
- * Inline editor shared by both report products. `config` supplies the API scope,
- * routes, document `kind` and copy so the Information Memorandum and Acquisition
- * Report editors are one implementation.
- */
 export function ReportEditor({ config }: { config: ReportKindConfig }) {
   const params = useParams();
   const router = useRouter();
@@ -62,8 +57,6 @@ export function ReportEditor({ config }: { config: ReportKindConfig }) {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [acquirerOpen, setAcquirerOpen] = useState(false);
 
-  // The save reads the latest template from a ref so it can fire immediately on
-  // commit (blur / discrete action) without waiting for a re-render.
   const templateRef = useRef<ImTemplate | null>(null);
 
   // ── Load ──────────────────────────────────────────────────────────────────
@@ -98,7 +91,6 @@ export function ReportEditor({ config }: { config: ReportKindConfig }) {
     };
   }, [id, BASE, config.docNoun]);
 
-  // ── Save (fires on commit: blur of a typed field, or a discrete action) ─────
   const saveNow = useCallback(async () => {
     const current = templateRef.current;
     if (!current) return;
@@ -121,17 +113,8 @@ export function ReportEditor({ config }: { config: ReportKindConfig }) {
     }
   }, [id, BASE]);
 
-  // ── Mutators ────────────────────────────────────────────────────────────────
-  // `patch` updates state live (for the preview) but does NOT save. Saving is
-  // triggered by `commit` — on blur for typed fields, immediately for discrete
-  // actions (reorder, toggle, broker, image…). So typing never autosaves until
-  // focus leaves the field.
   const hasPending = useRef(false);
 
-  // templateRef is the canonical latest state. We update it synchronously here
-  // (and mirror to React state for rendering) so an immediate commit() reads the
-  // new value — otherwise the setTemplate updater runs later and saveNow() would
-  // persist stale data (e.g. a just-added custom section would be missing).
   const patch = useCallback((updater: (prev: ImTemplate) => ImTemplate) => {
     const prev = templateRef.current;
     if (!prev) return;
@@ -215,9 +198,6 @@ export function ReportEditor({ config }: { config: ReportKindConfig }) {
     [patchCommit],
   );
 
-  // Duplicate any section (even "singleton" ones) directly below the original.
-  // The copy gets a fresh client id and a deep-cloned data payload, and no _id so
-  // the backend assigns a new one on save.
   const duplicateSection = useCallback(
     (index: number) =>
       patchCommit((prev) => {
@@ -236,20 +216,19 @@ export function ReportEditor({ config }: { config: ReportKindConfig }) {
     [patchCommit],
   );
 
-  // Title / subject name are edited inline on the document; the broker shown in
-  // Welcome / Process is chosen in Settings (broker = owner of the template).
   const setBroker = useCallback(
     (email: string) => patchCommit((prev) => ({ ...prev, brokerEmail: email })),
     [patchCommit],
   );
 
-  // `dealName` stores the deal's business name (shown on the portal card); the
-  // banner customer name is prefilled with the deal person's name — on both the
-  // top-level field and the banner section, so the document shows it.
   const setDeal = useCallback(
     (dealId: string, personName: string, businessName: string) =>
       patchCommit((prev) => {
-        const next: ImTemplate = { ...prev, deal: dealId, dealName: businessName };
+        const next: ImTemplate = {
+          ...prev,
+          deal: dealId,
+          dealName: businessName,
+        };
         if (personName) {
           next.businessName = personName;
           next.sections = prev.sections.map((s) =>
@@ -342,7 +321,6 @@ export function ReportEditor({ config }: { config: ReportKindConfig }) {
       {/* Document — continuous web-page flow, edited inline */}
       <div className='min-h-[calc(100vh-3.5rem)] bg-muted/40 pb-32'>
         <div className='mx-auto max-w-4xl px-4 py-8'>
-          {/* onBlur bubbles (focusout) — typed inline edits save when focus leaves a field. */}
           <div
             onBlur={commit}
             className='overflow-hidden border border-border bg-card shadow-sm'

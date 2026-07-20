@@ -19,7 +19,6 @@ export default function AcquisitionDashboardPage() {
   const { token } = useAcquirerAuth();
   const [reports, setReports] = useState<ReportCard[]>([]);
   const [loading, setLoading] = useState(true);
-  console.log('🚀 ~ AcquisitionDashboardPage ~ reports:', reports);
 
   useEffect(() => {
     if (!token) return;

@@ -39,11 +39,6 @@ function bannerTitle(t: ImTemplate): string {
   return typeof title === 'string' && title.trim() ? title : '—';
 }
 
-/**
- * Admin list for a report product (Information Memorandum or Acquisition
- * Report). All behaviour is identical; `config` supplies the API scope, routes
- * and copy so the two products share one implementation.
- */
 export function ReportList({ config }: { config: ReportKindConfig }) {
   const router = useRouter();
   const { user } = useAdminAuth();
