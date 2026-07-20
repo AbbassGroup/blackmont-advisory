@@ -55,12 +55,7 @@ export function ConfidentialitySection({ kind = 'im' }: { kind?: ReportKind }) {
         <div className='mt-8 border-t border-border pt-4 text-sm text-muted-foreground'>
           {isAcquisition && (
             <>
-              <p className='font-semibold text-secondary'>
-                Abbass Advocacy Pty Ltd
-              </p>
-              <p className='font-semibold text-secondary'>
-                T/A Blackmont Advisory
-              </p>
+              <p className='font-semibold text-secondary'>Blackmont Advisory</p>
             </>
           )}
           {!isAcquisition && (
