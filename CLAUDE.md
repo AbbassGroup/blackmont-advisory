@@ -65,5 +65,5 @@ View/access tracking flows through `ImViewLog` / `AccessEvent` (`utils/recordImV
 ## Environment
 
 - **Backend `.env`**: `MONGODB_URI`, `JWT_SECRET`, `EMAIL_HOST/EMAIL_PORT/EMAIL_USER/EMAIL_PASS`, `FROM_EMAIL`, `BACKEND_URL`, `FRONTEND_URL`, `NEXAR_API_URL`, `PORT`.
-- **Frontend `.env.local`**: `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID`.
+- **Frontend `.env.local`**: `NEXT_PUBLIC_API_URL`. (The Google Ads gtag ID is hardcoded in `app/layout.tsx`, not env-driven.)
 - **Port mismatch gotcha**: the backend defaults to `5059`, but `lib/api.ts` and several backend `*_URL` defaults fall back to `localhost:5005`. Set `NEXT_PUBLIC_API_URL` / `BACKEND_URL` explicitly rather than relying on defaults. CORS origins are an allow-list hardcoded in `backend/index.js` — add new frontend origins there.
