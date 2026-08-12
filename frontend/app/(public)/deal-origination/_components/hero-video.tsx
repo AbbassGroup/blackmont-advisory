@@ -14,7 +14,7 @@ const POSTER_SRCSET = [640, 960, 1280, 1600]
   .map((w) => `${poster(w)} ${w}w`)
   .join(', ');
 
-/* ~2.8 MB VP9 / ~4.8 MB H.264, down from 92 MB. */
+/* ~2.8 MB VP9 / ~4.8 MB H.264, down from 527 MB. */
 const WEBM = `${BASE}/vc_vp9,q_auto:eco,w_1280/${ASSET}.webm`;
 const MP4 = `${BASE}/vc_h264,q_auto:eco,w_1280/${ASSET}.mp4`;
 
@@ -27,11 +27,11 @@ export function HeroVideo() {
         {playing ? (
           <video
             className='h-full w-full object-cover'
+            poster={POSTER}
             controls
             autoPlay
             playsInline
             preload='auto'
-            poster={POSTER}
           >
             <source src={WEBM} type='video/webm' />
             <source src={MP4} type='video/mp4' />
