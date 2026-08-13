@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Building2, Edit, Loader2, Trash2, Plus } from 'lucide-react';
+import { Building2, Edit, Loader2, Trash2, Plus, Copy, Check } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { formatReferenceId } from '@/lib/utils';
 import { useAdminAuth } from '@/context/admin-auth-context';
@@ -27,6 +27,18 @@ export default function ListingsPage() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const handleCopyUrl = async (id: string) => {
+    const url = `https://blackmontadvisory.com/listings/${id}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy URL', err);
+    }
+  };
 
   const fetchListings = async () => {
     if (!user?.token) return;
@@ -142,6 +154,19 @@ export default function ListingsPage() {
                     </td>
                     <td className='px-6 py-4 text-right'>
                       <div className='flex items-center justify-end gap-2'>
+                        <Button
+                          variant='ghost'
+                          size='icon'
+                          className='text-muted-foreground hover:text-accent hover:bg-accent/10'
+                          title='Copy public listing URL'
+                          onClick={() => handleCopyUrl(listing._id)}
+                        >
+                          {copiedId === listing._id ? (
+                            <Check className='w-4 h-4 text-green-600' />
+                          ) : (
+                            <Copy className='w-4 h-4' />
+                          )}
+                        </Button>
                         <Button
                           variant='ghost'
                           size='icon'

@@ -4,6 +4,7 @@ import { Resources } from './_components/resources';
 import { Process } from './_components/process';
 import { Booking } from './_components/booking';
 import { WhyBlackmont } from './_components/why-blackmont';
+import { Stats } from './_components/stats';
 // import { AgentsCarousel } from '@/components/global/agents-carousel';
 // import { ReviewsCarousel } from '@/components/global/reviews-carousel';
 import { ScheduleCallCta } from './_components/schedule-call-cta';
@@ -64,7 +65,9 @@ export default function SellPage() {
       <Process />
       <Booking />
       <WhyBlackmont />
+      {/* "Ready to discuss your exit?" sits above the stats band. */}
       <ScheduleCallCta />
+      <Stats />
       {/* <AgentsCarousel title="Meet Our Team" /> */}
       {/* <ReviewsCarousel title='What Owners Say' /> */}
       <ScheduleCallCta

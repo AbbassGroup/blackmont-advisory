@@ -16,6 +16,7 @@ import { HighlightsSection } from './sections/highlights-section';
 import { ChartsSection } from './sections/charts-section';
 import { CustomSection } from './sections/custom-section';
 import { getSectionMeta } from './types';
+import { getReportConfig, type ReportKind } from './report-kind';
 import type {
   BannerData,
   ChartsData,
@@ -56,6 +57,8 @@ export function getNavItems(sections: ImSection[]) {
 interface ImDocumentProps {
   sections: ImSection[];
   editable?: boolean;
+  /** Which product this is — drives banner/footer terminology. */
+  kind?: ReportKind;
   /** Called with the section's index in the full array and a data patch. */
   onSectionChange?: (index: number, patch: Record<string, unknown>) => void;
   /** Broker shown in Welcome / Process (chosen in Settings). */
@@ -69,11 +72,13 @@ interface ImDocumentProps {
 function ImDocumentImpl({
   sections,
   editable = false,
+  kind = 'im',
   onSectionChange,
   brokerEmail,
   onUploadFile,
   onCommit,
 }: ImDocumentProps) {
+  const reportCfg = getReportConfig(kind);
   // Business name lives on the banner; the offer form emails it for context.
   const businessName =
     (sections.find((s) => s.type === 'banner')?.data?.businessName as string) ||
@@ -108,6 +113,7 @@ function ImDocumentImpl({
               key={key}
               data={section.data as unknown as BannerData}
               editable={editable}
+              kind={kind}
               onChange={onChange}
               onUploadFile={onUploadFile}
               onCommit={onCommit}
@@ -121,7 +127,7 @@ function ImDocumentImpl({
         const inner = (() => {
           switch (section.type) {
             case 'confidentiality':
-              return <ConfidentialitySection />;
+              return <ConfidentialitySection kind={kind} />;
             case 'welcome':
               return (
                 <WelcomeSection
@@ -163,6 +169,7 @@ function ImDocumentImpl({
                   onChange={onChange}
                   brokerEmail={brokerEmail}
                   businessName={businessName}
+                  kind={kind}
                 />
               );
             case 'keycontacts':
@@ -234,9 +241,9 @@ function ImDocumentImpl({
       <footer className='border-t border-border bg-card px-8 py-6 sm:px-12'>
         <p className='mx-auto max-w-3xl text-center text-[11px] leading-relaxed text-muted-foreground/70'>
           © Blackmont Advisory. All rights reserved. The content, format,
-          structure, templates, and presentation style of this Information
-          Memorandum are proprietary to Blackmont Advisory and may not be
-          copied, reproduced, or used without prior written consent.
+          structure, templates, and presentation style of this{' '}
+          {reportCfg.docTitle} are proprietary to Blackmont Advisory and may not
+          be copied, reproduced, or used without prior written consent.
         </p>
       </footer>
     </>

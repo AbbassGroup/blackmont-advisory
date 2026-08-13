@@ -6,6 +6,7 @@ import Link from 'next/link';
 export type PanelKey = 'sections' | 'settings';
 
 export function ImControlBar({
+  backHref,
   previewHref,
   printHref,
   activePanel,
@@ -14,6 +15,7 @@ export function ImControlBar({
   publishing,
   onTogglePublish,
 }: {
+  backHref: string;
   previewHref: string;
   printHref: string;
   activePanel: PanelKey | null;
@@ -24,7 +26,7 @@ export function ImControlBar({
 }) {
   return (
     <div className="fixed bottom-3 left-1/2 z-40 flex max-w-[calc(100vw-0.75rem)] -translate-x-1/2 items-center gap-0.5 overflow-x-auto rounded-2xl border border-border bg-card/95 p-1 shadow-[0_8px_30px_rgba(15,22,35,0.18)] backdrop-blur sm:bottom-4 sm:gap-1 sm:p-1.5">
-      <Link href="/admin/information-memorandum">
+      <Link href={backHref}>
         <BarButton label="Back" icon={<ArrowLeft className="h-5 w-5" />} />
       </Link>
 

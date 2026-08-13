@@ -5,8 +5,8 @@ export interface BrokerOption {
 
 
 export const BROKERS: BrokerOption[] = [
-  // { name: 'Tester', email: 'mohammadjahid0007@gmail.com' },
   { name: 'Sadeq Abbass', email: 'sadeq@blackmontadvisory.com' },
+  { name: 'Lucas Scarla', email: 'lucas@blackmontadvisory.com' },
   { name: 'Asif Ahammed', email: 'asif.ahammed@blackmontadvisory.com' },
   { name: 'Christine Lamani', email: 'christine.lamani@blackmontadvisory.com' },
   { name: 'Freddie Wong', email: 'freddie.wong@blackmontadvisory.com' },

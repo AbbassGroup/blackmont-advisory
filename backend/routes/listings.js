@@ -517,10 +517,10 @@ router.post('/:id/im-template/verify', async (req, res) => {
     if (accessDenied) return res.status(403).json({ error: 'expired' });
 
     const listing = await Listing.findById(req.params.id).lean();
-    if (!listing || !listing.imTemplateId) return res.status(404).json({ error: 'not_found' });
+    if (!listing || !listing.imTemplateId) return res.status(404).json({ error: 'not_found_listing' });
 
     const template = await ImTemplate.findById(listing.imTemplateId).lean();
-    if (!template || template.archived) return res.status(404).json({ error: 'not_found' });
+    if (!template || template.archived) return res.status(404).json({ error: 'not_found_template' });
 
     return res.json({
       template: {

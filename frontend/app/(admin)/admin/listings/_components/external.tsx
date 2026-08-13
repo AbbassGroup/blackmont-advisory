@@ -48,8 +48,10 @@ export function External({
   useEffect(() => {
     const fetchDeals = async () => {
       try {
+        const businessUnit = 'Business Sellers';
+
         const res = await apiClient.get(
-          `https://blackmont-api.nexartechnologies.com/api/v1/deals/get/all/names`,
+          `https://blackmont-api.nexartechnologies.com/api/v1/deals/get/all/names?businessUnit=${encodeURIComponent(businessUnit)}`,
         );
         if (res.data?.success) {
           setDeals(res.data.data);

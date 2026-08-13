@@ -9,6 +9,7 @@ import {
 import { AdminSidebar } from '../_components/admin-sidebar';
 import { Separator } from '@/components/ui/separator';
 import { AuthGuard } from '../_components/auth-guard';
+import { PageAccessGuard } from '../_components/page-access-guard';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { useAdminAuth } from '@/context/admin-auth-context';
 
@@ -51,7 +52,7 @@ export default function AdminLayout({
               </p>
             </header>
             <div className='flex-1 overflow-auto p-6 bg-background'>
-              {children}
+              <PageAccessGuard>{children}</PageAccessGuard>
             </div>
           </SidebarInset>
         </SidebarProvider>

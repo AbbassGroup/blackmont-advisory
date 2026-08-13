@@ -3,11 +3,10 @@ import { Facebook, Instagram, Linkedin, Globe } from 'lucide-react';
 
 export function AboutBlackmont() {
   const services = [
-    'Business Sales',
-    'Business Appraisals',
-    'Business Advisory',
-    'Strategic Sales Marketing',
-    'Exit Strategy',
+    'Small Business Sales',
+    'Mergers & Acquisitions',
+    'Strategic Acquisitions',
+    'Business Exit Strategy',
   ];
 
   const socialLinks = [
@@ -39,14 +38,12 @@ export function AboutBlackmont() {
 
       <div>
         <p className='text-foreground text-base leading-relaxed mb-6 text-justify'>
-          At Blackmont Advisory, we specialise in facilitating the seamless sale
-          and acquisition of businesses across Australia. With deep market
-          knowledge and a personalised approach, we guide business owners and
-          aspiring business owners through every step of the process, ensuring
-          that transactions are smooth, efficient, and successful. Whether
-          you&apos;re looking to sell your business or invest in a new
-          opportunity, our team is dedicated to helping you achieve your goals
-          with confidence and ease.
+          At Blackmont Advisory, we specialise in the sale and acquisition of
+          businesses across Australia and beyond. As a boutique, senior-led M&amp;A
+          advisory, we represent business owners seeking a premium exit and act
+          as exclusive buyer advocates for those looking to acquire. Our process
+          is private, our network pre-qualified, and our advisors with you from
+          first conversation to settlement.
         </p>
 
         <p className='text-secondary font-medium text-base mb-4'>

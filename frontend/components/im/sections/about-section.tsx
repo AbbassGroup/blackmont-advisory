@@ -4,12 +4,10 @@ import { Check } from 'lucide-react';
 import { SectionHeading } from '../section-chrome';
 
 const SERVICES = [
-  'Business Sales',
-  'Business Appraisals',
-  'Vendor Advisory',
-  'Exit Strategy',
-  'Business Consulting',
-  'Buyer Advisory',
+  'Small Business Sales',
+  'Mergers & Acquisitions',
+  'Strategic Acquisitions',
+  'Business Exit Strategy',
 ];
 
 export function AboutSection({

@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import { ImageUp, Loader2 } from 'lucide-react';
 import { InlineText } from '../inline-text';
 import { DEFAULT_BANNER_IMAGE, type BannerData } from '../types';
+import { getReportConfig, type ReportKind } from '../report-kind';
 
 export function BannerSection({
   data,
@@ -11,15 +12,18 @@ export function BannerSection({
   onChange,
   onUploadFile,
   onCommit,
+  kind = 'im',
 }: {
   data: BannerData;
   editable?: boolean;
   onChange?: (patch: Partial<BannerData>) => void;
   onUploadFile?: (file: File) => Promise<string | null>;
   onCommit?: () => void;
+  kind?: ReportKind;
 }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const cfg = getReportConfig(kind);
 
   // Fall back to the default banner image when no background has been set.
   const bg = data.backgroundImage || DEFAULT_BANNER_IMAGE;
@@ -99,7 +103,7 @@ export function BannerSection({
             editable={editable}
             value={data.title}
             onChange={(v) => onChange?.({ title: v })}
-            placeholder='Information Memorandum'
+            placeholder={cfg.docTitle}
             className='mb-2 text-xl font-medium text-accent sm:mb-3 sm:text-3xl'
           />
           <InlineText
@@ -107,20 +111,22 @@ export function BannerSection({
             editable={editable}
             value={data.businessName}
             onChange={(v) => onChange?.({ businessName: v })}
-            placeholder='Business Name'
+            placeholder={cfg.subjectLabel}
             className='text-[2rem] font-semibold leading-[1.1] tracking-tight text-white sm:text-6xl'
           />
-          <div className='mt-6 flex items-center gap-3'>
-            <span className='h-7 w-1 rounded-full bg-accent' />
-            <InlineText
-              singleLine
-              editable={editable}
-              value={data.price}
-              onChange={(v) => onChange?.({ price: v })}
-              placeholder='$1,000,000 + SaV'
-              className='text-xl font-semibold text-white sm:text-2xl'
-            />
-          </div>
+          {cfg.showPrice && (
+            <div className='mt-6 flex items-center gap-3'>
+              <span className='h-7 w-1 rounded-full bg-accent' />
+              <InlineText
+                singleLine
+                editable={editable}
+                value={data.price}
+                onChange={(v) => onChange?.({ price: v })}
+                placeholder='$1,000,000 + SaV'
+                className='text-xl font-semibold text-white sm:text-2xl'
+              />
+            </div>
+          )}
         </div>
       </div>
     </header>

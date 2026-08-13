@@ -380,8 +380,7 @@ export function Contact() {
           </h2>
           <p className='mb-11 text-lg font-light leading-loose text-muted-foreground'>
             Considering a sale, looking to acquire, or simply exploring your
-            options. We are available for a confidential, no-obligation
-            discussion.
+            options. We are available for a confidential discussion.
           </p>
           <dl className='flex flex-col gap-6'>
             <div>

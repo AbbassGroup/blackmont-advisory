@@ -3,12 +3,12 @@ import { Container, Eyebrow, Reveal } from './primitives';
 
 const CHECKS = [
   {
-    title: 'Off-market by design',
-    body: 'Every transaction is managed privately within our pre-qualified network.',
+    title: 'Qualified Buyer Database',
+    body: 'Large database of HNWI, Private Equity, sophisticated investors and other qualified buyers who are ready to make a move.',
   },
   {
     title: 'One side of the table, always',
-    body: 'We never represent both parties. Our advice is independent and fully aligned with you.',
+    body: 'We never represent both parties in the same transaction. Our advice is independently structured for you.',
   },
   {
     title: 'Senior advisors, every deal',
@@ -27,13 +27,9 @@ export function About() {
         {/* Heading + intro — full width */}
         <Reveal className='mb-14'>
           <Eyebrow className='mb-5'>About Blackmont</Eyebrow>
-          <h2 className='mb-4 text-3xl font-bold leading-tight tracking-tight text-secondary sm:text-4xl lg:text-5xl'>
-            Boutique. Senior-led. Built for serious transactions.
+          <h2 className='text-3xl font-bold leading-tight tracking-tight text-secondary sm:text-4xl lg:text-5xl'>
+            Boutique. Senior-led. Built for getting results.
           </h2>
-          <p className='text-lg font-light leading-relaxed text-muted-foreground'>
-            We operate where private business ownership meets sophisticated
-            capital, on both sides of the deal.
-          </p>
         </Reveal>
 
         {/* Checks (left) + quote (right) */}

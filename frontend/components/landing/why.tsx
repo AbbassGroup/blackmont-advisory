@@ -8,8 +8,8 @@ const CARDS = [
   },
   {
     tag: 'Confidentiality',
-    title: 'No public listings. Ever.',
-    body: 'Every process is private and directed at pre-qualified principals only.',
+    title: 'Complete access control.',
+    body: 'Every process is private and directed at pre-qualified buyers only.',
   },
   {
     tag: 'Senior-led',

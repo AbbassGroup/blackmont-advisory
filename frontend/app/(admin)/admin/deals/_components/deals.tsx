@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Loader2, Briefcase, Eye, Bell, BellOff } from 'lucide-react';
+import { Loader2, Briefcase, Eye, Bell, BellOff, Copy, Check } from 'lucide-react';
 import Link from 'next/link';
 import { apiClient } from '@/lib/api';
 import { useAdminAuth } from '@/context/admin-auth-context';
@@ -32,6 +32,7 @@ export type ImViewLog = {
 export default function Deals() {
   const { user } = useAdminAuth();
   const [deals, setDeals] = useState<Deal[]>([]);
+  console.log('🚀 ~ Deals ~ deals:', deals);
 
   const [loading, setLoading] = useState(true);
   // IM History State
@@ -41,6 +42,22 @@ export default function Deals() {
   // IM Notification Prefs
   const [notifPrefs, setNotifPrefs] = useState<Record<string, boolean>>({});
   const [togglingNotif, setTogglingNotif] = useState<Set<string>>(new Set());
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const handleCopyUrl = async (e: React.MouseEvent, id: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const url = `https://blackmontadvisory.com/listings/${id}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopiedId(id);
+      toast.success('Public listing URL copied');
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch (error) {
+      console.error('Failed to copy URL', error);
+      toast.error('Failed to copy URL');
+    }
+  };
 
   useEffect(() => {
     const fetchDeals = async () => {
@@ -204,6 +221,17 @@ export default function Deals() {
                       {deal.businessName}
                     </h3>
                     <div className='flex items-center gap-1 shrink-0'>
+                      <button
+                        onClick={(e) => handleCopyUrl(e, deal._id)}
+                        className='p-1.5 text-muted-foreground/70 hover:text-accent hover:bg-accent/10 rounded-full transition-colors shrink-0'
+                        title='Copy public listing URL'
+                      >
+                        {copiedId === deal._id ? (
+                          <Check className='w-4 h-4 text-green-600' />
+                        ) : (
+                          <Copy className='w-4 h-4' />
+                        )}
+                      </button>
                       <button
                         onClick={(e) => toggleNotification(e, deal._id)}
                         disabled={isToggling}

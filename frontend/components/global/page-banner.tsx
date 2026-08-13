@@ -1,4 +1,5 @@
 import { Container, Eyebrow, Reveal } from '@/components/landing/primitives';
+import { cn } from '@/lib/utils';
 
 type PageBannerProps = {
   /** Heading text. Wrap a word in a <span className='font-light text-accent'> for the gilt accent. */
@@ -8,6 +9,8 @@ type PageBannerProps = {
   eyebrow?: string;
   /** Optional background image path, shown faintly behind a cream overlay. */
   image?: string;
+  /** Text alignment. 'center' also switches the photo overlay to a symmetric fade. */
+  align?: 'left' | 'center';
   /** Optional content rendered below the description (e.g. CTAs, trust signals). */
   children?: React.ReactNode;
 };
@@ -23,8 +26,11 @@ export function PageBanner({
   description,
   eyebrow,
   image,
+  align = 'left',
   children,
 }: PageBannerProps) {
+  const centered = align === 'center';
+
   return (
     <section className='relative overflow-hidden border-b border-secondary/10 bg-background'>
       {image && (
@@ -36,15 +42,20 @@ export function PageBanner({
           />
           <div
             aria-hidden
-            className='absolute inset-0 z-[1] bg-gradient-to-r from-background/95 via-background/75 to-background/45'
+            className={cn(
+              'absolute inset-0 z-[1] bg-gradient-to-r',
+              centered
+                ? 'from-background/90 via-background/70 to-background/90'
+                : 'from-background/95 via-background/75 to-background/45',
+            )}
           />
         </>
       )}
 
       <Container className='relative z-[2] pb-20 pt-36 lg:pb-24 lg:pt-44'>
-        <Reveal className='max-w-3xl'>
+        <Reveal className={cn('max-w-3xl', centered && 'mx-auto text-center')}>
           {eyebrow && (
-            <Eyebrow withRule className='mb-7'>
+            <Eyebrow withRule className={cn('mb-7', centered && 'justify-center')}>
               {eyebrow}
             </Eyebrow>
           )}
@@ -52,7 +63,12 @@ export function PageBanner({
             {title}
           </h1>
           {description && (
-            <p className='mt-6 max-w-2xl text-lg font-light leading-relaxed text-muted-foreground'>
+            <p
+              className={cn(
+                'mt-6 max-w-2xl text-lg font-light leading-relaxed text-muted-foreground',
+                centered && 'mx-auto',
+              )}
+            >
               {description}
             </p>
           )}

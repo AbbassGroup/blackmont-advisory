@@ -4,10 +4,8 @@ const Listing = require('../models/Listing');
 const ImTemplate = require('../models/ImTemplate');
 const { sendMail } = require('./mailer');
 
-// Post-approval IM follow-up email. Works for both IM kinds — the kind only
-// changes how we resolve the broker + business name.
 
-const FROM = process.env.SENDGRID_FROM || process.env.EMAIL_FROM || 'info@blackmontadvisory.com';
+const FROM = process.env.FROM_EMAIL || 'info@blackmontadvisory.com';
 const NAVY = '#1b2535'; // filled button background (Deep Navy)
 const GILT = '#c9a84c'; // outline button accent (Gilt)
 
@@ -26,10 +24,7 @@ function signInterestToken(enquiryId) {
   );
 }
 
-// Resolve broker(s) + business name for an approved enquiry. The broker(s) to
-// notify are always the LISTING's assigned brokers (same recipients as the NDA
-// approval flow) — for a template IM we only borrow the template's businessName.
-// Returns null if it can't be resolved (no listingId / deleted listing).
+
 async function resolveFollowUpContext(enquiry) {
   const listingId = enquiry.listingId || enquiry.additionalData?.listingId;
   if (!listingId) return null;

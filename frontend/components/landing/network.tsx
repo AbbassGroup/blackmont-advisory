@@ -60,9 +60,9 @@ export function Network() {
             </p>
           </div>
           <p className='leading-loose text-parchment/65'>
-            Based in Australia with a global network of buyers, investors and
-            partners, connecting local businesses with domestic and
-            international capital.
+            Based in Melbourne, Australia with a global network of buyers,
+            investors and partners, connecting local businesses with domestic
+            and international capital.
           </p>
         </Reveal>
       </Container>

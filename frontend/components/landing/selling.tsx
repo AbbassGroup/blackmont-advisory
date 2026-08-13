@@ -1,4 +1,4 @@
-import { Users, FileText, DollarSign, Lock } from 'lucide-react';
+import { Users, FileText, Eye, Lock } from 'lucide-react';
 import { Container, Reveal, SectionHeader } from './primitives';
 
 const STEPS = [
@@ -15,12 +15,12 @@ const STEPS = [
   {
     num: '03',
     title: 'IM Preparation',
-    body: 'Investment-grade documentation for serious acquirers.',
+    body: 'Investment-grade Information Memorandums and sales materials.',
   },
   {
     num: '04',
     title: 'Private Buyer Outreach',
-    body: 'Direct contact with our pre-qualified network only.',
+    body: 'Direct contact with our pre-qualified network.',
   },
   {
     num: '05',
@@ -41,9 +41,9 @@ const CAPABILITIES = [
     body: 'Your IM prepared to institutional standard, covering financials, operations and deal structure options.',
   },
   {
-    icon: DollarSign,
-    title: 'Deal Structuring',
-    body: 'Cash, earnouts, vendor finance, mezzanine, equity rollovers. We find the structure that closes.',
+    icon: Eye,
+    title: 'Complete Visibility',
+    body: 'Your own dedicated vendor portal with access to track your sale progress.',
   },
   {
     icon: Lock,

@@ -9,7 +9,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ImReader, type ImTemplate } from '@/components/im';
 
-type GateError = '' | 'mismatch' | 'expired' | 'denied' | 'generic';
+type GateError =
+  | ''
+  | 'mismatch'
+  | 'expired'
+  | 'denied'
+  | 'generic'
+  | 'not_found_listing'
+  | 'not_found_template';
 
 function SecureImViewer() {
   const params = useParams();
@@ -39,6 +46,8 @@ function SecureImViewer() {
           ?.error || '';
       if (code === 'email_mismatch') setError('mismatch');
       else if (code === 'expired') setError('expired');
+      else if (code === 'not_found_listing') setError('not_found_listing');
+      else if (code === 'not_found_template') setError('not_found_template');
       else if (code === 'access_denied' || code === 'invalid_token')
         setError('denied');
       else setError('generic');
@@ -117,6 +126,18 @@ function SecureImViewer() {
             This link is invalid or access has not been granted.
           </p>
         )}
+        {error === 'not_found_listing' && (
+          <p className='flex items-center gap-1.5 text-sm text-red-600'>
+            <AlertCircle className='h-4 w-4 shrink-0' />
+            The requested listing could not be found.
+          </p>
+        )}
+        {error === 'not_found_template' && (
+          <p className='flex items-center gap-1.5 text-sm text-red-600'>
+            <AlertCircle className='h-4 w-4 shrink-0' />
+            The requested template could not be found.
+          </p>
+        )}
         {error === 'generic' && (
           <p className='flex items-center gap-1.5 text-sm text-red-600'>
             <AlertCircle className='h-4 w-4 shrink-0' />
@@ -157,10 +178,7 @@ function ContactLine() {
   return (
     <p className='mt-2 text-xs text-muted-foreground/60'>
       Blackmont Advisory &middot;{' '}
-      <a
-        href='mailto:info@blackmontadvisory.com'
-        className='text-accent'
-      >
+      <a href='mailto:info@blackmontadvisory.com' className='text-accent'>
         info@blackmontadvisory.com
       </a>{' '}
       {/* &middot; (03) 9103 1317 */}

@@ -10,7 +10,10 @@ import {
   Link,
 } from '@react-pdf/renderer';
 
-export const CONTACT_URL = 'https://www.blackmontadvisory.com/contact';
+// Deep-links to the access page and auto-opens the "Schedule a Confidential
+// Call" form (see the `?consultation=true` handling in GetStarted).
+export const CONTACT_URL =
+  'https://www.blackmontadvisory.com/access?consultation=true';
 
 export interface PdfAssets {
   logo: string;

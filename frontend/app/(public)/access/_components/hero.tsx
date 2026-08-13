@@ -6,7 +6,7 @@ import { PageBanner } from '@/components/global/page-banner';
 
 const trust = [
   { label: 'Confidential', icon: Lock },
-  { label: 'SME Business Sales', icon: MapPin },
+  { label: 'Business Sales', icon: MapPin },
   { label: 'Boutique Advisory', icon: Gem },
 ];
 

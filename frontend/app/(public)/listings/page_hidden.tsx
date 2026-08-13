@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   title: 'Business Listings – Buy a Business in Australia',
   description:
     'Browse businesses for sale across Melbourne, Sydney, and Australia. Filter by category and location to find your next business opportunity with Blackmont Advisory.',
+  alternates: { canonical: '/listings' },
   openGraph: {
     title: 'Businesses for Sale | Blackmont Advisory',
     description:

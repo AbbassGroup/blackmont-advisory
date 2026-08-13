@@ -20,24 +20,19 @@ const steps = [
       'Provide business owners name(s) and address and proceed to sign agreement which will be sent for electronic signing',
   },
   {
-    label: 'STEP 5: PROCESS MARKETING INVOICE PAYMENT',
-    description:
-      'Process payment of marketing invoice as well as engagement invoice (where applicable)',
-  },
-  {
-    label: 'STEP 6: CONFIDENTIAL AD IS LAUNCHED',
+    label: 'STEP 5: CONFIDENTIAL AD IS LAUNCHED',
     description:
       'We launch your ad confidentially across all platforms as well as our website',
   },
   {
-    label: 'STEP 7: BULK EMAIL TO DATABASE',
+    label: 'STEP 6: INFORMATION MATERIAL PREPARED',
     description:
-      'A bulk email will be sent to our extensive database of qualified buyers',
+      'Your investment grade information material is prepared for you to review and approve',
   },
   {
-    label: 'STEP 8: PROSPECTING BEGINS',
+    label: 'STEP 7: CAMPAIGN LAUNCHED',
     description:
-      'We begin the prospecting process and will reach out to you as and when we have buyer interest',
+      'The campaign starts by reaching out to our qualified database to gauge interest',
   },
 ];
 

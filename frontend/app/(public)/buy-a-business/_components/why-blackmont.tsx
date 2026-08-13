@@ -10,7 +10,7 @@ const advantages = [
   },
   {
     title: 'Experience across industries',
-    description: 'Hotel, hospitality, services, manufacturing and more',
+    description: 'We have experience working across various industries',
     icon: <Lightbulb className='w-6 h-6' />,
   },
   {
@@ -56,7 +56,7 @@ export function WhyBlackmont() {
 
         <div className='text-center'>
           <p className='text-xl font-bold text-secondary mb-8 max-w-2xl mx-auto leading-relaxed'>
-            Blackmont is a boutique firm built on trust, expertise, and excellence.
+            Blackmont Advisory is a boutique firm built on trust, expertise, and excellence.
           </p>
           <ContactFormModal>
             <Button className='h-auto rounded-none bg-accent px-8 py-4 text-xs font-bold uppercase tracking-[0.14em] text-primary transition-colors hover:bg-accent-light'>

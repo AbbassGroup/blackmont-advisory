@@ -4,19 +4,9 @@ const DigitalProposal = require('../models/DigitalProposal');
 const ProposalViewLog = require('../models/ProposalViewLog');
 const multer = require('multer');
 const path = require('path');
-const nodemailer = require('nodemailer');
+const { sendMail } = require('../utils/mailer');
 const { createAdminNotificationEmail, createCustomerApprovalEmail } = require('../utils/emailTemplates');
 
-// Configure Nodemailer transporter
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: process.env.EMAIL_PORT,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
 const SN_API = "https://api.signnow.com";
 // Configure multer for file uploads
 // const storage = multer.diskStorage({
@@ -161,7 +151,7 @@ router.post('/', upload.single('backgroundImage'), multerErrorHandler, async (re
     // Send email notification to owner for review
     try {
       const ownerMsg = createAdminNotificationEmail(savedProposal, 'created');
-      await transporter.sendMail(ownerMsg);
+      await sendMail(ownerMsg);
       console.log('Owner notification email sent for proposal:', savedProposal._id);
     } catch (emailError) {
       console.error('Failed to send owner notification email:', emailError);
@@ -216,7 +206,7 @@ router.put('/:id', upload.single('backgroundImage'), multerErrorHandler, async (
     // Send email notification to owner for updated proposal
     try {
       const ownerMsg = createAdminNotificationEmail(updatedProposal, 'updated');
-      await transporter.sendMail(ownerMsg);
+      await sendMail(ownerMsg);
       console.log('Owner notification email sent for updated proposal:', updatedProposal._id);
     } catch (emailError) {
       console.error('Failed to send owner notification email for update:', emailError);
@@ -251,7 +241,7 @@ router.put('/:id/approve', async (req, res) => {
     if (updatedProposal.customerEmail) {
       try {
         const customerMsg = createCustomerApprovalEmail(updatedProposal);
-        await transporter.sendMail(customerMsg);
+        await sendMail(customerMsg);
         console.log('Customer notification email sent for approved proposal:', updatedProposal._id);
       } catch (emailError) {
         console.error('Failed to send customer notification email:', emailError);

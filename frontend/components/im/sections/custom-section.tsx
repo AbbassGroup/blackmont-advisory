@@ -202,6 +202,20 @@ const LINK_CLASS =
 // PDF buttons open a download-protected viewer in a new tab (canvas render).
 const pdfHref = (url: string) => `/im-pdf?src=${encodeURIComponent(url)}`;
 
+// A bare host (`www.loom.com`) resolves as a relative path, so assume https.
+function linkHref(url: string): string {
+  const href = url.trim();
+  if (!href) return href;
+  if (href.startsWith('//')) return `https:${href}`;
+  if (/^[/#?]/.test(href)) return href;
+  // Needs `://` — dots are legal scheme chars, so `example.com:8080` isn't one.
+  if (/^[a-z][a-z\d+.-]*:\/\//i.test(href)) return href;
+  if (/^(mailto|tel|sms):/i.test(href)) return href;
+  return `https://${href}`;
+}
+
+const isExternalHref = (href: string) => !/^[/#]/.test(href);
+
 const BLOCK_LABELS: Record<CustomBlock['type'], string> = {
   text: 'Text',
   table: 'Table',
@@ -357,31 +371,36 @@ function ButtonsView({ buttons }: { buttons: CustomButton[] }) {
   if (!valid.length) return null;
   return (
     <div className='flex flex-wrap gap-3'>
-      {valid.map((b) =>
-        b.kind === 'pdf' ? (
-          <Link
-            key={b.id}
-            href={pdfHref(b.url)}
-            target='_blank'
-            rel='noopener noreferrer'
-            className={LINK_CLASS}
-          >
-            <FileText className='h-4 w-4' />
-            {b.label}
-          </Link>
-        ) : (
+      {valid.map((b) => {
+        if (b.kind === 'pdf') {
+          return (
+            <Link
+              key={b.id}
+              href={pdfHref(b.url)}
+              target='_blank'
+              rel='noopener noreferrer'
+              className={LINK_CLASS}
+            >
+              <FileText className='h-4 w-4' />
+              {b.label}
+            </Link>
+          );
+        }
+        const href = linkHref(b.url);
+        const external = isExternalHref(href);
+        return (
           <a
             key={b.id}
-            href={b.url}
-            target='_blank'
-            rel='noopener noreferrer'
+            href={href}
+            target={external ? '_blank' : undefined}
+            rel={external ? 'noopener noreferrer' : undefined}
             className={LINK_CLASS}
           >
             <ExternalLink className='h-4 w-4' />
             {b.label}
           </a>
-        ),
-      )}
+        );
+      })}
     </div>
   );
 }
@@ -1340,10 +1359,7 @@ export function CustomSection({
           {blocks.map((block, i) => {
             const Icon = BLOCK_ICONS[block.type];
             return (
-              <div
-                key={block.id}
-                className='border border-border bg-card p-3'
-              >
+              <div key={block.id} className='border border-border bg-card p-3'>
                 <div className='mb-2.5 flex items-center justify-between gap-2'>
                   <span className='flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground/60'>
                     <Icon className='h-3.5 w-3.5' /> {BLOCK_LABELS[block.type]}

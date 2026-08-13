@@ -19,16 +19,25 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ADMIN_PAGE_OPTIONS } from '@/lib/admin-pages';
 
 interface User {
   _id: string;
   username: string;
   email: string;
   role: string;
+  allowedPages?: string[];
   createdAt: string;
 }
 
-const EMPTY_FORM = { username: '', email: '', password: '', role: 'admin' };
+const EMPTY_FORM = {
+  username: '',
+  email: '',
+  password: '',
+  role: 'admin',
+  allowedPages: [] as string[],
+};
 
 export default function AdminUsersPage() {
   const { user } = useAdminAuth();
@@ -53,7 +62,13 @@ export default function AdminUsersPage() {
 
   const openEdit = (u: User) => {
     setEditingId(u._id);
-    setForm({ username: u.username, email: u.email, password: '', role: u.role });
+    setForm({
+      username: u.username,
+      email: u.email,
+      password: '',
+      role: u.role,
+      allowedPages: u.allowedPages ?? [],
+    });
     setFormOpen(true);
   };
 
@@ -85,22 +100,31 @@ export default function AdminUsersPage() {
     }
     if (!user?.token) return;
 
+    // Superadmins implicitly have every page; only store an allow-list for admins.
+    const allowedPages =
+      form.role === 'superadmin' ? [] : form.allowedPages;
+
     setActionLoading(true);
     try {
       if (editingId) {
         // Email is intentionally not updatable.
-        const payload: Record<string, string> = {
+        const payload: Record<string, unknown> = {
           username: form.username,
           role: form.role,
+          allowedPages,
         };
         if (form.password) payload.password = form.password;
         await apiClient.put(`/api/auth/update/user/${editingId}`, payload, {
           headers: { Authorization: `Bearer ${user.token}` },
         });
       } else {
-        await apiClient.post('/api/auth/register', form, {
-          headers: { Authorization: `Bearer ${user.token}` },
-        });
+        await apiClient.post(
+          '/api/auth/register',
+          { ...form, allowedPages },
+          {
+            headers: { Authorization: `Bearer ${user.token}` },
+          },
+        );
       }
       setForm(EMPTY_FORM);
       setEditingId(null);
@@ -346,6 +370,49 @@ export default function AdminUsersPage() {
                 <option value='admin'>Admin</option>
                 <option value='superadmin'>Super Admin</option>
               </select>
+            </div>
+
+            <div className='space-y-2'>
+              <Label>Page Access</Label>
+              {form.role === 'superadmin' ? (
+                <p className='text-xs text-muted-foreground'>
+                  Super admins have access to all pages.
+                </p>
+              ) : (
+                <>
+                  <div className='grid grid-cols-2 gap-2 rounded-md border border-input p-3'>
+                    {ADMIN_PAGE_OPTIONS.map((page) => {
+                      const checked = form.allowedPages.includes(page.value);
+                      return (
+                        <label
+                          key={page.value}
+                          className='flex cursor-pointer items-center gap-2 text-sm text-secondary'
+                        >
+                          <Checkbox
+                            checked={checked}
+                            onCheckedChange={(value) => {
+                              const isOn = value === true;
+                              setForm((prev) => ({
+                                ...prev,
+                                allowedPages: isOn
+                                  ? [...prev.allowedPages, page.value]
+                                  : prev.allowedPages.filter(
+                                      (p) => p !== page.value,
+                                    ),
+                              }));
+                            }}
+                          />
+                          {page.label}
+                        </label>
+                      );
+                    })}
+                  </div>
+                  <p className='text-xs text-muted-foreground'>
+                    Choose which pages this admin can access. If none are
+                    selected, the default pages are shown.
+                  </p>
+                </>
+              )}
             </div>
 
             <DialogFooter className='mt-6 border-t pt-4'>

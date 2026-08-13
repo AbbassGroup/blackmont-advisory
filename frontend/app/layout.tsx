@@ -10,6 +10,8 @@ const inter = Inter({
   variable: '--font-sans',
 });
 
+const GTAG_ID = 'AW-17295080699';
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.blackmontadvisory.com'),
   title: 'M&A Advisory Australia | Blackmont Advisory',
@@ -18,6 +20,7 @@ export const metadata: Metadata = {
   icons: {
     icon: '/assets/logo.png',
   },
+  manifest: '/manifest.json',
   openGraph: {
     type: 'website',
     locale: 'en_AU',
@@ -57,10 +60,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en' className={inter.variable}>
+    <html lang='en-AU' className={inter.variable}>
       <body className='min-h-full flex flex-col'>
         <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID}`}
+          src={`https://www.googletagmanager.com/gtag/js?id=${GTAG_ID}`}
           strategy='afterInteractive'
         />
         <Script id='google-gtag-init' strategy='afterInteractive'>
@@ -68,7 +71,7 @@ export default function RootLayout({
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', ${JSON.stringify(process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID)});
+            gtag('config', ${JSON.stringify(GTAG_ID)});
           `}
         </Script>
         {children}

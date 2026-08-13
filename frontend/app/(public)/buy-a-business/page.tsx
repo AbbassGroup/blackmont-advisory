@@ -12,6 +12,7 @@ export const metadata: Metadata = {
   title: 'Buy a Business | Business Buyers Agents | Blackmont Advisory',
   description:
     'Looking to buy a business? Blackmont Advisory helps buyers find, analyse, and negotiate the right business. Independent buyer advocacy from strategy to settlement. Book a free consultation.',
+  alternates: { canonical: '/buy-a-business' },
   openGraph: {
     title: 'Buy a Business | Blackmont Advisory',
     description: 'Independent buyer advocacy from strategy to settlement.',
@@ -28,7 +29,7 @@ export default function BuyBusinessPage() {
             <span className='font-light text-accent'>With Confidence</span>
           </>
         }
-        description='Business Buyer Representation by Blackmont Advisory'
+        description='Buy Side Deal Origination by Blackmont Advisory'
         image='/buy-a-business.webp'
       />
 
