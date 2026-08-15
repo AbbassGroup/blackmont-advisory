@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import Script from 'next/script';
 import { Toaster } from '@/components/ui/sonner';
 import './(public)/globals.css';
+import { PostHogProvider } from './provider';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -79,8 +80,10 @@ export default function RootLayout({
             gtag('config', ${JSON.stringify(GTAG_ID)});
           `}
         </Script>
-        {children}
-        <Toaster position='top-center' />
+        <PostHogProvider>
+          {children}
+          <Toaster position='top-center' />
+        </PostHogProvider>
       </body>
     </html>
   );
