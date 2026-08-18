@@ -289,6 +289,17 @@ export type SectionData =
   | ChartsData
   | CustomData;
 
+/** A section's `data` as stored — untyped until a section narrows it. */
+export type RawSectionData = Record<string, unknown>;
+
+/**
+ * A change to a section's data. Pass a function whenever the new value is built
+ * from the old one (adding a row, editing one item in a list) so it applies to
+ * the current data instead of whatever was on screen when the handler was made.
+ * A slow upload finishing late would otherwise undo edits made while it ran.
+ */
+export type SectionPatch<T> = Partial<T> | ((prev: RawSectionData) => Partial<T>);
+
 export interface ImSection {
   _id?: string;
   /** Stable client-side key (sections may not have a Mongo _id before first save). */

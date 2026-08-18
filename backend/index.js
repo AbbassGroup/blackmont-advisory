@@ -15,7 +15,9 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
-app.use(express.json());
+// Rich reports (many sections, rich text, tables, chart rows) outgrow the 100 KB
+// default, after which every save would 413 and nothing would persist again.
+app.use(express.json({ limit: '10mb' }));
 
 app.use(errorAlert);
 

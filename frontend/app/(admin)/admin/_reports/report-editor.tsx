@@ -7,6 +7,7 @@ import { AlertCircle, Loader2 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { useAdminAuth } from '@/context/admin-auth-context';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useAutosave } from '@/hooks/use-autosave';
 import { Button } from '@/components/ui/button';
 import {
   Drawer,
@@ -21,11 +22,13 @@ import {
   makeUid,
   type ImSection,
   type ImTemplate,
+  type RawSectionData,
   type ReportKindConfig,
+  type SectionPatch,
   type SectionType,
 } from '@/components/im';
 import { AcquirerAccessDialog } from '@/components/admin/acquirer-access-dialog';
-import { SavedIndicator, type SaveState } from './saved-indicator';
+import { SavedIndicator } from './saved-indicator';
 import { ImControlBar, type PanelKey } from './im-control-bar';
 import { SectionsPanel } from './sections-panel';
 import { SettingsPanel } from './settings-panel';
@@ -51,13 +54,40 @@ export function ReportEditor({ config }: { config: ReportKindConfig }) {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
   const [activePanel, setActivePanel] = useState<PanelKey | null>(null);
-  const [saveState, setSaveState] = useState<SaveState>('idle');
-  const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   const [publishing, setPublishing] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [acquirerOpen, setAcquirerOpen] = useState(false);
 
   const templateRef = useRef<ImTemplate | null>(null);
+
+  // One PUT at a time. Overlapping saves used to let an older copy land last
+  // and quietly undo newer edits, even though every request came back OK.
+  const saveTemplate = useCallback(
+    async (snapshot: ImTemplate) => {
+      // brokerEmail is always sent; the backend only applies a broker change
+      // when the user is a superadmin.
+      await apiClient.put(`${BASE}/${id}`, {
+        businessName: snapshot.businessName,
+        brokerEmail: snapshot.brokerEmail,
+        sections: snapshot.sections,
+        // Acquisition Reports only; ignored by the IM backend.
+        deal: snapshot.deal,
+        dealName: snapshot.dealName,
+      });
+    },
+    [id, BASE],
+  );
+
+  const {
+    state: saveState,
+    lastSavedAt,
+    isDirty,
+    update: trackChange,
+    reset: adoptSaved,
+    sync: syncSnapshot,
+    commit,
+    flush,
+  } = useAutosave<ImTemplate>({ save: saveTemplate });
 
   // ── Load ──────────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -76,6 +106,7 @@ export function ReportEditor({ config }: { config: ReportKindConfig }) {
         const loaded = { ...data, sections } as ImTemplate;
         templateRef.current = loaded;
         setTemplate(loaded);
+        adoptSaved(loaded);
       })
       .catch((e) => {
         if (!active) return;
@@ -89,46 +120,37 @@ export function ReportEditor({ config }: { config: ReportKindConfig }) {
     return () => {
       active = false;
     };
-  }, [id, BASE, config.docNoun]);
+  }, [id, BASE, config.docNoun, adoptSaved]);
 
-  const saveNow = useCallback(async () => {
-    const current = templateRef.current;
-    if (!current) return;
-    setSaveState('saving');
-    try {
-      // brokerEmail is always sent; the backend only applies a broker change
-      // when the user is a superadmin.
-      await apiClient.put(`${BASE}/${id}`, {
-        businessName: current.businessName,
-        brokerEmail: current.brokerEmail,
-        sections: current.sections,
-        // Acquisition Reports only; ignored by the IM backend.
-        deal: current.deal,
-        dealName: current.dealName,
-      });
-      setSaveState('saved');
-      setLastSavedAt(new Date());
-    } catch {
-      setSaveState('error');
-    }
-  }, [id, BASE]);
+  // ── Mutators ──────────────────────────────────────────────────
+  // `patch` updates the preview and flags the change as unsaved. The save
+  // itself comes from `commit` (on blur, or a discrete action like reorder or
+  // toggle) or from the idle timer, so an edit that never blurs isn't lost.
+  const patch = useCallback(
+    (updater: (prev: ImTemplate) => ImTemplate) => {
+      const prev = templateRef.current;
+      if (!prev) return;
+      const next = updater(prev);
+      templateRef.current = next;
+      setTemplate(next);
+      trackChange(next);
+    },
+    [trackChange],
+  );
 
-  const hasPending = useRef(false);
-
-  const patch = useCallback((updater: (prev: ImTemplate) => ImTemplate) => {
-    const prev = templateRef.current;
-    if (!prev) return;
-    const next = updater(prev);
-    templateRef.current = next;
-    setTemplate(next);
-    hasPending.current = true;
-  }, []);
-
-  const commit = useCallback(() => {
-    if (!hasPending.current) return;
-    hasPending.current = false;
-    void saveNow();
-  }, [saveNow]);
+  // Same, but for things the PUT doesn't send — publish status has its own
+  // endpoint, so don't flag the document as unsaved.
+  const patchLocal = useCallback(
+    (updater: (prev: ImTemplate) => ImTemplate) => {
+      const prev = templateRef.current;
+      if (!prev) return;
+      const next = updater(prev);
+      templateRef.current = next;
+      setTemplate(next);
+      syncSnapshot(next);
+    },
+    [syncSnapshot],
+  );
 
   const patchCommit = useCallback(
     (updater: (prev: ImTemplate) => ImTemplate) => {
@@ -139,18 +161,28 @@ export function ReportEditor({ config }: { config: ReportKindConfig }) {
   );
 
   const handleSectionChange = useCallback(
-    (index: number, p: Record<string, unknown>) =>
+    (index: number, p: SectionPatch<RawSectionData>) =>
       patch((prev) => {
         const target = prev.sections[index];
+        if (!target) return prev;
+        // Resolve against the section's current data, not a render-old copy.
+        const data = target.data ?? {};
+        const applied = typeof p === 'function' ? p(data) : p;
         const sections = prev.sections.map((s, i) =>
-          i === index ? { ...s, data: { ...s.data, ...p } } : s,
+          i === index ? { ...s, data: { ...data, ...applied } } : s,
         );
         const extra: Partial<ImTemplate> = {};
-        if (target.type === 'banner' && typeof p.businessName === 'string') {
-          extra.businessName = p.businessName;
+        if (
+          target.type === 'banner' &&
+          typeof applied.businessName === 'string'
+        ) {
+          extra.businessName = applied.businessName;
         }
-        if (target.type === 'welcome' && typeof p.brokerEmail === 'string') {
-          extra.brokerEmail = p.brokerEmail;
+        if (
+          target.type === 'welcome' &&
+          typeof applied.brokerEmail === 'string'
+        ) {
+          extra.brokerEmail = applied.brokerEmail;
         }
         return { ...prev, sections, ...extra };
       }),
@@ -263,9 +295,11 @@ export function ReportEditor({ config }: { config: ReportKindConfig }) {
     if (!template) return;
     setPublishing(true);
     try {
+      // Save pending edits first so we don't publish a stale document.
+      await flush();
       const next = template.status === 'published' ? 'draft' : 'published';
       await apiClient.patch(`${BASE}/${id}/status`, { status: next });
-      patch((prev) => ({
+      patchLocal((prev) => ({
         ...prev,
         status: next,
         publishedAt: next === 'published' ? new Date().toISOString() : null,
@@ -273,16 +307,18 @@ export function ReportEditor({ config }: { config: ReportKindConfig }) {
     } finally {
       setPublishing(false);
     }
-  }, [template, id, patch, BASE]);
+  }, [template, id, patchLocal, flush, BASE]);
 
   const handleDelete = useCallback(async () => {
     try {
       await apiClient.delete(`${BASE}/${id}`);
+      // Already archived, so don't let the save-on-exit put it back.
+      if (templateRef.current) adoptSaved(templateRef.current);
       router.push(config.basePath);
     } catch {
       setConfirmDelete(false);
     }
-  }, [id, router, BASE, config.basePath]);
+  }, [id, router, BASE, config.basePath, adoptSaved]);
 
   // ── Render ──────────────────────────────────────────────────────────────────
   if (loading) {
@@ -315,7 +351,12 @@ export function ReportEditor({ config }: { config: ReportKindConfig }) {
     <div className='-m-6'>
       {/* Saved indicator */}
       <div className='fixed right-6 top-20 z-40'>
-        <SavedIndicator state={saveState} lastSavedAt={lastSavedAt} />
+        <SavedIndicator
+          state={saveState}
+          lastSavedAt={lastSavedAt}
+          isDirty={isDirty}
+          onRetry={() => void flush()}
+        />
       </div>
 
       {/* Document — continuous web-page flow, edited inline */}

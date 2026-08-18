@@ -57,6 +57,7 @@ import {
   type KpiRow,
   type KpiStyle,
   type PieSlice,
+  type SectionPatch,
 } from '../types';
 
 // ─── Series definition (single source of truth for keys, labels, colours) ─────
@@ -1456,33 +1457,39 @@ export function ChartsSection({
 }: {
   data: ChartsData;
   editable?: boolean;
-  onChange?: (patch: Partial<ChartsData>) => void;
+  onChange?: (patch: SectionPatch<ChartsData>) => void;
   onCommit?: () => void;
 }) {
   const charts = data.charts ?? [];
 
-  const writeCharts = (next: ChartItem[], commit = true) => {
-    onChange?.({ charts: next });
+  // Built from the current charts rather than the ones this render captured, so
+  // two edits in quick succession can't drop the first.
+  const writeCharts = (make: (prev: ChartItem[]) => ChartItem[], commit = true) => {
+    onChange?.((prev) => ({ charts: make((prev.charts as ChartItem[]) ?? []) }));
     if (commit) onCommit?.();
   };
   const updateChart = (id: string, patch: Partial<ChartItem>) =>
     writeCharts(
-      charts.map((c) => (c.id === id ? { ...c, ...patch } : c)),
+      (prev) => prev.map((c) => (c.id === id ? { ...c, ...patch } : c)),
       false,
     );
-  const addFinance = () => writeCharts([...charts, makeFinanceChart()]);
-  const addRoi = () => writeCharts([...charts, makeRoiChart()]);
-  const addGrowth = () => writeCharts([...charts, makeGrowthChart()]);
-  const addPie = () => writeCharts([...charts, makePieChart()]);
-  const addKpi = () => writeCharts([...charts, makeKpiChart()]);
-  const removeChart = (id: string) => writeCharts(charts.filter((c) => c.id !== id));
-  const moveChart = (index: number, dir: -1 | 1) => {
-    const j = index + dir;
-    if (j < 0 || j >= charts.length) return;
-    const next = [...charts];
-    [next[index], next[j]] = [next[j], next[index]];
-    writeCharts(next);
-  };
+  const addChart = (make: () => ChartItem) =>
+    writeCharts((prev) => [...prev, make()]);
+  const addFinance = () => addChart(makeFinanceChart);
+  const addRoi = () => addChart(makeRoiChart);
+  const addGrowth = () => addChart(makeGrowthChart);
+  const addPie = () => addChart(makePieChart);
+  const addKpi = () => addChart(makeKpiChart);
+  const removeChart = (id: string) =>
+    writeCharts((prev) => prev.filter((c) => c.id !== id));
+  const moveChart = (index: number, dir: -1 | 1) =>
+    writeCharts((prev) => {
+      const j = index + dir;
+      if (j < 0 || j >= prev.length) return prev;
+      const next = [...prev];
+      [next[index], next[j]] = [next[j], next[index]];
+      return next;
+    });
 
   // Reader: only show charts that actually have data.
   const shown = editable ? charts : charts.filter(chartHasData);

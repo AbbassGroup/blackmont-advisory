@@ -45,6 +45,7 @@ import {
   type CustomBlock,
   type CustomButton,
   type CustomData,
+  type SectionPatch,
   type TableCell,
   type TableRow,
 } from '../types';
@@ -291,7 +292,15 @@ function newBlock(type: CustomBlock['type']): CustomBlock {
   }
 }
 
-type Update = (patch: Record<string, unknown>, commit?: boolean) => void;
+/** Updates one block. Pass a function when the new value is built from the old
+ * one (appending photos, editing a button) so a slow upload can't overwrite
+ * edits made while it was running. */
+type Update = (
+  patch:
+    | Record<string, unknown>
+    | ((prev: Record<string, unknown>) => Record<string, unknown>),
+  commit?: boolean,
+) => void;
 
 // ─── Read-only views ──────────────────────────────────────────────────────────
 function TableView({ rows: raw }: { rows: unknown }) {
@@ -862,19 +871,26 @@ function ButtonsBlockEditor({
   const pendingId = useRef<string | null>(null);
   const [uploadingId, setUploadingId] = useState<string | null>(null);
 
-  const setBtns = (next: CustomButton[], commit = true) =>
-    update({ buttons: next }, commit);
+  const setBtns = (
+    make: (prev: CustomButton[]) => CustomButton[],
+    commit = true,
+  ) =>
+    update(
+      (prev) => ({ buttons: make((prev.buttons as CustomButton[]) ?? []) }),
+      commit,
+    );
   const updBtn = (id: string, patch: Partial<CustomButton>, commit = false) =>
     setBtns(
-      buttons.map((b) => (b.id === id ? { ...b, ...patch } : b)),
+      (prev) => prev.map((b) => (b.id === id ? { ...b, ...patch } : b)),
       commit,
     );
   const addBtn = () =>
-    setBtns([
-      ...buttons,
+    setBtns((prev) => [
+      ...prev,
       { id: makeUid('btn'), label: 'New Button', kind: 'link', url: '' },
     ]);
-  const removeBtn = (id: string) => setBtns(buttons.filter((b) => b.id !== id));
+  const removeBtn = (id: string) =>
+    setBtns((prev) => prev.filter((b) => b.id !== id));
 
   const handlePdf = async (id: string, file: File) => {
     if (!onUploadFile) return;
@@ -1007,13 +1023,22 @@ function PhotosBlockEditor({
         const url = await onUploadFile(f);
         if (url) urls.push(url);
       }
-      if (urls.length) update({ photos: [...photos, ...urls] }, true);
+      if (urls.length)
+        update(
+          (prev) => ({ photos: [...((prev.photos as string[]) ?? []), ...urls] }),
+          true,
+        );
     } finally {
       setUploading(false);
     }
   };
   const removePhoto = (i: number) =>
-    update({ photos: photos.filter((_, idx) => idx !== i) }, true);
+    update(
+      (prev) => ({
+        photos: ((prev.photos as string[]) ?? []).filter((_, idx) => idx !== i),
+      }),
+      true,
+    );
 
   return (
     <div className='space-y-2'>
@@ -1309,41 +1334,54 @@ export function CustomSection({
 }: {
   data: CustomData;
   editable?: boolean;
-  onChange?: (patch: Partial<CustomData>) => void;
+  onChange?: (patch: SectionPatch<CustomData>) => void;
   onUploadFile?: (file: File) => Promise<string | null>;
   onCommit?: () => void;
 }) {
   const blocks = resolveBlocks(data);
 
-  const write = (next: CustomBlock[], commit = true) => {
-    onChange?.({ blocks: next });
+  // Every write is built from the blocks as they are now, not as they were when
+  // the handler was created. Without this an upload that finishes late reverts
+  // anything edited elsewhere in the section while it was running.
+  const write = (make: (prev: CustomBlock[]) => CustomBlock[], commit = true) => {
+    onChange?.((prev) => ({
+      blocks: make(resolveBlocks(prev as unknown as CustomData)),
+    }));
     if (commit) onCommit?.();
   };
   const updateBlock = (
     id: string,
-    patch: Record<string, unknown>,
+    patch:
+      | Record<string, unknown>
+      | ((prev: Record<string, unknown>) => Record<string, unknown>),
     commit = false,
   ) =>
     write(
-      blocks.map((b) =>
-        b.id === id ? ({ ...b, ...patch } as CustomBlock) : b,
-      ),
+      (prev) =>
+        prev.map((b) =>
+          b.id === id
+            ? ({
+                ...b,
+                ...(typeof patch === 'function'
+                  ? patch(b as unknown as Record<string, unknown>)
+                  : patch),
+              } as CustomBlock)
+            : b,
+        ),
       commit,
     );
-  const moveBlock = (index: number, dir: -1 | 1) => {
-    const j = index + dir;
-    if (j < 0 || j >= blocks.length) return;
-    const next = [...blocks];
-    [next[index], next[j]] = [next[j], next[index]];
-    write(next, true);
-  };
+  const moveBlock = (index: number, dir: -1 | 1) =>
+    write((prev) => {
+      const j = index + dir;
+      if (j < 0 || j >= prev.length) return prev;
+      const next = [...prev];
+      [next[index], next[j]] = [next[j], next[index]];
+      return next;
+    }, true);
   const removeBlock = (id: string) =>
-    write(
-      blocks.filter((b) => b.id !== id),
-      true,
-    );
+    write((prev) => prev.filter((b) => b.id !== id), true);
   const addBlock = (type: CustomBlock['type']) =>
-    write([...blocks, newBlock(type)], true);
+    write((prev) => [...prev, newBlock(type)], true);
 
   return (
     <>
