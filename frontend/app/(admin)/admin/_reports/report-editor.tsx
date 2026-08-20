@@ -8,6 +8,7 @@ import { apiClient } from '@/lib/api';
 import { useAdminAuth } from '@/context/admin-auth-context';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAutosave } from '@/hooks/use-autosave';
+import { useHistory } from '@/hooks/use-history';
 import { Button } from '@/components/ui/button';
 import {
   Drawer,
@@ -85,9 +86,25 @@ export function ReportEditor({ config }: { config: ReportKindConfig }) {
     update: trackChange,
     reset: adoptSaved,
     sync: syncSnapshot,
-    commit,
+    commit: commitSave,
     flush,
   } = useAutosave<ImTemplate>({ save: saveTemplate });
+
+  const {
+    canUndo,
+    canRedo,
+    record: recordHistory,
+    undo: undoHistory,
+    redo: redoHistory,
+    reset: resetHistory,
+    close: closeHistory,
+  } = useHistory<ImTemplate>();
+
+  // Blur ends a typing burst, so the next keystroke starts a fresh undo step.
+  const commit = useCallback(() => {
+    closeHistory();
+    commitSave();
+  }, [closeHistory, commitSave]);
 
   // ── Load ──────────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -107,6 +124,7 @@ export function ReportEditor({ config }: { config: ReportKindConfig }) {
         templateRef.current = loaded;
         setTemplate(loaded);
         adoptSaved(loaded);
+        resetHistory();
       })
       .catch((e) => {
         if (!active) return;
@@ -120,22 +138,30 @@ export function ReportEditor({ config }: { config: ReportKindConfig }) {
     return () => {
       active = false;
     };
-  }, [id, BASE, config.docNoun, adoptSaved]);
+  }, [id, BASE, config.docNoun, adoptSaved, resetHistory]);
 
   // ── Mutators ──────────────────────────────────────────────────
   // `patch` updates the preview and flags the change as unsaved. The save
   // itself comes from `commit` (on blur, or a discrete action like reorder or
   // toggle) or from the idle timer, so an edit that never blurs isn't lost.
   const patch = useCallback(
-    (updater: (prev: ImTemplate) => ImTemplate) => {
+    (
+      updater: (prev: ImTemplate) => ImTemplate,
+      // Continuous edits (typing in one field) share a key and collapse into a
+      // single undo step. `null` — every discrete action — gets its own.
+      coalesceKey: string | null = null,
+    ) => {
       const prev = templateRef.current;
       if (!prev) return;
       const next = updater(prev);
+      // Updaters bail out by returning `prev` (moving the first section up, say).
+      if (next === prev) return;
+      recordHistory(prev, coalesceKey);
       templateRef.current = next;
       setTemplate(next);
       trackChange(next);
     },
-    [trackChange],
+    [trackChange, recordHistory],
   );
 
   // Same, but for things the PUT doesn't send — publish status has its own
@@ -161,33 +187,91 @@ export function ReportEditor({ config }: { config: ReportKindConfig }) {
   );
 
   const handleSectionChange = useCallback(
-    (index: number, p: SectionPatch<RawSectionData>) =>
-      patch((prev) => {
-        const target = prev.sections[index];
-        if (!target) return prev;
-        // Resolve against the section's current data, not a render-old copy.
-        const data = target.data ?? {};
-        const applied = typeof p === 'function' ? p(data) : p;
-        const sections = prev.sections.map((s, i) =>
-          i === index ? { ...s, data: { ...data, ...applied } } : s,
-        );
-        const extra: Partial<ImTemplate> = {};
-        if (
-          target.type === 'banner' &&
-          typeof applied.businessName === 'string'
-        ) {
-          extra.businessName = applied.businessName;
-        }
-        if (
-          target.type === 'welcome' &&
-          typeof applied.brokerEmail === 'string'
-        ) {
-          extra.brokerEmail = applied.brokerEmail;
-        }
-        return { ...prev, sections, ...extra };
-      }),
+    (index: number, p: SectionPatch<RawSectionData>) => {
+      const current = templateRef.current;
+      const target = current?.sections[index];
+      if (!current || !target) return;
+      // Resolve against the section's current data, not a render-old copy.
+      // `patch` reads the same `templateRef` on the next line, so this sees
+      // exactly the state the change will be applied to.
+      const data = target.data ?? {};
+      const applied = typeof p === 'function' ? p(data) : p;
+      // Typing in one field is one undo step; moving to another field — or
+      // another section — starts the next one.
+      const key = `${index}:${Object.keys(applied).sort().join(',')}`;
+      patch(
+        (prev) => {
+          const sections = prev.sections.map((s, i) =>
+            i === index ? { ...s, data: { ...data, ...applied } } : s,
+          );
+          const extra: Partial<ImTemplate> = {};
+          if (
+            target.type === 'banner' &&
+            typeof applied.businessName === 'string'
+          ) {
+            extra.businessName = applied.businessName;
+          }
+          if (
+            target.type === 'welcome' &&
+            typeof applied.brokerEmail === 'string'
+          ) {
+            extra.brokerEmail = applied.brokerEmail;
+          }
+          return { ...prev, sections, ...extra };
+        },
+        key,
+      );
+    },
     [patch],
   );
+
+  // ── Undo / redo ─────────────────────────────────────────────────────────────
+  const applySnapshot = useCallback(
+    (snapshot: ImTemplate) => {
+      templateRef.current = snapshot;
+      setTemplate(snapshot);
+      // Stepping back is itself an edit — it saves like any other change.
+      trackChange(snapshot);
+    },
+    [trackChange],
+  );
+
+  // InlineText keeps the focused field uncontrolled so the caret stays put,
+  // which also means it won't repaint under us. Blurring first makes the
+  // restored text show up, and flushes that field's own edit into history.
+  const step = useCallback(
+    (take: (current: ImTemplate) => ImTemplate | null) => {
+      (document.activeElement as HTMLElement | null)?.blur?.();
+      const current = templateRef.current;
+      if (!current) return;
+      const snapshot = take(current);
+      if (!snapshot) return;
+      applySnapshot(snapshot);
+      // A discrete action, so persist it now rather than on the idle timer.
+      commit();
+    },
+    [applySnapshot, commit],
+  );
+
+  const undo = useCallback(() => step(undoHistory), [step, undoHistory]);
+  const redo = useCallback(() => step(redoHistory), [step, redoHistory]);
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (!e.metaKey && !e.ctrlKey) return;
+      const key = e.key.toLowerCase();
+      if (key !== 'z' && key !== 'y') return;
+      // Rich-text blocks carry their own history (TipTap), so leave undo to
+      // them while the caret is inside one.
+      const target = e.target as HTMLElement | null;
+      if (e.defaultPrevented || target?.closest?.('.ProseMirror')) return;
+      e.preventDefault();
+      if (key === 'y' || e.shiftKey) redo();
+      else undo();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [undo, redo]);
 
   const moveSection = useCallback(
     (index: number, dir: -1 | 1) =>
@@ -389,6 +473,10 @@ export function ReportEditor({ config }: { config: ReportKindConfig }) {
         status={template.status}
         publishing={publishing}
         onTogglePublish={togglePublish}
+        canUndo={canUndo}
+        canRedo={canRedo}
+        onUndo={undo}
+        onRedo={redo}
       />
 
       {/* Controls drawer (right on desktop, bottom on mobile) */}

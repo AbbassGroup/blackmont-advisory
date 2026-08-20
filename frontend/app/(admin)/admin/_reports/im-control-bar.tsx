@@ -1,6 +1,16 @@
 'use client';
 
-import { ArrowLeft, Eye, LayoutList, Printer, Settings, Globe, Loader2 } from 'lucide-react';
+import {
+  ArrowLeft,
+  Eye,
+  LayoutList,
+  Printer,
+  Redo2,
+  Settings,
+  Globe,
+  Loader2,
+  Undo2,
+} from 'lucide-react';
 import Link from 'next/link';
 
 export type PanelKey = 'sections' | 'settings';
@@ -14,6 +24,10 @@ export function ImControlBar({
   status,
   publishing,
   onTogglePublish,
+  canUndo,
+  canRedo,
+  onUndo,
+  onRedo,
 }: {
   backHref: string;
   previewHref: string;
@@ -23,12 +37,33 @@ export function ImControlBar({
   status: 'draft' | 'published';
   publishing: boolean;
   onTogglePublish: () => void;
+  canUndo: boolean;
+  canRedo: boolean;
+  onUndo: () => void;
+  onRedo: () => void;
 }) {
   return (
     <div className="fixed bottom-3 left-1/2 z-40 flex max-w-[calc(100vw-0.75rem)] -translate-x-1/2 items-center gap-0.5 overflow-x-auto rounded-2xl border border-border bg-card/95 p-1 shadow-[0_8px_30px_rgba(15,22,35,0.18)] backdrop-blur sm:bottom-4 sm:gap-1 sm:p-1.5">
       <Link href={backHref}>
         <BarButton label="Back" icon={<ArrowLeft className="h-5 w-5" />} />
       </Link>
+
+      <Divider />
+
+      <BarButton
+        label="Undo"
+        title="Undo (Ctrl+Z)"
+        icon={<Undo2 className="h-5 w-5" />}
+        onClick={onUndo}
+        disabled={!canUndo}
+      />
+      <BarButton
+        label="Redo"
+        title="Redo (Ctrl+Shift+Z)"
+        icon={<Redo2 className="h-5 w-5" />}
+        onClick={onRedo}
+        disabled={!canRedo}
+      />
 
       <Divider />
 
@@ -77,20 +112,27 @@ function BarButton({
   icon,
   onClick,
   active,
+  disabled,
+  title,
 }: {
   label: string;
   icon: React.ReactNode;
   onClick?: () => void;
   active?: boolean;
+  disabled?: boolean;
+  title?: string;
 }) {
   return (
     <button
       onClick={onClick}
-      title={label}
+      disabled={disabled}
+      title={title ?? label}
       className={`flex min-w-0 shrink-0 flex-col items-center gap-0.5 rounded-xl px-2.5 py-1.5 text-[10px] font-medium transition-colors sm:min-w-[58px] sm:px-3 sm:text-[11px] ${
-        active
-          ? 'bg-accent/15 text-accent'
-          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+        disabled
+          ? 'cursor-not-allowed text-muted-foreground/40'
+          : active
+            ? 'bg-accent/15 text-accent'
+            : 'text-muted-foreground hover:bg-muted hover:text-foreground'
       }`}
     >
       {icon}
