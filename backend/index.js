@@ -8,7 +8,7 @@ const app = express(); // Define app first
 
 // CORS configuration
 const corsOptions = {
-  origin: ['http://localhost:3000', 'http://localhost:5005', 'http://localhost:5006', 'http://localhost:3004', 'https://api.blackmontadvisory.com', 'https://blackmontadvisory.com', 'https://www.blackmontadvisory.com', 'https://dev.blackmontadvisory.com', 'http://localhost:5059', 'http://localhost:3090'],
+  origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:5005', 'http://localhost:5006', 'http://localhost:3004', 'https://api.blackmontadvisory.com', 'https://blackmontadvisory.com', 'https://www.blackmontadvisory.com', 'https://dev.blackmontadvisory.com', 'http://localhost:5059', 'http://localhost:3090'],
   credentials: true,
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS']
 };
@@ -91,6 +91,9 @@ app.use('/api/im-follow-up', imFollowUpRoutes);
 
 const vendorRoutes = require('./routes/vendor');
 app.use('/api/vendor', vendorRoutes);
+
+const offerTermSheetRoutes = require('./routes/offerTermSheets');
+app.use('/api/offer-term-sheets', offerTermSheetRoutes);
 
 app.use('/uploads', express.static('uploads'));
 
