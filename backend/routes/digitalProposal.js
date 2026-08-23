@@ -5,34 +5,21 @@ const ProposalViewLog = require('../models/ProposalViewLog');
 const multer = require('multer');
 const path = require('path');
 const { sendMail } = require('../utils/mailer');
-const { createAdminNotificationEmail, createCustomerApprovalEmail } = require('../utils/emailTemplates');
+const {
+  createAdminNotificationEmail,
+  createCustomerApprovalEmail,
+  createProposalAcceptanceEmail,
+} = require('../utils/emailTemplates');
+const {
+  makeDefaultSections,
+  deriveFlatFields,
+  enforceLockedSections,
+  ensureSections,
+} = require('../utils/proposalSections');
 
-const SN_API = "https://api.signnow.com";
-// Configure multer for file uploads
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, 'uploads/proposals/');
-//   },
-//   filename: function (req, file, cb) {
-//     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-//     cb(null, 'proposal-' + uniqueSuffix + path.extname(file.originalname));
-//   }
-// });
-
-// const upload = multer({
-//   storage: storage,
-//   limits: {
-//     fileSize: 5 * 1024 * 1024 // 5MB limit
-//   },
-//   fileFilter: function (req, file, cb) {
-//     if (file.mimetype.startsWith('image/')) {
-//       cb(null, true);
-//     } else {
-//       cb(new Error('Only image files are allowed!'), false);
-//     }
-//   }
-// });
-
+// Uploads land in `uploads/proposals/` and are served statically from /uploads.
+// Kept on disk (not memory) because the URL is stored on the section and served
+// back to the customer long after the request that uploaded it.
 const upload = multer({
   dest: path.join(__dirname, '../uploads/proposals/'),
   limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit
@@ -46,13 +33,69 @@ function multerErrorHandler(err, req, res, next) {
   next(err);
 }
 
+/** Public URL for an uploaded file. */
+const uploadUrl = (filename) =>
+  `${process.env.BACKEND_URL || 'https://api.blackmontadvisory.com'}/uploads/proposals/${filename}`;
+
+/** Settings-drawer fields — everything that isn't edited inline in a section.
+ *  These are contract inputs read by the emails, so they stay top-level. */
+const SETTINGS_FIELDS = [
+  'brokerName',
+  'brokerEmail',
+  'customerEmail',
+  'customerName',
+  'agreementTerm',
+  'businessAddress',
+  'listingPrice',
+  'performanceBonus',
+  'salePrice',
+  'template',
+];
+
+/** Persist a section payload: never trust the client to have kept the locked
+ *  sections, and always re-derive the contract fields from them afterwards. */
+function applySectionUpdate(proposal, body) {
+  const settings = {};
+  for (const key of SETTINGS_FIELDS) {
+    if (body[key] !== undefined) settings[key] = body[key];
+  }
+
+  Object.assign(proposal, settings);
+
+  // Only touch the layout when the caller actually sent one. A request with no
+  // `sections` — a partial update, or a client posting a body Express can't
+  // parse, such as the pre-section-engine editor's multipart form — must not be
+  // read as "this document has no sections" and wipe it down to the locked few.
+  if (Array.isArray(body.sections)) {
+    const flatContext = { ...proposal.toObject(), ...settings };
+    const sections = enforceLockedSections(body.sections, flatContext);
+    proposal.sections = sections;
+    // sections[] drives presentation; the derived scalars drive the emails.
+    Object.assign(proposal, deriveFlatFields(sections));
+  }
+
+  if (body.lastEditedBy) proposal.lastEditedBy = body.lastEditedBy;
+  return proposal;
+}
+
+// POST upload a file for a proposal section (banner image, photo, PDF, video).
+// Declared before `/:id` handlers for clarity; the section editor calls this and
+// stores the returned URL, which is what keeps autosave a plain JSON PUT.
+router.post('/upload', upload.single('image'), multerErrorHandler, async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
+    res.json({ url: uploadUrl(req.file.filename) });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 // GET all digital proposals
 router.get('/', async (req, res) => {
   try {
-    const { page = 1, limit = 10, search = '', isApproved } = req.query;
+    const { page = 1, limit = 10, search = '', isApproved, archived } = req.query;
 
-    let query = {};
+    let query = { archived: archived === 'true' ? true : { $ne: true } };
 
     // Search functionality
     if (search) {
@@ -70,7 +113,9 @@ router.get('/', async (req, res) => {
       query.isApproved = isApproved === 'true';
     }
 
+    // `sections` can be large — the list only renders the flat summary fields.
     const proposals = await DigitalProposal.find(query)
+      .select('-sections')
       .sort({ createdAt: -1 })
       .limit(limit * 1)
       .skip((page - 1) * limit)
@@ -96,6 +141,9 @@ router.get('/:id', async (req, res) => {
     if (!proposal) {
       return res.status(404).json({ message: 'Digital proposal not found' });
     }
+    // Documents created before the section engine get their layout built from
+    // their flat fields on first read, then saved so it only happens once.
+    if (ensureSections(proposal)) await proposal.save();
     res.json(proposal);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -107,8 +155,13 @@ router.get('/email/:email/:id', async (req, res) => {
   try {
     const proposals = await DigitalProposal.find({
       customerEmail: req.params.email,
-      _id: req.params.id
+      _id: req.params.id,
+      archived: { $ne: true }
     }).sort({ createdAt: -1 });
+
+    for (const proposal of proposals) {
+      if (ensureSections(proposal)) await proposal.save();
+    }
 
     res.json(proposals);
   } catch (error) {
@@ -116,14 +169,17 @@ router.get('/email/:email/:id', async (req, res) => {
   }
 });
 
-// POST create new digital proposal
-router.post('/', upload.single('backgroundImage'), multerErrorHandler, async (req, res) => {
+// POST create new digital proposal.
+// Creates a draft laid out with the default sections; the broker then edits it
+// inline. No owner notification here — that fires on submit-for-approval, since
+// autosave would otherwise email on every keystroke.
+router.post('/', async (req, res) => {
   try {
-    const proposalData = {
-      businessName: req.body.businessName,
-      businessValue: req.body.businessValue,
-      brokerName: req.body.brokerName,
-      brokerEmail: req.body.brokerEmail,
+    const flat = {
+      businessName: req.body.businessName || '',
+      businessValue: req.body.businessValue || '',
+      brokerName: req.body.brokerName || '',
+      brokerEmail: req.body.brokerEmail || '',
       financialAssumptions: req.body.financialAssumptions || '',
       customerEmail: req.body.customerEmail || '',
       customerName: req.body.customerName || '',
@@ -134,23 +190,61 @@ router.post('/', upload.single('backgroundImage'), multerErrorHandler, async (re
       salePrice: req.body.salePrice || '',
       engagementFee: req.body.engagementFee || '0',
       createdBy: req.body.createdBy || 'Admin',
-      advertisement: req.body.advertisement ? JSON.parse(req.body.advertisement) : [],
-      successFee: req.body.successFee ? JSON.parse(req.body.successFee) : [],
-      // expiredAt: req.body.expiredAt,
-      template: req.body.template || 'business_appraisal'
+      advertisement: Array.isArray(req.body.advertisement) ? req.body.advertisement : [],
+      successFee: Array.isArray(req.body.successFee) ? req.body.successFee : [],
+      template: req.body.template || 'business_appraisal',
     };
 
-    // Add background image if uploaded
-    if (req.file) {
-      proposalData.backgroundImage = `${process.env.BACKEND_URL}/uploads/proposals/${req.file.filename}`;
+    const proposal = new DigitalProposal({
+      ...flat,
+      sections: makeDefaultSections(flat),
+    });
+    // Seed the flat fee fields from the sections the defaults just built, so a
+    // brand-new proposal is already self-consistent.
+    Object.assign(proposal, deriveFlatFields(proposal.sections));
+
+    const savedProposal = await proposal.save();
+    res.status(201).json(savedProposal);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+// PUT update a digital proposal (autosave target).
+// JSON only — files go through POST /upload first. Deliberately silent: the
+// owner notification moved to POST /:id/submit.
+router.put('/:id', async (req, res) => {
+  try {
+    const proposal = await DigitalProposal.findById(req.params.id);
+    if (!proposal) {
+      return res.status(404).json({ message: 'Digital proposal not found' });
     }
 
-    const proposal = new DigitalProposal(proposalData);
+    applySectionUpdate(proposal, req.body);
+    const updatedProposal = await proposal.save();
+
+    res.json(updatedProposal);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+// POST submit a draft for the owner's approval.
+// This is where the admin notification email that used to fire on every save
+// now lives — one email, when the broker says the draft is ready.
+router.post('/:id/submit', async (req, res) => {
+  try {
+    const proposal = await DigitalProposal.findById(req.params.id);
+    if (!proposal) {
+      return res.status(404).json({ message: 'Digital proposal not found' });
+    }
+
+    const resubmitting = !!proposal.submittedForApprovalAt;
+    proposal.submittedForApprovalAt = new Date();
     const savedProposal = await proposal.save();
 
-    // Send email notification to owner for review
     try {
-      const ownerMsg = createAdminNotificationEmail(savedProposal, 'created');
+      const ownerMsg = createAdminNotificationEmail(savedProposal, resubmitting ? 'updated' : 'created');
       await sendMail(ownerMsg);
       console.log('Owner notification email sent for proposal:', savedProposal._id);
     } catch (emailError) {
@@ -158,62 +252,7 @@ router.post('/', upload.single('backgroundImage'), multerErrorHandler, async (re
       // Don't fail the request if email fails
     }
 
-    res.status(201).json(savedProposal);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
-// PUT update digital proposal
-router.put('/:id', upload.single('backgroundImage'), multerErrorHandler, async (req, res) => {
-  try {
-    const proposal = await DigitalProposal.findById(req.params.id);
-    if (!proposal) {
-      return res.status(404).json({ message: 'Digital proposal not found' });
-    }
-
-    // Update fields
-    const updateData = {
-      businessName: req.body.businessName || proposal.businessName,
-      businessValue: req.body.businessValue || proposal.businessValue,
-      brokerName: req.body.brokerName || proposal.brokerName,
-      brokerEmail: req.body.brokerEmail || proposal.brokerEmail,
-      financialAssumptions: req.body.financialAssumptions !== undefined ? req.body.financialAssumptions : proposal.financialAssumptions,
-      customerEmail: req.body.customerEmail !== undefined ? req.body.customerEmail : proposal.customerEmail,
-      customerName: req.body.customerName !== undefined ? req.body.customerName : proposal.customerName,
-      agreementTerm: req.body.agreementTerm !== undefined ? req.body.agreementTerm : proposal.agreementTerm,
-      businessAddress: req.body.businessAddress !== undefined ? req.body.businessAddress : proposal.businessAddress,
-      listingPrice: req.body.listingPrice !== undefined ? req.body.listingPrice : proposal.listingPrice,
-      performanceBonus: req.body.performanceBonus !== undefined ? req.body.performanceBonus : proposal.performanceBonus,
-      salePrice: req.body.salePrice !== undefined ? req.body.salePrice : proposal.salePrice,
-      engagementFee: req.body.engagementFee !== undefined ? req.body.engagementFee : proposal.engagementFee,
-      advertisement: req.body.advertisement ? JSON.parse(req.body.advertisement) : proposal.advertisement,
-      successFee: req.body.successFee ? JSON.parse(req.body.successFee) : proposal.successFee,
-      template: req.body.template !== undefined ? req.body.template : proposal.template
-    };
-
-    // Update background image if new one uploaded
-    if (req.file) {
-      updateData.backgroundImage = `https://api.blackmontadvisory.com/uploads/proposals/${req.file.filename}`;
-    }
-
-    const updatedProposal = await DigitalProposal.findByIdAndUpdate(
-      req.params.id,
-      updateData,
-      { new: true, runValidators: true }
-    );
-
-    // Send email notification to owner for updated proposal
-    try {
-      const ownerMsg = createAdminNotificationEmail(updatedProposal, 'updated');
-      await sendMail(ownerMsg);
-      console.log('Owner notification email sent for updated proposal:', updatedProposal._id);
-    } catch (emailError) {
-      console.error('Failed to send owner notification email for update:', emailError);
-      // Don't fail the request if email fails
-    }
-
-    res.json(updatedProposal);
+    res.json(savedProposal);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -279,6 +318,66 @@ router.put('/:id/revoke', async (req, res) => {
   }
 });
 
+/**
+ * The customer accepts their proposal.
+ *
+ * Notifies the owner and the broker that the customer accepted, and on which
+ * options. The agreement is then prepared by hand.
+ *
+ * This previously lived in a route that was meant to generate an e-signature
+ * document; that integration was never wired up — its API client did not exist
+ * in the codebase — so it has been removed rather than left as dead code.
+ *
+ * `id` comes from the path; `proposalId` in the body is accepted so a proposal
+ * page a customer had open before this change still works.
+ */
+async function acceptProposal(req, res) {
+  try {
+    const { selectedAdvertisement, selectedSuccessFee, customerEmail } = req.body;
+    const proposalId = req.params.id || req.body.proposalId;
+
+    if (!proposalId || !selectedAdvertisement || !selectedSuccessFee || !customerEmail) {
+      return res.status(400).json({
+        message:
+          'Missing required fields: proposalId, selectedAdvertisement, selectedSuccessFee, customerEmail',
+      });
+    }
+
+    const proposal = await DigitalProposal.findById(proposalId);
+    if (!proposal) {
+      return res.status(404).json({ message: 'Proposal not found' });
+    }
+
+    try {
+      const emailMsg = createProposalAcceptanceEmail(
+        proposal,
+        selectedAdvertisement,
+        selectedSuccessFee,
+      );
+      await sendMail(emailMsg);
+      console.log('Proposal acceptance notification email sent for proposal:', proposal._id);
+    } catch (emailError) {
+      console.error('Failed to send proposal acceptance email:', emailError);
+      // Don't fail the acceptance because the notification bounced.
+    }
+
+    res.json({
+      success: true,
+      message: 'Thank you, your agreement will be prepared shortly',
+      customerEmail: proposal.customerEmail,
+    });
+  } catch (error) {
+    console.error('Error processing proposal acceptance:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Failed to process proposal acceptance',
+    });
+  }
+}
+
+// POST the customer's acceptance
+router.post('/:id/accept', acceptProposal);
+
 // POST record a proposal view
 router.post('/:id/view', async (req, res) => {
   try {
@@ -315,8 +414,44 @@ router.get('/:id/views', async (req, res) => {
   }
 });
 
-// DELETE digital proposal
+// PATCH restore an archived proposal
+router.patch('/:id/restore', async (req, res) => {
+  try {
+    const proposal = await DigitalProposal.findByIdAndUpdate(
+      req.params.id,
+      { archived: false, archivedAt: null },
+      { new: true }
+    );
+    if (!proposal) {
+      return res.status(404).json({ message: 'Digital proposal not found' });
+    }
+    res.json(proposal);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+// DELETE digital proposal — soft delete, as per Information Memorandums.
+// A proposal may already have been accepted, so the record has to survive.
 router.delete('/:id', async (req, res) => {
+  try {
+    const proposal = await DigitalProposal.findByIdAndUpdate(
+      req.params.id,
+      { archived: true, archivedAt: new Date() },
+      { new: true }
+    );
+    if (!proposal) {
+      return res.status(404).json({ message: 'Digital proposal not found' });
+    }
+
+    res.json({ message: 'Digital proposal archived successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// DELETE permanently — superadmin escape hatch for an archived proposal.
+router.delete('/:id/permanent', async (req, res) => {
   try {
     const proposal = await DigitalProposal.findById(req.params.id);
     if (!proposal) {
@@ -324,10 +459,13 @@ router.delete('/:id', async (req, res) => {
     }
 
     await DigitalProposal.findByIdAndDelete(req.params.id);
-    res.json({ message: 'Digital proposal deleted successfully' });
+    await ProposalViewLog.deleteMany({ proposalId: req.params.id });
+    res.json({ message: 'Digital proposal deleted permanently' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
 module.exports = router;
+// Exported so the legacy acceptance path can reuse it — see `index.js`.
+module.exports.acceptProposal = acceptProposal;

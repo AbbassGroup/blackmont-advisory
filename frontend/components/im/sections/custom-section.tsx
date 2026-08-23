@@ -14,6 +14,7 @@ import {
   AlignCenter,
   AlignLeft,
   AlignRight,
+  BarChart3,
   Bold,
   ChevronDown,
   ChevronUp,
@@ -22,12 +23,16 @@ import {
   FileText,
   FileUp,
   Film,
+  Gauge,
   ImagePlus,
   Italic,
+  LayoutGrid,
   Loader2,
   Minus,
   MousePointerClick,
+  PieChart as PieChartIcon,
   Plus,
+  TrendingUp,
   Split,
   Table2,
   Trash2,
@@ -40,8 +45,15 @@ import { Input } from '@/components/ui/input';
 import { RichTextEditor } from '@/components/proposal/rich-text-editor';
 import { InlineText } from '../inline-text';
 import { SectionHeading } from '../section-chrome';
+import { ChartBlockEditor, ChartBlockView, chartHasData } from './charts-section';
 import {
+  makeFinanceChart,
+  makeGrowthChart,
+  makeKpiChart,
+  makePieChart,
+  makeRoiChart,
   makeUid,
+  type ChartItem,
   type CustomBlock,
   type CustomButton,
   type CustomData,
@@ -224,6 +236,7 @@ const BLOCK_LABELS: Record<CustomBlock['type'], string> = {
   photos: 'Photos',
   video: 'Video',
   pdf: 'PDF',
+  chart: 'Chart',
 };
 
 const BLOCK_ICONS: Record<CustomBlock['type'], typeof Type> = {
@@ -233,6 +246,7 @@ const BLOCK_ICONS: Record<CustomBlock['type'], typeof Type> = {
   photos: ImagePlus,
   video: Film,
   pdf: FileText,
+  chart: BarChart3,
 };
 
 const BLOCK_TYPES = [
@@ -242,7 +256,17 @@ const BLOCK_TYPES = [
   'photos',
   'video',
   'pdf',
+  'chart',
 ] as const;
+
+/** The chart kinds a chart block can become, in the order the picker lists them. */
+const CHART_KINDS: { label: string; icon: typeof BarChart3; make: () => ChartItem }[] = [
+  { label: 'Finance', icon: BarChart3, make: makeFinanceChart },
+  { label: 'Growth', icon: TrendingUp, make: makeGrowthChart },
+  { label: 'Pie', icon: PieChartIcon, make: makePieChart },
+  { label: 'ROI doughnut', icon: Gauge, make: makeRoiChart },
+  { label: 'KPIs', icon: LayoutGrid, make: makeKpiChart },
+];
 
 /** Build the working block list, migrating legacy custom-section data on the fly
  * (with deterministic ids so re-renders stay stable). */
@@ -289,6 +313,9 @@ function newBlock(type: CustomBlock['type']): CustomBlock {
       return { id, type, kind: 'link', url: '' };
     case 'pdf':
       return { id, type, url: '' };
+    // No chart yet — the block renders a kind picker until one is chosen.
+    case 'chart':
+      return { id, type };
   }
 }
 
@@ -460,6 +487,11 @@ function BlockRead({ block }: { block: CustomBlock }) {
       ) : null;
     case 'pdf':
       return block.url ? <PdfPages url={block.url} /> : null;
+    case 'chart':
+      // An unchosen or empty chart is left out of the document entirely.
+      return block.chart && chartHasData(block.chart) ? (
+        <ChartBlockView chart={block.chart} />
+      ) : null;
   }
 }
 
@@ -1266,10 +1298,12 @@ function BlockEdit({
   block,
   update,
   onUploadFile,
+  onCommit,
 }: {
   block: CustomBlock;
   update: Update;
   onUploadFile?: (file: File) => Promise<string | null>;
+  onCommit?: () => void;
 }) {
   switch (block.type) {
     case 'text':
@@ -1320,6 +1354,41 @@ function BlockEdit({
           update={update}
           onUploadFile={onUploadFile}
         />
+      );
+    case 'chart':
+      return block.chart ? (
+        <ChartBlockEditor
+          chart={block.chart}
+          onChange={(patch) =>
+            // Resolved against the block's current chart so a burst of edits
+            // (typing a title while changing a row) can't drop the earlier one.
+            update(
+              (prev) => ({
+                chart: { ...((prev.chart as ChartItem) ?? {}), ...patch },
+              }),
+              false,
+            )
+          }
+          onCommit={onCommit}
+        />
+      ) : (
+        <div>
+          <p className='mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground/60'>
+            Choose a chart
+          </p>
+          <div className='grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5'>
+            {CHART_KINDS.map(({ label, icon: Icon, make }) => (
+              <button
+                key={label}
+                type='button'
+                onClick={() => update({ chart: make() })}
+                className='flex items-center justify-center gap-2 rounded-2xl border border-dashed border-border px-3 py-3 text-sm font-medium text-muted-foreground transition hover:border-accent hover:bg-accent/5 hover:text-accent'
+              >
+                <Icon className='h-4 w-4' /> {label}
+              </button>
+            ))}
+          </div>
+        </div>
       );
   }
 }
@@ -1437,6 +1506,7 @@ export function CustomSection({
                     updateBlock(block.id, patch, commit)
                   }
                   onUploadFile={onUploadFile}
+                  onCommit={onCommit}
                 />
               </div>
             );

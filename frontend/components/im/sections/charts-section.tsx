@@ -204,7 +204,7 @@ function rowHasData(r: FinanceRow): boolean {
 function rowHasContent(r: KpiRow): boolean {
   return Boolean(r.category.trim() || r.cells.some((c) => c.big.trim() || c.small.trim()));
 }
-function chartHasData(c: ChartItem): boolean {
+export function chartHasData(c: ChartItem): boolean {
   if (c.type === 'roi') return Boolean(c.askingPrice && c.sde);
   if (c.type === 'growth') return (c.growthRows ?? []).some((r) => r.value);
   if (c.type === 'pie') return (c.pieSlices ?? []).some((s) => s.value > 0);
@@ -1341,6 +1341,91 @@ function KpiBody({
 }
 
 // ─── Chart card (editor) ──────────────────────────────────────────────────────
+/**
+ * One chart, edited without the move/remove chrome `ChartEditor` carries.
+ *
+ * Used by a custom section's chart block, where the block wrapper already
+ * provides the reorder and delete controls — see `custom-section.tsx`.
+ */
+export function ChartBlockEditor({
+  chart,
+  onChange,
+  onCommit,
+}: {
+  chart: ChartItem;
+  onChange: (patch: Partial<ChartItem>) => void;
+  onCommit?: () => void;
+}) {
+  return (
+    <div className="border border-border bg-card p-4 shadow-xs sm:p-6">
+      <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <InlineText
+            as="h3"
+            singleLine
+            editable
+            value={chart.title}
+            onChange={(v) => onChange({ title: v })}
+            placeholder="Chart title"
+            className="text-lg font-semibold text-secondary sm:text-xl"
+          />
+        </div>
+        {chart.type === 'finance' && (
+          <VariantSwitch
+            variant={chart.variant ?? 'bar'}
+            onChange={(v) => {
+              onChange({ variant: v });
+              onCommit?.();
+            }}
+          />
+        )}
+      </div>
+
+      {chart.type === 'roi' ? (
+        <RoiBody chart={chart} onChange={onChange} onCommit={onCommit} />
+      ) : chart.type === 'growth' ? (
+        <GrowthBody chart={chart} onChange={onChange} onCommit={onCommit} />
+      ) : chart.type === 'pie' ? (
+        <PieBody chart={chart} onChange={onChange} onCommit={onCommit} />
+      ) : chart.type === 'kpi' ? (
+        <KpiBody chart={chart} onChange={onChange} onCommit={onCommit} />
+      ) : (
+        <FinanceBody chart={chart} onChange={onChange} onCommit={onCommit} />
+      )}
+    </div>
+  );
+}
+
+/** One chart as the reader sees it. */
+export function ChartBlockView({ chart }: { chart: ChartItem }) {
+  return (
+    <figure className="border border-border bg-card p-4 shadow-xs sm:p-6">
+      {chart.title?.trim() && (
+        <figcaption className="mb-4 text-lg font-semibold text-secondary sm:text-xl">
+          {chart.title}
+        </figcaption>
+      )}
+      {chart.type === 'roi' ? (
+        <RoiChartView chart={chart} />
+      ) : chart.type === 'growth' ? (
+        <>
+          <GrowthChartView chart={chart} />
+          <GrowthLegend />
+        </>
+      ) : chart.type === 'pie' ? (
+        <PieChartView chart={chart} />
+      ) : chart.type === 'kpi' ? (
+        <KpiView chart={chart} />
+      ) : (
+        <>
+          <FinanceChartView chart={chart} />
+          <FinanceLegend />
+        </>
+      )}
+    </figure>
+  );
+}
+
 function ChartEditor({
   chart,
   index,

@@ -2,46 +2,61 @@
 
 import {
   ArrowLeft,
+  Check,
   Eye,
   LayoutList,
+  Loader2,
   Printer,
   Redo2,
+  Send,
   Settings,
   Globe,
-  Loader2,
   Undo2,
 } from 'lucide-react';
 import Link from 'next/link';
+import type { DocStatusAction, StatusIcon } from './types';
 
 export type PanelKey = 'sections' | 'settings';
 
-export function ImControlBar({
+const STATUS_ICONS: Record<StatusIcon, React.ComponentType<{ className?: string }>> = {
+  globe: Globe,
+  send: Send,
+  check: Check,
+};
+
+/**
+ * The floating bar at the bottom of every document editor: navigation, undo/redo,
+ * preview/print, the two drawers, and the product's own status action.
+ */
+export function DocumentControlBar({
   backHref,
   previewHref,
   printHref,
   activePanel,
   onOpenPanel,
-  status,
-  publishing,
-  onTogglePublish,
+  statusAction,
+  statusBusy,
+  onStatusAction,
   canUndo,
   canRedo,
   onUndo,
   onRedo,
 }: {
   backHref: string;
-  previewHref: string;
-  printHref: string;
+  previewHref: string | null;
+  printHref: string | null;
   activePanel: PanelKey | null;
   onOpenPanel: (panel: PanelKey) => void;
-  status: 'draft' | 'published';
-  publishing: boolean;
-  onTogglePublish: () => void;
+  statusAction: DocStatusAction | null;
+  statusBusy: boolean;
+  onStatusAction: () => void;
   canUndo: boolean;
   canRedo: boolean;
   onUndo: () => void;
   onRedo: () => void;
 }) {
+  const StatusIconCmp = statusAction ? STATUS_ICONS[statusAction.icon] : null;
+
   return (
     <div className="fixed bottom-3 left-1/2 z-40 flex max-w-[calc(100vw-0.75rem)] -translate-x-1/2 items-center gap-0.5 overflow-x-auto rounded-2xl border border-border bg-card/95 p-1 shadow-[0_8px_30px_rgba(15,22,35,0.18)] backdrop-blur sm:bottom-4 sm:gap-1 sm:p-1.5">
       <Link href={backHref}>
@@ -67,12 +82,16 @@ export function ImControlBar({
 
       <Divider />
 
-      <Link href={previewHref} target="_blank" rel="noopener noreferrer">
-        <BarButton label="Preview" icon={<Eye className="h-5 w-5" />} />
-      </Link>
-      <Link href={printHref} target="_blank" rel="noopener noreferrer">
-        <BarButton label="Print" icon={<Printer className="h-5 w-5" />} />
-      </Link>
+      {previewHref && (
+        <Link href={previewHref} target="_blank" rel="noopener noreferrer">
+          <BarButton label="Preview" icon={<Eye className="h-5 w-5" />} />
+        </Link>
+      )}
+      {printHref && (
+        <Link href={printHref} target="_blank" rel="noopener noreferrer">
+          <BarButton label="Print" icon={<Printer className="h-5 w-5" />} />
+        </Link>
+      )}
       <BarButton
         label="Sections"
         icon={<LayoutList className="h-5 w-5" />}
@@ -86,23 +105,28 @@ export function ImControlBar({
         onClick={() => onOpenPanel('settings')}
       />
 
-      <Divider />
-
-      <button
-        onClick={onTogglePublish}
-        disabled={publishing}
-        title={status === 'published' ? 'Unpublish' : 'Publish'}
-        className={`flex shrink-0 items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition-colors sm:px-4 ${
-          status === 'published'
-            ? 'bg-amber-50 text-amber-600 hover:bg-amber-100'
-            : 'bg-accent text-primary hover:bg-accent-light'
-        }`}
-      >
-        {publishing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Globe className="h-4 w-4" />}
-        <span className="hidden sm:inline">
-          {status === 'published' ? 'Unpublish' : 'Publish'}
-        </span>
-      </button>
+      {statusAction && StatusIconCmp && (
+        <>
+          <Divider />
+          <button
+            onClick={onStatusAction}
+            disabled={statusBusy || statusAction.disabled}
+            title={statusAction.title ?? statusAction.label}
+            className={`flex shrink-0 items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60 sm:px-4 ${
+              statusAction.active
+                ? 'bg-amber-50 text-amber-600 hover:bg-amber-100'
+                : 'bg-accent text-primary hover:bg-accent-light'
+            }`}
+          >
+            {statusBusy ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <StatusIconCmp className="h-4 w-4" />
+            )}
+            <span className="hidden sm:inline">{statusAction.label}</span>
+          </button>
+        </>
+      )}
     </div>
   );
 }

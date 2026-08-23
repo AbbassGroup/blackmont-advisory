@@ -90,7 +90,9 @@ export type CustomBlock =
   | { id: string; type: 'buttons'; buttons: CustomButton[] }
   | { id: string; type: 'photos'; photos: string[] }
   | { id: string; type: 'video'; kind: 'upload' | 'link'; url: string }
-  | { id: string; type: 'pdf'; url: string };
+  | { id: string; type: 'pdf'; url: string }
+  /** `chart` is unset until the author picks a kind from the block's own picker. */
+  | { id: string; type: 'chart'; chart?: ChartItem };
 
 export interface CustomData {
   title: string;

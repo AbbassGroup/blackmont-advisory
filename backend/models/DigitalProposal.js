@@ -1,5 +1,28 @@
 const mongoose = require('mongoose');
 
+/**
+ * A single section inside a Digital Proposal.
+ *
+ * Mirrors the Information Memorandum engine (`models/ImTemplate.js`): `type`
+ * picks the renderer, `data` is a free-form payload owned by that renderer, and
+ * order is the position in the `sections` array.
+ *
+ * The difference from an IM: a proposal is a *contract*. The banner and
+ * investment section types are locked because their content is denormalised
+ * back onto the flat fields below, which `utils/emailTemplates.js` reads when
+ * the client accepts. Presentation lives in `sections`; the contract lives in
+ * the flat fields, and the PUT handler keeps the two in step via
+ * `utils/proposalSections.js`.
+ */
+const proposalSectionSchema = new mongoose.Schema(
+  {
+    type: { type: String, required: true, trim: true },
+    enabled: { type: Boolean, default: true },
+    data: { type: mongoose.Schema.Types.Mixed, default: {} },
+  },
+  { _id: true }
+);
+
 const digitalProposalSchema = new mongoose.Schema({
   businessName: {//
     type: String,
@@ -117,6 +140,40 @@ const digitalProposalSchema = new mongoose.Schema({
   // expiredAt: {
   //   type: Date,
   // },
+  // ── Section engine ────────────────────────────────────────────────────────
+  // Source of truth for how the proposal is laid out and what it says. Empty on
+  // legacy documents; `buildSectionsFromFlat()` fills it in lazily on read.
+  sections: {
+    type: [proposalSectionSchema],
+    default: []
+  },
+
+  // Set when the broker submits the draft for the owner's approval. Together
+  // with `isApproved` this gives the editor its three states: draft (unset),
+  // pending (set, not approved), approved.
+  submittedForApprovalAt: {
+    type: Date,
+    default: null
+  },
+
+  // Soft delete, as per Information Memorandums: archived proposals drop out of
+  // the admin list and stop serving to customers, but stay recoverable.
+  archived: {
+    type: Boolean,
+    default: false,
+    index: true
+  },
+  archivedAt: {
+    type: Date,
+    default: null
+  },
+
+  lastEditedBy: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+
   template: {
     type: String,
     enum: ['business_appraisal', 'franchise_proposal'],
