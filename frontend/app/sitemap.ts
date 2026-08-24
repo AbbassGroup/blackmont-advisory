@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { blogs } from '@/data/blog-data';
+import { fetchAllPublicBlogSlugs } from '@/lib/blogs';
 
 const BASE_URL = 'https://www.blackmontadvisory.com';
 const API_BASE = process.env.NEXT_PUBLIC_API_URL;
@@ -43,13 +43,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }),
   );
 
-  // Dynamic Blog Routes
-  const blogEntries: MetadataRoute.Sitemap = blogs.map((blog) => ({
-    url: `${BASE_URL}/resources/${blog.link}`,
-    lastModified: new Date(),
-    changeFrequency: 'monthly',
-    priority: 0.6,
-  }));
+  // Dynamic Blog Routes (Fetched from API)
+  let blogEntries: MetadataRoute.Sitemap = [];
+  try {
+    const slugs = await fetchAllPublicBlogSlugs();
+    blogEntries = slugs.map(({ url, updatedAt }) => ({
+      url: `${BASE_URL}/resources/${url}`,
+      lastModified: updatedAt ? new Date(updatedAt) : new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    }));
+  } catch (error) {
+    console.error('Failed to fetch blogs for sitemap:', error);
+  }
 
   // Dynamic Listing Routes (Fetched from API)
   let listingEntries: MetadataRoute.Sitemap = [];
