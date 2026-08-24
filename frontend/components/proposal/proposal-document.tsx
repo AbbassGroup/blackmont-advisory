@@ -97,6 +97,12 @@ export interface ProposalDocumentProps {
   interaction?: ProposalInteraction;
   /** Tailwind classes for the container wrapping every non-cover section. */
   contentClassName?: string;
+  /**
+   * Start each section on a fresh printed page. Only the PDF export turns this
+   * on — a section taller than a page still flows onto the next, which is what
+   * you want for a long disclaimer or a big fee table.
+   */
+  pageBreakPerSection?: boolean;
 }
 
 function ProposalDocumentImpl({
@@ -108,6 +114,7 @@ function ProposalDocumentImpl({
   onCommit,
   interaction,
   contentClassName = 'mx-auto max-w-[1260px] px-6 lg:px-8',
+  pageBreakPerSection = false,
 }: ProposalDocumentProps) {
   const renderSection = (section: DocSection, index: number): ReactNode => {
     const onChange = (patch: SectionPatch) => onSectionChange?.(index, patch);
@@ -255,6 +262,9 @@ function ProposalDocumentImpl({
   // The cover is full-bleed; everything else shares one container so the
   // sections' vertical margins collapse the way they did before the engine.
   const groups: { full: boolean; items: { section: DocSection; index: number }[] }[] = [];
+  // Counted across groups so the first rendered section doesn't open with a
+  // page break and leave a blank sheet.
+  let rendered = 0;
   sections.forEach((section, index) => {
     if (section.enabled === false) return;
     const full = section.type === 'banner';
@@ -266,20 +276,35 @@ function ProposalDocumentImpl({
   return (
     <>
       {groups.map((group, gi) => {
-        const rendered = group.items.map(({ section, index }) => (
-          <div
-            key={section.uid || section._id || index}
-            id={proposalAnchorId(section, index)}
-            data-proposal-section={section.type}
-          >
-            {renderSection(section, index)}
-          </div>
-        ));
+        const items = group.items.map(({ section, index }) => {
+          const first = rendered === 0;
+          rendered += 1;
+          // A single-element section (the Accept button) would otherwise claim a
+          // sheet of its own that is almost entirely whitespace.
+          const breaks =
+            pageBreakPerSection &&
+            !first &&
+            !getProposalSectionMeta(section.type)?.noPageBreak;
+          return (
+            <div
+              key={section.uid || section._id || index}
+              id={proposalAnchorId(section, index)}
+              data-proposal-section={section.type}
+              className={breaks ? 'break-before-page' : undefined}
+              // Only a section that opens a sheet should lose its top margin.
+              data-page-start={
+                pageBreakPerSection && (first || breaks) ? 'true' : undefined
+              }
+            >
+              {renderSection(section, index)}
+            </div>
+          );
+        });
         return group.full ? (
-          <div key={`g${gi}`}>{rendered}</div>
+          <div key={`g${gi}`}>{items}</div>
         ) : (
           <div key={`g${gi}`} className={contentClassName}>
-            {rendered}
+            {items}
           </div>
         );
       })}

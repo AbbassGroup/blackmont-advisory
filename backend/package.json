@@ -27,6 +27,7 @@
     "multer": "^2.0.1",
     "nodemailer": "^7.0.10",
     "nodemon": "^3.1.10",
-    "pdf-lib": "^1.17.1"
+    "pdf-lib": "^1.17.1",
+    "puppeteer": "^25.8.0"
   }
 }

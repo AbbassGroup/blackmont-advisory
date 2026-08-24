@@ -72,6 +72,8 @@ function buildProposalConfig(): DocumentKindConfig<DigitalProposalDoc> {
     basePath: PROPOSAL_BASE_PATH,
     viewerBase: null,
     printBase: '/proposal-print',
+    printLabel: 'Export',
+    printIcon: 'download',
 
     // The customer link is gated on their email address, so it needs more than
     // the id. Without an address there is nothing to preview yet.

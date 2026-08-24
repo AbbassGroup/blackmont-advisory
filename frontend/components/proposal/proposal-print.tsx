@@ -1,143 +1,125 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { AlertCircle, Loader2, Printer } from 'lucide-react';
+import { AlertCircle, Download, FileText, Loader2 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
-import { useAdminAuth } from '@/context/admin-auth-context';
 import { Button } from '@/components/ui/button';
-import { ProposalDocument } from './proposal-document';
-import { PROPOSAL_API_BASE, type DigitalProposalDoc } from './types';
-
-/** Force every image to load (lazy images are skipped during print) and resolve
- *  once they're all done — with a safety timeout. */
-function waitForImages(root: HTMLElement, timeout = 7000): Promise<void> {
-  const imgs = Array.from(root.querySelectorAll('img'));
-  const pending = imgs.map((img) => {
-    img.loading = 'eager';
-    try {
-      img.decoding = 'sync';
-    } catch {
-      /* ignore */
-    }
-    if (img.complete && img.naturalWidth > 0) return Promise.resolve();
-    return new Promise<void>((resolve) => {
-      img.addEventListener('load', () => resolve(), { once: true });
-      img.addEventListener('error', () => resolve(), { once: true });
-    });
-  });
-  return Promise.race([
-    Promise.all(pending).then(() => undefined),
-    new Promise<void>((r) => setTimeout(r, timeout)),
-  ]);
-}
+import { PROPOSAL_API_BASE } from './types';
 
 /**
- * Broker-only printable view of a Digital Proposal.
+ * Broker-facing export screen.
  *
- * Renders outside the dashboard chrome so the document paginates like the web
- * page does, at the A4 printable width.
+ * The PDF is rendered on the server by headless Chrome — see
+ * `backend/utils/proposalPdf.js` — so it comes out as a designed document
+ * (full-bleed cover, running header, one section per page) rather than whatever
+ * the browser's print dialog happens to produce. This page previews it and
+ * hands over the download.
  */
 export function ProposalPrint({ id }: { id: string }) {
-  const { token } = useAdminAuth();
-  const router = useRouter();
-  const [proposal, setProposal] = useState<DigitalProposalDoc | null>(null);
+  const [state, setState] = useState<'working' | 'ready' | 'error'>('working');
   const [error, setError] = useState('');
-  const printed = useRef(false);
-  const docRef = useRef<HTMLDivElement>(null);
+  const [url, setUrl] = useState('');
+  const started = useRef(false);
+
+  // Kept as a promise chain rather than an awaited async call: the state lands
+  // in a callback, not synchronously inside the effect below.
+  const load = useCallback(
+    () =>
+      apiClient
+        .get(`${PROPOSAL_API_BASE}/${id}/pdf`, {
+          responseType: 'blob',
+          // Two Chrome render passes take longer than a normal request.
+          timeout: 120000,
+        })
+        .then(({ data }) => {
+          setUrl((prev) => {
+            if (prev) URL.revokeObjectURL(prev);
+            return URL.createObjectURL(data as Blob);
+          });
+          setState('ready');
+        })
+        .catch(() => {
+          setError('The PDF could not be generated. Please try again.');
+          setState('error');
+        }),
+    [id],
+  );
+
+  const retry = useCallback(() => {
+    setState('working');
+    setError('');
+    void load();
+  }, [load]);
 
   useEffect(() => {
-    if (!token) {
-      router.replace('/admin/login');
-      return;
-    }
-    apiClient
-      .get(`${PROPOSAL_API_BASE}/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then(({ data }) => setProposal(data))
-      .catch(() => setError('Failed to load this proposal.'));
-  }, [id, token, router]);
+    if (started.current) return;
+    started.current = true;
+    void load();
+  }, [load]);
 
-  const doPrint = useCallback(async () => {
-    if (docRef.current) await waitForImages(docRef.current);
-    window.print();
-  }, []);
-
-  // Auto-print once the document has rendered and its images are ready.
-  useEffect(() => {
-    if (proposal && !printed.current) {
-      printed.current = true;
-      const t = setTimeout(() => void doPrint(), 300);
-      return () => clearTimeout(t);
-    }
-  }, [proposal, doPrint]);
-
-  if (error) {
-    return (
-      <div className='flex min-h-screen flex-col items-center justify-center gap-2 text-red-600'>
-        <AlertCircle className='h-6 w-6' />
-        <span className='text-sm font-medium'>{error}</span>
-      </div>
-    );
-  }
-
-  if (!proposal) {
-    return (
-      <div className='flex min-h-screen items-center justify-center'>
-        <Loader2 className='h-6 w-6 animate-spin text-accent' />
-      </div>
-    );
-  }
+  // Don't leak the object URL when the screen goes away.
+  useEffect(
+    () => () => {
+      if (url) URL.revokeObjectURL(url);
+    },
+    [url],
+  );
 
   return (
-    <div className='min-h-screen bg-muted/40 print:bg-white'>
-      <style>{`@media print {
-        /* Browsers drop background colours and images by default; the cover is
-           almost entirely both. */
-        * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-        tr, img, iframe { break-inside: avoid; }
-        canvas, svg, img { max-width: 100% !important; }
-        /* The cover is designed to bleed to the sheet's edges. */
-        [data-proposal-section="banner"] { margin: -12mm -12mm 0 -12mm; }
-        @page { margin: 12mm; }
-      }`}</style>
-
-      {/* Toolbar — hidden when printing */}
-      <div className='sticky top-0 z-10 border-b border-border bg-card/95 backdrop-blur print:hidden'>
-        <div className='mx-auto flex max-w-4xl items-center justify-between gap-3 px-4 py-3'>
-          <p className='truncate text-sm text-muted-foreground'>
-            {proposal.businessName || 'Digital Proposal'}
+    <div className='min-h-screen bg-muted/40'>
+      <div className='sticky top-0 z-10 border-b border-border bg-card/95 backdrop-blur'>
+        <div className='mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3'>
+          <p className='flex items-center gap-2 truncate text-sm text-muted-foreground'>
+            <FileText className='h-4 w-4 shrink-0' />
+            {state === 'working' ? 'Preparing the PDF…' : 'Proposal PDF'}
           </p>
-          <Button
-            onClick={() => void doPrint()}
-            className='shrink-0 gap-2 rounded-none bg-accent font-semibold text-primary hover:bg-accent-light'
-          >
-            <Printer className='h-4 w-4' /> Print / Save PDF
-          </Button>
+          <div className='flex items-center gap-2'>
+            {state === 'error' && (
+              <Button variant='outline' className='rounded-none' onClick={retry}>
+                Try again
+              </Button>
+            )}
+            <a href={url || undefined} download={state === 'ready' ? 'proposal.pdf' : undefined}>
+              <Button
+                disabled={state !== 'ready'}
+                className='shrink-0 gap-2 rounded-none bg-accent font-semibold text-primary hover:bg-accent-light'
+              >
+                {state === 'working' ? (
+                  <Loader2 className='h-4 w-4 animate-spin' />
+                ) : (
+                  <Download className='h-4 w-4' />
+                )}
+                Download PDF
+              </Button>
+            </a>
+          </div>
         </div>
       </div>
 
-      {/* Fixed to the A4 printable width (210mm − 2×12mm margins) so on-screen
-          measurements match the print width exactly. */}
-      <div className='mx-auto w-[186mm] py-6 print:py-0'>
-        <div
-          ref={docRef}
-          className='overflow-hidden border border-border bg-card shadow-sm print:overflow-visible print:border-0 print:shadow-none'
-        >
-          <ProposalDocument
-            sections={proposal.sections ?? []}
-            context={{
-              template: proposal.template ?? 'business_appraisal',
-              brokerName: proposal.brokerName ?? '',
-              customerName: proposal.customerName ?? '',
-              businessName: proposal.businessName ?? '',
-              businessValue: proposal.businessValue ?? '',
-              preparedOn: proposal.approvedAt ?? proposal.createdAt,
-            }}
-            contentClassName='px-6'
+      <div className='mx-auto max-w-5xl px-4 py-6'>
+        {state === 'working' && (
+          <div className='flex min-h-[60vh] flex-col items-center justify-center gap-3 text-muted-foreground'>
+            <Loader2 className='h-6 w-6 animate-spin text-accent' />
+            <p className='text-sm'>Rendering the document — this takes a few seconds.</p>
+          </div>
+        )}
+
+        {state === 'error' && (
+          <div className='mx-auto flex min-h-[40vh] max-w-md flex-col items-center justify-center gap-4 text-center'>
+            <div className='flex items-center gap-2 border border-red-100 bg-red-50 px-5 py-4 text-red-600'>
+              <AlertCircle className='h-5 w-5' />
+              <span className='text-sm font-medium'>{error}</span>
+            </div>
+          </div>
+        )}
+
+        {state === 'ready' && url && (
+          <iframe
+            src={url}
+            title='Proposal PDF'
+            className='h-[calc(100vh-8rem)] w-full border border-border bg-card'
           />
-        </div>
+        )}
       </div>
     </div>
   );

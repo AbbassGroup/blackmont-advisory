@@ -55,13 +55,6 @@ export interface DocSectionMeta {
   /** Whether the section appears in the preview sidebar navigation. */
   inNav: boolean;
   /**
-   * Locked sections may be edited and hidden but never removed, reordered past
-   * the document's edges, or duplicated. Digital Proposals use this for the
-   * sections whose content is denormalised into the signed agreement — see
-   * `backend/utils/proposalSections.js`. Omitted means false.
-   */
-  locked?: boolean;
-  /**
    * Keep at least this many of the type in the document. Used for sections that
    * are freely placeable but must not vanish entirely — a proposal's Accept
    * button, which the original page repeated three times down the page.
@@ -73,6 +66,12 @@ export interface DocSectionMeta {
    * firm boilerplate, which must read the same on every proposal.
    */
   fixed?: boolean;
+  /**
+   * Don't start this type on a fresh page when exporting. For sections that are
+   * a single element — a proposal's Accept button — a page of their own is
+   * mostly whitespace, so they follow whatever came before.
+   */
+  noPageBreak?: boolean;
 }
 
 export const findSectionMeta = (
@@ -80,15 +79,11 @@ export const findSectionMeta = (
   type: string,
 ): DocSectionMeta | undefined => registry.find((m) => m.type === type);
 
-export const isSectionLocked = (
-  registry: DocSectionMeta[],
-  type: string,
-): boolean => !!findSectionMeta(registry, type)?.locked;
-
 /**
- * Whether the section at `index` may be deleted: not locked, and not the last
- * of a type the registry requires. `backend/utils/proposalSections.js` enforces
- * the same rules on save — this keeps the UI honest about it.
+ * Whether the section at `index` may be deleted. Everything can be, except the
+ * last of a type the registry requires a minimum of.
+ * `backend/utils/proposalSections.js` enforces the same rule on save — this
+ * keeps the UI honest about it.
  */
 export function canRemoveSection(
   registry: DocSectionMeta[],
@@ -97,9 +92,7 @@ export function canRemoveSection(
 ): boolean {
   const section = sections[index];
   if (!section) return false;
-  const meta = findSectionMeta(registry, section.type);
-  if (meta?.locked) return false;
-  const min = meta?.minCount ?? 0;
+  const min = findSectionMeta(registry, section.type)?.minCount ?? 0;
   if (min <= 0) return true;
   return sections.filter((s) => s.type === section.type).length > min;
 }
@@ -210,6 +203,9 @@ export interface DocumentKindConfig<T extends EditorDocument = EditorDocument> {
   viewerBase: string | null;
   /** Broker-only print route base, or null. */
   printBase: string | null;
+  /** Toolbar wording for that route. Defaults to a plain browser print. */
+  printLabel?: string;
+  printIcon?: 'printer' | 'download';
   /**
    * Overrides `viewerBase` when the preview link needs more than the id — a
    * proposal's customer link carries their email address as well. Returning

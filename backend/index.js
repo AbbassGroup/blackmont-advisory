@@ -104,6 +104,16 @@ app.use('/uploads', express.static('uploads'));
 app.use(errorHandler);
 
 
+// Shut the PDF renderer's Chrome down with the server, so restarts don't leave
+// orphaned browser processes behind.
+const { closePdfBrowser } = require('./utils/proposalPdf');
+for (const signal of ['SIGINT', 'SIGTERM']) {
+  process.on(signal, async () => {
+    await closePdfBrowser();
+    process.exit(0);
+  });
+}
+
 process.on('unhandledRejection', (reason) => {
   console.error('Unhandled Rejection:', reason);
   notifyError({ source: 'unhandledRejection', error: reason });

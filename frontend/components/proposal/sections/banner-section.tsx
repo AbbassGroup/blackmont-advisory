@@ -173,7 +173,7 @@ export function ProposalBannerSection({
           <img
             src='/assets/blackmont-light.png'
             alt='Blackmont Advisory'
-            className='hidden h-7 w-auto shrink-0 object-contain opacity-90 lg:block lg:h-8'
+            className='hidden h-7 w-auto shrink-0 object-contain opacity-90 lg:block lg:h-8 print:block print:h-7'
           />
         </div>
       </div>

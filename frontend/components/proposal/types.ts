@@ -7,11 +7,11 @@
  * `PROPOSAL_SECTION_REGISTRY`, add a default in `makeDefaultData`, render it in
  * `<ProposalDocument>`, and mirror all of that on the backend.
  *
- * Locked sections (`locked: true`) are the ones the backend denormalises back
- * onto the model's flat fields — the values that end up in the signed agreement
- * and the notification emails. They can be edited and hidden but never removed,
- * duplicated or reordered. Sections with a `minCount` move freely but cannot be
- * deleted down to none.
+ * Every section can be moved, hidden, duplicated and removed. The only guard is
+ * `minCount`: the Cover, Your Investment and Accept sections must each keep at
+ * least one instance, because the backend denormalises the first two onto the
+ * model's flat fields (the values the notification emails quote) and the third
+ * is the customer's only way to accept.
  */
 
 import type {
@@ -44,7 +44,7 @@ export type ProposalSectionType =
 
 // ─── Section data ────────────────────────────────────────────────────────────
 
-/** LOCKED — business name and value flow into the agreement. */
+/** Business name and value are mirrored onto the model for the emails. */
 export interface ProposalBannerData {
   eyebrow: string;
   businessName: string;
@@ -104,7 +104,7 @@ export interface FeeOption {
   unit: FeeUnit;
 }
 
-/** LOCKED — every value here reaches the agreement. */
+/** The fee options the customer picks from; mirrored onto the model. */
 export interface InvestmentData {
   title: string;
   advertisementTitle: string;
@@ -224,7 +224,7 @@ export const PROPOSAL_SECTION_REGISTRY: DocSectionMeta[] = [
     icon: 'banner',
     singleton: true,
     inNav: false,
-    locked: true,
+    minCount: 1,
   },
   {
     type: 'disclaimer',
@@ -269,11 +269,11 @@ export const PROPOSAL_SECTION_REGISTRY: DocSectionMeta[] = [
     icon: 'investment',
     singleton: true,
     inNav: true,
-    locked: true,
+    minCount: 1,
   },
   {
-    // Not locked: the original page repeated this button three times down the
-    // page, so brokers place as many as they like — but never zero.
+    // The original page repeated this button three times down the page, so
+    // brokers place as many as they like — but never zero.
     type: 'accept',
     label: 'Accept Proposal',
     description: 'The acceptance button the customer signs off with. Place as many as you like.',
@@ -281,6 +281,8 @@ export const PROPOSAL_SECTION_REGISTRY: DocSectionMeta[] = [
     singleton: false,
     inNav: false,
     minCount: 1,
+    // One button doesn't warrant its own sheet in the PDF.
+    noPageBreak: true,
   },
   {
     type: 'accreditations',
@@ -336,9 +338,6 @@ export const PROPOSAL_SECTION_REGISTRY: DocSectionMeta[] = [
 
 export const getProposalSectionMeta = (type: string): DocSectionMeta | undefined =>
   PROPOSAL_SECTION_REGISTRY.find((m) => m.type === type);
-
-export const isProposalSectionLocked = (type: string): boolean =>
-  !!getProposalSectionMeta(type)?.locked;
 
 // ─── Defaults ────────────────────────────────────────────────────────────────
 

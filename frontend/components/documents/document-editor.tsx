@@ -22,7 +22,6 @@ import { DocumentControlBar, type PanelKey } from './control-bar';
 import { SectionsPanel } from './sections-panel';
 import {
   canRemoveSection,
-  isSectionLocked,
   sectionInsertIndex,
   type DocSection,
   type DocumentKindConfig,
@@ -277,25 +276,16 @@ export function DocumentEditor<T extends EditorDocument>({
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [undo, redo]);
 
-  // Locked sections are fixed structure — the panel disables these controls,
-  // and these guards make a stray call a no-op rather than a broken contract.
-  const locked = useCallback(
-    (section: DocSection | undefined) =>
-      !!section && isSectionLocked(config.registry, section.type),
-    [config.registry],
-  );
-
   const moveSection = useCallback(
     (index: number, dir: -1 | 1) =>
       patchCommit((prev) => {
         const j = index + dir;
         if (j < 0 || j >= prev.sections.length) return prev;
-        if (locked(prev.sections[index]) || locked(prev.sections[j])) return prev;
         const sections = [...prev.sections];
         [sections[index], sections[j]] = [sections[j], sections[index]];
         return { ...prev, sections } as T;
       }),
-    [patchCommit, locked],
+    [patchCommit],
   );
 
   const toggleSection = useCallback(
@@ -338,7 +328,7 @@ export function DocumentEditor<T extends EditorDocument>({
     (index: number) =>
       patchCommit((prev) => {
         const src = prev.sections[index];
-        if (!src || locked(src)) return prev;
+        if (!src) return prev;
         const copy: DocSection = {
           ...src,
           _id: undefined,
@@ -349,7 +339,7 @@ export function DocumentEditor<T extends EditorDocument>({
         sections.splice(index + 1, 0, copy);
         return { ...prev, sections } as T;
       }),
-    [patchCommit, config, locked],
+    [patchCommit, config],
   );
 
   // Generic upload (banner image, photo, PDF). Returns the URL.
@@ -467,6 +457,8 @@ export function DocumentEditor<T extends EditorDocument>({
               : null
         }
         printHref={config.printBase ? `${config.printBase}/${id}` : null}
+        printLabel={config.printLabel}
+        printIcon={config.printIcon}
         activePanel={activePanel}
         onOpenPanel={(p) => setActivePanel(p)}
         statusAction={statusAction}

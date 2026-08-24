@@ -12,20 +12,18 @@
  *   sections[]   → source of truth for presentation (what the customer reads)
  *   flat fields  → source of truth for the contract  (what the emails quote)
  *
- * Two section types are LOCKED — `banner` and `investment`. They may be edited
- * and hidden but never deleted, because `deriveFlatFields()` reads the contract
- * values back out of them on every save. Everything else is free to add,
- * reorder, duplicate and delete, subject to `MIN_COUNTS`.
+ * Every section can be moved, hidden, duplicated and deleted, in any order the
+ * broker likes. The only structural rule is `MIN_COUNTS`.
  */
-
-const LOCKED_TYPES = Object.freeze(['banner', 'investment']);
 
 /**
- * Types that must appear at least N times. `accept` is freely placeable — the
- * original proposal repeated the Accept button three times down the page — but
- * an approved proposal with no way to accept it is a dead end, so one is kept.
+ * Types that must appear at least N times, re-seeded here if a client drops
+ * them. `banner` and `investment` because `deriveFlatFields()` reads the
+ * contract values back out of them; `accept` — which the original proposal
+ * repeated three times down the page — because an approved proposal with no way
+ * to accept it is a dead end.
  */
-const MIN_COUNTS = Object.freeze({ accept: 1 });
+const MIN_COUNTS = Object.freeze({ banner: 1, investment: 1, accept: 1 });
 
 const SECTION_TYPES = Object.freeze([
   'banner',
@@ -291,12 +289,10 @@ function deriveFlatFields(sections) {
 }
 
 /**
- * Guarantee the required sections exist and sit in a sane place. Called on save
- * so a malformed client payload can never strip the contract out of the
- * document — the editor enforces the same rules, this is the backstop.
- *
- * Missing required sections are re-seeded from the current flat fields, and
- * `banner` is forced back to index 0.
+ * Guarantee the required sections exist. Called on save so a malformed client
+ * payload can never strip the contract out of the document — the editor
+ * enforces the same rule, this is the backstop. Missing ones are re-seeded from
+ * the current flat fields and appended; position is never touched.
  */
 function enforceLockedSections(sections, flat = {}) {
   // Drop anything the renderer has no case for, so a malformed or out-of-date
@@ -304,12 +300,6 @@ function enforceLockedSections(sections, flat = {}) {
   const list = (Array.isArray(sections) ? sections : []).filter(
     (s) => s && SECTION_TYPES.includes(s.type),
   );
-
-  for (const type of LOCKED_TYPES) {
-    if (!list.some((s) => s.type === type)) {
-      list.push(makeDefaultSection(type, flat));
-    }
-  }
 
   for (const [type, min] of Object.entries(MIN_COUNTS)) {
     let have = list.filter((s) => s.type === type).length;
@@ -319,11 +309,7 @@ function enforceLockedSections(sections, flat = {}) {
     }
   }
 
-  // A locked section can be hidden but not deleted out of existence — the
-  // banner also always leads the document.
-  const bannerAt = list.findIndex((s) => s.type === 'banner');
-  if (bannerAt > 0) list.unshift(list.splice(bannerAt, 1)[0]);
-
+  // Order is entirely the broker's — nothing is pinned to a position.
   return list;
 }
 
@@ -350,7 +336,6 @@ function ensureSections(proposal) {
 }
 
 module.exports = {
-  LOCKED_TYPES,
   MIN_COUNTS,
   SECTION_TYPES,
   makeUid,

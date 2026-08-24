@@ -6,7 +6,6 @@ import {
   Trash2,
   Copy,
   Plus,
-  Lock,
   Landmark,
   Image as ImageIcon,
   ShieldAlert,
@@ -68,11 +67,10 @@ const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
 /**
  * The Sections drawer: reorder, hide, duplicate, remove and add.
  *
- * Sections marked `locked` in the registry can be edited and hidden but not
- * removed, duplicated, or moved — a Digital Proposal's cover and fee options
- * carry the values that end up in the signed agreement. Sections with a
- * `minCount` are freely placeable but cannot all be deleted, and `fixed` ones
- * are placeable but have no editable content.
+ * Every section moves, hides, duplicates and removes freely. Two registry flags
+ * qualify that: a type with a `minCount` cannot be deleted down to none — a
+ * proposal always keeps a Cover, a Your Investment and one Accept — and a
+ * `fixed` type is placeable but has no editable content.
  */
 export function SectionsPanel({
   sections,
@@ -93,9 +91,7 @@ export function SectionsPanel({
 }) {
   // A singleton type already in the document can't be added again.
   const present = new Set(sections.map((s) => s.type));
-  const addable = registry.filter(
-    (m) => !m.locked && (!m.singleton || !present.has(m.type)),
-  );
+  const addable = registry.filter((m) => !m.singleton || !present.has(m.type));
 
   return (
     <div className="space-y-6">
@@ -104,7 +100,6 @@ export function SectionsPanel({
           const meta = findSectionMeta(registry, section.type);
           const Icon = ICONS[section.type] ?? LayoutList;
           const enabled = section.enabled !== false;
-          const locked = !!meta?.locked;
           const removable = canRemoveSection(registry, sections, index);
           const fixed = !!meta?.fixed;
           // Show the section's own (edited) title when it has one, e.g. a custom
@@ -122,17 +117,17 @@ export function SectionsPanel({
               <div className="flex flex-col">
                 <button
                   onClick={() => onMove(index, -1)}
-                  disabled={locked || index === 0}
+                  disabled={index === 0}
                   className="text-muted-foreground/60 transition hover:text-accent disabled:opacity-25 disabled:hover:text-muted-foreground/60"
-                  title={locked ? 'This section is fixed in place' : 'Move up'}
+                  title="Move up"
                 >
                   <ChevronUp className="h-4 w-4" />
                 </button>
                 <button
                   onClick={() => onMove(index, 1)}
-                  disabled={locked || index === sections.length - 1}
+                  disabled={index === sections.length - 1}
                   className="text-muted-foreground/60 transition hover:text-accent disabled:opacity-25 disabled:hover:text-muted-foreground/60"
-                  title={locked ? 'This section is fixed in place' : 'Move down'}
+                  title="Move down"
                 >
                   <ChevronDown className="h-4 w-4" />
                 </button>
@@ -155,12 +150,6 @@ export function SectionsPanel({
                   }`}
                 >
                   <span className="truncate">{label}</span>
-                  {locked && (
-                    <Lock
-                      className="h-3 w-3 shrink-0 text-muted-foreground/50"
-                      aria-label="Required section"
-                    />
-                  )}
                   {fixed && (
                     <Landmark
                       className="h-3 w-3 shrink-0 text-muted-foreground/50"
@@ -169,11 +158,9 @@ export function SectionsPanel({
                   )}
                 </p>
                 <p className="truncate text-xs text-muted-foreground/60">
-                  {locked
-                    ? 'Required — editable, but always present'
-                    : fixed
-                      ? 'Fixed wording — place it, but it reads the same every time'
-                      : `Section ${index + 1}`}
+                  {fixed
+                    ? 'Fixed wording — place it, but it reads the same every time'
+                    : `Section ${index + 1}`}
                 </p>
               </div>
 
@@ -181,9 +168,8 @@ export function SectionsPanel({
 
               <button
                 onClick={() => onDuplicate(index)}
-                disabled={locked}
-                className="p-1.5 text-muted-foreground/50 transition hover:bg-accent/10 hover:text-accent disabled:opacity-25 disabled:hover:bg-transparent disabled:hover:text-muted-foreground/50"
-                title={locked ? 'This section cannot be duplicated' : 'Duplicate section'}
+                className="p-1.5 text-muted-foreground/50 transition hover:bg-accent/10 hover:text-accent"
+                title="Duplicate section"
               >
                 <Copy className="h-4 w-4" />
               </button>
@@ -193,11 +179,9 @@ export function SectionsPanel({
                 disabled={!removable}
                 className="p-1.5 text-muted-foreground/50 transition hover:bg-red-50 hover:text-red-500 disabled:opacity-25 disabled:hover:bg-transparent disabled:hover:text-muted-foreground/50"
                 title={
-                  locked
-                    ? 'This section cannot be removed'
-                    : removable
-                      ? 'Remove section'
-                      : `At least one ${meta?.label ?? section.type} is required`
+                  removable
+                    ? 'Remove section'
+                    : `At least one ${meta?.label ?? section.type} is required`
                 }
               >
                 <Trash2 className="h-4 w-4" />

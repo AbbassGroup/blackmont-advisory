@@ -123,7 +123,7 @@ function Screenshots({
   if (!editable && photos.length === 0) return null;
 
   return (
-    <div className='mb-10 space-y-5'>
+    <div className='mb-4 space-y-5'>
       {photos.map((src, index) => (
         <div key={`${src}-${index}`} className='group/row relative'>
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -334,7 +334,7 @@ export function ScorecardSection({
         value={data.factorsTitle}
         onChange={(v) => onChange?.({ factorsTitle: v })}
         placeholder='Weighting Factors'
-        className='mb-6 text-xl font-bold text-accent'
+        className='mb-6 mt-10 text-xl font-bold text-accent'
       />
 
       <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>

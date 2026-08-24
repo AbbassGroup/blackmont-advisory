@@ -3,6 +3,7 @@
 import {
   ArrowLeft,
   Check,
+  Download,
   Eye,
   LayoutList,
   Loader2,
@@ -32,6 +33,8 @@ export function DocumentControlBar({
   backHref,
   previewHref,
   printHref,
+  printLabel = 'Print',
+  printIcon = 'printer',
   activePanel,
   onOpenPanel,
   statusAction,
@@ -45,6 +48,8 @@ export function DocumentControlBar({
   backHref: string;
   previewHref: string | null;
   printHref: string | null;
+  printLabel?: string;
+  printIcon?: 'printer' | 'download';
   activePanel: PanelKey | null;
   onOpenPanel: (panel: PanelKey) => void;
   statusAction: DocStatusAction | null;
@@ -89,7 +94,16 @@ export function DocumentControlBar({
       )}
       {printHref && (
         <Link href={printHref} target="_blank" rel="noopener noreferrer">
-          <BarButton label="Print" icon={<Printer className="h-5 w-5" />} />
+          <BarButton
+            label={printLabel}
+            icon={
+              printIcon === 'download' ? (
+                <Download className="h-5 w-5" />
+              ) : (
+                <Printer className="h-5 w-5" />
+              )
+            }
+          />
         </Link>
       )}
       <BarButton

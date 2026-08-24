@@ -182,7 +182,7 @@ function FeeGroup({
                 )}
               </div>
 
-              <div className='mt-auto w-full'>
+              <div className='mt-auto w-full text-center'>
                 {editable ? (
                   <div className='flex items-center gap-2'>
                     <Input
@@ -205,8 +205,8 @@ function FeeGroup({
                     </select>
                   </div>
                 ) : (
-                  <div className='bg-accent px-6 py-3 text-center text-primary shadow-sm'>
-                    <span className='text-xl font-bold'>
+                  <div className='inline-block bg-accent px-6 py-1.5 text-center text-primary shadow-sm'>
+                    <span className='text-base font-bold sm:text-lg'>
                       {formatAmount(item.amount, item.unit)}
                     </span>
                   </div>
@@ -363,8 +363,10 @@ export const InvestmentSection = forwardRef<HTMLDivElement, InvestmentSectionPro
                 />
               </div>
             ) : (
-              <div className='inline-block bg-accent px-8 py-3 text-primary shadow-sm'>
-                <span className='text-xl font-bold'>${data.engagementFee || '0'}</span>
+              <div className='inline-block bg-accent px-7 py-1.5 text-primary shadow-sm'>
+                <span className='text-base font-bold sm:text-lg'>
+                  ${data.engagementFee || '0'}
+                </span>
               </div>
             )}
           </div>

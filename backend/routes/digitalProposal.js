@@ -10,6 +10,8 @@ const {
   createCustomerApprovalEmail,
   createProposalAcceptanceEmail,
 } = require('../utils/emailTemplates');
+const jwt = require('jsonwebtoken');
+const { renderProposalPdf } = require('../utils/proposalPdf');
 const {
   makeDefaultSections,
   deriveFlatFields,
@@ -87,6 +89,64 @@ router.post('/upload', upload.single('image'), multerErrorHandler, async (req, r
     res.json({ url: uploadUrl(req.file.filename) });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+});
+
+// ── PDF export ──────────────────────────────────────────────────────────────
+// The rendering page runs in a headless browser with no session, so it fetches
+// its data with a short-lived token minted here rather than a login.
+const RENDER_PURPOSE = 'proposal-pdf';
+
+const mintRenderToken = (id) =>
+  jwt.sign({ proposalId: String(id), purpose: RENDER_PURPOSE }, process.env.JWT_SECRET, {
+    expiresIn: '3m',
+  });
+
+// GET the proposal for the PDF renderer. Token-gated and read-only.
+router.get('/:id/render', async (req, res) => {
+  try {
+    const decoded = jwt.verify(String(req.query.token || ''), process.env.JWT_SECRET);
+    if (decoded.purpose !== RENDER_PURPOSE || decoded.proposalId !== req.params.id) {
+      return res.status(403).json({ message: 'Invalid render token' });
+    }
+    const proposal = await DigitalProposal.findById(req.params.id);
+    if (!proposal) return res.status(404).json({ message: 'Digital proposal not found' });
+    if (ensureSections(proposal)) await proposal.save();
+    res.json(proposal);
+  } catch {
+    res.status(403).json({ message: 'Invalid or expired render token' });
+  }
+});
+
+// GET the proposal as a PDF.
+router.get('/:id/pdf', async (req, res) => {
+  try {
+    const proposal = await DigitalProposal.findById(req.params.id);
+    if (!proposal) return res.status(404).json({ message: 'Digital proposal not found' });
+
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const pdf = await renderProposalPdf({
+      id: String(proposal._id),
+      token: mintRenderToken(proposal._id),
+      frontendUrl,
+      title:
+        proposal.template === 'franchise_proposal' ? 'Franchise Proposal' : 'Business Appraisal',
+    });
+
+    // A filename the broker can hand straight to a client.
+    const safeName = (proposal.businessName || 'Proposal')
+      .replace(/[^a-z0-9\- ]/gi, '')
+      .trim()
+      .replace(/\s+/g, '-');
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader(
+      'Content-Disposition',
+      `${req.query.inline === 'true' ? 'inline' : 'attachment'}; filename="${safeName}-Appraisal.pdf"`,
+    );
+    res.send(pdf);
+  } catch (error) {
+    console.error('Failed to render proposal PDF:', error);
+    res.status(500).json({ message: 'Failed to generate the PDF. Please try again.' });
   }
 });
 
