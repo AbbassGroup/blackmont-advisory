@@ -10,6 +10,7 @@ import {
   Users,
   Handshake,
   BarChart3,
+  Newspaper,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -38,6 +39,7 @@ export const ADMIN_PAGES: AdminPage[] = [
   { key: 'deals', label: 'Deals', href: '/admin/deals', icon: Handshake, defaultForAdmin: true },
   { key: 'listings', label: 'Listings', href: '/admin/listings', icon: Building2, defaultForAdmin: false },
   { key: 'enquiries', label: 'Enquiries', href: '/admin/enquiries', icon: MessageSquare, defaultForAdmin: false },
+  { key: 'blogs', label: 'Blogs', href: '/admin/blogs', icon: Newspaper, defaultForAdmin: false },
   { key: 'access', label: 'Resource Analytics', href: '/admin/access', icon: BarChart3, defaultForAdmin: false },
   { key: 'confidentiality', label: 'Confidentiality', href: '/admin/confidentiality', icon: Shield, defaultForAdmin: false },
   { key: 'users', label: 'User Management', href: '/admin/users', icon: Users, defaultForAdmin: false },
