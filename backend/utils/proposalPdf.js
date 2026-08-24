@@ -13,8 +13,90 @@
  * the header and margins, and the two are stitched together with pdf-lib.
  */
 
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
 const puppeteer = require('puppeteer');
 const { PDFDocument } = require('pdf-lib');
+
+/**
+ * Where a distro usually puts Chrome. Checked as a fallback because
+ * Puppeteer's own download is easy to lose: PUPPETEER_CACHE_DIR may be
+ * inherited from whatever shell started the process (a CI or sandbox path under
+ * /tmp, say), and /tmp doesn't survive a reboot.
+ */
+const SYSTEM_CHROME_PATHS = [
+  '/usr/bin/chromium',
+  '/usr/bin/chromium-browser',
+  '/usr/bin/google-chrome',
+  '/usr/bin/google-chrome-stable',
+  '/snap/bin/chromium',
+];
+
+/** Layout of an installed browser inside a Puppeteer cache, per platform. */
+const CACHE_BINARIES = [
+  'chrome-linux64/chrome',
+  'chrome-linux/chrome',
+  'chrome-win64/chrome.exe',
+  'chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing',
+  'chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing',
+];
+
+/** Any Chrome inside a Puppeteer cache directory, whatever version it is. */
+function findInCache(root) {
+  const dir = path.join(root, 'chrome');
+  let versions;
+  try {
+    versions = fs.readdirSync(dir);
+  } catch {
+    return null;
+  }
+  for (const version of versions) {
+    for (const rel of CACHE_BINARIES) {
+      const candidate = path.join(dir, version, rel);
+      if (fs.existsSync(candidate)) return candidate;
+    }
+  }
+  return null;
+}
+
+/**
+ * The browser to drive, in order of preference:
+ *   1. PUPPETEER_EXECUTABLE_PATH, if it points at something real
+ *   2. the exact binary Puppeteer expects
+ *   3. any Chrome in a Puppeteer cache we know of — including the default home
+ *      cache, which is where `npx puppeteer browsers install chrome` puts it
+ *      even when PUPPETEER_CACHE_DIR has been set to somewhere stale
+ *   4. a system Chrome
+ *
+ * Step 3 exists because a wrong PUPPETEER_CACHE_DIR — inherited from a CI or
+ * sandbox shell, and easily stuck inside a pm2 dump — otherwise hides a
+ * perfectly good install. Returns null when there is genuinely nothing to run.
+ */
+async function resolveChromePath() {
+  const override = process.env.PUPPETEER_EXECUTABLE_PATH;
+  if (override) return fs.existsSync(override) ? override : null;
+
+  try {
+    const bundled = await puppeteer.executablePath();
+    if (bundled && fs.existsSync(bundled)) return bundled;
+  } catch {
+    /* keep looking */
+  }
+
+  const roots = [
+    process.env.PUPPETEER_CACHE_DIR,
+    path.join(os.homedir(), '.cache', 'puppeteer'),
+    '/root/.cache/puppeteer',
+    path.join(__dirname, '..', '.cache', 'puppeteer'),
+  ].filter(Boolean);
+  for (const root of roots) {
+    const found = findInCache(root);
+    if (found) return found;
+  }
+
+  return SYSTEM_CHROME_PATHS.find((p) => fs.existsSync(p)) ?? null;
+}
 
 /** A4 at 96dpi — the sheet the cover bleeds across. */
 const A4 = { width: 794, height: 1123 };
@@ -49,17 +131,17 @@ let browserPromise = null;
  */
 function getBrowser() {
   if (!browserPromise) {
-    browserPromise = puppeteer
-      .launch({
-        headless: true,
-        // Two escape hatches for hosts where the bundled download doesn't land
-        // where the app runs: PUPPETEER_EXECUTABLE_PATH to point at a system
-        // Chrome, or PUPPETEER_CACHE_DIR (read by Puppeteer itself) to move the
-        // download somewhere the deploy preserves.
-        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
-        // Containers and most VPS images can't use Chrome's sandbox.
-        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
-      })
+    browserPromise = resolveChromePath()
+      .then((executablePath) =>
+        puppeteer.launch({
+          headless: true,
+          // Left undefined when nothing was found, so Puppeteer raises its own
+          // (more specific) error about the missing download.
+          executablePath: executablePath || undefined,
+          // Containers and most VPS images can't use Chrome's sandbox.
+          args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+        }),
+      )
       .then((browser) => {
         browser.on('disconnected', () => {
           browserPromise = null;
@@ -200,18 +282,23 @@ async function renderProposalPdf({ id, token, frontendUrl, title = 'Business App
  * a broker clicks Export.
  */
 async function checkPdfRenderer() {
-  const override = process.env.PUPPETEER_EXECUTABLE_PATH;
   try {
-    const path = override || (await puppeteer.executablePath());
-    if (require('fs').existsSync(path)) {
+    const path = await resolveChromePath();
+    if (path) {
       console.log('PDF renderer ready - Chrome at', path);
       return true;
     }
+    const cacheDir = process.env.PUPPETEER_CACHE_DIR;
     console.warn(
       [
-        `PDF export is UNAVAILABLE: no Chrome at ${path}`,
-        '  Fix: run "npx puppeteer browsers install chrome" in the backend directory,',
-        '  or set PUPPETEER_EXECUTABLE_PATH to an installed Chrome/Chromium.',
+        'PDF export is UNAVAILABLE: no Chrome found on this host.',
+        cacheDir
+          ? `  PUPPETEER_CACHE_DIR is ${cacheDir}${
+              cacheDir.startsWith('/tmp') ? ' - /tmp does not survive a reboot' : ''
+            }`
+          : '  PUPPETEER_CACHE_DIR is unset (Puppeteer looks in ~/.cache/puppeteer).',
+        '  Fix: run "npx puppeteer browsers install chrome" as the user that runs this',
+        '  process, or set PUPPETEER_EXECUTABLE_PATH to an installed Chrome/Chromium.',
       ].join('\n'),
     );
   } catch (error) {
@@ -225,20 +312,26 @@ async function checkPdfRenderer() {
  * production failure can be pinned down from the browser rather than the logs.
  */
 async function pdfDiagnostics(frontendUrl) {
+  const cacheDir = process.env.PUPPETEER_CACHE_DIR || null;
   const out = {
-    chromeExecutable: process.env.PUPPETEER_EXECUTABLE_PATH || null,
+    chromeExecutable: null,
+    chromeFound: false,
     chromeLaunches: false,
+    // Named explicitly because an inherited value — a CI or sandbox path under
+    // /tmp — is the usual reason a working install goes missing.
+    puppeteerCacheDir: cacheDir,
+    cacheDirIsEphemeral: !!cacheDir && cacheDir.startsWith('/tmp'),
+    executablePathOverride: process.env.PUPPETEER_EXECUTABLE_PATH || null,
     frontendUrl: frontendUrl || null,
     frontendReachable: false,
     detail: null,
   };
 
   try {
-    if (!out.chromeExecutable) {
-      out.chromeExecutable = await puppeteer.executablePath();
-    }
+    out.chromeExecutable = await resolveChromePath();
+    out.chromeFound = !!out.chromeExecutable;
   } catch (e) {
-    out.detail = `executablePath: ${e.message}`;
+    out.detail = `resolving Chrome: ${e.message}`;
   }
 
   try {

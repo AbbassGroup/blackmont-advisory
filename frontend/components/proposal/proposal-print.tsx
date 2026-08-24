@@ -51,7 +51,9 @@ export function ProposalPrint({ id }: { id: string }) {
           } catch {
             /* keep the generic message */
           }
-          setError(reason || 'The PDF could not be generated. Please try again.');
+          setError(
+            reason || 'The PDF could not be generated. Please try again.',
+          );
           setState('error');
         }),
     [id],
@@ -87,11 +89,18 @@ export function ProposalPrint({ id }: { id: string }) {
           </p>
           <div className='flex items-center gap-2'>
             {state === 'error' && (
-              <Button variant='outline' className='rounded-none' onClick={retry}>
+              <Button
+                variant='outline'
+                className='rounded-none'
+                onClick={retry}
+              >
                 Try again
               </Button>
             )}
-            <a href={url || undefined} download={state === 'ready' ? 'proposal.pdf' : undefined}>
+            <a
+              href={url || undefined}
+              download={state === 'ready' ? 'proposal.pdf' : undefined}
+            >
               <Button
                 disabled={state !== 'ready'}
                 className='shrink-0 gap-2 rounded-none bg-accent font-semibold text-primary hover:bg-accent-light'
@@ -112,7 +121,9 @@ export function ProposalPrint({ id }: { id: string }) {
         {state === 'working' && (
           <div className='flex min-h-[60vh] flex-col items-center justify-center gap-3 text-muted-foreground'>
             <Loader2 className='h-6 w-6 animate-spin text-accent' />
-            <p className='text-sm'>Rendering the document — this takes a few seconds.</p>
+            <p className='text-sm'>
+              Rendering the document, this takes a few seconds.
+            </p>
           </div>
         )}
 
