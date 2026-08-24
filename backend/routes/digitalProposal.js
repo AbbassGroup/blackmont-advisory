@@ -11,7 +11,7 @@ const {
   createProposalAcceptanceEmail,
 } = require('../utils/emailTemplates');
 const jwt = require('jsonwebtoken');
-const { renderProposalPdf } = require('../utils/proposalPdf');
+const { renderProposalPdf, pdfDiagnostics } = require('../utils/proposalPdf');
 const {
   makeDefaultSections,
   deriveFlatFields,
@@ -146,7 +146,20 @@ router.get('/:id/pdf', async (req, res) => {
     res.send(pdf);
   } catch (error) {
     console.error('Failed to render proposal PDF:', error);
-    res.status(500).json({ message: 'Failed to generate the PDF. Please try again.' });
+    res.status(500).json({
+      message: 'Failed to generate the PDF.',
+      reason: error.message,
+    });
+  }
+});
+
+// GET a report on why PDF export is or isn't working on this host. Declared
+// before `/:id` so "diagnostics" isn't read as a proposal id.
+router.get('/pdf-diagnostics', async (req, res) => {
+  try {
+    res.json(await pdfDiagnostics(process.env.FRONTEND_URL || null));
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
 

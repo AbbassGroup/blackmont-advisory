@@ -52,6 +52,11 @@ function getBrowser() {
     browserPromise = puppeteer
       .launch({
         headless: true,
+        // Two escape hatches for hosts where the bundled download doesn't land
+        // where the app runs: PUPPETEER_EXECUTABLE_PATH to point at a system
+        // Chrome, or PUPPETEER_CACHE_DIR (read by Puppeteer itself) to move the
+        // download somewhere the deploy preserves.
+        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
         // Containers and most VPS images can't use Chrome's sandbox.
         args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
       })
@@ -63,7 +68,9 @@ function getBrowser() {
       })
       .catch((error) => {
         browserPromise = null;
-        throw error;
+        throw new Error(
+          `Chrome could not start: ${error.message}. Run "npx puppeteer browsers install chrome" on the server, or point PUPPETEER_EXECUTABLE_PATH at an installed Chrome.`,
+        );
       });
   }
   return browserPromise;
@@ -80,9 +87,22 @@ async function renderPart(url, { viewport = A4, ...pdfOptions } = {}) {
     await page.setViewport({ ...viewport, deviceScaleFactor: 1.5 });
     // Explicit, so the document's `print:` styles apply during layout too.
     await page.emulateMediaType('print');
-    await page.goto(url, { waitUntil: 'networkidle0', timeout: READY_TIMEOUT });
+    const response = await page
+      .goto(url, { waitUntil: 'networkidle0', timeout: READY_TIMEOUT })
+      .catch((e) => {
+        throw new Error(`Could not load the render page at ${url} — ${e.message}`);
+      });
+    if (response && !response.ok()) {
+      throw new Error(
+        `The render page returned HTTP ${response.status()}. Is the frontend deployed with /proposal-pdf, and is FRONTEND_URL correct?`,
+      );
+    }
     // The page sets this once its data has loaded and its images have decoded.
-    await page.waitForSelector(READY_SELECTOR, { timeout: READY_TIMEOUT });
+    await page.waitForSelector(READY_SELECTOR, { timeout: READY_TIMEOUT }).catch(() => {
+      throw new Error(
+        'The render page never finished loading its data. Check that the backend URL the page calls (NEXT_PUBLIC_API_URL) is reachable from the browser.',
+      );
+    });
     return await page.pdf({
       format: 'A4',
       printBackground: true,
@@ -173,6 +193,75 @@ async function renderProposalPdf({ id, token, frontendUrl, title = 'Business App
   return Buffer.from(await out.save());
 }
 
+/**
+ * Cheap boot-time check: is a Chrome binary actually on this machine? Doesn't
+ * launch it — just confirms the file Puppeteer would run exists, so a server
+ * missing its browser says so in the logs at startup rather than the first time
+ * a broker clicks Export.
+ */
+async function checkPdfRenderer() {
+  const override = process.env.PUPPETEER_EXECUTABLE_PATH;
+  try {
+    const path = override || (await puppeteer.executablePath());
+    if (require('fs').existsSync(path)) {
+      console.log('PDF renderer ready - Chrome at', path);
+      return true;
+    }
+    console.warn(
+      [
+        `PDF export is UNAVAILABLE: no Chrome at ${path}`,
+        '  Fix: run "npx puppeteer browsers install chrome" in the backend directory,',
+        '  or set PUPPETEER_EXECUTABLE_PATH to an installed Chrome/Chromium.',
+      ].join('\n'),
+    );
+  } catch (error) {
+    console.warn('PDF export is UNAVAILABLE:', error.message);
+  }
+  return false;
+}
+
+/**
+ * What the renderer can and can't reach. Used by the diagnostics endpoint so a
+ * production failure can be pinned down from the browser rather than the logs.
+ */
+async function pdfDiagnostics(frontendUrl) {
+  const out = {
+    chromeExecutable: process.env.PUPPETEER_EXECUTABLE_PATH || null,
+    chromeLaunches: false,
+    frontendUrl: frontendUrl || null,
+    frontendReachable: false,
+    detail: null,
+  };
+
+  try {
+    if (!out.chromeExecutable) {
+      out.chromeExecutable = await puppeteer.executablePath();
+    }
+  } catch (e) {
+    out.detail = `executablePath: ${e.message}`;
+  }
+
+  try {
+    const browser = await getBrowser();
+    out.chromeLaunches = browser.connected !== false;
+    out.chromeVersion = await browser.version();
+  } catch (e) {
+    out.detail = e.message;
+  }
+
+  if (frontendUrl) {
+    try {
+      const res = await fetch(frontendUrl, { redirect: 'follow' });
+      out.frontendReachable = res.ok;
+      out.frontendStatus = res.status;
+    } catch (e) {
+      out.detail = `frontend fetch: ${e.message}`;
+    }
+  }
+
+  return out;
+}
+
 /** Close the shared browser — called on shutdown. */
 async function closePdfBrowser() {
   if (!browserPromise) return;
@@ -181,4 +270,4 @@ async function closePdfBrowser() {
   if (browser) await browser.close().catch(() => {});
 }
 
-module.exports = { renderProposalPdf, closePdfBrowser };
+module.exports = { renderProposalPdf, pdfDiagnostics, checkPdfRenderer, closePdfBrowser };

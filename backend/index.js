@@ -104,9 +104,10 @@ app.use('/uploads', express.static('uploads'));
 app.use(errorHandler);
 
 
-// Shut the PDF renderer's Chrome down with the server, so restarts don't leave
-// orphaned browser processes behind.
-const { closePdfBrowser } = require('./utils/proposalPdf');
+// Report at boot whether PDF export can work on this host, and shut the
+// renderer's Chrome down with the server so restarts don't orphan processes.
+const { checkPdfRenderer, closePdfBrowser } = require('./utils/proposalPdf');
+void checkPdfRenderer();
 for (const signal of ['SIGINT', 'SIGTERM']) {
   process.on(signal, async () => {
     await closePdfBrowser();

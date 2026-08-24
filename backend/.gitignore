@@ -1,3 +1,6 @@
 .env
 node_modules
 /uploads/
+
+# Chromium for the PDF renderer (downloaded on install)
+.cache/
