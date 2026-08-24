@@ -1,18 +1,15 @@
 'use client';
 
-import React, { Suspense, useEffect, useRef, useState } from 'react';
+import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { ProposalBanner } from './_components/proposal-banner';
-import { ProposalDisclaimer } from './_components/proposal-disclaimer';
-import { ProposalFinancialOverview } from './_components/proposal-financial-overview';
-import { ProposalBusinessAppraisal } from './_components/proposal-business-appraisal';
-import { YourInvestment } from './_components/your-investment';
-import { TheProcess } from './_components/the-process';
-import { AboutBlackmont } from './_components/about-blackmont';
-import { ContactUs } from './_components/contact-us';
-import { MediaReviews } from './_components/media-reviews';
 import { CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
 import { apiClient } from '@/lib/api';
+import { ProposalDocument } from '@/components/proposal/proposal-document';
+import {
+  PROPOSAL_API_BASE,
+  type DigitalProposalDoc,
+  type FeeOption,
+} from '@/components/proposal/types';
 
 const PROPOSAL_EXPIRY_DAYS = 30;
 
@@ -51,47 +48,10 @@ function ProposalSuccessPage({ businessName }: { businessName?: string }) {
   );
 }
 
-function AcceptProposalButton({
-  handleAcceptProposal,
-  acceptingProposal,
-  acceptError,
-}: {
-  handleAcceptProposal: () => void;
-  acceptingProposal: boolean;
-  acceptError: string;
-}) {
-  return (
-    <div className='text-center my-12 relative z-20'>
-      {acceptError && (
-        <div className='mb-6 max-w-[600px] mx-auto p-4 bg-red-50 text-red-700 border border-red-200 flex items-center justify-center gap-2'>
-          <AlertCircle className='w-5 h-5 shrink-0' />
-          <span className='text-sm'>{acceptError}</span>
-        </div>
-      )}
-
-      <button
-        onClick={handleAcceptProposal}
-        disabled={acceptingProposal}
-        className='bg-accent text-primary px-10 py-4 text-lg font-bold uppercase tracking-[0.12em] min-w-[240px] shadow-lg hover:bg-accent-light hover:-translate-y-1 transition-all duration-300 disabled:opacity-70 disabled:transform-none disabled:cursor-wait flex items-center justify-center mx-auto gap-3'
-      >
-        {acceptingProposal ? (
-          <>
-            <Loader2 className='w-5 h-5 animate-spin' />
-            <span>Processing...</span>
-          </>
-        ) : (
-          'Accept Proposal'
-        )}
-      </button>
-
-      {acceptingProposal && (
-        <p className='text-sm text-muted-foreground mt-4'>
-          Please wait while we process your proposal acceptance...
-        </p>
-      )}
-    </div>
-  );
-}
+/** Fee options are matched by id so the tick survives an autosave round-trip
+ *  replacing the objects underneath it. */
+const findOption = (options: FeeOption[] | undefined, id?: string | null) =>
+  (options ?? []).find((o) => o.id === id) ?? null;
 
 function ProposalContent() {
   const router = useRouter();
@@ -100,17 +60,18 @@ function ProposalContent() {
   const proposalId = searchParams.get('id');
   const isSuccess = searchParams.get('success') === 'true';
 
-  const [proposal, setProposal] = useState<any>(null);
+  const [proposal, setProposal] = useState<DigitalProposalDoc | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const [selectedAdvertisement, setSelectedAdvertisement] = useState<any>(null);
-  const [selectedSuccessFee, setSelectedSuccessFee] = useState<any>(null);
+  // Held by id; resolved back to the live option object at render time.
+  const [selectedAdvertisementId, setSelectedAdvertisementId] = useState<string | null>(null);
+  const [selectedSuccessFeeId, setSelectedSuccessFeeId] = useState<string | null>(null);
 
   const [acceptingProposal, setAcceptingProposal] = useState(false);
   const [acceptError, setAcceptError] = useState('');
 
-  const yourInvestmentRef = useRef<HTMLDivElement>(null);
+  const investmentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchProposal = async () => {
@@ -129,8 +90,8 @@ function ProposalContent() {
         const proposals = res.data;
 
         // Backend possibly returns array of matching proposals
-        const approvedProposal = Array.isArray(proposals)
-          ? proposals.find((p: any) => p.isApproved)
+        const approvedProposal: DigitalProposalDoc | null = Array.isArray(proposals)
+          ? (proposals.find((p: DigitalProposalDoc) => p.isApproved) ?? null)
           : proposals && proposals.isApproved
             ? proposals
             : null;
@@ -157,26 +118,20 @@ function ProposalContent() {
           // Non-critical — don't surface view-tracking errors to the user
         }
 
-        // Pre-select defaults based on legacy logic
-        if (
-          approvedProposal.advertisement &&
-          approvedProposal.advertisement.length > 1
-        ) {
-          setSelectedAdvertisement(approvedProposal.advertisement[1]); // Default to option 2
-        } else if (
-          approvedProposal.advertisement &&
-          approvedProposal.advertisement.length === 1
-        ) {
-          setSelectedAdvertisement(approvedProposal.advertisement[0]);
-        }
+        // Pre-select defaults based on legacy logic. The options now live on
+        // the locked Investment section rather than the flat fields.
+        const investment = approvedProposal.sections?.find(
+          (s) => s.type === 'investment',
+        )?.data as { advertisement?: FeeOption[]; successFee?: FeeOption[] } | undefined;
 
-        if (
-          approvedProposal.successFee &&
-          approvedProposal.successFee.length > 0
-        ) {
-          setSelectedSuccessFee(approvedProposal.successFee[0]);
-        }
-      } catch (err: any) {
+        const ads = investment?.advertisement ?? [];
+        const fees = investment?.successFee ?? [];
+
+        if (ads.length > 1) setSelectedAdvertisementId(ads[1].id); // Default to option 2
+        else if (ads.length === 1) setSelectedAdvertisementId(ads[0].id);
+
+        if (fees.length > 0) setSelectedSuccessFeeId(fees[0].id);
+      } catch (err) {
         console.error('Error fetching proposal:', err);
         setError(
           'Failed to load your business appraisal. Please check your email link or contact us for assistance.',
@@ -189,6 +144,19 @@ function ProposalContent() {
     fetchProposal();
   }, [customerEmail, proposalId]);
 
+  // Memoised so the accept handler isn't rebuilt on every render.
+  const { advertisementOptions, successFeeOptions } = useMemo(() => {
+    const investment = proposal?.sections?.find((s) => s.type === 'investment')
+      ?.data as { advertisement?: FeeOption[]; successFee?: FeeOption[] } | undefined;
+    return {
+      advertisementOptions: investment?.advertisement ?? [],
+      successFeeOptions: investment?.successFee ?? [],
+    };
+  }, [proposal]);
+
+  const selectedAdvertisement = findOption(advertisementOptions, selectedAdvertisementId);
+  const selectedSuccessFee = findOption(successFeeOptions, selectedSuccessFeeId);
+
   const isProposalExpired = proposal?.approvedAt
     ? new Date() >
       new Date(
@@ -197,26 +165,18 @@ function ProposalContent() {
       )
     : false;
 
-  const handleAcceptProposal = async () => {
-    const hasAdvertisementOptions =
-      proposal?.advertisement && proposal.advertisement.length > 0;
-    const hasSuccessFeeOptions =
-      proposal?.successFee && proposal.successFee.length > 0;
+  const handleAcceptProposal = useCallback(async () => {
+    if (!proposal) return;
+
+    const hasAdvertisementOptions = advertisementOptions.length > 0;
+    const hasSuccessFeeOptions = successFeeOptions.length > 0;
 
     const needsAdvertisementSelection =
-      hasAdvertisementOptions &&
-      proposal.advertisement.length > 1 &&
-      !selectedAdvertisement;
-    const needsSuccessFeeSelection =
-      hasSuccessFeeOptions && !selectedSuccessFee;
+      hasAdvertisementOptions && advertisementOptions.length > 1 && !selectedAdvertisement;
+    const needsSuccessFeeSelection = hasSuccessFeeOptions && !selectedSuccessFee;
 
     if (needsAdvertisementSelection || needsSuccessFeeSelection) {
-      if (yourInvestmentRef.current) {
-        yourInvestmentRef.current.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start',
-        });
-      }
+      investmentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
       let errorMessage = 'Please select ';
       if (needsAdvertisementSelection && needsSuccessFeeSelection) {
@@ -236,16 +196,13 @@ function ProposalContent() {
     setAcceptError('');
 
     try {
-      await apiClient.post('/api/signnow/accept-proposal', {
-        proposalId: proposal._id,
+      await apiClient.post(`${PROPOSAL_API_BASE}/${proposal._id}/accept`, {
         selectedAdvertisement:
           selectedAdvertisement ||
-          (proposal.advertisement?.length === 1
-            ? proposal.advertisement[0]
-            : null),
+          (advertisementOptions.length === 1 ? advertisementOptions[0] : null),
         selectedSuccessFee:
           selectedSuccessFee ||
-          (proposal.successFee?.length === 1 ? proposal.successFee[0] : null),
+          (successFeeOptions.length === 1 ? successFeeOptions[0] : null),
         customerEmail: proposal.customerEmail,
       });
 
@@ -253,17 +210,25 @@ function ProposalContent() {
       const newUrl = new URL(window.location.href);
       newUrl.searchParams.set('success', 'true');
       router.push(newUrl.pathname + newUrl.search);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error accepting proposal:', err);
+      const axiosErr = err as { response?: { data?: { message?: string } }; message?: string };
       setAcceptError(
-        err.response?.data?.message ||
-          err.message ||
+        axiosErr.response?.data?.message ||
+          axiosErr.message ||
           'Failed to process proposal acceptance',
       );
     } finally {
       setAcceptingProposal(false);
     }
-  };
+  }, [
+    proposal,
+    advertisementOptions,
+    successFeeOptions,
+    selectedAdvertisement,
+    selectedSuccessFee,
+    router,
+  ]);
 
   if (isSuccess) {
     return <ProposalSuccessPage businessName={proposal?.businessName} />;
@@ -323,69 +288,39 @@ function ProposalContent() {
 
   return (
     <div className='min-h-screen bg-white'>
-      <ProposalBanner
-        businessName={proposal.businessName}
-        businessValue={proposal.businessValue}
-        backgroundImage={proposal.backgroundImage}
-        template={proposal.template}
+      {/* Printing / "Save as PDF" from this page should give the document
+          alone, without the marketing chrome around it. */}
+      <style>{`@media print {
+        /* The nav and footer are direct children of <body>; the cover's own
+           <header> lives inside <main> and is untouched. */
+        body > header, body > footer { display: none !important; }
+        * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        @page { margin: 12mm; }
+      }`}</style>
+
+      <ProposalDocument
+        sections={proposal.sections ?? []}
+        context={{
+          template: proposal.template ?? 'business_appraisal',
+          brokerName: proposal.brokerName ?? '',
+          customerName: proposal.customerName ?? '',
+          businessName: proposal.businessName ?? '',
+          businessValue: proposal.businessValue ?? '',
+          // The cover dates the appraisal: when it was approved, else when it was made.
+          preparedOn: proposal.approvedAt ?? proposal.createdAt,
+        }}
+        interaction={{
+          selectedAdvertisement,
+          onSelectAdvertisement: (o) => setSelectedAdvertisementId(o.id),
+          selectedSuccessFee,
+          onSelectSuccessFee: (o) => setSelectedSuccessFeeId(o.id),
+          onAccept: handleAcceptProposal,
+          accepting: acceptingProposal,
+          acceptError,
+          investmentRef,
+          hideSelectionIfSingle: true,
+        }}
       />
-
-      <div className='max-w-[1260px] mx-auto px-6 lg:px-8'>
-        <ProposalDisclaimer template={proposal.template} />
-
-        {proposal.template === 'business_appraisal' && (
-          <ProposalFinancialOverview
-            financialAssumptions={proposal.financialAssumptions}
-          />
-        )}
-
-        {proposal.template === 'business_appraisal' && (
-          <ProposalBusinessAppraisal
-            businessName={proposal.businessName}
-            businessValue={proposal.businessValue}
-            brokerName={proposal.brokerName}
-          />
-        )}
-
-        <YourInvestment
-          ref={yourInvestmentRef}
-          advertisement={proposal.advertisement}
-          successFee={proposal.successFee}
-          engagementFee={proposal.engagementFee}
-          selectedAdvertisement={selectedAdvertisement}
-          setSelectedAdvertisement={setSelectedAdvertisement}
-          selectedSuccessFee={selectedSuccessFee}
-          setSelectedSuccessFee={setSelectedSuccessFee}
-          onAcceptProposal={handleAcceptProposal}
-          hideSelectionIfSingle={true}
-        />
-
-        <AcceptProposalButton
-          handleAcceptProposal={handleAcceptProposal}
-          acceptingProposal={acceptingProposal}
-          acceptError={acceptError}
-        />
-
-        <MediaReviews />
-
-        <AcceptProposalButton
-          handleAcceptProposal={handleAcceptProposal}
-          acceptingProposal={acceptingProposal}
-          acceptError={acceptError}
-        />
-
-        <TheProcess />
-
-        <AboutBlackmont />
-
-        <ContactUs />
-
-        <AcceptProposalButton
-          handleAcceptProposal={handleAcceptProposal}
-          acceptingProposal={acceptingProposal}
-          acceptError={acceptError}
-        />
-      </div>
     </div>
   );
 }

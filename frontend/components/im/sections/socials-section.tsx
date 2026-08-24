@@ -12,7 +12,13 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { SectionHeading } from '../section-chrome';
-import { makeUid, type SocialLink, type SocialPlatform, type SocialsData } from '../types';
+import {
+  makeUid,
+  type SectionPatch,
+  type SocialLink,
+  type SocialPlatform,
+  type SocialsData,
+} from '../types';
 
 /** Original brand glyphs (Simple Icons paths) + brand colours. The `website`
  * entry has no path and falls back to a globe. */
@@ -174,36 +180,43 @@ export function SocialsSection({
 }: {
   data: SocialsData;
   editable?: boolean;
-  onChange?: (patch: Partial<SocialsData>) => void;
+  onChange?: (patch: SectionPatch<SocialsData>) => void;
   onCommit?: () => void;
 }) {
   const links = data.links ?? [];
 
-  const writeLinks = (next: SocialLink[], commit = true) => {
-    onChange?.({ links: next });
+  // Built from the current links rather than the ones this render captured.
+  const writeLinks = (
+    make: (prev: SocialLink[]) => SocialLink[],
+    commit = true,
+  ) => {
+    onChange?.((prev) => ({ links: make((prev.links as SocialLink[]) ?? []) }));
     if (commit) onCommit?.();
   };
   const updateLink = (id: string, patch: Partial<SocialLink>, commit = false) =>
     writeLinks(
-      links.map((l) => (l.id === id ? { ...l, ...patch } : l)),
+      (prev) => prev.map((l) => (l.id === id ? { ...l, ...patch } : l)),
       commit,
     );
   const addLink = () =>
-    writeLinks([
-      ...links,
+    writeLinks((prev) => [
+      ...prev,
       { id: makeUid('soc'), platform: 'facebook', label: CATALOG.facebook.name, url: '' },
     ]);
-  const removeLink = (id: string) => writeLinks(links.filter((l) => l.id !== id));
+  const removeLink = (id: string) =>
+    writeLinks((prev) => prev.filter((l) => l.id !== id));
 
-  const changePlatform = (id: string, platform: SocialPlatform) => {
-    const link = links.find((l) => l.id === id);
-    const patch: Partial<SocialLink> = { platform };
-    // Keep the label in sync unless the broker customised it.
-    if (link && (!link.label.trim() || link.label === CATALOG[link.platform].name)) {
-      patch.label = CATALOG[platform].name;
-    }
-    updateLink(id, patch, true);
-  };
+  const changePlatform = (id: string, platform: SocialPlatform) =>
+    writeLinks(
+      (prev) =>
+        prev.map((l) => {
+          if (l.id !== id) return l;
+          // Keep the label in sync unless the broker customised it.
+          const rename = !l.label.trim() || l.label === CATALOG[l.platform].name;
+          return { ...l, platform, ...(rename ? { label: CATALOG[platform].name } : {}) };
+        }),
+      true,
+    );
 
   return (
     <>

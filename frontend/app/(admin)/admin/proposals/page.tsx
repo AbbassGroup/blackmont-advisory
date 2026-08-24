@@ -20,6 +20,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import DashboardLayout from '@/components/global/dashboard-layout';
 import { ProposalHistoryDialog, type ProposalViewLog } from '@/components/admin/proposal-history-dialog';
+import { getProposalStage, type ProposalStage } from '@/components/proposal/types';
 
 type Proposal = {
   _id: string;
@@ -30,7 +31,15 @@ type Proposal = {
   customerName: string;
   customerEmail: string;
   isApproved: boolean;
+  submittedForApprovalAt?: string | null;
   createdAt: string;
+};
+
+/** Draft → Pending → Approved, matching the editor's status button. */
+const STAGE_STYLE: Record<ProposalStage, { label: string; cls: string }> = {
+  draft: { label: 'Draft', cls: 'bg-muted text-muted-foreground' },
+  pending: { label: 'Pending', cls: 'bg-accent/15 text-accent' },
+  approved: { label: 'Approved', cls: 'bg-emerald-100 text-emerald-700' },
 };
 
 export default function ProposalsPage() {
@@ -202,11 +211,16 @@ export default function ProposalsPage() {
                       {p.businessValue || '—'}
                     </td>
                     <td className='px-5 py-4'>
-                      <span
-                        className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium ${p.isApproved ? 'bg-emerald-100 text-emerald-700' : 'bg-accent/15 text-accent'}`}
-                      >
-                        {p.isApproved ? 'Approved' : 'Pending'}
-                      </span>
+                      {(() => {
+                        const stage = STAGE_STYLE[getProposalStage(p)];
+                        return (
+                          <span
+                            className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium ${stage.cls}`}
+                          >
+                            {stage.label}
+                          </span>
+                        );
+                      })()}
                     </td>
                     <td className='px-5 py-4 text-muted-foreground hidden lg:table-cell'>
                       {format(new Date(p.createdAt), 'MMM dd, yyyy')}
@@ -333,8 +347,9 @@ export default function ProposalsPage() {
               Delete Proposal?
             </h3>
             <p className='mb-6 text-sm text-muted-foreground'>
-              This action cannot be undone. The proposal and all associated data
-              will be permanently deleted.
+              This proposal will be removed from your list and stop opening for
+              the customer. It is archived (kept in the database) rather than
+              permanently erased, so it can be recovered if needed.
             </p>
             <div className='flex justify-end gap-3'>
               <Button

@@ -14,6 +14,7 @@ import {
   AlignCenter,
   AlignLeft,
   AlignRight,
+  BarChart3,
   Bold,
   ChevronDown,
   ChevronUp,
@@ -22,12 +23,16 @@ import {
   FileText,
   FileUp,
   Film,
+  Gauge,
   ImagePlus,
   Italic,
+  LayoutGrid,
   Loader2,
   Minus,
   MousePointerClick,
+  PieChart as PieChartIcon,
   Plus,
+  TrendingUp,
   Split,
   Table2,
   Trash2,
@@ -40,11 +45,19 @@ import { Input } from '@/components/ui/input';
 import { RichTextEditor } from '@/components/proposal/rich-text-editor';
 import { InlineText } from '../inline-text';
 import { SectionHeading } from '../section-chrome';
+import { ChartBlockEditor, ChartBlockView, chartHasData } from './charts-section';
 import {
+  makeFinanceChart,
+  makeGrowthChart,
+  makeKpiChart,
+  makePieChart,
+  makeRoiChart,
   makeUid,
+  type ChartItem,
   type CustomBlock,
   type CustomButton,
   type CustomData,
+  type SectionPatch,
   type TableCell,
   type TableRow,
 } from '../types';
@@ -223,6 +236,7 @@ const BLOCK_LABELS: Record<CustomBlock['type'], string> = {
   photos: 'Photos',
   video: 'Video',
   pdf: 'PDF',
+  chart: 'Chart',
 };
 
 const BLOCK_ICONS: Record<CustomBlock['type'], typeof Type> = {
@@ -232,6 +246,7 @@ const BLOCK_ICONS: Record<CustomBlock['type'], typeof Type> = {
   photos: ImagePlus,
   video: Film,
   pdf: FileText,
+  chart: BarChart3,
 };
 
 const BLOCK_TYPES = [
@@ -241,7 +256,17 @@ const BLOCK_TYPES = [
   'photos',
   'video',
   'pdf',
+  'chart',
 ] as const;
+
+/** The chart kinds a chart block can become, in the order the picker lists them. */
+const CHART_KINDS: { label: string; icon: typeof BarChart3; make: () => ChartItem }[] = [
+  { label: 'Finance', icon: BarChart3, make: makeFinanceChart },
+  { label: 'Growth', icon: TrendingUp, make: makeGrowthChart },
+  { label: 'Pie', icon: PieChartIcon, make: makePieChart },
+  { label: 'ROI doughnut', icon: Gauge, make: makeRoiChart },
+  { label: 'KPIs', icon: LayoutGrid, make: makeKpiChart },
+];
 
 /** Build the working block list, migrating legacy custom-section data on the fly
  * (with deterministic ids so re-renders stay stable). */
@@ -288,10 +313,21 @@ function newBlock(type: CustomBlock['type']): CustomBlock {
       return { id, type, kind: 'link', url: '' };
     case 'pdf':
       return { id, type, url: '' };
+    // No chart yet — the block renders a kind picker until one is chosen.
+    case 'chart':
+      return { id, type };
   }
 }
 
-type Update = (patch: Record<string, unknown>, commit?: boolean) => void;
+/** Updates one block. Pass a function when the new value is built from the old
+ * one (appending photos, editing a button) so a slow upload can't overwrite
+ * edits made while it was running. */
+type Update = (
+  patch:
+    | Record<string, unknown>
+    | ((prev: Record<string, unknown>) => Record<string, unknown>),
+  commit?: boolean,
+) => void;
 
 // ─── Read-only views ──────────────────────────────────────────────────────────
 function TableView({ rows: raw }: { rows: unknown }) {
@@ -451,6 +487,11 @@ function BlockRead({ block }: { block: CustomBlock }) {
       ) : null;
     case 'pdf':
       return block.url ? <PdfPages url={block.url} /> : null;
+    case 'chart':
+      // An unchosen or empty chart is left out of the document entirely.
+      return block.chart && chartHasData(block.chart) ? (
+        <ChartBlockView chart={block.chart} />
+      ) : null;
   }
 }
 
@@ -862,19 +903,26 @@ function ButtonsBlockEditor({
   const pendingId = useRef<string | null>(null);
   const [uploadingId, setUploadingId] = useState<string | null>(null);
 
-  const setBtns = (next: CustomButton[], commit = true) =>
-    update({ buttons: next }, commit);
+  const setBtns = (
+    make: (prev: CustomButton[]) => CustomButton[],
+    commit = true,
+  ) =>
+    update(
+      (prev) => ({ buttons: make((prev.buttons as CustomButton[]) ?? []) }),
+      commit,
+    );
   const updBtn = (id: string, patch: Partial<CustomButton>, commit = false) =>
     setBtns(
-      buttons.map((b) => (b.id === id ? { ...b, ...patch } : b)),
+      (prev) => prev.map((b) => (b.id === id ? { ...b, ...patch } : b)),
       commit,
     );
   const addBtn = () =>
-    setBtns([
-      ...buttons,
+    setBtns((prev) => [
+      ...prev,
       { id: makeUid('btn'), label: 'New Button', kind: 'link', url: '' },
     ]);
-  const removeBtn = (id: string) => setBtns(buttons.filter((b) => b.id !== id));
+  const removeBtn = (id: string) =>
+    setBtns((prev) => prev.filter((b) => b.id !== id));
 
   const handlePdf = async (id: string, file: File) => {
     if (!onUploadFile) return;
@@ -1007,13 +1055,22 @@ function PhotosBlockEditor({
         const url = await onUploadFile(f);
         if (url) urls.push(url);
       }
-      if (urls.length) update({ photos: [...photos, ...urls] }, true);
+      if (urls.length)
+        update(
+          (prev) => ({ photos: [...((prev.photos as string[]) ?? []), ...urls] }),
+          true,
+        );
     } finally {
       setUploading(false);
     }
   };
   const removePhoto = (i: number) =>
-    update({ photos: photos.filter((_, idx) => idx !== i) }, true);
+    update(
+      (prev) => ({
+        photos: ((prev.photos as string[]) ?? []).filter((_, idx) => idx !== i),
+      }),
+      true,
+    );
 
   return (
     <div className='space-y-2'>
@@ -1241,10 +1298,12 @@ function BlockEdit({
   block,
   update,
   onUploadFile,
+  onCommit,
 }: {
   block: CustomBlock;
   update: Update;
   onUploadFile?: (file: File) => Promise<string | null>;
+  onCommit?: () => void;
 }) {
   switch (block.type) {
     case 'text':
@@ -1296,6 +1355,41 @@ function BlockEdit({
           onUploadFile={onUploadFile}
         />
       );
+    case 'chart':
+      return block.chart ? (
+        <ChartBlockEditor
+          chart={block.chart}
+          onChange={(patch) =>
+            // Resolved against the block's current chart so a burst of edits
+            // (typing a title while changing a row) can't drop the earlier one.
+            update(
+              (prev) => ({
+                chart: { ...((prev.chart as ChartItem) ?? {}), ...patch },
+              }),
+              false,
+            )
+          }
+          onCommit={onCommit}
+        />
+      ) : (
+        <div>
+          <p className='mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground/60'>
+            Choose a chart
+          </p>
+          <div className='grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5'>
+            {CHART_KINDS.map(({ label, icon: Icon, make }) => (
+              <button
+                key={label}
+                type='button'
+                onClick={() => update({ chart: make() })}
+                className='flex items-center justify-center gap-2 rounded-2xl border border-dashed border-border px-3 py-3 text-sm font-medium text-muted-foreground transition hover:border-accent hover:bg-accent/5 hover:text-accent'
+              >
+                <Icon className='h-4 w-4' /> {label}
+              </button>
+            ))}
+          </div>
+        </div>
+      );
   }
 }
 
@@ -1309,41 +1403,54 @@ export function CustomSection({
 }: {
   data: CustomData;
   editable?: boolean;
-  onChange?: (patch: Partial<CustomData>) => void;
+  onChange?: (patch: SectionPatch<CustomData>) => void;
   onUploadFile?: (file: File) => Promise<string | null>;
   onCommit?: () => void;
 }) {
   const blocks = resolveBlocks(data);
 
-  const write = (next: CustomBlock[], commit = true) => {
-    onChange?.({ blocks: next });
+  // Every write is built from the blocks as they are now, not as they were when
+  // the handler was created. Without this an upload that finishes late reverts
+  // anything edited elsewhere in the section while it was running.
+  const write = (make: (prev: CustomBlock[]) => CustomBlock[], commit = true) => {
+    onChange?.((prev) => ({
+      blocks: make(resolveBlocks(prev as unknown as CustomData)),
+    }));
     if (commit) onCommit?.();
   };
   const updateBlock = (
     id: string,
-    patch: Record<string, unknown>,
+    patch:
+      | Record<string, unknown>
+      | ((prev: Record<string, unknown>) => Record<string, unknown>),
     commit = false,
   ) =>
     write(
-      blocks.map((b) =>
-        b.id === id ? ({ ...b, ...patch } as CustomBlock) : b,
-      ),
+      (prev) =>
+        prev.map((b) =>
+          b.id === id
+            ? ({
+                ...b,
+                ...(typeof patch === 'function'
+                  ? patch(b as unknown as Record<string, unknown>)
+                  : patch),
+              } as CustomBlock)
+            : b,
+        ),
       commit,
     );
-  const moveBlock = (index: number, dir: -1 | 1) => {
-    const j = index + dir;
-    if (j < 0 || j >= blocks.length) return;
-    const next = [...blocks];
-    [next[index], next[j]] = [next[j], next[index]];
-    write(next, true);
-  };
+  const moveBlock = (index: number, dir: -1 | 1) =>
+    write((prev) => {
+      const j = index + dir;
+      if (j < 0 || j >= prev.length) return prev;
+      const next = [...prev];
+      [next[index], next[j]] = [next[j], next[index]];
+      return next;
+    }, true);
   const removeBlock = (id: string) =>
-    write(
-      blocks.filter((b) => b.id !== id),
-      true,
-    );
+    write((prev) => prev.filter((b) => b.id !== id), true);
   const addBlock = (type: CustomBlock['type']) =>
-    write([...blocks, newBlock(type)], true);
+    write((prev) => [...prev, newBlock(type)], true);
 
   return (
     <>
@@ -1399,6 +1506,7 @@ export function CustomSection({
                     updateBlock(block.id, patch, commit)
                   }
                   onUploadFile={onUploadFile}
+                  onCommit={onCommit}
                 />
               </div>
             );

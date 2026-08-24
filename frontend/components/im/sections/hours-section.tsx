@@ -2,7 +2,7 @@
 
 import { SectionHeading } from '../section-chrome';
 import { InlineText } from '../inline-text';
-import type { HoursData, HoursRow } from '../types';
+import type { HoursData, HoursRow, SectionPatch } from '../types';
 
 export function HoursSection({
   data,
@@ -11,11 +11,16 @@ export function HoursSection({
 }: {
   data: HoursData;
   editable?: boolean;
-  onChange?: (patch: Partial<HoursData>) => void;
+  onChange?: (patch: SectionPatch<HoursData>) => void;
 }) {
   const rows = data.rows ?? [];
+  // Built from the current rows rather than the ones this render captured.
   const updateRow = (index: number, patch: Partial<HoursRow>) =>
-    onChange?.({ rows: rows.map((r, i) => (i === index ? { ...r, ...patch } : r)) });
+    onChange?.((prev) => ({
+      rows: ((prev.rows as HoursRow[]) ?? []).map((r, i) =>
+        i === index ? { ...r, ...patch } : r,
+      ),
+    }));
 
   return (
     <>

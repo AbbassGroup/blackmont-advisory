@@ -57,6 +57,7 @@ import {
   type KpiRow,
   type KpiStyle,
   type PieSlice,
+  type SectionPatch,
 } from '../types';
 
 // ─── Series definition (single source of truth for keys, labels, colours) ─────
@@ -203,7 +204,7 @@ function rowHasData(r: FinanceRow): boolean {
 function rowHasContent(r: KpiRow): boolean {
   return Boolean(r.category.trim() || r.cells.some((c) => c.big.trim() || c.small.trim()));
 }
-function chartHasData(c: ChartItem): boolean {
+export function chartHasData(c: ChartItem): boolean {
   if (c.type === 'roi') return Boolean(c.askingPrice && c.sde);
   if (c.type === 'growth') return (c.growthRows ?? []).some((r) => r.value);
   if (c.type === 'pie') return (c.pieSlices ?? []).some((s) => s.value > 0);
@@ -1340,6 +1341,91 @@ function KpiBody({
 }
 
 // ─── Chart card (editor) ──────────────────────────────────────────────────────
+/**
+ * One chart, edited without the move/remove chrome `ChartEditor` carries.
+ *
+ * Used by a custom section's chart block, where the block wrapper already
+ * provides the reorder and delete controls — see `custom-section.tsx`.
+ */
+export function ChartBlockEditor({
+  chart,
+  onChange,
+  onCommit,
+}: {
+  chart: ChartItem;
+  onChange: (patch: Partial<ChartItem>) => void;
+  onCommit?: () => void;
+}) {
+  return (
+    <div className="border border-border bg-card p-4 shadow-xs sm:p-6">
+      <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <InlineText
+            as="h3"
+            singleLine
+            editable
+            value={chart.title}
+            onChange={(v) => onChange({ title: v })}
+            placeholder="Chart title"
+            className="text-lg font-semibold text-secondary sm:text-xl"
+          />
+        </div>
+        {chart.type === 'finance' && (
+          <VariantSwitch
+            variant={chart.variant ?? 'bar'}
+            onChange={(v) => {
+              onChange({ variant: v });
+              onCommit?.();
+            }}
+          />
+        )}
+      </div>
+
+      {chart.type === 'roi' ? (
+        <RoiBody chart={chart} onChange={onChange} onCommit={onCommit} />
+      ) : chart.type === 'growth' ? (
+        <GrowthBody chart={chart} onChange={onChange} onCommit={onCommit} />
+      ) : chart.type === 'pie' ? (
+        <PieBody chart={chart} onChange={onChange} onCommit={onCommit} />
+      ) : chart.type === 'kpi' ? (
+        <KpiBody chart={chart} onChange={onChange} onCommit={onCommit} />
+      ) : (
+        <FinanceBody chart={chart} onChange={onChange} onCommit={onCommit} />
+      )}
+    </div>
+  );
+}
+
+/** One chart as the reader sees it. */
+export function ChartBlockView({ chart }: { chart: ChartItem }) {
+  return (
+    <figure className="border border-border bg-card p-4 shadow-xs sm:p-6">
+      {chart.title?.trim() && (
+        <figcaption className="mb-4 text-lg font-semibold text-secondary sm:text-xl">
+          {chart.title}
+        </figcaption>
+      )}
+      {chart.type === 'roi' ? (
+        <RoiChartView chart={chart} />
+      ) : chart.type === 'growth' ? (
+        <>
+          <GrowthChartView chart={chart} />
+          <GrowthLegend />
+        </>
+      ) : chart.type === 'pie' ? (
+        <PieChartView chart={chart} />
+      ) : chart.type === 'kpi' ? (
+        <KpiView chart={chart} />
+      ) : (
+        <>
+          <FinanceChartView chart={chart} />
+          <FinanceLegend />
+        </>
+      )}
+    </figure>
+  );
+}
+
 function ChartEditor({
   chart,
   index,
@@ -1456,33 +1542,39 @@ export function ChartsSection({
 }: {
   data: ChartsData;
   editable?: boolean;
-  onChange?: (patch: Partial<ChartsData>) => void;
+  onChange?: (patch: SectionPatch<ChartsData>) => void;
   onCommit?: () => void;
 }) {
   const charts = data.charts ?? [];
 
-  const writeCharts = (next: ChartItem[], commit = true) => {
-    onChange?.({ charts: next });
+  // Built from the current charts rather than the ones this render captured, so
+  // two edits in quick succession can't drop the first.
+  const writeCharts = (make: (prev: ChartItem[]) => ChartItem[], commit = true) => {
+    onChange?.((prev) => ({ charts: make((prev.charts as ChartItem[]) ?? []) }));
     if (commit) onCommit?.();
   };
   const updateChart = (id: string, patch: Partial<ChartItem>) =>
     writeCharts(
-      charts.map((c) => (c.id === id ? { ...c, ...patch } : c)),
+      (prev) => prev.map((c) => (c.id === id ? { ...c, ...patch } : c)),
       false,
     );
-  const addFinance = () => writeCharts([...charts, makeFinanceChart()]);
-  const addRoi = () => writeCharts([...charts, makeRoiChart()]);
-  const addGrowth = () => writeCharts([...charts, makeGrowthChart()]);
-  const addPie = () => writeCharts([...charts, makePieChart()]);
-  const addKpi = () => writeCharts([...charts, makeKpiChart()]);
-  const removeChart = (id: string) => writeCharts(charts.filter((c) => c.id !== id));
-  const moveChart = (index: number, dir: -1 | 1) => {
-    const j = index + dir;
-    if (j < 0 || j >= charts.length) return;
-    const next = [...charts];
-    [next[index], next[j]] = [next[j], next[index]];
-    writeCharts(next);
-  };
+  const addChart = (make: () => ChartItem) =>
+    writeCharts((prev) => [...prev, make()]);
+  const addFinance = () => addChart(makeFinanceChart);
+  const addRoi = () => addChart(makeRoiChart);
+  const addGrowth = () => addChart(makeGrowthChart);
+  const addPie = () => addChart(makePieChart);
+  const addKpi = () => addChart(makeKpiChart);
+  const removeChart = (id: string) =>
+    writeCharts((prev) => prev.filter((c) => c.id !== id));
+  const moveChart = (index: number, dir: -1 | 1) =>
+    writeCharts((prev) => {
+      const j = index + dir;
+      if (j < 0 || j >= prev.length) return prev;
+      const next = [...prev];
+      [next[index], next[j]] = [next[j], next[index]];
+      return next;
+    });
 
   // Reader: only show charts that actually have data.
   const shown = editable ? charts : charts.filter(chartHasData);

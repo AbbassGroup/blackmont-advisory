@@ -26,6 +26,8 @@ import type {
   ImSection,
   MakeOfferData,
   OwnershipData,
+  RawSectionData,
+  SectionPatch,
   SocialsData,
 } from './types';
 
@@ -60,7 +62,7 @@ interface ImDocumentProps {
   /** Which product this is — drives banner/footer terminology. */
   kind?: ReportKind;
   /** Called with the section's index in the full array and a data patch. */
-  onSectionChange?: (index: number, patch: Record<string, unknown>) => void;
+  onSectionChange?: (index: number, patch: SectionPatch<RawSectionData>) => void;
   /** Broker shown in Welcome / Process (chosen in Settings). */
   brokerEmail?: string;
   /** Uploads a file (e.g. a custom section's PDF) and returns its URL. */
@@ -104,7 +106,7 @@ function ImDocumentImpl({
         // bottom of Key Contacts. Skip any reviews section in legacy templates.
         if (section.type === 'reviews') return null;
         const key = section.uid || section._id || `${section.type}-${index}`;
-        const onChange = (patch: Record<string, unknown>) =>
+        const onChange = (patch: SectionPatch<RawSectionData>) =>
           onSectionChange?.(index, patch);
 
         if (section.type === 'banner') {

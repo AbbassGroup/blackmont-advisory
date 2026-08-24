@@ -42,7 +42,12 @@ import {
 } from '@/components/ui/popover';
 import { InlineText } from '../inline-text';
 import { SectionHeading } from '../section-chrome';
-import { makeUid, type HighlightItem, type HighlightsData } from '../types';
+import {
+  makeUid,
+  type HighlightItem,
+  type HighlightsData,
+  type SectionPatch,
+} from '../types';
 
 // Curated icons a broker can pick for a highlight.
 const ICONS: Record<string, LucideIcon> = {
@@ -128,23 +133,31 @@ export function HighlightsSection({
 }: {
   data: HighlightsData;
   editable?: boolean;
-  onChange?: (patch: Partial<HighlightsData>) => void;
+  onChange?: (patch: SectionPatch<HighlightsData>) => void;
   onCommit?: () => void;
 }) {
   const items = data.items ?? [];
 
-  const writeItems = (next: HighlightItem[], commit = true) => {
-    onChange?.({ items: next });
+  // Built from the current items rather than the ones this render captured.
+  const writeItems = (
+    make: (prev: HighlightItem[]) => HighlightItem[],
+    commit = true,
+  ) => {
+    onChange?.((prev) => ({ items: make((prev.items as HighlightItem[]) ?? []) }));
     if (commit) onCommit?.();
   };
   const updateItem = (id: string, patch: Partial<HighlightItem>, commit = false) =>
     writeItems(
-      items.map((it) => (it.id === id ? { ...it, ...patch } : it)),
+      (prev) => prev.map((it) => (it.id === id ? { ...it, ...patch } : it)),
       commit,
     );
   const addItem = () =>
-    writeItems([...items, { id: makeUid('hl'), icon: 'store', title: '', desc: '' }]);
-  const removeItem = (id: string) => writeItems(items.filter((it) => it.id !== id));
+    writeItems((prev) => [
+      ...prev,
+      { id: makeUid('hl'), icon: 'store', title: '', desc: '' },
+    ]);
+  const removeItem = (id: string) =>
+    writeItems((prev) => prev.filter((it) => it.id !== id));
 
   const shown = editable ? items : items.filter((it) => it.title || it.desc);
 

@@ -3,7 +3,7 @@
 import { UserRound } from 'lucide-react';
 import { InlineText } from '../inline-text';
 import { SectionHeading } from '../section-chrome';
-import type { OwnershipData, StaffGroup } from '../types';
+import type { OwnershipData, SectionPatch, StaffGroup } from '../types';
 
 /** A single "Label: value" line. The label is static; the value is editable
  * (highlighted to show it can be edited, echoing the source design). */
@@ -93,16 +93,22 @@ export function OwnershipSection({
 }: {
   data: OwnershipData;
   editable?: boolean;
-  onChange?: (patch: Partial<OwnershipData>) => void;
+  onChange?: (patch: SectionPatch<OwnershipData>) => void;
 }) {
+  // Merged into the current values rather than the ones this render captured.
   const setOwner = (patch: Partial<OwnershipData['owner']>) =>
-    onChange?.({ owner: { ...data.owner, ...patch } });
+    onChange?.((prev) => ({
+      owner: { ...((prev.owner as OwnershipData['owner']) ?? {}), ...patch },
+    }));
   const setGroup =
     (key: 'fulltime' | 'parttime' | 'casual' | 'subcontractors') =>
     (patch: Partial<StaffGroup>) =>
-      onChange?.({
-        [key]: { ...data[key], ...patch },
-      } as Partial<OwnershipData>);
+      onChange?.(
+        (prev) =>
+          ({
+            [key]: { ...((prev[key] as StaffGroup) ?? {}), ...patch },
+          }) as Partial<OwnershipData>,
+      );
 
   return (
     <>
