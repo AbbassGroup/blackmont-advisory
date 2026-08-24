@@ -356,7 +356,7 @@ function Outcome({
               className='mx-auto h-9 w-auto'
             />
             <p className='mt-3 text-xs text-gray-400'>
-              {BRAND.phone} · {BRAND.email}
+              {BRAND.email}
             </p>
           </div>
         </div>

@@ -1,11 +1,4 @@
-/**
- * Common imports for the proposal section renderers.
- *
- * Each section takes its typed `data` and an `onChange` that accepts either a
- * plain partial or an updater. Use the updater form whenever the new value is
- * derived from the old one (adding a row, editing one item in a list) so the
- * change applies to the data as it stands, not to a render-old copy.
- */
+/** Common imports for the proposal section renderers. */
 
 import type { SectionPatch } from '@/components/documents/types';
 

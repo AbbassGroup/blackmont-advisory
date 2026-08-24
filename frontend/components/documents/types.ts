@@ -1,26 +1,11 @@
-/**
- * The generic document-editor contract.
- *
- * Three products now share one section engine — the Information Memorandum, the
- * Acquisition Report and the Digital Proposal. They differ in their section
- * registry, their renderer, their settings drawer and what "publishing" means,
- * and in nothing else: loading, autosave, undo/redo, add/reorder/hide/duplicate
- * and the control bar are identical, and live once in `<DocumentEditor>`.
- *
- * A product supplies a `DocumentKindConfig` and gets the whole editor.
- */
+/** The generic document-editor contract. */
 
 import type { ComponentType, ReactNode } from 'react';
 
 /** A section's payload. Shape depends on `type` and is owned by its renderer. */
 export type RawSectionData = Record<string, unknown>;
 
-/**
- * A change to a section's data. Pass a function whenever the new value is built
- * from the old one (adding a row, editing one item in a list) so it applies to
- * the current data instead of whatever was on screen when the handler was made.
- * A slow upload finishing late would otherwise undo edits made while it ran.
- */
+/** A change to a section's data. */
 export type SectionPatch<T = RawSectionData> =
   | Partial<T>
   | ((prev: RawSectionData) => Partial<T>);
@@ -54,23 +39,11 @@ export interface DocSectionMeta {
   singleton: boolean;
   /** Whether the section appears in the preview sidebar navigation. */
   inNav: boolean;
-  /**
-   * Keep at least this many of the type in the document. Used for sections that
-   * are freely placeable but must not vanish entirely — a proposal's Accept
-   * button, which the original page repeated three times down the page.
-   */
+  /** Keep at least this many of the type in the document. */
   minCount?: number;
-  /**
-   * The section renders fixed content and has nothing to edit inline. It can
-   * still be placed, reordered and hidden — a proposal's legal disclaimer and
-   * firm boilerplate, which must read the same on every proposal.
-   */
+  /** The section renders fixed content and has nothing to edit inline. */
   fixed?: boolean;
-  /**
-   * Don't start this type on a fresh page when exporting. For sections that are
-   * a single element — a proposal's Accept button — a page of their own is
-   * mostly whitespace, so they follow whatever came before.
-   */
+  /** Don't start this type on a fresh page when exporting. */
   noPageBreak?: boolean;
 }
 
@@ -79,12 +52,7 @@ export const findSectionMeta = (
   type: string,
 ): DocSectionMeta | undefined => registry.find((m) => m.type === type);
 
-/**
- * Whether the section at `index` may be deleted. Everything can be, except the
- * last of a type the registry requires a minimum of.
- * `backend/utils/proposalSections.js` enforces the same rule on save — this
- * keeps the UI honest about it.
- */
+/** Whether the section at `index` may be deleted. */
 export function canRemoveSection(
   registry: DocSectionMeta[],
   sections: DocSection[],
@@ -97,16 +65,7 @@ export function canRemoveSection(
   return sections.filter((s) => s.type === section.type).length > min;
 }
 
-/**
- * Where a newly added section belongs.
- *
- * The registry is listed in the order a finished document reads, so a new
- * section goes before the first one that ranks after it — a proposal's
- * "Financial Data & Weighting" lands under the disclaimer rather than at the
- * bottom of a fifteen-section document. Repeatable types that sit last in the
- * registry (custom, charts) still append, which is what you want for those.
- * An unknown type appends.
- */
+/** Where a newly added section belongs. */
 export function sectionInsertIndex(
   registry: DocSectionMeta[],
   sections: DocSection[],
@@ -147,11 +106,7 @@ export interface SettingsRenderProps<T extends EditorDocument = EditorDocument> 
   busy: boolean;
   /** Run the document's status action, if it has one. */
   onStatusAction: () => void;
-  /**
-   * Open one of the product's `Extras` dialogs by key, closing the drawer first.
-   * A dialog nested inside the drawer would fight it for the focus trap, so the
-   * editor renders them as siblings and the drawer only asks for them by name.
-   */
+  /** Open one of the product's `Extras` dialogs by key, closing the drawer first. */
   onOpenExtra: (key: string) => void;
 }
 
@@ -159,10 +114,7 @@ export interface SettingsRenderProps<T extends EditorDocument = EditorDocument> 
 
 export type StatusIcon = 'globe' | 'send' | 'check';
 
-/**
- * What the control bar's right-hand button does for this product. An IM
- * publishes; a proposal is submitted for the owner's approval, then approved.
- */
+/** What the control bar's right-hand button does for this product. */
 export interface DocStatusAction {
   /** Button caption, e.g. "Publish", "Submit", "Approve". */
   label: string;
@@ -207,9 +159,7 @@ export interface DocumentKindConfig<T extends EditorDocument = EditorDocument> {
   printLabel?: string;
   printIcon?: 'printer' | 'download';
   /**
-   * Overrides `viewerBase` when the preview link needs more than the id — a
-   * proposal's customer link carries their email address as well. Returning
-   * null hides the Preview button.
+   * Overrides `viewerBase` when the preview link needs more than the id — a proposal's customer link carries their email address as well.
    */
   previewHref?: (doc: T, id: string) => string | null;
   /** Lowercase noun for UI copy: "Delete {docNoun}?". */
@@ -223,9 +173,7 @@ export interface DocumentKindConfig<T extends EditorDocument = EditorDocument> {
   toSavePayload: (doc: T, user: EditorUser) => Record<string, unknown>;
 
   /**
-   * Document-level fields that mirror a section's data — an IM's banner carries
-   * the business name, a proposal's banner the same. Returns the extra
-   * top-level keys to merge, or nothing.
+   * Document-level fields that mirror a section's data — an IM's banner carries the business name, a proposal's banner the same.
    */
   mirrorSectionFields?: (
     section: DocSection,
@@ -242,10 +190,7 @@ export interface DocumentKindConfig<T extends EditorDocument = EditorDocument> {
   /** Performs that action. Resolves once the server and local state agree. */
   runStatusAction?: (doc: T, ctx: StatusActionContext<T>) => Promise<void>;
 
-  /**
-   * Product dialogs mounted as siblings of the drawer. `openKey` is whatever
-   * `onOpenExtra` was last called with, and null when nothing is open.
-   */
+  /** Product dialogs mounted as siblings of the drawer. */
   Extras?: ComponentType<{
     doc: T;
     id: string;

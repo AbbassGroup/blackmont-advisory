@@ -9,15 +9,7 @@ import {
   type DigitalProposalDoc,
 } from '@/components/proposal/types';
 
-/**
- * The page headless Chrome renders when a broker exports a proposal.
- *
- * It is never linked from the app: the backend mints a short-lived render token,
- * opens this URL, and flags `data-pdf-ready` once the document has settled. Two
- * passes are taken — `part=cover` for the full-bleed first page and `part=body`
- * for the content pages — which the backend stitches together so the cover can
- * bleed while every other page carries the running header.
- */
+/** The page headless Chrome renders when a broker exports a proposal. */
 function ProposalPdfContent() {
   const params = useParams();
   const search = useSearchParams();

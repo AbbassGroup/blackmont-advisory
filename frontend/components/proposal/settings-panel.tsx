@@ -58,14 +58,7 @@ function Field({
   );
 }
 
-/**
- * The Settings drawer for a Digital Proposal.
- *
- * Everything here is a contract input that never appears as document text:
- * who the proposal is for, the agreement term, and the prices that fill the
- * agreement's smart fields. What the customer *reads* is edited inline on the
- * document itself.
- */
+/** The Settings drawer for a Digital Proposal. */
 export function ProposalSettingsPanel({
   doc,
   isSuperAdmin,

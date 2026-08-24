@@ -26,8 +26,7 @@ const STATUS_ICONS: Record<StatusIcon, React.ComponentType<{ className?: string 
 };
 
 /**
- * The floating bar at the bottom of every document editor: navigation, undo/redo,
- * preview/print, the two drawers, and the product's own status action.
+ * The floating bar at the bottom of every document editor: navigation, undo/redo, preview/print, the two drawers, and the product's own status action.
  */
 export function DocumentControlBar({
   backHref,

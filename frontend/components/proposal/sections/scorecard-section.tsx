@@ -18,8 +18,9 @@ const MAX_SCORE = 5;
 const fmt = (n: number) =>
   Number.isInteger(n) ? String(n) : String(Number(n.toFixed(2)));
 
-/** Clamp to the 0–5 scale and snap to quarters, the granularity the printed
- *  worksheet uses. Anything unparseable clears the field. */
+/**
+ * Clamp to the 0–5 scale and snap to quarters, the granularity the printed worksheet uses.
+ */
 function normaliseScore(raw: string): number | '' {
   if (raw.trim() === '') return '';
   const n = Number(raw);
@@ -33,9 +34,7 @@ const RADIUS = (RING.size - RING.stroke) / 2;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 /**
- * The running total as a proportional gauge — the arc sweeps to however much of
- * the available score has been awarded, so 28.5 out of 35 reads as four fifths
- * of a circle at a glance rather than as a number in a disc.
+ * The running total as a proportional gauge — the arc sweeps to however much of the available score has been awarded, so 28.5 out of 35 reads as four fifths of a circle at a glance rather than as a number in a disc.
  */
 function ScoreRing({ total, outOf }: { total: number; outOf: number }) {
   const pct = outOf > 0 ? Math.min(1, Math.max(0, total / outOf)) : 0;
@@ -263,15 +262,7 @@ function FactorCard({
   );
 }
 
-/**
- * Financial data and weighting factors.
- *
- * Screenshots of the financials sit on top, full width; the weighting factors
- * follow beneath, each scored out of 5, with the running total in a ring at the
- * foot. Only factors that have been given a question count towards the total —
- * an unfilled slot is shown in the editor but skipped in the document, so the
- * denominator always reflects what was actually scored.
- */
+/** Financial data and weighting factors. */
 export function ScorecardSection({
   data,
   editable,

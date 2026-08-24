@@ -4,13 +4,7 @@ import { InlineText } from '@/components/im';
 import { RichTextEditor } from '../rich-text-editor';
 import type { FinancialOverviewData, SectionChangeHandler } from './shared';
 
-/**
- * Free-form notes on the numbers behind the appraisal.
- *
- * The HTML here is mirrored onto the model's `financialAssumptions` field, which
- * the customer approval email quotes — see `deriveFlatFields` in
- * `backend/utils/proposalSections.js`.
- */
+/** Free-form notes on the numbers behind the appraisal. */
 export function FinancialOverviewSection({
   data,
   editable,

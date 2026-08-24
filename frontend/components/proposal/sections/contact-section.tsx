@@ -4,17 +4,10 @@ import Image from 'next/image';
 import { Mail, MapPin, Phone } from 'lucide-react';
 import { CONTACT_CONTENT } from '../fixed-content';
 
-/**
- * FIXED CONTENT — the closing contact card is the same on every proposal, so it
- * is rendered from `fixed-content.ts` and carries no editable fields (the
- * background image included). The section can still be placed, reordered and
- * hidden.
- */
+/** Fixed wording from `fixed-content.ts`; nothing here is editable. */
 export function ProposalContactSection() {
   const c = CONTACT_CONTENT;
 
-  // Phone and address are blank on the live page; kept here so restoring them
-  // is a one-line change in `fixed-content.ts`.
   const rows = [
     { key: 'email', icon: Mail, value: c.email, multiline: false },
     { key: 'phone', icon: Phone, value: c.phone, multiline: false },

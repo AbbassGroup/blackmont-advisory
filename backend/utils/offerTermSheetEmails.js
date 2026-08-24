@@ -159,7 +159,7 @@ function layout({ heading, intro, rows = [], cta, buttons = '', note }) {
       ${ctaHtml}
       ${note ? `<p style="color:#666;font-size:13px;line-height:1.6">${note}</p>` : ''}
       <p style="margin-top:32px;color:#555;font-size:13px;line-height:1.6">
-        Regards,<br/>Blackmont Advisory<br/>(03) 9103 1317<br/>
+        Regards,<br/>Blackmont Advisory<br/>
         <a href="mailto:info@blackmontadvisory.com" style="color:${ACCENT}">info@blackmontadvisory.com</a><br/>
         <a href="https://www.blackmontadvisory.com" style="color:${ACCENT}">www.blackmontadvisory.com</a>
       </p>
@@ -175,7 +175,6 @@ const plain = (intro, rows, ctaUrl) =>
     '',
     'Regards,',
     'Blackmont Advisory',
-    '(03) 9103 1317',
     'info@blackmontadvisory.com',
     'www.blackmontadvisory.com',
   ].join('\n');

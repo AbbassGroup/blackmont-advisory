@@ -64,14 +64,7 @@ const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   contact: Mail,
 };
 
-/**
- * The Sections drawer: reorder, hide, duplicate, remove and add.
- *
- * Every section moves, hides, duplicates and removes freely. Two registry flags
- * qualify that: a type with a `minCount` cannot be deleted down to none — a
- * proposal always keeps a Cover, a Your Investment and one Accept — and a
- * `fixed` type is placeable but has no editable content.
- */
+/** The Sections drawer: reorder, hide, duplicate, remove and add. */
 export function SectionsPanel({
   sections,
   registry,

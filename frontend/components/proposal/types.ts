@@ -1,27 +1,8 @@
-/**
- * Type system + defaults for Digital Proposals.
- *
- * The frontend half of `backend/utils/proposalSections.js` — the two files
- * describe the same sections and must be changed together. Adding a section
- * type means: add its data interface here, register it in
- * `PROPOSAL_SECTION_REGISTRY`, add a default in `makeDefaultData`, render it in
- * `<ProposalDocument>`, and mirror all of that on the backend.
- *
- * Every section can be moved, hidden, duplicated and removed. The only guard is
- * `minCount`: the Cover, Your Investment and Accept sections must each keep at
- * least one instance, because the backend denormalises the first two onto the
- * model's flat fields (the values the notification emails quote) and the third
- * is the customer's only way to accept.
- */
+/** Type system + defaults for Digital Proposals. */
 
-import type {
-  ChartsData,
-  CustomData,
-} from '@/components/im';
 import type { DocSection, DocSectionMeta, EditorDocument } from '@/components/documents/types';
 
-/** Backend base and admin route base. Kept here, free of React imports, so the
- *  print view can reach them without pulling in the editor. */
+/** Backend base and admin route base. */
 export const PROPOSAL_API_BASE = '/api/digital-proposals';
 export const PROPOSAL_BASE_PATH = '/admin/proposals';
 
@@ -57,9 +38,7 @@ export interface TextItem {
   text: string;
 }
 
-/** One weighting factor, scored out of 5. A factor with no label is an unfilled
- *  slot: the editor shows it, the reader skips it, and it is left out of the
- *  denominator so the total can never be out of a number nobody was scored on. */
+/** One weighting factor, scored out of 5. */
 export interface ScorecardFactor {
   id: string;
   label: string;
@@ -83,8 +62,9 @@ export interface FinancialOverviewData {
   html: string;
 }
 
-/** The statement itself is fixed wording (`fixed-content.ts`); only the heading
- *  and the two signature captions are editable. */
+/**
+ * The statement itself is fixed wording (`fixed-content.ts`); only the heading and the two signature captions are editable.
+ */
 export interface AppraisalData {
   title: string;
   preparedByLabel: string;
@@ -94,8 +74,7 @@ export interface AppraisalData {
 
 export type FeeUnit = 'Dollar' | 'Percentage';
 
-/** One selectable fee option. The customer picks one of each on the public page
- *  and the choice is sent with the acceptance. */
+/** One selectable fee option. */
 export interface FeeOption {
   id: string;
   /** Rich text (HTML). */
@@ -146,31 +125,13 @@ export interface ProcessData {
   steps: ProcessStep[];
 }
 
-/** Only the editable sections have a data payload; the fixed ones store `{}`. */
-export type ProposalSectionData =
-  | ProposalBannerData
-  | ScorecardData
-  | FinancialOverviewData
-  | AppraisalData
-  | InvestmentData
-  | AcceptData
-  | AccreditationsData
-  | ProcessData
-  | CustomData
-  | ChartsData;
-
 // ─── Document ────────────────────────────────────────────────────────────────
 
 export interface ProposalSection extends DocSection {
   type: ProposalSectionType;
 }
 
-/**
- * A proposal as the editor sees it: the section list plus the settings-drawer
- * fields. The flat presentation fields (`businessName`, `advertisement`, …) also
- * come down from the API — they are the backend's denormalised mirror, read by
- * the notification emails, and are not edited directly here.
- */
+/** A proposal as the editor sees it: the section list plus the settings-drawer fields. */
 export interface DigitalProposalDoc extends EditorDocument {
   _id: string;
   sections: ProposalSection[];
@@ -358,8 +319,7 @@ const DEFAULT_PROCESS_STEPS: [string, string][] = [
   ['STEP 7: CAMPAIGN LAUNCHED', 'The campaign starts by reaching out to our qualified database to gauge interest'],
 ];
 
-/** Rich text — the engagement blurb uses the same editor as the fee options.
- *  Legacy plain-text values are converted to HTML on read by the section. */
+/** Rich text — the engagement blurb uses the same editor as the fee options. */
 export const DEFAULT_ENGAGEMENT_BODY =
   '<p>Call through key contacts in database</p>' +
   '<p>Handle enquiries from prospects</p>' +
@@ -369,10 +329,7 @@ export const DEFAULT_ENGAGEMENT_BODY =
 export const DEFAULT_BANNER_IMAGE =
   'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1920&q=80';
 
-/**
- * The seven factors from the standard appraisal worksheet — scored out of 35.
- * Brokers can add more from the document; the total follows the count.
- */
+/** The seven factors from the standard appraisal worksheet — scored out of 35. */
 const DEFAULT_FACTORS: [string, string][] = [
   [
     'What are the barriers to entry?',

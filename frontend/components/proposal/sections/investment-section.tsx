@@ -86,8 +86,9 @@ const gridCols = (length: number) => {
   return 'grid-cols-1 md:grid-cols-3';
 };
 
-/** Fee options are matched by id, not object identity — an autosave round-trip
- *  replaces the objects, and the customer's tick must survive that. */
+/**
+ * Fee options are matched by id, not object identity — an autosave round-trip replaces the objects, and the customer's tick must survive that.
+ */
 const sameOption = (a?: FeeOption | null, b?: FeeOption | null) =>
   !!a && !!b && (a.id ? a.id === b.id : a === b);
 
@@ -242,14 +243,7 @@ export interface InvestmentSectionProps {
   hideSelectionIfSingle?: boolean;
 }
 
-/**
- * LOCKED SECTION — "Your Investment".
- *
- * Every value here is denormalised back onto the proposal model: the
- * advertisement and success-fee options the customer picks from, and the
- * engagement fee. They are quoted in the acceptance email and fill the
- * agreement's smart fields, so this section cannot be removed.
- */
+/** LOCKED SECTION — "Your Investment". */
 export const InvestmentSection = forwardRef<HTMLDivElement, InvestmentSectionProps>(
   function InvestmentSection(
     {
@@ -267,8 +261,9 @@ export const InvestmentSection = forwardRef<HTMLDivElement, InvestmentSectionPro
     const advertisement = data.advertisement ?? [];
     const successFee = data.successFee ?? [];
 
-    /** Read the live list off `prev` so a slow rich-text change can't clobber a
-     *  reorder that landed while it was open. */
+    /**
+     * Read the live list off `prev` so a slow rich-text change can't clobber a reorder that landed while it was open.
+     */
     const editGroup =
       (key: 'advertisement' | 'successFee') =>
       (mutate: (rows: FeeOption[]) => FeeOption[]) =>

@@ -2,11 +2,7 @@
 
 import { ABOUT_CONTENT } from '../fixed-content';
 
-/**
- * FIXED CONTENT — the firm introduction and service list are the same on every
- * proposal, so they are rendered from `fixed-content.ts` and carry no editable
- * fields. The section can still be placed, reordered and hidden.
- */
+/** Fixed wording from `fixed-content.ts`; nothing here is editable. */
 export function ProposalAboutSection() {
   const c = ABOUT_CONTENT;
 

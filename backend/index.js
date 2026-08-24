@@ -65,12 +65,6 @@ app.use('/api/digital-proposals', digitalProposalRoutes);
 const seekEmailRoutes = require('./routes/seekEmail');
 app.use('/api/seekbusiness-email', seekEmailRoutes);
 
-// Legacy acceptance path. The proposal page used to post here when acceptance
-// was meant to run through SignNow; that integration never existed and has been
-// removed, but a proposal a customer already had open still posts to this URL.
-// Safe to delete once no stale pages remain in the wild.
-app.post('/api/signnow/accept-proposal', digitalProposalRoutes.acceptProposal);
-
 const partnershipContactFormRoutes = require('./routes/partnership-contact-form');
 app.use('/api/partnership-contact-form', partnershipContactFormRoutes);
 

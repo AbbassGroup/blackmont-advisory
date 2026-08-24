@@ -19,7 +19,7 @@ const BRAND = {
   abn: '78 674 429 255',
   licence: LICENCE,
   address: OFFICE_ADDRESS,
-  phone: '(03) 9103 1317',
+  // Blackmont has no phone number; email is the only contact point.
   email: 'info@blackmontadvisory.com',
   website: 'www.blackmontadvisory.com',
 };

@@ -1,14 +1,6 @@
-/**
- * Every Blackmont detail that appears on the web Letter of Intent.
- *
- * Client mirror of `backend/utils/offerTermSheetBrand.js`, which the PDF and the
- * notification emails read. The two apps deploy separately and share no package
- * — change them together.
- */
 
-// TODO(blackmont): confirm the office address and the estate agent licence
-// number. Both are carried over from the Abbass Advocacy trading entity and are
-// not published anywhere else on the Blackmont site.
+
+
 const OFFICE_ADDRESS = '1/459 Toorak Road, Toorak, VIC 3142';
 const LICENCE = '(BLA) 092153L';
 
@@ -20,7 +12,7 @@ export const BRAND = {
   abn: '78 674 429 255',
   licence: LICENCE,
   address: OFFICE_ADDRESS,
-  phone: '(03) 9103 1317',
+  // Blackmont has no phone number; email is the only contact point.
   email: 'info@blackmontadvisory.com',
   website: 'www.blackmontadvisory.com',
   /** Dark wordmark, for the letterhead on a light page. */

@@ -68,10 +68,6 @@ export function Letter(props: FieldProps) {
               {BRAND.address}
             </p>
             <p>
-              <span className='font-semibold text-foreground'>Phone:</span>{' '}
-              {BRAND.phone}
-            </p>
-            <p>
               <span className='font-semibold text-foreground'>Email:</span>{' '}
               {BRAND.email}
             </p>

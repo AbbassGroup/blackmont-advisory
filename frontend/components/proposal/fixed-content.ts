@@ -1,16 +1,4 @@
-/**
- * Fixed copy for the boilerplate proposal sections.
- *
- * The Conditions of Acceptance, About and Contact Us sections say the same
- * thing on every proposal — the first is a legal disclaimer, the other two are
- * firm boilerplate — so they are rendered from these constants rather than from
- * editable section data. The Business Appraisal section's statement is fixed the
- * same way. Brokers can still place, reorder and hide those sections; they just
- * can't reword them.
- *
- * Changing the wording is a code change on purpose: edit it here and it changes
- * on every proposal at once, including ones already sent.
- */
+/** Fixed copy for the boilerplate proposal sections. */
 
 export const DISCLAIMER_CONTENT = {
   title: 'Disclaimer - Business Appraisal Report',
@@ -29,8 +17,7 @@ export const DISCLAIMER_CONTENT = {
 
 export const APPRAISAL_CONTENT = {
   /**
-   * `{businessName}` and `{businessValue}` are replaced at render time with the
-   * cover's values — see `renderAppraisalBody` in `appraisal-section.tsx`.
+   * `{businessName}` and `{businessValue}` are replaced at render time with the cover's values — see `renderAppraisalBody` in `appraisal-section.tsx`.
    */
   body:
     'Based on the above data, our research, previous sales data, and market experience suggest that a fair market appraisal in the current climate for {businessName} is within the range of {businessValue}.',

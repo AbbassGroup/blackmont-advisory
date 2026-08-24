@@ -411,7 +411,6 @@ async function renderDocument(sheet, density) {
   layout.heading("Vendor's Agent");
   layout.row('Agent', BRAND_DETAILS.legalEntity);
   layout.row('Address', BRAND_DETAILS.address);
-  layout.row('Phone', BRAND_DETAILS.phone);
   layout.row('Email', BRAND_DETAILS.email);
 
   layout.heading('Offer');
