@@ -6,15 +6,7 @@ import { apiClient } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { PROPOSAL_API_BASE } from './types';
 
-/**
- * Broker-facing export screen.
- *
- * The PDF is rendered on the server by headless Chrome — see
- * `backend/utils/proposalPdf.js` — so it comes out as a designed document
- * (full-bleed cover, running header, one section per page) rather than whatever
- * the browser's print dialog happens to produce. This page previews it and
- * hands over the download.
- */
+/** Broker-facing export screen. */
 export function ProposalPrint({ id }: { id: string }) {
   const [state, setState] = useState<'working' | 'ready' | 'error'>('working');
   const [error, setError] = useState('');

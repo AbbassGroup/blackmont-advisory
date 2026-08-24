@@ -2,11 +2,7 @@
 
 import { DISCLAIMER_CONTENT } from '../fixed-content';
 
-/**
- * FIXED CONTENT — the Conditions of Acceptance disclaimer is the same legal text
- * on every proposal, so it is rendered from `fixed-content.ts` and carries no
- * editable fields. The section can still be placed, reordered and hidden.
- */
+/** Fixed legal wording from `fixed-content.ts`; nothing here is editable. */
 export function DisclaimerSection({
   showTitle = true,
 }: {

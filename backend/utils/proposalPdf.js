@@ -1,16 +1,8 @@
 /**
- * Server-side PDF rendering for Digital Proposals.
+ * Renders a Digital Proposal to PDF with headless Chrome.
  *
- * The browser's own "Save as PDF" produces something that reads as a printed
- * web page: no running header, whatever margins the dialog defaults to, and the
- * browser's URL/date furniture across the top. This renders the document with
- * headless Chrome instead, so the output is a designed document — full-bleed
- * cover, a running header on every content page, consistent margins, one
- * section per page.
- *
- * It is produced in two passes because Chrome applies one header template to
- * every page: the cover is rendered edge-to-edge with no header, the body with
- * the header and margins, and the two are stitched together with pdf-lib.
+ * Two passes: Chrome applies one header template to every page, so the cover is
+ * rendered edge-to-edge without one, the body with it, and pdf-lib stitches them.
  */
 
 const fs = require('fs');
@@ -19,12 +11,6 @@ const path = require('path');
 const puppeteer = require('puppeteer');
 const { PDFDocument } = require('pdf-lib');
 
-/**
- * Where a distro usually puts Chrome. Checked as a fallback because
- * Puppeteer's own download is easy to lose: PUPPETEER_CACHE_DIR may be
- * inherited from whatever shell started the process (a CI or sandbox path under
- * /tmp, say), and /tmp doesn't survive a reboot.
- */
 const SYSTEM_CHROME_PATHS = [
   '/usr/bin/chromium',
   '/usr/bin/chromium-browser',
@@ -33,7 +19,6 @@ const SYSTEM_CHROME_PATHS = [
   '/snap/bin/chromium',
 ];
 
-/** Layout of an installed browser inside a Puppeteer cache, per platform. */
 const CACHE_BINARIES = [
   'chrome-linux64/chrome',
   'chrome-linux/chrome',
@@ -42,7 +27,6 @@ const CACHE_BINARIES = [
   'chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing',
 ];
 
-/** Any Chrome inside a Puppeteer cache directory, whatever version it is. */
 function findInCache(root) {
   const dir = path.join(root, 'chrome');
   let versions;
@@ -61,17 +45,9 @@ function findInCache(root) {
 }
 
 /**
- * The browser to drive, in order of preference:
- *   1. PUPPETEER_EXECUTABLE_PATH, if it points at something real
- *   2. the exact binary Puppeteer expects
- *   3. any Chrome in a Puppeteer cache we know of — including the default home
- *      cache, which is where `npx puppeteer browsers install chrome` puts it
- *      even when PUPPETEER_CACHE_DIR has been set to somewhere stale
- *   4. a system Chrome
- *
- * Step 3 exists because a wrong PUPPETEER_CACHE_DIR — inherited from a CI or
- * sandbox shell, and easily stuck inside a pm2 dump — otherwise hides a
- * perfectly good install. Returns null when there is genuinely nothing to run.
+ * Override, then Puppeteer's own binary, then any Chrome in a known cache, then
+ * a system one. The cache scan matters: a stale PUPPETEER_CACHE_DIR (inherited
+ * from a CI shell, or stuck in a pm2 dump) otherwise hides a good install.
  */
 async function resolveChromePath() {
   const override = process.env.PUPPETEER_EXECUTABLE_PATH;
@@ -98,22 +74,17 @@ async function resolveChromePath() {
   return SYSTEM_CHROME_PATHS.find((p) => fs.existsSync(p)) ?? null;
 }
 
-/** A4 at 96dpi — the sheet the cover bleeds across. */
+// A4 at 96dpi.
 const A4 = { width: 794, height: 1123 };
 
-/** Content-page margins. The top has to clear the running header *and* leave
- *  daylight under its rule — a full-bleed section like Contact otherwise runs
- *  straight into it. */
+// Top clears the running header and leaves daylight under its rule.
 const BODY_MARGIN_MM = { top: 30, bottom: 16, left: 14, right: 14 };
 const BODY_MARGIN = Object.fromEntries(
   Object.entries(BODY_MARGIN_MM).map(([k, v]) => [k, `${v}mm`]),
 );
 
-/**
- * Body pages are laid out at the printable width, not the full sheet.
- * Anything that measures its own container — Recharts, most obviously — would
- * otherwise size itself to 210mm and get clipped by the margins.
- */
+// Body pages lay out at the printable width, not the full sheet — Recharts
+// measures its container, and would otherwise size to 210mm and get clipped.
 const MM_TO_PX = 96 / 25.4;
 const BODY_VIEWPORT = {
   width: Math.round(A4.width - (BODY_MARGIN_MM.left + BODY_MARGIN_MM.right) * MM_TO_PX),
@@ -125,18 +96,13 @@ const READY_TIMEOUT = 45000;
 
 let browserPromise = null;
 
-/**
- * One Chrome instance for the process, launched on first use. Re-launched if it
- * dies, so a crashed browser doesn't wedge every later request.
- */
+// One Chrome per process, relaunched if it dies.
 function getBrowser() {
   if (!browserPromise) {
     browserPromise = resolveChromePath()
       .then((executablePath) =>
         puppeteer.launch({
           headless: true,
-          // Left undefined when nothing was found, so Puppeteer raises its own
-          // (more specific) error about the missing download.
           executablePath: executablePath || undefined,
           // Containers and most VPS images can't use Chrome's sandbox.
           args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
@@ -158,16 +124,12 @@ function getBrowser() {
   return browserPromise;
 }
 
-/** Render one pass of the document and return its PDF bytes. */
 async function renderPart(url, { viewport = A4, ...pdfOptions } = {}) {
   const browser = await getBrowser();
   const page = await browser.newPage();
   try {
-    // Text is vector regardless; this only governs raster assets. 1.5 keeps
-    // photos and screenshots sharp without doubling the file size — these get
-    // emailed to clients.
+    // Only affects raster assets; text stays vector.
     await page.setViewport({ ...viewport, deviceScaleFactor: 1.5 });
-    // Explicit, so the document's `print:` styles apply during layout too.
     await page.emulateMediaType('print');
     const response = await page
       .goto(url, { waitUntil: 'networkidle0', timeout: READY_TIMEOUT })
@@ -179,7 +141,6 @@ async function renderPart(url, { viewport = A4, ...pdfOptions } = {}) {
         `The render page returned HTTP ${response.status()}. Is the frontend deployed with /proposal-pdf, and is FRONTEND_URL correct?`,
       );
     }
-    // The page sets this once its data has loaded and its images have decoded.
     await page.waitForSelector(READY_SELECTOR, { timeout: READY_TIMEOUT }).catch(() => {
       throw new Error(
         'The render page never finished loading its data. Check that the backend URL the page calls (NEXT_PUBLIC_API_URL) is reachable from the browser.',
@@ -196,7 +157,6 @@ async function renderPart(url, { viewport = A4, ...pdfOptions } = {}) {
   }
 }
 
-/** Running header: wordmark left, document title right, hairline beneath. */
 function headerTemplate(logoDataUri, title) {
   const mark = logoDataUri
     ? `<img src="${logoDataUri}" style="height:30px;width:auto;display:block" />`
@@ -213,7 +173,6 @@ function headerTemplate(logoDataUri, title) {
     </div>`;
 }
 
-/** Footer: page number only, kept quiet. */
 function footerTemplate() {
   return `
     <div style="width:100%;font-family:Helvetica,Arial,sans-serif;font-size:7px;color:#9aa1ac;
@@ -225,7 +184,6 @@ function footerTemplate() {
 const escapeHtml = (s = '') =>
   String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-/** The wordmark, fetched once from the frontend and inlined into the header. */
 let logoPromise = null;
 function getLogo(frontendUrl) {
   if (!logoPromise) {
@@ -237,16 +195,6 @@ function getLogo(frontendUrl) {
   return logoPromise;
 }
 
-/**
- * Render a proposal to PDF.
- *
- * @param {object}  opts
- * @param {string}  opts.id            proposal id
- * @param {string}  opts.token         short-lived render token the page uses to fetch its data
- * @param {string}  opts.frontendUrl   origin serving the render route
- * @param {string}  opts.title         shown on the right of the running header
- * @returns {Promise<Buffer>}
- */
 async function renderProposalPdf({ id, token, frontendUrl, title = 'Business Appraisal' }) {
   const base = `${frontendUrl.replace(/\/$/, '')}/proposal-pdf/${id}?token=${encodeURIComponent(token)}`;
   const logo = await getLogo(frontendUrl.replace(/\/$/, ''));
@@ -265,7 +213,6 @@ async function renderProposalPdf({ id, token, frontendUrl, title = 'Business App
     }),
   ]);
 
-  // Stitch the two passes into one document.
   const out = await PDFDocument.create();
   for (const bytes of [cover, body]) {
     const src = await PDFDocument.load(bytes);
@@ -275,12 +222,7 @@ async function renderProposalPdf({ id, token, frontendUrl, title = 'Business App
   return Buffer.from(await out.save());
 }
 
-/**
- * Cheap boot-time check: is a Chrome binary actually on this machine? Doesn't
- * launch it — just confirms the file Puppeteer would run exists, so a server
- * missing its browser says so in the logs at startup rather than the first time
- * a broker clicks Export.
- */
+// Logs at startup whether export can work, rather than failing on first use.
 async function checkPdfRenderer() {
   try {
     const path = await resolveChromePath();
@@ -307,55 +249,6 @@ async function checkPdfRenderer() {
   return false;
 }
 
-/**
- * What the renderer can and can't reach. Used by the diagnostics endpoint so a
- * production failure can be pinned down from the browser rather than the logs.
- */
-async function pdfDiagnostics(frontendUrl) {
-  const cacheDir = process.env.PUPPETEER_CACHE_DIR || null;
-  const out = {
-    chromeExecutable: null,
-    chromeFound: false,
-    chromeLaunches: false,
-    // Named explicitly because an inherited value — a CI or sandbox path under
-    // /tmp — is the usual reason a working install goes missing.
-    puppeteerCacheDir: cacheDir,
-    cacheDirIsEphemeral: !!cacheDir && cacheDir.startsWith('/tmp'),
-    executablePathOverride: process.env.PUPPETEER_EXECUTABLE_PATH || null,
-    frontendUrl: frontendUrl || null,
-    frontendReachable: false,
-    detail: null,
-  };
-
-  try {
-    out.chromeExecutable = await resolveChromePath();
-    out.chromeFound = !!out.chromeExecutable;
-  } catch (e) {
-    out.detail = `resolving Chrome: ${e.message}`;
-  }
-
-  try {
-    const browser = await getBrowser();
-    out.chromeLaunches = browser.connected !== false;
-    out.chromeVersion = await browser.version();
-  } catch (e) {
-    out.detail = e.message;
-  }
-
-  if (frontendUrl) {
-    try {
-      const res = await fetch(frontendUrl, { redirect: 'follow' });
-      out.frontendReachable = res.ok;
-      out.frontendStatus = res.status;
-    } catch (e) {
-      out.detail = `frontend fetch: ${e.message}`;
-    }
-  }
-
-  return out;
-}
-
-/** Close the shared browser — called on shutdown. */
 async function closePdfBrowser() {
   if (!browserPromise) return;
   const browser = await browserPromise.catch(() => null);
@@ -363,4 +256,4 @@ async function closePdfBrowser() {
   if (browser) await browser.close().catch(() => {});
 }
 
-module.exports = { renderProposalPdf, pdfDiagnostics, checkPdfRenderer, closePdfBrowser };
+module.exports = { renderProposalPdf, checkPdfRenderer, closePdfBrowser };

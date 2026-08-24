@@ -11,7 +11,7 @@ const {
   createProposalAcceptanceEmail,
 } = require('../utils/emailTemplates');
 const jwt = require('jsonwebtoken');
-const { renderProposalPdf, pdfDiagnostics } = require('../utils/proposalPdf');
+const { renderProposalPdf } = require('../utils/proposalPdf');
 const {
   makeDefaultSections,
   deriveFlatFields,
@@ -19,9 +19,6 @@ const {
   ensureSections,
 } = require('../utils/proposalSections');
 
-// Uploads land in `uploads/proposals/` and are served statically from /uploads.
-// Kept on disk (not memory) because the URL is stored on the section and served
-// back to the customer long after the request that uploaded it.
 const upload = multer({
   dest: path.join(__dirname, '../uploads/proposals/'),
   limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit
@@ -35,12 +32,10 @@ function multerErrorHandler(err, req, res, next) {
   next(err);
 }
 
-/** Public URL for an uploaded file. */
 const uploadUrl = (filename) =>
   `${process.env.BACKEND_URL || 'https://api.blackmontadvisory.com'}/uploads/proposals/${filename}`;
 
-/** Settings-drawer fields — everything that isn't edited inline in a section.
- *  These are contract inputs read by the emails, so they stay top-level. */
+// Settings-drawer fields: contract inputs, not document text.
 const SETTINGS_FIELDS = [
   'brokerName',
   'brokerEmail',
@@ -54,8 +49,6 @@ const SETTINGS_FIELDS = [
   'template',
 ];
 
-/** Persist a section payload: never trust the client to have kept the locked
- *  sections, and always re-derive the contract fields from them afterwards. */
 function applySectionUpdate(proposal, body) {
   const settings = {};
   for (const key of SETTINGS_FIELDS) {
@@ -64,15 +57,11 @@ function applySectionUpdate(proposal, body) {
 
   Object.assign(proposal, settings);
 
-  // Only touch the layout when the caller actually sent one. A request with no
-  // `sections` — a partial update, or a client posting a body Express can't
-  // parse, such as the pre-section-engine editor's multipart form — must not be
-  // read as "this document has no sections" and wipe it down to the locked few.
+  // No `sections` means a partial update, not an empty document.
   if (Array.isArray(body.sections)) {
     const flatContext = { ...proposal.toObject(), ...settings };
     const sections = enforceLockedSections(body.sections, flatContext);
     proposal.sections = sections;
-    // sections[] drives presentation; the derived scalars drive the emails.
     Object.assign(proposal, deriveFlatFields(sections));
   }
 
@@ -80,9 +69,7 @@ function applySectionUpdate(proposal, body) {
   return proposal;
 }
 
-// POST upload a file for a proposal section (banner image, photo, PDF, video).
-// Declared before `/:id` handlers for clarity; the section editor calls this and
-// stores the returned URL, which is what keeps autosave a plain JSON PUT.
+// Uploads happen here so autosave can stay a plain JSON PUT.
 router.post('/upload', upload.single('image'), multerErrorHandler, async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
@@ -92,9 +79,8 @@ router.post('/upload', upload.single('image'), multerErrorHandler, async (req, r
   }
 });
 
-// ── PDF export ──────────────────────────────────────────────────────────────
-// The rendering page runs in a headless browser with no session, so it fetches
-// its data with a short-lived token minted here rather than a login.
+// The render page runs in a headless browser with no session, so it fetches its
+// data with a short-lived token instead of a login.
 const RENDER_PURPOSE = 'proposal-pdf';
 
 const mintRenderToken = (id) =>
@@ -102,7 +88,6 @@ const mintRenderToken = (id) =>
     expiresIn: '3m',
   });
 
-// GET the proposal for the PDF renderer. Token-gated and read-only.
 router.get('/:id/render', async (req, res) => {
   try {
     const decoded = jwt.verify(String(req.query.token || ''), process.env.JWT_SECRET);
@@ -118,7 +103,6 @@ router.get('/:id/render', async (req, res) => {
   }
 });
 
-// GET the proposal as a PDF.
 router.get('/:id/pdf', async (req, res) => {
   try {
     const proposal = await DigitalProposal.findById(req.params.id);
@@ -133,7 +117,6 @@ router.get('/:id/pdf', async (req, res) => {
         proposal.template === 'franchise_proposal' ? 'Franchise Proposal' : 'Business Appraisal',
     });
 
-    // A filename the broker can hand straight to a client.
     const safeName = (proposal.businessName || 'Proposal')
       .replace(/[^a-z0-9\- ]/gi, '')
       .trim()
@@ -153,15 +136,6 @@ router.get('/:id/pdf', async (req, res) => {
   }
 });
 
-// GET a report on why PDF export is or isn't working on this host. Declared
-// before `/:id` so "diagnostics" isn't read as a proposal id.
-router.get('/pdf-diagnostics', async (req, res) => {
-  try {
-    res.json(await pdfDiagnostics(process.env.FRONTEND_URL || null));
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
 
 // GET all digital proposals
 router.get('/', async (req, res) => {
@@ -186,7 +160,7 @@ router.get('/', async (req, res) => {
       query.isApproved = isApproved === 'true';
     }
 
-    // `sections` can be large — the list only renders the flat summary fields.
+    // `sections` can be large and the list only needs the summary fields.
     const proposals = await DigitalProposal.find(query)
       .select('-sections')
       .sort({ createdAt: -1 })
@@ -214,8 +188,6 @@ router.get('/:id', async (req, res) => {
     if (!proposal) {
       return res.status(404).json({ message: 'Digital proposal not found' });
     }
-    // Documents created before the section engine get their layout built from
-    // their flat fields on first read, then saved so it only happens once.
     if (ensureSections(proposal)) await proposal.save();
     res.json(proposal);
   } catch (error) {
@@ -242,10 +214,8 @@ router.get('/email/:email/:id', async (req, res) => {
   }
 });
 
-// POST create new digital proposal.
-// Creates a draft laid out with the default sections; the broker then edits it
-// inline. No owner notification here — that fires on submit-for-approval, since
-// autosave would otherwise email on every keystroke.
+// Creates a draft. The owner is notified on submit, not here — autosave would
+// otherwise email on every keystroke.
 router.post('/', async (req, res) => {
   try {
     const flat = {
@@ -272,8 +242,6 @@ router.post('/', async (req, res) => {
       ...flat,
       sections: makeDefaultSections(flat),
     });
-    // Seed the flat fee fields from the sections the defaults just built, so a
-    // brand-new proposal is already self-consistent.
     Object.assign(proposal, deriveFlatFields(proposal.sections));
 
     const savedProposal = await proposal.save();
@@ -283,9 +251,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// PUT update a digital proposal (autosave target).
-// JSON only — files go through POST /upload first. Deliberately silent: the
-// owner notification moved to POST /:id/submit.
+// Autosave target. JSON only; files go through POST /upload first.
 router.put('/:id', async (req, res) => {
   try {
     const proposal = await DigitalProposal.findById(req.params.id);
@@ -302,9 +268,6 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// POST submit a draft for the owner's approval.
-// This is where the admin notification email that used to fire on every save
-// now lives — one email, when the broker says the draft is ready.
 router.post('/:id/submit', async (req, res) => {
   try {
     const proposal = await DigitalProposal.findById(req.params.id);
@@ -391,23 +354,11 @@ router.put('/:id/revoke', async (req, res) => {
   }
 });
 
-/**
- * The customer accepts their proposal.
- *
- * Notifies the owner and the broker that the customer accepted, and on which
- * options. The agreement is then prepared by hand.
- *
- * This previously lived in a route that was meant to generate an e-signature
- * document; that integration was never wired up — its API client did not exist
- * in the codebase — so it has been removed rather than left as dead code.
- *
- * `id` comes from the path; `proposalId` in the body is accepted so a proposal
- * page a customer had open before this change still works.
- */
+// Notifies the owner and broker; the agreement is then prepared by hand.
 async function acceptProposal(req, res) {
   try {
     const { selectedAdvertisement, selectedSuccessFee, customerEmail } = req.body;
-    const proposalId = req.params.id || req.body.proposalId;
+    const proposalId = req.params.id;
 
     if (!proposalId || !selectedAdvertisement || !selectedSuccessFee || !customerEmail) {
       return res.status(400).json({
@@ -431,7 +382,6 @@ async function acceptProposal(req, res) {
       console.log('Proposal acceptance notification email sent for proposal:', proposal._id);
     } catch (emailError) {
       console.error('Failed to send proposal acceptance email:', emailError);
-      // Don't fail the acceptance because the notification bounced.
     }
 
     res.json({
@@ -448,7 +398,6 @@ async function acceptProposal(req, res) {
   }
 }
 
-// POST the customer's acceptance
 router.post('/:id/accept', acceptProposal);
 
 // POST record a proposal view
@@ -487,7 +436,6 @@ router.get('/:id/views', async (req, res) => {
   }
 });
 
-// PATCH restore an archived proposal
 router.patch('/:id/restore', async (req, res) => {
   try {
     const proposal = await DigitalProposal.findByIdAndUpdate(
@@ -504,8 +452,7 @@ router.patch('/:id/restore', async (req, res) => {
   }
 });
 
-// DELETE digital proposal — soft delete, as per Information Memorandums.
-// A proposal may already have been accepted, so the record has to survive.
+// Soft delete: an accepted proposal's record has to survive.
 router.delete('/:id', async (req, res) => {
   try {
     const proposal = await DigitalProposal.findByIdAndUpdate(
@@ -523,7 +470,6 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// DELETE permanently — superadmin escape hatch for an archived proposal.
 router.delete('/:id/permanent', async (req, res) => {
   try {
     const proposal = await DigitalProposal.findById(req.params.id);
@@ -540,5 +486,3 @@ router.delete('/:id/permanent', async (req, res) => {
 });
 
 module.exports = router;
-// Exported so the legacy acceptance path can reuse it — see `index.js`.
-module.exports.acceptProposal = acceptProposal;

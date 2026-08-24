@@ -43,24 +43,6 @@ export function proposalAnchorId(section: DocSection, index: number): string {
   return `proposal-${section.uid || section._id || index}`;
 }
 
-/** Nav entries for a preview sidebar: enabled, in-nav sections only. */
-export function getProposalNavItems(sections: DocSection[]) {
-  return sections
-    .map((section, index) => ({ section, index }))
-    .filter(
-      ({ section }) =>
-        section.enabled !== false && getProposalSectionMeta(section.type)?.inNav,
-    )
-    .map(({ section, index }) => {
-      const title = section.data?.title;
-      const label =
-        typeof title === 'string' && title.trim()
-          ? title
-          : (getProposalSectionMeta(section.type)?.label ?? section.type);
-      return { id: proposalAnchorId(section, index), label };
-    });
-}
-
 /** Customer-facing behaviour. Absent in the admin editor. */
 export interface ProposalInteraction {
   selectedAdvertisement?: FeeOption | null;
@@ -97,11 +79,7 @@ export interface ProposalDocumentProps {
   interaction?: ProposalInteraction;
   /** Tailwind classes for the container wrapping every non-cover section. */
   contentClassName?: string;
-  /**
-   * Start each section on a fresh printed page. Only the PDF export turns this
-   * on — a section taller than a page still flows onto the next, which is what
-   * you want for a long disclaimer or a big fee table.
-   */
+  /** Start each section on a fresh printed page. */
   pageBreakPerSection?: boolean;
 }
 
@@ -313,10 +291,6 @@ function ProposalDocumentImpl({
 }
 
 /**
- * Renders a Digital Proposal from its section list — editable in the admin,
- * read-only (with fee selection and acceptance) for the customer.
- *
- * Memoised so scroll/selection state on the public page doesn't re-render every
- * section, including any PDF canvases inside a custom section.
+ * Renders a Digital Proposal from its section list — editable in the admin, read-only (with fee selection and acceptance) for the customer.
  */
 export const ProposalDocument = memo(ProposalDocumentImpl);

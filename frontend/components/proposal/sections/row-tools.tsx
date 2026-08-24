@@ -3,13 +3,7 @@
 import { ChevronDown, ChevronUp, Plus, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-/**
- * Move/remove controls for one row of a repeatable list inside a section.
- *
- * Sits in the document itself rather than a side form, so a broker edits a
- * proposal the same way they edit an Information Memorandum: on the page.
- * Hidden entirely when the document is not editable.
- */
+/** Move/remove controls for one row of a repeatable list inside a section. */
 export function RowTools({
   index,
   count,
@@ -100,11 +94,7 @@ export function AddRowButton({
   );
 }
 
-/**
- * Move an item within a list, returning the same array reference when the move
- * is a no-op so the editor's `patch` can bail out instead of pushing an undo
- * step for nothing.
- */
+/** Returns the same reference on a no-op move, so `patch` skips the undo step. */
 export function moveItem<T>(items: T[], index: number, dir: -1 | 1): T[] {
   const j = index + dir;
   if (j < 0 || j >= items.length) return items;

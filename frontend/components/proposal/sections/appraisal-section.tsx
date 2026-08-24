@@ -5,11 +5,7 @@ import { InlineText } from '@/components/im';
 import { APPRAISAL_CONTENT } from '../fixed-content';
 import type { AppraisalData, SectionChangeHandler } from './shared';
 
-/**
- * The appraisal statement is fixed wording. `{businessName}` and
- * `{businessValue}` are replaced with the cover's values — including in the
- * editor, so the broker sees exactly what the customer will read.
- */
+/** Fixed wording; `{businessName}` and `{businessValue}` resolve from the cover. */
 function renderAppraisalBody(businessName: string, businessValue: string) {
   const parts = APPRAISAL_CONTENT.body.split(/(\{businessName\}|\{businessValue\})/g);
   return parts.map((part, i) => {

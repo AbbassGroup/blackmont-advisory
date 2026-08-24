@@ -1,28 +1,11 @@
 /**
- * Digital Proposal section engine — the backend half of the contract.
+ * Digital Proposal section engine. Mirrors `frontend/components/proposal/types.ts`.
  *
- * A proposal is laid out as an ordered list of sections, exactly like an
- * Information Memorandum (`models/ImTemplate.js`). Unlike an IM, a proposal is
- * a document the customer accepts: `utils/emailTemplates.js` reads flat scalar
- * fields off the model to build the notification emails, and any future signing
- * integration would read the same fields.
- *
- * So the two representations are kept in step:
- *
- *   sections[]   → source of truth for presentation (what the customer reads)
- *   flat fields  → source of truth for the contract  (what the emails quote)
- *
- * Every section can be moved, hidden, duplicated and deleted, in any order the
- * broker likes. The only structural rule is `MIN_COUNTS`.
+ * `sections[]` is the source of truth for presentation; the model's flat fields
+ * are what the notification emails quote. `deriveFlatFields` keeps them in step.
  */
 
-/**
- * Types that must appear at least N times, re-seeded here if a client drops
- * them. `banner` and `investment` because `deriveFlatFields()` reads the
- * contract values back out of them; `accept` — which the original proposal
- * repeated three times down the page — because an approved proposal with no way
- * to accept it is a dead end.
- */
+// Types the document must always keep at least one of, re-seeded if dropped.
 const MIN_COUNTS = Object.freeze({ banner: 1, investment: 1, accept: 1 });
 
 const SECTION_TYPES = Object.freeze([
@@ -41,11 +24,6 @@ const SECTION_TYPES = Object.freeze([
   'charts',
 ]);
 
-/**
- * The seven factors from the standard appraisal worksheet — scored out of 35.
- * Brokers can add more from the document; the total follows the count.
- * Mirrors DEFAULT_FACTORS in the frontend registry.
- */
 const DEFAULT_FACTORS = [
   ['What are the barriers to entry?', '1 = Easy, 5 = Difficult. Would it be easy for a competitor to become established in this industry?'],
   ['What is the risk profile of this business?', '1 = Risky, 5 = Not risky. e.g. relies on 1 or 2 clients, supplier contracts not in place, relies on the owner.'],
@@ -57,17 +35,10 @@ const DEFAULT_FACTORS = [
 ];
 
 let uidCounter = 0;
-/** Stable-ish client id. Mirrors `makeUid` in the frontend registry. */
 function makeUid(prefix) {
   uidCounter += 1;
   return `${prefix}-${Date.now().toString(36)}-${uidCounter.toString(36)}`;
 }
-
-// ── Default content ─────────────────────────────────────────────────────────
-// Lifted verbatim from the components that used to hardcode it, so a migrated
-// proposal renders byte-identically to how it did before the section engine.
-// The fixed sections (disclaimer, about, contact) keep their copy on the
-// frontend instead — see `frontend/components/proposal/fixed-content.ts`.
 
 const DEFAULT_PROCESS_STEPS = [
   ['STEP 1: REVIEW APPRAISAL', 'Review the appraisal provided by Blackmont Advisory to understand where your business sits'],
@@ -79,16 +50,13 @@ const DEFAULT_PROCESS_STEPS = [
   ['STEP 7: CAMPAIGN LAUNCHED', 'The campaign starts by reaching out to our qualified database to gauge interest'],
 ];
 
-// Rich text — mirrors DEFAULT_ENGAGEMENT_BODY in the frontend registry. Legacy
-// plain-text values are converted to HTML on read by the Investment section.
 const DEFAULT_ENGAGEMENT_BODY =
   '<p>Call through key contacts in database</p>' +
   '<p>Handle enquiries from prospects</p>' +
   '<p>Obtain NDA from prospects &amp; review client profile Nurture clients</p>' +
   '<p>Negotiate &amp; structure deal with clients Collaborate with stakeholders on deal structure</p>';
 
-/** Fee-option rows carry a uid so the editor can reorder them without React
- *  losing track, and so the customer's selection survives an edit. */
+// Ids let the editor reorder rows and the customer's tick survive an edit.
 function normaliseOptions(rows, fallbackUnit) {
   return (Array.isArray(rows) ? rows : []).map((row) => ({
     id: row.id || makeUid('opt'),
@@ -98,8 +66,6 @@ function normaliseOptions(rows, fallbackUnit) {
   }));
 }
 
-/** The default payload for one section type, seeded from a proposal's existing
- *  flat fields where it has them. */
 function makeDefaultData(type, flat = {}) {
   switch (type) {
     case 'banner':
@@ -129,8 +95,6 @@ function makeDefaultData(type, flat = {}) {
         html: flat.financialAssumptions || '',
       };
 
-    // The appraisal statement itself is fixed wording on the frontend; only the
-    // heading and the two signature captions are stored.
     case 'appraisal':
       return {
         title: 'Business Appraisal',
@@ -160,10 +124,7 @@ function makeDefaultData(type, flat = {}) {
         note: '',
       };
 
-    // Fixed-content sections carry no data — the Conditions of Acceptance
-    // disclaimer and the About / Contact boilerplate read the same on every
-    // proposal and are rendered from
-    // `frontend/components/proposal/fixed-content.ts`.
+    // Fixed wording — rendered from `fixed-content.ts`, nothing to store.
     case 'disclaimer':
     case 'about':
     case 'contact':
@@ -207,7 +168,6 @@ function makeDefaultData(type, flat = {}) {
   }
 }
 
-/** One section with a fresh uid, seeded from flat fields where relevant. */
 function makeDefaultSection(type, flat = {}) {
   return {
     uid: makeUid(type),
@@ -217,19 +177,9 @@ function makeDefaultSection(type, flat = {}) {
   };
 }
 
-/**
- * The default section order for a new (or migrating) proposal. Matches the
- * hardcoded order the public `/proposal` page rendered before the engine.
- *
- * `accept` sits after `investment` because that is where the first Accept
- * button appeared; the customer-facing page still repeats the button further
- * down, driven by this one section's data.
- */
 function makeDefaultSections(flat = {}) {
   const isAppraisal = (flat.template || 'business_appraisal') === 'business_appraisal';
 
-  // Mirrors the order the public page hardcoded before the section engine,
-  // including all three Accept buttons.
   const order = [
     'banner',
     'disclaimer',
@@ -248,12 +198,9 @@ function makeDefaultSections(flat = {}) {
 }
 
 /**
- * Pull the contract-critical values back out of the locked sections so the flat
- * fields — the ones the email templates read — stay authoritative.
- *
- * Only returns keys it can actually resolve: a caller merges this over the
- * existing document, so a missing/disabled section leaves the last known value
- * in place rather than blanking a signed agreement's inputs.
+ * Contract values read back out of the sections. Only returns keys it can
+ * resolve, so a missing section leaves the last known value rather than
+ * blanking it.
  */
 function deriveFlatFields(sections) {
   const out = {};
@@ -278,8 +225,6 @@ function deriveFlatFields(sections) {
     }
   }
 
-  // Financial assumptions live in a free section, but the customer email quotes
-  // them, so mirror the first enabled one.
   const financial = sections.find((s) => s && s.type === 'financialOverview' && s.enabled !== false);
   if (financial && financial.data && typeof financial.data.html === 'string') {
     out.financialAssumptions = financial.data.html;
@@ -289,14 +234,11 @@ function deriveFlatFields(sections) {
 }
 
 /**
- * Guarantee the required sections exist. Called on save so a malformed client
- * payload can never strip the contract out of the document — the editor
- * enforces the same rule, this is the backstop. Missing ones are re-seeded from
- * the current flat fields and appended; position is never touched.
+ * Backstop on save: a malformed payload can't strip the contract out. Missing
+ * required sections are re-seeded and appended; order is never touched.
  */
 function enforceLockedSections(sections, flat = {}) {
-  // Drop anything the renderer has no case for, so a malformed or out-of-date
-  // client can't persist sections that would silently render as nothing.
+  // Drop types the renderer has no case for.
   const list = (Array.isArray(sections) ? sections : []).filter(
     (s) => s && SECTION_TYPES.includes(s.type),
   );
@@ -309,15 +251,10 @@ function enforceLockedSections(sections, flat = {}) {
     }
   }
 
-  // Order is entirely the broker's — nothing is pinned to a position.
   return list;
 }
 
-/**
- * Legacy documents predate the engine and have an empty `sections` array. Build
- * one from their flat fields on read so the editor and the public page never
- * have to special-case them. Returns true when it changed the doc.
- */
+// Builds sections for documents that predate the engine. True if it changed.
 function ensureSections(proposal) {
   if (!proposal) return false;
   if (Array.isArray(proposal.sections) && proposal.sections.length > 0) return false;

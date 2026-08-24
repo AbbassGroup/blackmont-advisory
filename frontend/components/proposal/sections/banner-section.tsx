@@ -23,14 +23,7 @@ function MetaCell({ label, value }: { label: string; value: string }) {
   );
 }
 
-/**
- * LOCKED SECTION — the cover.
- *
- * The business name and appraised value shown here are denormalised onto the
- * proposal model and quoted in the agreement, so this section can be edited but
- * never removed. The date and broker come from the document itself (the broker
- * is chosen in the Settings drawer), so they are read-only here.
- */
+/** LOCKED SECTION — the cover. */
 export function ProposalBannerSection({
   data,
   template = 'business_appraisal',

@@ -4,13 +4,7 @@ import { AlertCircle, Loader2 } from 'lucide-react';
 import { InlineText } from '@/components/im';
 import type { AcceptData, SectionChangeHandler } from './shared';
 
-/**
- * LOCKED SECTION — the customer's way to accept.
- *
- * Removing it would leave an approved proposal with no acceptance path, so it
- * can be hidden and reworded but not deleted. In the editor it renders as a
- * disabled preview of the button.
- */
+/** LOCKED SECTION — the customer's way to accept. */
 export function AcceptSection({
   data,
   editable,

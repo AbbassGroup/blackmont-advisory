@@ -21,17 +21,7 @@ import {
   type ProposalBannerData,
 } from './types';
 
-/**
- * Digital Proposal editor.
- *
- * Uses the same `<DocumentEditor>` engine as the Information Memorandum, so a
- * proposal is built the same way: inline WYSIWYG on the document, autosave,
- * undo/redo, and a Sections drawer to add, reorder, hide and remove sections.
- *
- * The one thing a proposal adds is the approval workflow. The status button
- * runs Draft → Pending → Approved rather than IM's publish toggle, because
- * `isApproved` is what gates the customer's access to the document.
- */
+/** Digital Proposal editor. */
 export function ProposalEditor() {
   return <DocumentEditor<DigitalProposalDoc> config={PROPOSAL_CONFIG} />;
 }
@@ -192,6 +182,7 @@ function buildProposalConfig(): DocumentKindConfig<DigitalProposalDoc> {
   };
 }
 
-/** Built once — the config holds no state of its own; the editor supplies the
- *  signed-in user to the callbacks that need it. */
+/**
+ * Built once — the config holds no state of its own; the editor supplies the signed-in user to the callbacks that need it.
+ */
 const PROPOSAL_CONFIG = buildProposalConfig();
