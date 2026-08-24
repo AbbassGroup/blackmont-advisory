@@ -2,5 +2,6 @@
 node_modules
 /uploads/
 
+scripts/blog-import-preview/
 # Chromium for the PDF renderer (downloaded on install)
 .cache/

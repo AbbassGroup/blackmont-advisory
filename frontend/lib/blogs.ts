@@ -85,6 +85,96 @@ export async function listBlogs(params: {
   };
 }
 
+/**
+ * Server-side list fetch for the public Resources page.
+ *
+ * Deliberately native `fetch` rather than the axios client: only fetch goes
+ * through Next's data cache, so the published list is revalidated on a timer
+ * instead of hitting the API on every visit. The axios client stays the path
+ * for the admin portal, which is browser-only and wants no caching at all.
+ */
+export async function fetchPublicBlogs(params: {
+  page?: number;
+  limit?: number;
+  category?: string;
+  /** Seconds before the cached list is refetched. */
+  revalidate?: number;
+}): Promise<BlogListResult> {
+  const query = new URLSearchParams({
+    page: String(params.page ?? 1),
+    limit: String(params.limit ?? BLOGS_PER_PAGE),
+  });
+  if (params.category) query.set('category', params.category);
+
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5005';
+  const response = await fetch(`${baseUrl}${BLOGS_API}?${query.toString()}`, {
+    next: { revalidate: params.revalidate ?? 300 },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to load blogs (${response.status})`);
+  }
+
+  const body = await response.json();
+  return {
+    blogs: body?.data ?? [],
+    pagination: body?.pagination ?? EMPTY_PAGINATION,
+  };
+}
+
+/**
+ * Server-side single-article fetch for the public article page.
+ *
+ * Returns null when the article doesn't exist so the caller can render a 404,
+ * rather than throwing and turning a missing slug into a 500.
+ */
+export async function fetchPublicBlog(
+  slug: string,
+  options: { revalidate?: number } = {},
+): Promise<Blog | null> {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5005';
+  const response = await fetch(
+    `${baseUrl}${BLOGS_API}/${encodeURIComponent(slug)}`,
+    { next: { revalidate: options.revalidate ?? 300 } },
+  );
+
+  if (response.status === 404) return null;
+  if (!response.ok) {
+    throw new Error(`Failed to load blog (${response.status})`);
+  }
+
+  const body = await response.json();
+  return body?.data ?? null;
+}
+
+/**
+ * Every published slug, for `generateStaticParams` and the sitemap.
+ *
+ * Pages through the list rather than assuming one request covers it, so this
+ * keeps working as the blog grows past a single page.
+ */
+export async function fetchAllPublicBlogSlugs(
+  options: { revalidate?: number } = {},
+): Promise<Array<{ url: string; updatedAt: string }>> {
+  const slugs: Array<{ url: string; updatedAt: string }> = [];
+
+  for (let page = 1; ; page += 1) {
+    const { blogs, pagination } = await fetchPublicBlogs({
+      page,
+      limit: 100,
+      revalidate: options.revalidate ?? 3600,
+    });
+
+    for (const blog of blogs) {
+      if (blog.url) slugs.push({ url: blog.url, updatedAt: blog.updatedAt });
+    }
+
+    if (!pagination.hasNextPage) break;
+  }
+
+  return slugs;
+}
+
 /** Fetch one article. Accepts the ObjectId or the article's slug. */
 export async function getBlog(idOrSlug: string): Promise<Blog> {
   const { data } = await apiClient.get(`${BLOGS_API}/${idOrSlug}`);

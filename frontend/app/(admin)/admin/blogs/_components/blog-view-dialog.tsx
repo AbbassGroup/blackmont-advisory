@@ -121,6 +121,9 @@ export function BlogViewDialog({ blogId, onClose }: BlogViewDialogProps) {
               .blog-preview ul { list-style: disc; padding-left: 1.5em; margin: 0.7em 0; }
               .blog-preview ol { list-style: decimal; padding-left: 1.5em; margin: 0.7em 0; }
               .blog-preview li { margin: 0.25em 0; }
+              /* The editor stores items as <li><p>…</p></li>; the paragraph
+                 margin would add a gap inside every bullet. */
+              .blog-preview li p { margin: 0; }
               .blog-preview blockquote {
                 border-left: 3px solid var(--border);
                 padding-left: 1em;
