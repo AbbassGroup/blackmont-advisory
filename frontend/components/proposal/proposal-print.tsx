@@ -38,8 +38,22 @@ export function ProposalPrint({ id }: { id: string }) {
           });
           setState('ready');
         })
-        .catch(() => {
-          setError('The PDF could not be generated. Please try again.');
+        .catch(async (err) => {
+          // The backend explains what failed (Chrome missing, render page
+          // unreachable, and so on). Surfacing it beats sending someone to the
+          // server logs — the blob response has to be read back as text.
+          let reason = '';
+          try {
+            const blob = err?.response?.data as Blob | undefined;
+            if (blob && typeof blob.text === 'function') {
+              reason = JSON.parse(await blob.text())?.reason ?? '';
+            }
+          } catch {
+            /* keep the generic message */
+          }
+          setError(
+            reason || 'The PDF could not be generated. Please try again.',
+          );
           setState('error');
         }),
     [id],
@@ -75,11 +89,18 @@ export function ProposalPrint({ id }: { id: string }) {
           </p>
           <div className='flex items-center gap-2'>
             {state === 'error' && (
-              <Button variant='outline' className='rounded-none' onClick={retry}>
+              <Button
+                variant='outline'
+                className='rounded-none'
+                onClick={retry}
+              >
                 Try again
               </Button>
             )}
-            <a href={url || undefined} download={state === 'ready' ? 'proposal.pdf' : undefined}>
+            <a
+              href={url || undefined}
+              download={state === 'ready' ? 'proposal.pdf' : undefined}
+            >
               <Button
                 disabled={state !== 'ready'}
                 className='shrink-0 gap-2 rounded-none bg-accent font-semibold text-primary hover:bg-accent-light'
@@ -100,15 +121,17 @@ export function ProposalPrint({ id }: { id: string }) {
         {state === 'working' && (
           <div className='flex min-h-[60vh] flex-col items-center justify-center gap-3 text-muted-foreground'>
             <Loader2 className='h-6 w-6 animate-spin text-accent' />
-            <p className='text-sm'>Rendering the document — this takes a few seconds.</p>
+            <p className='text-sm'>
+              Rendering the document, this takes a few seconds.
+            </p>
           </div>
         )}
 
         {state === 'error' && (
-          <div className='mx-auto flex min-h-[40vh] max-w-md flex-col items-center justify-center gap-4 text-center'>
-            <div className='flex items-center gap-2 border border-red-100 bg-red-50 px-5 py-4 text-red-600'>
+          <div className='mx-auto flex min-h-[40vh] max-w-xl flex-col items-center justify-center gap-4 text-center'>
+            <div className='flex items-start gap-2 border border-red-100 bg-red-50 px-5 py-4 text-red-600'>
               <AlertCircle className='h-5 w-5' />
-              <span className='text-sm font-medium'>{error}</span>
+              <span className='text-left text-sm font-medium'>{error}</span>
             </div>
           </div>
         )}
