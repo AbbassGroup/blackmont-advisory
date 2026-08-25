@@ -45,7 +45,11 @@ import { Input } from '@/components/ui/input';
 import { RichTextEditor } from '@/components/proposal/rich-text-editor';
 import { InlineText } from '../inline-text';
 import { SectionHeading } from '../section-chrome';
-import { ChartBlockEditor, ChartBlockView, chartHasData } from './charts-section';
+import {
+  ChartBlockEditor,
+  ChartBlockView,
+  chartHasData,
+} from './charts-section';
 import {
   makeFinanceChart,
   makeGrowthChart,
@@ -259,8 +263,11 @@ const BLOCK_TYPES = [
   'chart',
 ] as const;
 
-/** The chart kinds a chart block can become, in the order the picker lists them. */
-const CHART_KINDS: { label: string; icon: typeof BarChart3; make: () => ChartItem }[] = [
+const CHART_KINDS: {
+  label: string;
+  icon: typeof BarChart3;
+  make: () => ChartItem;
+}[] = [
   { label: 'Finance', icon: BarChart3, make: makeFinanceChart },
   { label: 'Growth', icon: TrendingUp, make: makeGrowthChart },
   { label: 'Pie', icon: PieChartIcon, make: makePieChart },
@@ -313,7 +320,6 @@ function newBlock(type: CustomBlock['type']): CustomBlock {
       return { id, type, kind: 'link', url: '' };
     case 'pdf':
       return { id, type, url: '' };
-    // No chart yet — the block renders a kind picker until one is chosen.
     case 'chart':
       return { id, type };
   }
@@ -488,7 +494,6 @@ function BlockRead({ block }: { block: CustomBlock }) {
     case 'pdf':
       return block.url ? <PdfPages url={block.url} /> : null;
     case 'chart':
-      // An unchosen or empty chart is left out of the document entirely.
       return block.chart && chartHasData(block.chart) ? (
         <ChartBlockView chart={block.chart} />
       ) : null;
@@ -1057,7 +1062,9 @@ function PhotosBlockEditor({
       }
       if (urls.length)
         update(
-          (prev) => ({ photos: [...((prev.photos as string[]) ?? []), ...urls] }),
+          (prev) => ({
+            photos: [...((prev.photos as string[]) ?? []), ...urls],
+          }),
           true,
         );
     } finally {
@@ -1360,8 +1367,8 @@ function BlockEdit({
         <ChartBlockEditor
           chart={block.chart}
           onChange={(patch) =>
-            // Resolved against the block's current chart so a burst of edits
-            // (typing a title while changing a row) can't drop the earlier one.
+            // Resolved against the current chart so quick successive edits don't
+            // drop each other.
             update(
               (prev) => ({
                 chart: { ...((prev.chart as ChartItem) ?? {}), ...patch },
@@ -1412,7 +1419,10 @@ export function CustomSection({
   // Every write is built from the blocks as they are now, not as they were when
   // the handler was created. Without this an upload that finishes late reverts
   // anything edited elsewhere in the section while it was running.
-  const write = (make: (prev: CustomBlock[]) => CustomBlock[], commit = true) => {
+  const write = (
+    make: (prev: CustomBlock[]) => CustomBlock[],
+    commit = true,
+  ) => {
     onChange?.((prev) => ({
       blocks: make(resolveBlocks(prev as unknown as CustomData)),
     }));

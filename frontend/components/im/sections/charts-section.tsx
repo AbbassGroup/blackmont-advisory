@@ -1341,12 +1341,7 @@ function KpiBody({
 }
 
 // ─── Chart card (editor) ──────────────────────────────────────────────────────
-/**
- * One chart, edited without the move/remove chrome `ChartEditor` carries.
- *
- * Used by a custom section's chart block, where the block wrapper already
- * provides the reorder and delete controls — see `custom-section.tsx`.
- */
+/** One chart without the move/remove chrome — the block wrapper supplies those. */
 export function ChartBlockEditor({
   chart,
   onChange,

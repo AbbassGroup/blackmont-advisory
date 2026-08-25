@@ -82,9 +82,18 @@ export function ProposalBannerSection({
         style={{ backgroundImage: `url("${bg}")` }}
       />
       {/* Ink wash — heaviest at the bottom-left where the type sits, clearing
-          towards the top-right so the photograph still reads as a photograph. */}
-      <div className='absolute inset-0 bg-gradient-to-tr from-secondary via-secondary/75 to-secondary/10' />
-      <div className='absolute inset-0 bg-gradient-to-t from-secondary via-transparent to-transparent' />
+          towards the top-right so the photograph still reads as a photograph.
+          Raster ramps rather than CSS gradients: a gradient fading to
+          transparent compiles to a PDF function-based shading, which pdf.js
+          can't render and paints hotpink instead. */}
+      <div
+        className='absolute inset-0 bg-cover'
+        style={{ backgroundImage: 'url("/assets/scrim-cover.png")', backgroundSize: '100% 100%' }}
+      />
+      <div
+        className='absolute inset-0'
+        style={{ backgroundImage: 'url("/assets/scrim-foot.png")', backgroundSize: '100% 100%' }}
+      />
 
       {editable && (
         <>

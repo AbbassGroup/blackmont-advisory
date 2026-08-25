@@ -25,7 +25,8 @@ export function ProposalContactSection() {
         {/* gilt hairline at the top */}
         <span
           aria-hidden
-          className='block h-0.5 w-full bg-linear-to-r from-transparent via-accent to-transparent'
+          className='block h-0.5 w-full'
+          style={{ backgroundImage: 'url("/assets/scrim-hairline.png")', backgroundSize: '100% 100%' }}
         />
 
         <div className='bg-secondary p-8 text-center text-parchment'>
