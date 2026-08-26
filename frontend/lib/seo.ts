@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 // metadataBase is the bare domain, so relative canonicals would resolve wrong.
 export const SITE_URL = 'https://www.blackmontadvisory.com';
 export const ORG_NAME = 'Blackmont Advisory';
-export const OG_IMAGE = 'https://www.blackmontadvisory.com/bb-og.png';
+export const OG_IMAGE = 'https://www.blackmontadvisory.com/assets/blackmont-og.png';
 
 export function absoluteUrl(path = ''): string {
   if (!path) return SITE_URL;
