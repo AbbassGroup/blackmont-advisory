@@ -5,8 +5,6 @@ import { InlineText } from '../inline-text';
 import { SectionHeading } from '../section-chrome';
 import type { OwnershipData, SectionPatch, StaffGroup } from '../types';
 
-/** A single "Label: value" line. The label is static; the value is editable
- * (highlighted to show it can be edited, echoing the source design). */
 function Row({
   label,
   value,
@@ -20,7 +18,9 @@ function Row({
 }) {
   return (
     <div className='flex flex-wrap items-baseline gap-x-2 gap-y-1'>
-      <span className='text-sm font-semibold text-muted-foreground'>{label}:</span>
+      <span className='text-sm font-semibold text-muted-foreground'>
+        {label}:
+      </span>
       <InlineText
         as='span'
         singleLine
@@ -35,13 +35,14 @@ function Row({
 }
 
 function GroupCard({
-  heading,
+  fallbackHeading,
   group,
   withRate,
   editable,
   onChange,
 }: {
-  heading: string;
+  /** Used when the template predates editable headings. */
+  fallbackHeading: string;
   group: StaffGroup;
   withRate?: boolean;
   editable?: boolean;
@@ -50,9 +51,15 @@ function GroupCard({
   return (
     <div className='overflow-hidden border border-border bg-card shadow-xs'>
       <div className='bg-accent/15 px-5 py-2.5'>
-        <p className='text-sm font-semibold uppercase tracking-wide text-accent'>
-          {heading}
-        </p>
+        <InlineText
+          as='p'
+          singleLine
+          editable={editable}
+          value={group.heading ?? fallbackHeading}
+          onChange={(v) => onChange({ heading: v })}
+          placeholder={fallbackHeading}
+          className='text-sm font-semibold uppercase tracking-wide text-accent'
+        />
       </div>
       <div className='space-y-2 p-5'>
         <Row
@@ -125,9 +132,15 @@ export function OwnershipSection({
           <span className='flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent text-primary'>
             <UserRound className='h-5 w-5' />
           </span>
-          <p className='text-base font-semibold text-secondary'>
-            Business Owner(s)
-          </p>
+          <InlineText
+            as='p'
+            singleLine
+            editable={editable}
+            value={data.owner.heading ?? 'Business Owner(s)'}
+            onChange={(v) => setOwner({ heading: v })}
+            placeholder='Business Owner(s)'
+            className='text-base font-semibold text-secondary'
+          />
         </div>
         <div className='space-y-2 p-5'>
           <Row
@@ -154,28 +167,28 @@ export function OwnershipSection({
       {/* Staff breakdown */}
       <div className='mt-4 grid gap-4 sm:grid-cols-2'>
         <GroupCard
-          heading='Full Time'
+          fallbackHeading='Full Time'
           group={data.fulltime}
           withRate
           editable={editable}
           onChange={setGroup('fulltime')}
         />
         <GroupCard
-          heading='Part Time'
+          fallbackHeading='Part Time'
           group={data.parttime}
           withRate
           editable={editable}
           onChange={setGroup('parttime')}
         />
         <GroupCard
-          heading='Casual'
+          fallbackHeading='Casual'
           group={data.casual}
           withRate
           editable={editable}
           onChange={setGroup('casual')}
         />
         <GroupCard
-          heading='Sub-Contractors'
+          fallbackHeading='Sub-Contractors'
           group={data.subcontractors}
           withRate
           editable={editable}

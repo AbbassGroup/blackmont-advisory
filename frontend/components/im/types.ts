@@ -149,9 +149,10 @@ export interface SocialsData {
   links: SocialLink[];
 }
 
-/** A staff group (full-time, part-time, …). Only the values are editable; the
- * field labels and group headings are static. `rate` is shown for some groups. */
+/** A staff group (full-time, part-time, …). `rate` is shown for some groups. */
 export interface StaffGroup {
+  /** Card heading. Falls back to the group's default label when unset. */
+  heading?: string;
   people: string;
   hours: string;
   tasks: string;
@@ -160,7 +161,7 @@ export interface StaffGroup {
 
 export interface OwnershipData {
   title: string;
-  owner: { owners: string; hours: string; tasks: string };
+  owner: { heading?: string; owners: string; hours: string; tasks: string };
   fulltime: StaffGroup;
   parttime: StaffGroup;
   casual: StaffGroup;
@@ -645,11 +646,11 @@ export function makeDefaultSection(type: SectionType): ImSection {
         ...base,
         data: {
           title: 'Ownership & Staff',
-          owner: { owners: '', hours: '', tasks: '' },
-          fulltime: { people: '', hours: '', tasks: '', rate: '' },
-          parttime: { people: '', hours: '', tasks: '', rate: '' },
-          casual: { people: '', hours: '', tasks: '', rate: '' },
-          subcontractors: { people: '', hours: '', tasks: '', rate: '' },
+          owner: { heading: 'Business Owner(s)', owners: '', hours: '', tasks: '' },
+          fulltime: { heading: 'Full Time', people: '', hours: '', tasks: '', rate: '' },
+          parttime: { heading: 'Part Time', people: '', hours: '', tasks: '', rate: '' },
+          casual: { heading: 'Casual', people: '', hours: '', tasks: '', rate: '' },
+          subcontractors: { heading: 'Sub-Contractors', people: '', hours: '', tasks: '', rate: '' },
         } satisfies OwnershipData,
       };
     default:
