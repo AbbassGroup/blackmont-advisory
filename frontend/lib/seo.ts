@@ -114,3 +114,53 @@ export function itemListJsonLd(
     })),
   };
 }
+
+export function faqJsonLd(items: { q: string; a: string }[]): Json {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: items.map((it) => ({
+      '@type': 'Question',
+      name: it.q,
+      acceptedAnswer: { '@type': 'Answer', text: it.a },
+    })),
+  };
+}
+
+export function articleJsonLd({
+  headline,
+  description,
+  path,
+  updated,
+}: {
+  headline: string;
+  description: string;
+  path: string;
+  updated: string;
+}): Json {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline,
+    description,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': absoluteUrl(path) },
+    datePublished: updated,
+    dateModified: updated,
+    image: OG_IMAGE,
+    publisher: {
+      '@type': 'Organization',
+      name: ORG_NAME,
+      url: absoluteUrl(),
+    },
+  };
+}
+
+export function gatedMetadata(
+  args: BuildMetadataArgs & { reviewed: boolean },
+): Metadata {
+  const { reviewed, ...rest } = args;
+  const metadata = buildMetadata(rest);
+  return reviewed
+    ? metadata
+    : { ...metadata, robots: { index: false, follow: false } };
+}

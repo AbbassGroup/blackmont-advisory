@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/select';
 import { industries } from '@/lib/data/industries';
 import { locations } from '@/lib/data/locations';
+import { bracketFor } from '@/lib/data/valuation-brackets';
 import { GetStarted } from '../../_components/get-started';
 import { PrintButton } from '../../_components/print-button';
 import { ValuationPdf } from '../../_components/pdf/valuation-pdf';
@@ -66,31 +67,7 @@ function calculateValuationRange(data: ValuationData) {
   const profit = parseMoney(data.ebitda);
   const ebitda = profit > 0 ? profit : revenue * 0.15;
 
-  let bracketMin = 0.8;
-  let bracketMax = 1.8;
-
-  if (ebitda >= 10000000) {
-    bracketMin = 6.0;
-    bracketMax = 10.0;
-  } else if (ebitda >= 5000000) {
-    bracketMin = 5.0;
-    bracketMax = 8.0;
-  } else if (ebitda >= 2500000) {
-    bracketMin = 3.8;
-    bracketMax = 6.5;
-  } else if (ebitda >= 1000000) {
-    bracketMin = 3.0;
-    bracketMax = 5.0;
-  } else if (ebitda >= 500000) {
-    bracketMin = 2.2;
-    bracketMax = 4.0;
-  } else if (ebitda >= 250000) {
-    bracketMin = 1.6;
-    bracketMax = 3.0;
-  } else if (ebitda >= 100000) {
-    bracketMin = 1.2;
-    bracketMax = 2.4;
-  }
+  const { min: bracketMin, max: bracketMax } = bracketFor(ebitda);
 
   let managementScore = 0.5;
   if (data.management === 'Fully Managed') managementScore = 1.0;

@@ -1,5 +1,10 @@
 import type { MetadataRoute } from 'next';
 import { fetchAllPublicBlogSlugs } from '@/lib/blogs';
+import {
+  CONTENT_UPDATED,
+  indexableIndustryPages,
+} from '@/lib/data/industry-benchmarks';
+import { indexableGuides } from '@/lib/data/guides';
 
 const BASE_URL = 'https://www.blackmontadvisory.com';
 
@@ -11,6 +16,8 @@ const staticPages = [
   '/partnership',
   '/resources',
   '/access',
+  '/selling-a',
+  '/guides',
   '/access/valuation',
   '/access/readiness',
   '/access/benchmarks',
@@ -35,5 +42,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error('Failed to fetch blogs for sitemap:', error);
   }
 
-  return [...staticEntries, ...blogEntries];
+  const industryEntries: MetadataRoute.Sitemap = indexableIndustryPages().map(
+    ({ page }) => ({
+      url: `${BASE_URL}/selling-a/${page.slug}`,
+      lastModified: new Date(CONTENT_UPDATED),
+    }),
+  );
+
+  const guideEntries: MetadataRoute.Sitemap = indexableGuides().map((guide) => ({
+    url: `${BASE_URL}/guides/${guide.slug}`,
+    lastModified: new Date(CONTENT_UPDATED),
+  }));
+
+  return [
+    ...staticEntries,
+    ...industryEntries,
+    ...guideEntries,
+    ...blogEntries,
+  ];
 }
