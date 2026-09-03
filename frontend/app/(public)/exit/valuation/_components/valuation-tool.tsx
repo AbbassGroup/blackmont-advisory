@@ -267,6 +267,7 @@ export function ValuationTool() {
                   Start Over
                 </Button>
                 <PrintButton
+                  resource='Valuation Tool'
                   label='Print Appraisal'
                   fileName='Blackmont-Business-Valuation.pdf'
                   buildDocument={(assets) => (

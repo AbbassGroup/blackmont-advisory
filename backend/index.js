@@ -83,6 +83,9 @@ app.use('/api/acquisition', acquisitionRoutes);
 const accessAnalyticsRoutes = require('./routes/accessAnalytics');
 app.use('/api/access-analytics', accessAnalyticsRoutes);
 
+const resourceReportsRoutes = require('./routes/resourceReports');
+app.use('/api/resource-reports', resourceReportsRoutes);
+
 const imFollowUpRoutes = require('./routes/imFollowUp');
 app.use('/api/im-follow-up', imFollowUpRoutes);
 

@@ -7,7 +7,8 @@ const exploreLinks = [
   { label: 'Buying', to: '/#buying' },
   { label: 'Network', to: '/#network' },
   { label: 'Why Blackmont', to: '/#why' },
-  // { label: 'Resources', to: '/resources' },
+  { label: 'Exit Planning', to: '/exit' },
+  { label: 'Resources', to: '/resources' },
   { label: 'Begin Confidentially', to: '/#contact' },
 ];
 

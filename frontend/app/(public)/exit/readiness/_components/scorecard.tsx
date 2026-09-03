@@ -325,6 +325,7 @@ export function Scorecard() {
 
             <div className='flex justify-center'>
               <PrintButton
+                resource='Sale Readiness Score'
                 label='Print Checklist'
                 fileName='Blackmont-Sale-Readiness-Checklist.pdf'
                 buildDocument={(assets) => (

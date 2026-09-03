@@ -182,7 +182,7 @@ export default function ReadinessGuidePage() {
 
         <section className='mt-16 grid gap-px border-[1.5px] border-secondary/10 bg-secondary/10 sm:grid-cols-2'>
           <Link
-            href='/access/readiness'
+            href='/exit/readiness'
             className='group bg-muted px-8 py-9 transition-colors hover:bg-accent-pale'
           >
             <span className='flex items-center justify-between text-lg font-bold tracking-tight text-secondary'>

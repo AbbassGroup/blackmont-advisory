@@ -144,6 +144,7 @@ export function BenchmarkReport() {
         {ind && (
           <div className='mt-6 flex justify-center'>
             <PrintButton
+              resource='Industry Benchmark Report'
               label='Print Report'
               fileName={`Blackmont-${ind.name.replace(/[^a-z0-9]+/gi, '-')}-Benchmark.pdf`}
               buildDocument={(assets) => (

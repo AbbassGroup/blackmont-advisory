@@ -426,7 +426,7 @@ export const INDUSTRY_BENCHMARKS: IndustryBenchmark[] = [
     drivers: [
       'Provider registration numbers',
       'Referral network quality',
-      'Medicare / NDIS billing mix',
+      'Medicare / NDIS billing mi×',
       'Multi-practitioner structure',
       'Location & accessibility',
     ],

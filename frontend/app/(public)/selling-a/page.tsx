@@ -182,7 +182,7 @@ export default function SellingIndexPage() {
         <CtaPair
           items={[
             {
-              href: '/access/valuation',
+              href: '/exit/valuation',
               title: 'Estimate your own range',
               detail: 'Free valuation tool. Five questions, indicative range.',
             },

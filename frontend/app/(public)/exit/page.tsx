@@ -13,7 +13,7 @@ import { JsonLd } from '@/components/seo/json-ld';
 import { breadcrumbJsonLd, buildMetadata, itemListJsonLd } from '@/lib/seo';
 
 export const metadata: Metadata = buildMetadata({
-  path: '/access',
+  path: '/exit',
   title: 'Sell Your Business | Free Exit Tools & Advisory | Blackmont Advisory',
   description:
     'Thinking about selling your business? Access free valuation tools, exit-readiness checklists, and confidential advice from Blackmont Advisory, a Melbourne boutique business brokerage.',
@@ -25,32 +25,32 @@ export const metadata: Metadata = buildMetadata({
 const jsonLd = [
   breadcrumbJsonLd([
     { name: 'Home', path: '' },
-    { name: 'Sell Your Business', path: '/access' },
+    { name: 'Sell Your Business', path: '/exit' },
   ]),
   itemListJsonLd('Free Business Exit Resources', [
     {
       name: 'Business Valuation Tool',
       description:
         'Estimate the potential value of your business using industry-based insights.',
-      path: '/access/valuation',
+      path: '/exit/valuation',
     },
     {
       name: 'Business Sale Checklist',
       description:
         'Understand what buyers look for before taking your business to market.',
-      path: '/access/readiness',
+      path: '/exit/readiness',
     },
     {
       name: 'Industry Benchmark Report',
       description:
         'Compare your business performance against broader industry standards.',
-      path: '/access/benchmarks',
+      path: '/exit/benchmarks',
     },
     {
       name: 'Exit Planning Guide',
       description:
         'Learn how to prepare for a smoother and more profitable business exit.',
-      path: '/access/exit-planning',
+      path: '/exit/exit-planning',
     },
   ]),
 ];

@@ -19,7 +19,8 @@ const NAV_LINKS = [
   { label: 'Buying', path: '/#buying' },
   { label: 'Network', path: '/#network' },
   { label: 'Why Us', path: '/#why' },
-  // { label: 'Resources', path: '/resources' },
+  { label: 'Exit Planning', path: '/exit' },
+  { label: 'Resources', path: '/resources' },
 ];
 
 function BrandLockup() {

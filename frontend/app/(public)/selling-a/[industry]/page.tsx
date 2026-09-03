@@ -227,7 +227,7 @@ export default async function IndustryPage({ params }: IndustryPageProps) {
         <CtaPair
           items={[
             {
-              href: '/access/valuation',
+              href: '/exit/valuation',
               title: 'Find out what your business is worth',
               detail: 'Free valuation tool. Five questions, indicative range.',
             },

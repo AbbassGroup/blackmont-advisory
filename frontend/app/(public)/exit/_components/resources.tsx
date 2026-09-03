@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { ArrowUpRight } from 'lucide-react';
 import { SectionHeading } from './section-heading';
-import { ResourceGate } from './resource-gate';
+import { ResourceLink } from './resource-link';
 
 interface Resource {
   title: string;
@@ -21,7 +21,7 @@ const resources: Resource[] = [
     summary:
       'Estimate the potential value of your business using industry-based insights.',
     image: '/valuation.webp',
-    href: '/access/valuation',
+    href: '/exit/valuation',
     cta: 'Access Tool',
   },
   {
@@ -30,7 +30,7 @@ const resources: Resource[] = [
     summary:
       'Understand what buyers look for before taking your business to market.',
     image: '/sale.webp',
-    href: '/access/readiness',
+    href: '/exit/readiness',
     cta: 'Download Checklist',
   },
   {
@@ -39,7 +39,7 @@ const resources: Resource[] = [
     summary:
       'Compare your business performance against broader industry standards.',
     image: '/benchmark.webp',
-    href: '/access/benchmarks',
+    href: '/exit/benchmarks',
     cta: 'View Report',
   },
   {
@@ -48,7 +48,7 @@ const resources: Resource[] = [
     summary:
       'Learn how to prepare for a smoother and more profitable business exit.',
     image: '/exit-plan.webp',
-    href: '/access/exit-planning',
+    href: '/exit/exit-planning',
     cta: 'Get Guide',
   },
 ];
@@ -92,7 +92,7 @@ export function Resources() {
 
         <div className='mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 md:gap-8 lg:grid-cols-4'>
           {resources.map((resource, i) => (
-            <ResourceGate
+            <ResourceLink
               key={resource.title}
               href={resource.href}
               resourceTitle={resource.apiName}
@@ -100,7 +100,7 @@ export function Resources() {
               index={i}
             >
               <CardInner resource={resource} />
-            </ResourceGate>
+            </ResourceLink>
           ))}
         </div>
       </div>

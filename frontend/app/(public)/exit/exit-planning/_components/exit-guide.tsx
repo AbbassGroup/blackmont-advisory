@@ -150,6 +150,7 @@ export function ExitGuide() {
 
         <div className='mt-8 flex justify-center'>
           <PrintButton
+            resource='Exit Planning Guide'
             label='Print Exit Guide'
             fileName='Blackmont-Exit-Planning-Guide.pdf'
             buildDocument={(assets) => (

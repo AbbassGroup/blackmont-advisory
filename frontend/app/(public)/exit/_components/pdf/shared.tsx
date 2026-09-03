@@ -13,7 +13,7 @@ import {
 // Deep-links to the access page and auto-opens the "Schedule a Confidential
 // Call" form (see the `?consultation=true` handling in GetStarted).
 export const CONTACT_URL =
-  'https://www.blackmontadvisory.com/access?consultation=true';
+  'https://www.blackmontadvisory.com/exit?consultation=true';
 
 export interface PdfAssets {
   logo: string;

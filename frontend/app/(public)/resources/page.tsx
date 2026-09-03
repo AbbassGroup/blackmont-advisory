@@ -5,7 +5,7 @@ import { JsonLd } from '@/components/seo/json-ld';
 import { PageBanner } from '@/components/global/page-banner';
 import { Container } from '@/components/landing/primitives';
 import { fetchPublicBlogs, BLOGS_PER_PAGE, type Blog } from '@/lib/blogs';
-import { ResourceGate } from '../access/_components/resource-gate';
+import { ResourceLink } from '../exit/_components/resource-link';
 import { BlogCard } from './_components/blog-card';
 import { BlogPagination } from './_components/blog-pagination';
 
@@ -29,7 +29,7 @@ const resourceTools = [
     summary:
       'Estimate the potential value of your business using industry-based insights.',
     image: '/valuation.webp',
-    href: '/access/valuation',
+    href: '/exit/valuation',
     cta: 'Access Tool',
   },
   {
@@ -38,7 +38,7 @@ const resourceTools = [
     summary:
       'Understand what buyers look for before taking your business to market.',
     image: '/sale.webp',
-    href: '/access/readiness',
+    href: '/exit/readiness',
     cta: 'Download Checklist',
   },
   {
@@ -47,7 +47,7 @@ const resourceTools = [
     summary:
       'Compare your business performance against broader industry standards.',
     image: '/benchmark.webp',
-    href: '/access/benchmarks',
+    href: '/exit/benchmarks',
     cta: 'View Report',
   },
   {
@@ -56,7 +56,7 @@ const resourceTools = [
     summary:
       'Learn how to prepare for a smoother and more profitable business exit.',
     image: '/exit-plan.webp',
-    href: '/access/exit-planning',
+    href: '/exit/exit-planning',
     cta: 'Get Guide',
   },
 ];
@@ -174,7 +174,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
 
           <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
             {resourceTools.map((tool, idx) => (
-              <ResourceGate
+              <ResourceLink
                 key={tool.title}
                 href={tool.href}
                 resourceTitle={tool.apiName}
@@ -205,7 +205,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
                     <ArrowUpRight className='h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5' />
                   </div>
                 </div>
-              </ResourceGate>
+              </ResourceLink>
             ))}
           </div>
         </Container>

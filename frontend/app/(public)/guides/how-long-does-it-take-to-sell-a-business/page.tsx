@@ -50,6 +50,19 @@ const DELAYS = [
   },
 ];
 
+const PHASE_NOTES: Record<string, string> = {
+  'Lay the foundation':
+    'Work out where you stand and start separating yourself from the business. Structure and tax planning belong here too, because both are difficult to change once a sale is close.',
+  'Clean up and systemise':
+    'The unglamorous year. Financials get prepared properly, the lease gets secured, disputes and tax positions get resolved, and handshake arrangements become written contracts.',
+  'Prepare for market':
+    'Position rather than fix. Confirm a realistic price, begin the Information Memorandum, reduce any customer concentration, and tidy what a buyer will see first.',
+  'Engage Blackmont Advisory and go to market':
+    'Terms, structure and disclosure get settled, the data room is built, and you agree who knows what and when before anything goes live.',
+  'Manage the sale process':
+    'Enquiries, inspections, offers and due diligence. Speed of response matters more than owners expect: it is read as a signal about the business itself.',
+};
+
 const FAQS = [
   {
     q: 'How long does it take to sell a small business in Australia?',
@@ -184,7 +197,7 @@ export default function TimeToSellGuidePage() {
             through with sellers.
           </p>
 
-          <ol className='mt-10 space-y-10'>
+          <ol className='mt-10 space-y-8'>
             {EXIT_PHASES.map((phase) => (
               <li key={phase.title} className='border-l-2 border-accent pl-6'>
                 <span className='text-[0.7rem] font-bold uppercase tracking-[0.14em] text-accent'>
@@ -193,19 +206,23 @@ export default function TimeToSellGuidePage() {
                 <h3 className='mt-1.5 text-lg font-bold tracking-tight text-secondary'>
                   {phase.title}
                 </h3>
-                <ul className='mt-3 space-y-1.5'>
-                  {phase.tasks.map((task) => (
-                    <li
-                      key={task}
-                      className='text-sm leading-relaxed text-muted-foreground'
-                    >
-                      {task}
-                    </li>
-                  ))}
-                </ul>
+                <p className='mt-2 leading-relaxed text-muted-foreground'>
+                  {PHASE_NOTES[phase.title]}
+                </p>
               </li>
             ))}
           </ol>
+
+          <p className='mt-8 leading-relaxed text-muted-foreground'>
+            Each phase has a working checklist behind it.{' '}
+            <Link
+              href='/exit/exit-planning'
+              className='text-accent underline underline-offset-4 transition-opacity hover:opacity-75'
+            >
+              Open the exit planning guide
+            </Link>{' '}
+            to tick items off as you go.
+          </p>
         </section>
 
         <section className='mt-14'>

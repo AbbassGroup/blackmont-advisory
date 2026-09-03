@@ -1,4 +1,4 @@
-// Fire-and-forget event tracker for the public /access lead pages.
+// Fire-and-forget event tracker for the public /exit lead pages.
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5005';
 const ENDPOINT = `${API_URL}/api/access-analytics/event`;
 const SID_KEY = 'abb_access_sid';
@@ -18,7 +18,7 @@ export interface AccessLead {
   industry?: string;
   location?: string;
   comments?: string;
-  leadType?: 'resource_gate' | 'consultation';
+  leadType?: 'resource_gate' | 'consultation' | 'pdf_download';
 }
 
 interface TrackOptions {
