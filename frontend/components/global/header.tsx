@@ -27,16 +27,17 @@ function BrandLockup() {
   return (
     <Link
       href='/'
-      className='flex items-center gap-3 shrink-0'
+      className='flex shrink-0 items-center'
       aria-label='Blackmont Advisory home'
     >
       <Image
         unoptimized
+        priority
         src='/assets/blackmont-light.png'
         alt='Blackmont Advisory logo'
-        width={32}
-        height={32}
-        className='h-10 w-full'
+        width={2400}
+        height={374}
+        className='h-8 w-auto xl:h-9 2xl:h-10'
       />
     </Link>
   );
@@ -68,14 +69,14 @@ export function Header() {
     >
       <div
         className={[
-          'mx-auto flex max-w-[1500px] items-center justify-between px-6 transition-[height] duration-300 sm:px-10 lg:px-16',
+          'mx-auto flex max-w-[1500px] items-center justify-between gap-4 px-6 transition-[height] duration-300 sm:px-10 lg:px-12 2xl:px-16',
           scrolled ? 'h-[60px]' : 'h-[72px]',
         ].join(' ')}
       >
         <BrandLockup />
 
         {/* Desktop nav */}
-        <nav className='hidden items-center gap-8 lg:flex'>
+        <nav className='hidden min-w-0 items-center gap-5 xl:flex 2xl:gap-8'>
           {NAV_LINKS.map((link) => {
             const active = isActive(link.path);
             return (
@@ -83,7 +84,7 @@ export function Header() {
                 key={link.path}
                 href={link.path}
                 className={[
-                  'text-xs font-medium uppercase tracking-[0.1em] transition-colors',
+                  'whitespace-nowrap text-xs font-medium uppercase tracking-[0.08em] transition-colors 2xl:tracking-[0.1em]',
                   active
                     ? 'text-accent'
                     : 'text-parchment/55 hover:text-accent',
@@ -95,16 +96,16 @@ export function Header() {
           })}
         </nav>
 
-        <div className='flex items-center gap-3'>
+        <div className='flex shrink-0 items-center gap-3'>
           <Link
             href='/#contact'
-            className='hidden whitespace-nowrap bg-accent px-6 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-primary transition-colors hover:bg-accent-light sm:inline-block'
+            className='hidden whitespace-nowrap bg-accent px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.1em] text-primary transition-colors hover:bg-accent-light sm:inline-block xl:px-6 2xl:tracking-[0.14em]'
           >
             Begin Confidentially
           </Link>
 
           {/* Mobile nav */}
-          <div className='lg:hidden'>
+          <div className='xl:hidden'>
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
                 <Button
