@@ -11,7 +11,7 @@ import ListingActions from '../_components/listing-actions';
 import { PageBanner } from '@/components/global/page-banner';
 import { JsonLd } from '@/components/seo/json-ld';
 
-const SITE_URL = 'https://www.blackmontadvisory.com';
+const SITE_URL = 'https://blackmontadvisory.com';
 
 export async function generateMetadata({
   params,

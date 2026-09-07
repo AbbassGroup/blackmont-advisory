@@ -6,7 +6,7 @@ import {
 } from '@/lib/data/industry-benchmarks';
 import { indexableGuides } from '@/lib/data/guides';
 
-const BASE_URL = 'https://www.blackmontadvisory.com';
+const BASE_URL = 'https://blackmontadvisory.com';
 
 // No priority/changeFrequency: Google ignores both. lastModified only where real.
 const staticPages = [

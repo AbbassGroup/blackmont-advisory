@@ -9,7 +9,7 @@ import {
 } from '@/lib/blogs';
 import { JsonLd } from '@/components/seo/json-ld';
 
-const SITE_URL = 'https://www.blackmontadvisory.com';
+const SITE_URL = 'https://blackmontadvisory.com';
 
 type BlogPostPageProps = {
   params: Promise<{ slug: string }>;

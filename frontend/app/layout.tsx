@@ -14,7 +14,7 @@ const inter = Inter({
 const GTAG_ID = 'AW-17295080699';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.blackmontadvisory.com'),
+  metadataBase: new URL('https://blackmontadvisory.com'),
   title: 'M&A Advisory Australia | Blackmont Advisory',
   description:
     'Australia’s trusted boutique business brokerage, helping owners achieve the best outcomes when buying or selling businesses across Melbourne, Sydney, and beyond.',

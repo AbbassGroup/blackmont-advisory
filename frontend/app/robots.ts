@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/admin/', '/api/', '/proposal'],
       },
     ],
-    sitemap: 'https://www.blackmontadvisory.com/sitemap.xml',
+    sitemap: 'https://blackmontadvisory.com/sitemap.xml',
   };
 }

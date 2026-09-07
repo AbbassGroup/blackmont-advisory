@@ -10,7 +10,7 @@ import { Network } from '@/components/landing/network';
 import { Why } from '@/components/landing/why';
 import { Contact } from '@/components/landing/contact';
 
-const SITE_URL = 'https://www.blackmontadvisory.com';
+const SITE_URL = 'https://blackmontadvisory.com';
 const OG_IMAGE = '/assets/blackmont-og.png';
 const DESCRIPTION =
   'Blackmont Advisory is a boutique, senior-led M&A firm. We manage confidential business sales for owners and act as exclusive buyer advocates for acquirers across Australia and beyond.';

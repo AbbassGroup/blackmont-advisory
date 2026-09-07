@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { SectionHeading } from '../section-chrome';
 import { AppraisalDialog } from '../appraisal-dialog';
 
-const BUY_A_BUSINESS_URL = 'https://www.blackmontadvisory.com/buy-a-business';
+const BUY_A_BUSINESS_URL = 'https://blackmontadvisory.com/buy-a-business';
 
 const CONTACTS = [
   {

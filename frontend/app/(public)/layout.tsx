@@ -2,7 +2,7 @@ import { Header } from '@/components/global/header';
 import { Footer } from '@/components/global/footer';
 import { JsonLd } from '@/components/seo/json-ld';
 
-const SITE_URL = 'https://www.blackmontadvisory.com';
+const SITE_URL = 'https://blackmontadvisory.com';
 
 const organizationSchema = {
   '@context': 'https://schema.org',
