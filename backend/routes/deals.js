@@ -7,6 +7,8 @@ const Vendor = require('../models/Vendor');
 const ProspectNote = require('../models/ProspectNote');
 const auth = require('../middleware/auth.middleware');
 const fetchBusinessNames = require('../utils/fetchBusinessNames');
+const fetchProspects = require('../utils/fetchProspects');
+const { filterApprovedProspects } = require('../utils/approvedProspects');
 
 // Returns the listing if the admin owns it (or is superadmin); otherwise sends
 // the error response and returns null so the caller can `return`.
@@ -62,6 +64,50 @@ router.get("/", auth, async (req, res) => {
     }
   } catch (err) {
     console.error('Error in GET /api/deals:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/deals/:listingId/prospects — approved prospects, full contact details.
+// Proxied server-side so the approval filter can't be bypassed in the browser.
+router.get('/:listingId/prospects', auth, async (req, res) => {
+  try {
+    const listing = await requireOwnedListing(req, res);
+    if (!listing) return;
+
+    let businessName = listing.title || 'Deal';
+    try {
+      if (listing.deal) {
+        const names = await fetchBusinessNames([listing.deal]);
+        const info = names.find((bn) => bn.dealId === listing.deal);
+        if (info?.businessName) businessName = info.businessName;
+      }
+    } catch (e) {
+      console.error('Deal business name lookup failed:', e.message);
+    }
+
+    let prospects = [];
+    try {
+      prospects = await fetchProspects(listing.deal);
+      // Hide unapproved NDAs (pending or rejected).
+      prospects = await filterApprovedProspects(req.params.listingId, prospects);
+    } catch (e) {
+      console.error('Deal prospects fetch failed:', e.message);
+      prospects = [];
+    }
+
+    return res.json({
+      businessName,
+      prospects: prospects.map((p) => ({
+        _id: p._id,
+        firstName: p.firstName || '',
+        lastName: p.lastName || '',
+        email: p.email || '',
+        phone: p.phone || '',
+      })),
+    });
+  } catch (err) {
+    console.error('Fetch deal prospects error:', err);
     res.status(500).json({ error: err.message });
   }
 });

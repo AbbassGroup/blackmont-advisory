@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import {
   ArrowLeft,
   Loader2,
@@ -54,8 +54,6 @@ const CATEGORIES = [
   },
 ];
 
-const NEXAR_API = process.env.NEXT_PUBLIC_NEXAR_API_URL;
-
 type Prospect = {
   _id: string;
   firstName: string;
@@ -67,9 +65,7 @@ type Prospect = {
 export default function ProspectsPage() {
   const params = useParams();
   const router = useRouter();
-  const searchParams = useSearchParams();
   const dealId = params?.id as string; // or listingId
-  const nexarDealId = searchParams?.get('dealId') || '';
 
   // IM History State
   const [imDialogOpen, setImDialogOpen] = useState(false);
@@ -115,39 +111,20 @@ export default function ProspectsPage() {
       if (!user?.token || !dealId) return;
       setLoading(true);
       try {
-        // Fetch prospects from Nexar API
-        const prospectsRes = await fetch(
-          `${NEXAR_API}/contacts/business-brokers/${nexarDealId}`,
-          { headers: { Authorization: `Bearer ${user.token}` } },
-        );
-
-        const prospectsData = await prospectsRes.json();
-
-        // Fetch categories from our backend API
-        const categoriesRes = await apiClient.get(
-          `/api/deals/${dealId}/categories`,
-          {
+        // Via our backend, which filters out unapproved NDAs. Don't call
+        // Nexar directly from the browser — that bypasses the filter.
+        const [dealRes, categoriesRes] = await Promise.all([
+          apiClient.get(`/api/deals/${dealId}/prospects`, {
             headers: { Authorization: `Bearer ${user.token}` },
-          },
-        );
+          }),
+          apiClient.get(`/api/deals/${dealId}/categories`, {
+            headers: { Authorization: `Bearer ${user.token}` },
+          }),
+        ]);
 
-        const businessNamesRes = await fetch(`${NEXAR_API}/contacts/business`, {
-          method: 'POST',
-          body: JSON.stringify({ dealIds: [nexarDealId] }),
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-            'Content-Type': 'application/json',
-          },
-        });
-        const businessNames = (await businessNamesRes.json()).data;
-
-        const businessInfo = businessNames?.find(
-          (bn: any) => bn.dealId === nexarDealId,
-        );
-
-        setProspects(prospectsData || []);
+        setProspects(dealRes.data?.prospects || []);
         setCategories(categoriesRes.data || {});
-        if (businessInfo) setDealTitle(businessInfo.businessName);
+        if (dealRes.data?.businessName) setDealTitle(dealRes.data.businessName);
       } catch (error) {
         console.error('Failed to fetch prospects data:', error);
       } finally {
@@ -156,7 +133,7 @@ export default function ProspectsPage() {
     };
 
     fetchDealData();
-  }, [dealId, nexarDealId, user?.token]);
+  }, [dealId, user?.token]);
 
   // Fetch notification preference for this deal
   useEffect(() => {
@@ -409,12 +386,17 @@ export default function ProspectsPage() {
                 <tr>
                   <td colSpan={5} className='text-center py-12'>
                     <Loader2 className='w-6 h-6 animate-spin text-accent mx-auto mb-2' />
-                    <p className='text-muted-foreground'>Loading prospects...</p>
+                    <p className='text-muted-foreground'>
+                      Loading prospects...
+                    </p>
                   </td>
                 </tr>
               ) : sortedProspects.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className='text-center py-12 text-muted-foreground'>
+                  <td
+                    colSpan={5}
+                    className='text-center py-12 text-muted-foreground'
+                  >
                     No prospects found for this deal.
                   </td>
                 </tr>

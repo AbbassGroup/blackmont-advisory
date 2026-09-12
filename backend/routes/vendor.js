@@ -12,6 +12,7 @@ const ProspectNote = require('../models/ProspectNote');
 const vendorAuth = require('../middleware/vendorAuth.middleware');
 const fetchProspects = require('../utils/fetchProspects');
 const fetchBusinessNames = require('../utils/fetchBusinessNames');
+const { filterApprovedProspects } = require('../utils/approvedProspects');
 
 const signVendorToken = (vendor) =>
   jwt.sign(
@@ -155,6 +156,8 @@ router.get('/deal/prospects', vendorAuth, async (req, res) => {
     let prospects = [];
     try {
       prospects = await fetchProspects(listing.deal);
+      // Approved NDAs only.
+      prospects = await filterApprovedProspects(req.listingId, prospects);
     } catch (e) {
       console.error('Vendor prospects fetch failed:', e.message);
       prospects = [];
