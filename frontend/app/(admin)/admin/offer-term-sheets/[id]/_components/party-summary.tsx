@@ -2,13 +2,28 @@
 
 import { format } from 'date-fns';
 import { CheckCircle2, Clock } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
 import {
   STOCK_TREATMENT_OPTIONS,
   formatMoney,
   type OfferTermSheet,
+  type SubjectTo,
 } from '@/components/offer-term-sheet';
 
-export function PartySummary({ sheet }: { sheet: OfferTermSheet }) {
+export function PartySummary({
+  sheet,
+  subjectTo,
+  readOnly,
+  errors,
+  onSubjectToChange,
+}: {
+  sheet: OfferTermSheet;
+  subjectTo: SubjectTo;
+  readOnly: boolean;
+  errors: Record<string, string>;
+  onSubjectToChange: (value: SubjectTo) => void;
+}) {
   // The price no longer signals this, since the broker may have entered it.
   const buyerStarted = !!sheet.purchaserName || !!sheet.purchaserEmail;
 
@@ -51,7 +66,13 @@ export function PartySummary({ sheet }: { sheet: OfferTermSheet }) {
       </Section>
 
       <Section title='Subject To'>
-        {conditions(sheet).length ? (
+        {!readOnly ? (
+          <SubjectToEditor
+            value={subjectTo}
+            errors={errors}
+            onChange={onSubjectToChange}
+          />
+        ) : conditions(sheet).length ? (
           <ul className='space-y-1.5 text-sm text-foreground/80'>
             {conditions(sheet).map((c) => (
               <li key={c} className='flex items-start gap-2'>
@@ -79,6 +100,175 @@ export function PartySummary({ sheet }: { sheet: OfferTermSheet }) {
         />
       </Section>
     </>
+  );
+}
+
+function SubjectToEditor({
+  value,
+  errors,
+  onChange,
+}: {
+  value: SubjectTo;
+  errors: Record<string, string>;
+  onChange: (value: SubjectTo) => void;
+}) {
+  const patch = (next: Partial<SubjectTo>) => onChange({ ...value, ...next });
+
+  return (
+    <div className='space-y-4'>
+      <p className='text-xs text-muted-foreground'>
+        Set the initial conditions. The buyer can change them before signing.
+      </p>
+
+      <ConditionToggle
+        label='Due Diligence'
+        checked={value.dueDiligenceEnabled}
+        onChange={(checked) =>
+          patch({
+            dueDiligenceEnabled: checked,
+            ...(!checked ? { dueDiligenceDays: null } : {}),
+          })
+        }
+      />
+      {value.dueDiligenceEnabled && (
+        <NumberCondition
+          field='subjectTo.dueDiligenceDays'
+          label='Due diligence period from contract date'
+          unit='days'
+          value={value.dueDiligenceDays}
+          max={365}
+          error={errors['subjectTo.dueDiligenceDays']}
+          onChange={(dueDiligenceDays) => patch({ dueDiligenceDays })}
+        />
+      )}
+
+      <ConditionToggle
+        label='Lease transfer approval'
+        checked={value.leaseTransfer}
+        onChange={(leaseTransfer) => patch({ leaseTransfer })}
+      />
+      <ConditionToggle
+        label='Finance approval'
+        checked={value.financeApproval}
+        onChange={(financeApproval) => patch({ financeApproval })}
+      />
+      <ConditionToggle
+        label='Transition & handover support'
+        checked={value.transitionEnabled}
+        onChange={(checked) =>
+          patch({
+            transitionEnabled: checked,
+            ...(!checked ? { transitionWeeks: null } : {}),
+          })
+        }
+      />
+      {value.transitionEnabled && (
+        <NumberCondition
+          field='subjectTo.transitionWeeks'
+          label='Transition & handover support'
+          unit='weeks'
+          value={value.transitionWeeks}
+          max={260}
+          error={errors['subjectTo.transitionWeeks']}
+          onChange={(transitionWeeks) => patch({ transitionWeeks })}
+        />
+      )}
+
+      <ConditionToggle
+        label='Other'
+        checked={value.otherEnabled}
+        onChange={(checked) =>
+          patch({
+            otherEnabled: checked,
+            ...(!checked ? { otherText: '' } : {}),
+          })
+        }
+      />
+      {value.otherEnabled && (
+        <div data-field='subjectTo.otherText' className='space-y-1.5 pl-7'>
+          <label
+            htmlFor='subjectTo.otherText'
+            className='block text-sm font-medium text-foreground/80'
+          >
+            Other condition
+          </label>
+          <Input
+            id='subjectTo.otherText'
+            value={value.otherText}
+            maxLength={300}
+            placeholder='Describe the condition'
+            aria-invalid={!!errors['subjectTo.otherText']}
+            onChange={(event) => patch({ otherText: event.target.value })}
+          />
+          {errors['subjectTo.otherText'] && (
+            <p className='text-xs text-red-500'>{errors['subjectTo.otherText']}</p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ConditionToggle({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+}) {
+  return (
+    <label className='flex cursor-pointer items-center gap-3 text-sm text-foreground/80'>
+      <Checkbox
+        checked={checked}
+        onCheckedChange={(next) => onChange(next === true)}
+      />
+      {label}
+    </label>
+  );
+}
+
+function NumberCondition({
+  field,
+  label,
+  unit,
+  value,
+  max,
+  error,
+  onChange,
+}: {
+  field: string;
+  label: string;
+  unit: string;
+  value: number | null;
+  max: number;
+  error?: string;
+  onChange: (value: number | null) => void;
+}) {
+  return (
+    <div data-field={field} className='space-y-1.5 pl-7'>
+      <label htmlFor={field} className='block text-sm font-medium text-foreground/80'>
+        {label}
+      </label>
+      <div className='flex items-center gap-2.5'>
+        <Input
+          id={field}
+          type='number'
+          min={1}
+          max={max}
+          step={1}
+          value={value ?? ''}
+          aria-invalid={!!error}
+          onChange={(event) =>
+            onChange(event.target.value === '' ? null : Number(event.target.value))
+          }
+          className='max-w-24'
+        />
+        <span className='text-sm text-muted-foreground'>{unit}</span>
+      </div>
+      {error && <p className='text-xs text-red-500'>{error}</p>}
+    </div>
   );
 }
 

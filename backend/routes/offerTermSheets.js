@@ -895,6 +895,15 @@ router.post('/:id/submit', validateObjectId(), async (req, res) => {
         missing: ['buyerInviteEmail'],
       });
     }
+    const missingConditions = missingRequiredFields('buyer', sheet).filter(
+      (path) => path.startsWith('subjectTo.'),
+    );
+    if (missingConditions.length) {
+      return res.status(400).json({
+        message: 'Complete the selected conditions before submitting.',
+        missing: missingConditions,
+      });
+    }
 
     const result = await applyTransition(sheet, {
       action: 'submit',

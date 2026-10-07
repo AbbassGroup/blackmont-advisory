@@ -47,6 +47,7 @@ const toForm = (sheet: OfferTermSheet): BrokerFormValues => ({
   purchasePrice: sheet.purchasePrice ?? null,
   depositAmount: sheet.depositAmount ?? null,
   inclusions: { ...sheet.inclusions },
+  subjectTo: { ...sheet.subjectTo },
 });
 
 export default function OfferTermSheetEditorPage() {
@@ -205,6 +206,11 @@ export default function OfferTermSheetEditorPage() {
     // Checked here first so nothing round-trips just to be told a box is empty.
     const gaps = missingRequiredFields('broker', form).map((f) => f.key);
     if (!form.buyerInviteEmail) gaps.push('buyerInviteEmail');
+    gaps.push(
+      ...missingRequiredFields('buyer', form)
+        .filter((field) => field.key.startsWith('subjectTo.'))
+        .map((field) => field.key),
+    );
 
     setMissing(gaps);
     if (gaps.length) {
@@ -331,7 +337,18 @@ export default function OfferTermSheetEditorPage() {
           errors={fieldErrors}
           onChange={patch}
         />
-        <PartySummary sheet={sheet} />
+        <PartySummary
+          sheet={sheet}
+          subjectTo={form.subjectTo}
+          readOnly={!editable}
+          errors={{
+            ...Object.fromEntries(
+              missing.map((field) => [field, 'This field is required.']),
+            ),
+            ...fieldErrors,
+          }}
+          onSubjectToChange={(subjectTo) => patch({ subjectTo })}
+        />
       </div>
 
       {(editable || canCancel) && (

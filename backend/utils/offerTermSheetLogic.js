@@ -233,7 +233,11 @@ const OWNED_FIELDS = {
 
 // Paths a role may write although another owns them; ownership still decides who must fill them.
 const SHARED_FIELDS = {
-  broker: ['purchasePrice', 'depositAmount'],
+  broker: [
+    'purchasePrice',
+    'depositAmount',
+    ...OWNED_FIELDS.buyer.filter((path) => path.startsWith('subjectTo.')),
+  ],
   buyer: [],
   vendor: [],
 };

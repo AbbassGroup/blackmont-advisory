@@ -281,6 +281,7 @@ export const FIELDS = [
     label: 'Due Diligence',
     type: 'checkbox',
     owner: 'buyer',
+    editableBy: ['broker'],
   },
   {
     key: 'subjectTo.dueDiligenceDays',
@@ -288,6 +289,7 @@ export const FIELDS = [
     label: 'Due Diligence period from contract date',
     type: 'number',
     owner: 'buyer',
+    editableBy: ['broker'],
     required: true,
     suffix: 'days',
     min: 1,
@@ -300,6 +302,7 @@ export const FIELDS = [
     label: 'Lease transfer approval',
     type: 'checkbox',
     owner: 'buyer',
+    editableBy: ['broker'],
   },
   {
     key: 'subjectTo.financeApproval',
@@ -307,6 +310,7 @@ export const FIELDS = [
     label: 'Finance approval',
     type: 'checkbox',
     owner: 'buyer',
+    editableBy: ['broker'],
   },
   {
     key: 'subjectTo.transitionEnabled',
@@ -314,6 +318,7 @@ export const FIELDS = [
     label: 'Transition & handover support',
     type: 'checkbox',
     owner: 'buyer',
+    editableBy: ['broker'],
   },
   {
     key: 'subjectTo.transitionWeeks',
@@ -321,6 +326,7 @@ export const FIELDS = [
     label: 'Transition & handover support',
     type: 'number',
     owner: 'buyer',
+    editableBy: ['broker'],
     required: true,
     suffix: 'weeks',
     min: 1,
@@ -333,6 +339,7 @@ export const FIELDS = [
     label: 'Other',
     type: 'checkbox',
     owner: 'buyer',
+    editableBy: ['broker'],
   },
   {
     key: 'subjectTo.otherText',
@@ -340,6 +347,7 @@ export const FIELDS = [
     label: 'Other condition',
     type: 'text',
     owner: 'buyer',
+    editableBy: ['broker'],
     required: true,
     maxLength: 300,
     showWhen: { key: 'subjectTo.otherEnabled', equals: true },

@@ -7,6 +7,7 @@ import {
   computeAmounts,
   formatMoney,
   type Inclusions,
+  type SubjectTo,
 } from '@/components/offer-term-sheet';
 
 export interface BrokerFormValues {
@@ -20,6 +21,7 @@ export interface BrokerFormValues {
   purchasePrice: number | null;
   depositAmount: number | null;
   inclusions: Inclusions;
+  subjectTo: SubjectTo;
 }
 
 const INCLUSION_ITEMS: { key: keyof Inclusions; label: string }[] = [
