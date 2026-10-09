@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { IntroSection } from './_components/intro-section';
 import { WhyUseAgent } from './_components/why-use-agent';
 import { BuyingProcess } from './_components/buying-process';
+import { RecentAcquisitions } from './_components/recent-acquisitions';
 import { WhoWeWorkWith } from './_components/who-we-work-with';
 import { TalkToAgent } from './_components/talk-to-agent';
 import { WhyBlackmont } from './_components/why-blackmont';
@@ -37,6 +38,7 @@ export default function BuyBusinessPage() {
       <IntroSection />
       <WhyUseAgent />
       <BuyingProcess />
+      <RecentAcquisitions />
       <WhoWeWorkWith />
       <TalkToAgent />
       <WhyBlackmont />

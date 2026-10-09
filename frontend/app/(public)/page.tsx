@@ -6,6 +6,7 @@ import { About } from '@/components/landing/about';
 import { DualPath } from '@/components/landing/dual-path';
 import { Selling } from '@/components/landing/selling';
 import { Buying } from '@/components/landing/buying';
+import { Transactions } from '@/components/landing/transactions';
 import { Network } from '@/components/landing/network';
 import { Why } from '@/components/landing/why';
 import { Contact } from '@/components/landing/contact';
@@ -76,6 +77,7 @@ export default function HomePage() {
       <DualPath />
       <Selling />
       <Buying />
+      <Transactions />
       <Network />
       <Why />
       <Contact />
