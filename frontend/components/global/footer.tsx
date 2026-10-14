@@ -34,6 +34,10 @@ export function Footer() {
               We represent business owners seeking a premium exit, and act as
               exclusive buyer advocates for those looking to acquire.
             </p>
+            <p className='mt-2 text-xs tracking-[0.08em] text-parchment/55'>
+              Licence:{' '}
+              <span className='font-medium text-accent'>BLA 092153L</span>
+            </p>
             {/* <div className='flex gap-3'>
               {[
                 {
