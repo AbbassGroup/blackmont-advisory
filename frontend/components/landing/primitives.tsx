@@ -46,30 +46,6 @@ export function Eyebrow({
   );
 }
 
-/* Section intro: eyebrow + heading on the left, supporting lead on the right.
-   Collapses to a single column on small screens. */
-export function SectionHeader({
-  eyebrow,
-  heading,
-
-  className,
-}: {
-  eyebrow: string;
-  heading: React.ReactNode;
-
-  className?: string;
-}) {
-  return (
-    <Reveal className={cn('mb-14', className)}>
-      <Eyebrow className='mb-5'>{eyebrow}</Eyebrow>
-
-      <h2 className='text-3xl font-bold leading-tight tracking-tight text-secondary sm:text-4xl lg:text-5xl'>
-        {heading}
-      </h2>
-    </Reveal>
-  );
-}
-
 /* Reveal-on-scroll wrapper. Falls back to visible without JS / reduced motion. */
 export function Reveal({
   children,

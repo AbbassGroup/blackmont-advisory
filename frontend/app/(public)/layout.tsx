@@ -1,5 +1,6 @@
-import { Header } from '@/components/global/header';
 import { Footer } from '@/components/global/footer';
+import { PublicChrome } from '@/components/global/public-chrome';
+import { LandingFooter } from '@/components/landing/footer';
 import { JsonLd } from '@/components/seo/json-ld';
 
 const SITE_URL = 'https://blackmontadvisory.com';
@@ -24,9 +25,9 @@ export default function PublicLayout({
   return (
     <>
       <JsonLd data={organizationSchema} />
-      <Header />
-      <main className='flex-1'>{children}</main>
-      <Footer />
+      <PublicChrome footer={<Footer />} landingFooter={<LandingFooter />}>
+        {children}
+      </PublicChrome>
     </>
   );
 }

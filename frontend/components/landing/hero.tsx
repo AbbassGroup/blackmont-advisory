@@ -1,110 +1,62 @@
-import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
-import { Container, Eyebrow, Reveal } from './primitives';
-
-const PATHS = [
-  {
-    num: '01',
-    title: 'For Business Owners',
-    body: 'A confidential, managed sale process that protects your legacy and maximises your outcome.',
-    href: '#selling',
-  },
-  {
-    num: '02',
-    title: 'For Aspiring Acquirers',
-    body: 'We work exclusively for you, sourcing, assessing and negotiating the right business on your behalf.',
-    href: '#buying',
-  },
-];
+import { LandingImage } from './landing-image';
+import { landingImages } from './images';
+import { LandingTheme } from './landing-theme';
+import {
+  LandingButtonLink,
+  LandingContainer,
+  LandingTextLink,
+} from './presentation';
 
 export function Hero() {
   return (
-    <section
-      id='home'
-      className='relative overflow-hidden border-b border-secondary/10 bg-background'
-    >
-      {/* Subtle background texture with cream overlay */}
-      <div
-        aria-hidden
-        className="absolute inset-0 z-0 bg-[url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1920&q=80')] bg-cover bg-position-[center_30%] opacity-55"
-      />
-      <div
-        aria-hidden
-        className='absolute inset-0 z-[1] bg-gradient-to-r from-background/90 via-background/70 to-background/45'
-      />
-
-      <Container className='relative z-[2] grid items-center gap-12 pb-20 pt-32 lg:grid-cols-2 lg:gap-20 lg:pb-28 lg:pt-40'>
-        {/* Left: headline */}
-        <Reveal>
-          <h1 className='mb-7 text-[2.75rem] font-bold leading-[1.08] tracking-tight text-secondary sm:text-6xl lg:text-7xl'>
-            Your Boutique
-            <br />
-            M&amp;A <span className='font-light text-accent'>Advisory.</span>
-          </h1>
-          <p className='mb-10 max-w-md text-lg font-light leading-relaxed text-muted-foreground'>
-            We represent business owners seeking a premium exit, and act as
-            exclusive buyer advocates for those looking to acquire.
-          </p>
-          <div className='flex flex-wrap items-center gap-5'>
-            <Link
-              href='#selling'
-              className='bg-secondary px-8 py-4 text-xs font-bold uppercase  text-background transition-colors hover:bg-accent hover:text-primary'
+    <LandingTheme className='bg-canvas'>
+      <section
+        id='home'
+        aria-labelledby='hero-title'
+        className='relative isolate overflow-hidden'
+      >
+        <LandingContainer className='pointer-events-none relative z-10 min-[931px]:flex min-[931px]:min-h-[620px] min-[931px]:items-center min-[1121px]:min-h-[660px]'>
+          <div className='pointer-events-auto min-w-0 pt-[50px] pb-7 motion-safe:animate-advisory-hero focus-within:animate-none min-[681px]:pt-[60px] min-[681px]:pb-9 min-[931px]:w-[55%] min-[931px]:py-[76px] min-[1121px]:w-[54%] min-[1121px]:py-[88px]'>
+            <h1
+              id='hero-title'
+              className='m-0 mb-6 max-w-[570px] font-advisory-heading text-[clamp(38px,9.5vw,54px)] leading-[1.14] font-bold tracking-normal text-midnight min-[681px]:mb-[30px] min-[681px]:max-w-[650px] min-[681px]:text-[clamp(37px,5.15vw,52px)] min-[931px]:text-[clamp(42px,5.1vw,58px)] min-[1121px]:text-[clamp(46px,4.85vw,66px)]'
             >
-              I want to sell
-            </Link>
-            <Link
-              href='#buying'
-              className='group inline-flex items-center gap-2 text-xs font-semibold uppercase  text-muted-foreground transition-colors hover:text-secondary'
-            >
-              I want to acquire
-              <ArrowRight className='h-4 w-4 transition-transform group-hover:translate-x-1' />
-            </Link>
-          </div>
-        </Reveal>
-
-        {/* Right: two-paths panel */}
-        <Reveal delay={120}>
-          <div className='relative border-[1.5px] border-secondary/10 bg-muted/90 px-8 py-12 sm:px-11 sm:py-13'>
-            <span
-              aria-hidden
-              className='absolute inset-x-8 top-0 h-0.5 bg-gradient-to-r from-transparent via-accent to-transparent'
-            />
-            <p className='mb-8 text-xs font-bold uppercase text-accent'>
-              Two ways we work
+              Thinking about selling your business?
+            </h1>
+            <p className='m-0 mb-[27px] max-w-[560px] text-[17px] leading-[1.7] text-ink min-[681px]:mb-[33px] min-[681px]:max-w-[580px] min-[681px]:text-base min-[681px]:leading-[1.8] min-[931px]:text-[17px] min-[1121px]:text-lg'>
+              You have spent years building your business. When the time comes
+              to sell, you deserve an advisor who handles the process carefully,
+              protects your confidentiality and works for your best outcome.
             </p>
-            <div className='flex flex-col'>
-              {PATHS.map((path, i) => (
-                <div
-                  key={path.num}
-                  className={[
-                    'flex items-start gap-5 border-secondary/10 py-6 first:pt-0 last:pb-0',
-                    i < PATHS.length - 1 ? 'border-b' : '',
-                  ].join(' ')}
-                >
-                  <span className='mt-0.5 shrink-0 text-[11px] font-bold tracking-[0.1em] text-accent'>
-                    {path.num}
-                  </span>
-                  <div>
-                    <h3 className='mb-2 text-xl font-bold leading-tight text-secondary'>
-                      {path.title}
-                    </h3>
-                    <p className='text-base leading-relaxed text-muted-foreground'>
-                      {path.body}
-                    </p>
-                    <Link
-                      href={path.href}
-                      className='group mt-3 inline-flex items-center gap-1.5 text-sm font-bold tracking-[0.06em] text-accent'
-                    >
-                      Learn more
-                      <ArrowRight className='h-3.5 w-3.5 transition-transform group-hover:translate-x-1' />
-                    </Link>
-                  </div>
-                </div>
-              ))}
+            <div className='flex flex-col flex-wrap items-start gap-[13px] min-[426px]:flex-row min-[426px]:items-center min-[426px]:gap-3.5 min-[681px]:flex-col min-[681px]:items-start min-[931px]:flex-row min-[931px]:items-center min-[931px]:gap-x-[27px] min-[931px]:gap-y-[22px]'>
+              <LandingButtonLink href='#contact'>
+                Discuss selling my business
+              </LandingButtonLink>
+              <LandingTextLink
+                href='#buying'
+                className='py-[5px] min-[931px]:py-0'
+              >
+                I want to buy a business
+              </LandingTextLink>
             </div>
           </div>
-        </Reveal>
-      </Container>
-    </section>
+        </LandingContainer>
+        <figure className='group/image relative m-0 h-[clamp(280px,65vw,440px)] w-full overflow-hidden min-[931px]:absolute min-[931px]:inset-y-0 min-[931px]:right-0 min-[931px]:h-auto min-[931px]:w-[60%]'>
+          <LandingImage
+            src={landingImages.hero.src}
+            alt={landingImages.hero.alt}
+            quality={85}
+            preload
+            fill
+            sizes='(max-width: 930px) 100vw, 60vw'
+            className='object-cover object-[60%_center]'
+          />
+          <div
+            aria-hidden='true'
+            className='pointer-events-none absolute inset-0 bg-linear-to-b from-canvas via-canvas/60 via-[8%] to-canvas/0 to-[35%] min-[931px]:bg-linear-to-r min-[931px]:via-canvas/90 min-[931px]:via-[22%] min-[931px]:to-[55%]'
+          />
+        </figure>
+      </section>
+    </LandingTheme>
   );
 }

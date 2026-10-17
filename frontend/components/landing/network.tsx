@@ -1,71 +1,54 @@
-import { Container, Reveal, SectionHeader } from './primitives';
-
-const CARDS = [
-  {
-    roman: 'I',
-    title: 'Family Offices',
-    body: 'Long investment horizons, a preference for direct ownership and a reputation for quiet, discreet transactions.',
-  },
-  {
-    roman: 'II',
-    title: 'Private Equity',
-    body: 'Mid-market PE firms with platform and add-on mandates. Structured, well-capitalised and experienced at moving efficiently.',
-  },
-  {
-    roman: 'III',
-    title: 'HNW Principals',
-    body: 'High-net-worth individuals and syndicates who move fast, accept flexible structures and engage where others hesitate.',
-  },
-];
+import { LandingImage } from './landing-image';
+import { landingImages } from './images';
+import { LandingTheme } from './landing-theme';
+import { LandingContainer, LandingTextLink } from './presentation';
 
 export function Network() {
   return (
-    <section id='network' className='bg-muted py-20 lg:py-28'>
-      <Container>
-        <SectionHeader
-          eyebrow='Our Network'
-          heading={<>Private capital, actively seeking.</>}
+    <LandingTheme className='bg-midnight text-white'>
+      <section
+        id='network'
+        aria-labelledby='network-title'
+        className='group/image relative isolate overflow-hidden border-t border-white/20'
+      >
+        <LandingImage
+          src={landingImages.network.src}
+          alt=''
+          aria-hidden='true'
+          fill
+          quality={85}
+          loading='lazy'
+          sizes='100vw'
+          className='pointer-events-none object-cover object-center'
         />
-
-        <Reveal className='grid gap-px border-[1.5px] border-secondary/10 bg-secondary/10 lg:grid-cols-3'>
-          {CARDS.map((card) => (
-            <div
-              key={card.roman}
-              className='group relative overflow-hidden bg-muted px-8 py-11 transition-colors hover:bg-accent-pale'
-            >
-              <span
-                aria-hidden
-                className='absolute inset-x-0 top-0 h-0.5 bg-accent opacity-0 transition-opacity group-hover:opacity-100'
-              />
-              <span className='mb-5 block text-[44px] font-bold leading-none tracking-tight text-accent/20'>
-                {card.roman}
-              </span>
-              <h3 className='mb-3 text-2xl font-bold tracking-tight text-secondary'>
-                {card.title}
-              </h3>
-              <p className='leading-relaxed text-muted-foreground'>
-                {card.body}
-              </p>
-            </div>
-          ))}
-        </Reveal>
-
-        <Reveal className='mt-6 grid items-center gap-8 border-[1.5px] border-secondary bg-secondary px-8 py-9 md:grid-cols-[260px_1fr] md:gap-12 md:px-10'>
-          <div>
-            <p className='mb-3.5 text-[10px] font-bold uppercase tracking-[0.2em] text-accent'>
-              Our reach
+        <div
+          aria-hidden='true'
+          className='pointer-events-none absolute inset-0 bg-midnight/[0.72]'
+        />
+        <LandingContainer className='relative z-10 grid items-start gap-[23px] pt-[72px] pb-[78px] min-[681px]:grid-cols-2 min-[681px]:gap-[74px] min-[681px]:pt-[96px] min-[681px]:pb-[100px]'>
+          <h2
+            data-landing-reveal
+            id='network-title'
+            className='m-0 max-w-[545px] font-advisory-heading text-[31px] leading-[1.32] font-bold tracking-normal text-white min-[681px]:text-[clamp(30px,3vw,40px)]'
+          >
+            Local knowledge. A wider circle of buyers.
+          </h2>
+          <div className='min-w-0 max-w-[520px] text-white/90'>
+            <p className='m-0 mb-5 text-base leading-[1.7]'>
+              Based in Melbourne, Blackmont works with private investors, family
+              offices, high-net-worth individuals and private equity groups
+              seeking Australian businesses.
             </p>
-            <p className='text-2xl font-bold tracking-tight text-parchment'>
-              Australia and beyond
+            <p className='m-0 mb-5 text-base leading-[1.7]'>
+              We bring the right people into the conversation, without exposing
+              your business to the wider market.
             </p>
+            <LandingTextLink href='#contact' tone='white'>
+              Start a private discussion
+            </LandingTextLink>
           </div>
-          <p className='leading-loose text-parchment/65'>
-            Based in Melbourne, Australia with a global network of buyers,
-            investors and partners, connecting local businesses with domestic
-            and international capital.
-          </p>
-        </Reveal>
-      </Container>
-    </section>
+        </LandingContainer>
+      </section>
+    </LandingTheme>
   );
 }

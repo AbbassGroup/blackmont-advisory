@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Autoplay from 'embla-carousel-autoplay';
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { RECENT_ACQUISITIONS } from '@/lib/data/recent-acquisitions';
 import {
   Carousel,
   CarouselContent,
@@ -13,52 +14,6 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
-
-const DEALS: {
-  image: string;
-  sector: string;
-  location: string;
-  structure: string;
-  dealSize: string;
-  sde?: string;
-  outcome: string;
-}[] = [
-  {
-    image: '/carousel/allied-health.webp',
-    sector: 'Allied Health',
-    location: 'Sydney',
-    structure: 'Fully-Managed',
-    dealSize: '$475,000',
-    sde: '$151k',
-    outcome: 'Acquired for First Time Business Owner',
-  },
-  {
-    image: '/carousel/fencing.webp',
-    sector: 'Fencing',
-    location: 'Melbourne',
-    structure: 'Owner-Operated',
-    dealSize: '$445,000',
-    sde: '$248k',
-    outcome: 'Acquired for First Time Business Owner',
-  },
-  {
-    image: '/carousel/trade-services.webp',
-    sector: 'Trade Services',
-    location: 'Melbourne',
-    structure: 'Semi-Managed',
-    dealSize: '$810,000',
-    outcome: 'Buy-side advisory for an owner scaling through acquisition',
-  },
-  {
-    image: '/carousel/transport.webp',
-    sector: 'Transport',
-    location: 'Melbourne',
-    structure: 'Owner-Operated',
-    dealSize: '$740,000',
-    sde: '$224k',
-    outcome: 'Acquired for First Time Business Owner',
-  },
-];
 
 /* Square outline arrows, matching the reviews carousel; tone is the
    background the carousel sits on. */
@@ -107,7 +62,7 @@ export function DealsCarousel({
   return (
     <Carousel opts={{ align: 'start', loop: true }} plugins={[autoplay]}>
       <CarouselContent className='-ml-5'>
-        {DEALS.map((deal) => {
+        {RECENT_ACQUISITIONS.map((deal) => {
           const card = (
             <article
               className={cn(
@@ -177,7 +132,7 @@ export function DealsCarousel({
 
           return (
             <CarouselItem
-              key={deal.sector}
+              key={deal.id}
               className='basis-[85%] pl-5 sm:basis-1/2 lg:basis-1/3'
             >
               {href ? (

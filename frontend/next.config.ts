@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
+    qualities: [75, 85],
     localPatterns: [
       {
         pathname: '/**',
