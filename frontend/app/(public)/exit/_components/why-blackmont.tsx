@@ -1,85 +1,78 @@
-'use client';
-
+import { LandingTheme } from '@/components/landing/landing-theme';
+import { LandingImage } from '@/components/landing/landing-image';
+import advisoryReview from '@/public/landing/exit-advisory-review.jpeg';
 import {
-  Gem,
-  Sparkles,
-  Network,
-  Handshake,
-  LineChart,
-  ShieldCheck,
-} from 'lucide-react';
-import { SectionHeading } from './section-heading';
-import { Reveal } from '@/components/landing/primitives';
+  LandingContainer,
+  LandingSectionIntro,
+} from '@/components/landing/presentation';
 
 const reasons = [
   {
-    title: 'Boutique Advisory Approach',
+    title: 'Boutique advisory approach',
     description: 'Senior advisors on every engagement, never handed off.',
-    icon: Gem,
   },
   {
-    title: 'High-Quality Marketing',
+    title: 'High-quality marketing',
     description:
       'Polished campaigns that elevate how your business is perceived.',
-    icon: Sparkles,
   },
   {
-    title: 'Strong Buyer Network',
+    title: 'Strong buyer network',
     description: 'Direct access to qualified, capable acquirers.',
-    icon: Network,
   },
   {
-    title: 'Negotiation Expertise',
+    title: 'Negotiation expertise',
     description: 'Decades of structuring deals that protect your value.',
-    icon: Handshake,
   },
   {
-    title: 'Finance + Business Combined',
+    title: 'Finance + business combined',
     description: 'The rare blend of commercial and financial fluency.',
-    icon: LineChart,
   },
   {
-    title: 'Professional & Confidential',
+    title: 'Professional & confidential',
     description: 'Total discretion from first call to settlement.',
-    icon: ShieldCheck,
   },
 ];
 
 export function WhyBlackmont() {
   return (
-    <section className='bg-background py-20 lg:py-28'>
-      <div className='max-w-[1500px] mx-auto px-6 sm:px-10 lg:px-16'>
-        <SectionHeading
-          label='The Blackmont Advisory Difference'
-          title='Why Business Owners Choose Blackmont Advisory'
-        />
-
-        {/* Reasons grid */}
-        <Reveal className='mt-14 grid grid-cols-1 gap-px overflow-hidden border border-secondary/15 bg-secondary/10 sm:grid-cols-2 lg:grid-cols-3'>
-          {reasons.map((r) => {
-            const Icon = r.icon;
-            return (
-              <div
-                key={r.title}
-                className='group bg-background p-8 transition-colors duration-300 hover:bg-accent-pale lg:p-9'
-              >
-                <div className='flex h-12 w-12 items-center justify-center border-[1.5px] border-accent/30 transition-colors duration-300 group-hover:bg-accent'>
-                  <Icon
-                    className='h-6 w-6 text-accent transition-colors duration-300 group-hover:text-primary'
-                    strokeWidth={1.5}
-                  />
-                </div>
-                <h3 className='mt-6 text-lg font-bold text-secondary'>
-                  {r.title}
-                </h3>
-                <p className='mt-2 leading-relaxed text-muted-foreground'>
-                  {r.description}
-                </p>
-              </div>
-            );
-          })}
-        </Reveal>
-      </div>
-    </section>
+    <LandingTheme>
+      <section
+        id='why-blackmont'
+        aria-labelledby='exit-why-title'
+        className='py-[56px] min-[681px]:py-[80px]'
+      >
+        <LandingContainer>
+          <LandingSectionIntro
+            headingId='exit-why-title'
+            heading='Why business owners choose Blackmont Advisory'
+          />
+          <div className='grid gap-8 min-[931px]:grid-cols-[0.95fr_1.05fr] min-[931px]:gap-[clamp(40px,5vw,72px)]'>
+            <figure className='group/image relative m-0 aspect-[1.25] min-w-0 overflow-hidden bg-canvas min-[681px]:aspect-[1.7] min-[931px]:aspect-auto min-[931px]:min-h-[520px]'>
+              <LandingImage
+                src={advisoryReview}
+                alt='Illustrative photograph of experienced business professionals reviewing financial documents together'
+                unoptimized
+                fill
+                loading='lazy'
+                className='object-cover object-[55%_center]'
+              />
+            </figure>
+            <ul role='list' className='m-0 flex list-none flex-col justify-between border-b border-advisory-rule p-0'>
+              {reasons.map((reason) => (
+                <li key={reason.title} className='min-w-0 border-t border-advisory-rule py-4'>
+                  <h3 className='m-0 mb-1.5 font-advisory-heading text-xl leading-[1.4] font-bold tracking-normal text-midnight min-[681px]:text-[22px]'>
+                    {reason.title}
+                  </h3>
+                  <p className='m-0 max-w-[550px] text-[15px] leading-[1.65] text-ink'>
+                    {reason.description}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </LandingContainer>
+      </section>
+    </LandingTheme>
   );
 }

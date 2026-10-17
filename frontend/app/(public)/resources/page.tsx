@@ -1,13 +1,9 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
-import { ArrowUpRight } from 'lucide-react';
 import { JsonLd } from '@/components/seo/json-ld';
-import { PageBanner } from '@/components/global/page-banner';
-import { Container } from '@/components/landing/primitives';
 import { fetchPublicBlogs, BLOGS_PER_PAGE, type Blog } from '@/lib/blogs';
-import { ResourceLink } from '../exit/_components/resource-link';
-import { BlogCard } from './_components/blog-card';
-import { BlogPagination } from './_components/blog-pagination';
+import { ResourceTools } from '@/components/resources/resource-tools';
+import { ResourcesBanner } from './_components/banner';
+import { BlogSection } from './_components/blog-section';
 
 const SITE_URL = 'https://blackmontadvisory.com';
 
@@ -21,48 +17,6 @@ function toPageNumber(value: string | string[] | undefined): number {
   const parsed = Number.parseInt(raw ?? '1', 10);
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 1;
 }
-
-const resourceTools = [
-  {
-    title: 'Business Valuation Tool',
-    apiName: 'Valuation Tool',
-    summary:
-      'Estimate the potential value of your business using industry-based insights.',
-    image: '/valuation.webp',
-    href: '/exit/valuation',
-    cta: 'Access Tool',
-  },
-  {
-    title: 'Business Sale Checklist',
-    apiName: 'Sale Readiness Score',
-    summary:
-      'Understand what buyers look for before taking your business to market.',
-    image: '/sale.webp',
-    href: '/exit/readiness',
-    cta: 'Download Checklist',
-  },
-  {
-    title: 'Industry Benchmark Report',
-    apiName: 'Industry Benchmark Report',
-    summary:
-      'Compare your business performance against broader industry standards.',
-    image: '/benchmark.webp',
-    href: '/exit/benchmarks',
-    cta: 'View Report',
-  },
-  {
-    title: 'Exit Planning Guide',
-    apiName: 'Exit Planning Guide',
-    summary:
-      'Learn how to prepare for a smoother and more profitable business exit.',
-    image: '/exit-plan.webp',
-    href: '/exit/exit-planning',
-    cta: 'Get Guide',
-  },
-];
-
-const resourceCardClass =
-  'group flex h-full w-full cursor-pointer flex-col overflow-hidden border border-secondary/10 bg-background text-left transition-colors hover:border-accent/40';
 
 export async function generateMetadata({
   searchParams,
@@ -85,14 +39,6 @@ export async function generateMetadata({
         'Expert guides and insights for buying and selling businesses.',
     },
   };
-}
-
-function SectionHeading({ children }: { children: React.ReactNode }) {
-  return (
-    <h2 className='mb-12 text-center text-3xl font-bold leading-tight tracking-tight text-secondary sm:text-4xl lg:text-5xl'>
-      {children}
-    </h2>
-  );
 }
 
 function buildStructuredData(blogs: Blog[], page: number) {
@@ -156,87 +102,17 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
     <>
       <JsonLd data={buildStructuredData(blogs, page)} />
 
-      <PageBanner
-        title={
-          <>
-            Resources &amp;{' '}
-            <span className='font-light text-accent'>Blogs</span>
-          </>
-        }
-        description='Insights, guides, and tips for business owners, buyers, and sellers. Stay informed with the latest from Blackmont Advisory.'
-        image='https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1500&q=80'
-      />
+      <ResourcesBanner />
 
       {/* ── Resource Tools ────────────────────────────── */}
-      <section className='bg-background pt-20 lg:pt-28'>
-        <Container>
-          <SectionHeading>Resource Tools</SectionHeading>
-
-          <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
-            {resourceTools.map((tool, idx) => (
-              <ResourceLink
-                key={tool.title}
-                href={tool.href}
-                resourceTitle={tool.apiName}
-                className={resourceCardClass}
-                index={idx}
-              >
-                <div className='relative h-48 w-full overflow-hidden'>
-                  <Image
-                    src={tool.image}
-                    alt={tool.title}
-                    fill
-                    sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw'
-                    className='object-cover transition-transform duration-500 group-hover:scale-105'
-                  />
-                </div>
-                <div className='flex flex-1 flex-col p-6'>
-                  <p className='mb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-accent'>
-                    Free Resource
-                  </p>
-                  <h3 className='mb-3 line-clamp-2 text-lg font-bold tracking-tight text-secondary transition-colors group-hover:text-accent'>
-                    {tool.title}
-                  </h3>
-                  <p className='mb-5 line-clamp-3 flex-1 text-sm leading-relaxed text-muted-foreground'>
-                    {tool.summary}
-                  </p>
-                  <div className='mt-auto flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.12em] text-accent'>
-                    {tool.cta}
-                    <ArrowUpRight className='h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5' />
-                  </div>
-                </div>
-              </ResourceLink>
-            ))}
-          </div>
-        </Container>
-      </section>
+      <ResourceTools
+        id='resource-tools'
+        heading='Resource tools'
+        headingId='resource-tools-title'
+      />
 
       {/* ── Blog Grid ────────────────────────────────── */}
-      <section className='bg-background py-20 lg:py-28'>
-        <Container>
-          <SectionHeading>Blogs</SectionHeading>
-
-          {blogs.length > 0 ? (
-            <>
-              <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
-                {blogs.map((blog) => (
-                  <BlogCard key={blog._id} blog={blog} />
-                ))}
-              </div>
-
-              <BlogPagination page={page} totalPages={totalPages} />
-            </>
-          ) : (
-            <p className='text-center text-muted-foreground'>
-              {failed
-                ? 'Our articles are temporarily unavailable. Please check back shortly.'
-                : page > 1
-                  ? 'There are no articles on this page.'
-                  : 'No articles have been published yet.'}
-            </p>
-          )}
-        </Container>
-      </section>
+      <BlogSection blogs={blogs} page={page} totalPages={totalPages} failed={failed} />
     </>
   );
 }

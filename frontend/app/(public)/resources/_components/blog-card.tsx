@@ -1,7 +1,7 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import type { Blog } from '@/lib/blogs';
+import { LandingImage } from '@/components/landing/landing-image';
 
 // Words that stay lowercase mid-title, so `selling-a-business` reads
 // "Selling a Business" rather than "Selling A Business".
@@ -25,47 +25,60 @@ export function BlogCard({ blog }: { blog: Blog }) {
   // next/image would reject unless that exact host is in remotePatterns — so
   // they go through a plain <img>. Relative paths stay optimised.
   const isExternal = blog.image?.startsWith('http');
+  const published = new Date(blog.createdAt);
+  const hasDate = !Number.isNaN(published.getTime());
+  const displayDate = hasDate
+    ? new Intl.DateTimeFormat('en-AU', {
+        day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Australia/Melbourne',
+      }).format(published)
+    : null;
 
   return (
     <Link
       href={`/resources/${blog.url}`}
-      className='group flex h-full flex-col overflow-hidden border border-secondary/10 bg-background transition-colors hover:border-accent/40'
+      className='group flex h-full min-w-0 flex-col overflow-hidden border border-advisory-rule bg-white no-underline transition-colors duration-200 hover:border-gilt focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none'
     >
-      <div className='relative h-48 w-full overflow-hidden bg-muted'>
-        {blog.image ? (
-          isExternal ? (
+      {blog.image && (
+        <div className='group/image relative aspect-video w-full shrink-0 overflow-hidden bg-canvas'>
+          {isExternal ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={blog.image}
               alt={blog.title}
-              className='h-full w-full object-cover transition-transform duration-500 group-hover:scale-105'
+              loading='lazy'
+              decoding='async'
+              className='h-full w-full object-cover transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-safe:group-hover/image:transform-[scale(1.04)] motion-reduce:transition-none'
             />
           ) : (
-            <Image
+            <LandingImage
               src={blog.image}
               alt={blog.title}
               fill
-              sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
-              className='object-cover transition-transform duration-500 group-hover:scale-105'
+              quality={85}
+              loading='lazy'
+              sizes='(max-width: 680px) calc(100vw - 40px), (max-width: 1023px) calc(50vw - 50px), (max-width: 1120px) calc(33.333vw - 42px), (max-width: 1279px) calc(33.333vw - 53px), (max-width: 1444px) calc(25vw - 46px), 315px'
+              className='object-cover'
             />
-          )
-        ) : null}
-      </div>
-      <div className='flex flex-1 flex-col p-6'>
-        {blog.category && (
-          <p className='mb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-accent'>
-            {categoryLabel(blog.category)}
-          </p>
-        )}
-        <h3 className='mb-3 line-clamp-2 text-lg font-bold tracking-tight text-secondary transition-colors group-hover:text-accent'>
+          )}
+        </div>
+      )}
+      <div className='flex min-w-0 flex-1 flex-col p-5'>
+        <h3 className='m-0 mb-3 line-clamp-3 font-advisory-heading text-xl leading-[1.4] font-bold tracking-normal text-midnight'>
           {blog.title}
         </h3>
-        <p className='mb-5 line-clamp-3 flex-1 text-sm leading-relaxed text-muted-foreground'>
+        {(blog.category || displayDate) && (
+          <div className='mb-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs leading-[1.6] text-ink'>
+            {blog.category && <span>{categoryLabel(blog.category)}</span>}
+            {blog.category && displayDate && <span aria-hidden='true'>·</span>}
+            {displayDate && <time dateTime={published.toISOString()}>{displayDate}</time>}
+          </div>
+        )}
+        <p className='m-0 mb-4 line-clamp-2 flex-1 text-[15px] leading-[1.65] text-ink'>
           {blog.metaDescription}
         </p>
-        <div className='mt-auto flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.12em] text-accent'>
-          Read More
-          <ArrowRight className='h-4 w-4 transition-transform group-hover:translate-x-1' />
+        <div className='mt-auto flex min-h-11 items-center justify-between gap-3 border-t border-advisory-rule pt-[14px] text-sm font-bold text-midnight transition-colors duration-200 group-hover:text-gilt group-focus-visible:text-gilt motion-reduce:transition-none'>
+          Read article
+          <ArrowRight aria-hidden='true' className='size-4 shrink-0' />
         </div>
       </div>
     </Link>

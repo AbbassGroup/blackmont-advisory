@@ -6,14 +6,16 @@ import { cn } from '@/lib/utils';
 export function LandingBrand({
   className,
   placement = 'header',
+  href = '#top',
 }: {
   className?: string;
   placement?: 'header' | 'footer';
+  href?: string;
 }) {
   return (
     <LandingLink
-      href='#top'
-      aria-label='Blackmont Advisory, back to top'
+      href={href}
+      aria-label={href === '#top' ? 'Blackmont Advisory, back to top' : 'Blackmont Advisory home'}
       className={cn(
         'inline-flex max-w-full shrink-0 items-center no-underline focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-gilt',
         className,

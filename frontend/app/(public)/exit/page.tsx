@@ -55,7 +55,7 @@ const jsonLd = [
 
 export default function SellPage() {
   return (
-    <main className='min-h-screen bg-background'>
+    <div className='min-h-screen bg-background font-sans'>
       <JsonLd data={jsonLd} />
       <AccessTracker resource='Access Landing' />
       <SellHero />
@@ -70,6 +70,6 @@ export default function SellPage() {
         title='Take the next step'
         subtitle='Book a 30-minute confidential strategy call with our senior team. No obligation.'
       /> */}
-    </main>
+    </div>
   );
 }

@@ -1,10 +1,14 @@
 'use client';
 
 import { Suspense, useState } from 'react';
-import { ArrowRight, CalendarDays } from 'lucide-react';
 import { GetStarted } from './get-started';
-import { Button } from '@/components/ui/button';
-import { Reveal } from '@/components/landing/primitives';
+import { LandingTheme } from '@/components/landing/landing-theme';
+import {
+  LandingButton,
+  LandingContainer,
+  landingButtonVariants,
+} from '@/components/landing/presentation';
+import { cn } from '@/lib/utils';
 
 const slots = [
   'Tue 9:30 AM',
@@ -19,76 +23,71 @@ export function Booking() {
   const [selected, setSelected] = useState<string | null>(null);
 
   return (
-    <Suspense>
+    <LandingTheme className='bg-midnight text-white'>
       <section
         id='booking'
-        className='scroll-mt-24 bg-secondary py-20 lg:py-28'
+        aria-labelledby='exit-booking-title'
+        className='py-10 min-[681px]:py-14'
       >
-        <div className='max-w-[1500px] mx-auto px-6 sm:px-10 lg:px-16'>
-          <div className='grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-20'>
-            {/* Left */}
-            <Reveal>
-              <div className='mb-5'>
-                <span className='text-xs font-bold uppercase tracking-[0.22em] text-accent'>
-                  Confidential
-                </span>
-              </div>
-              <h2 className='text-[1.9rem] font-bold leading-[1.12] tracking-tight text-parchment md:text-4xl lg:text-[2.6rem]'>
-                Want Personalised Advice?
+        <LandingContainer className='grid items-center gap-7 min-[931px]:grid-cols-[1fr_0.94fr] min-[931px]:gap-[clamp(40px,5vw,72px)]'>
+            <div className='min-w-0'>
+              <h2
+                id='exit-booking-title'
+                className='m-0 mb-4 max-w-[500px] font-advisory-heading text-[32px] leading-[1.25] font-bold tracking-normal text-white min-[681px]:text-[clamp(34px,3.5vw,43px)]'
+              >
+                Want personalised advice?
               </h2>
-              <p className='mt-5 max-w-md text-lg leading-relaxed text-parchment/70'>
+              <p className='m-0 max-w-[490px] text-base leading-[1.75] text-white/90 min-[1121px]:text-[17px]'>
                 Speak confidentially with our team about business value, buyer
                 demand, timing, and exit strategies.
               </p>
-              <GetStarted selectedTime={selected ?? undefined}>
-                <Button className='group mt-9 inline-flex h-auto items-center gap-2 rounded-none bg-accent px-8 py-4 text-xs font-bold uppercase tracking-[0.14em] text-primary transition-colors hover:bg-accent-light'>
-                  Schedule a Confidential Call
-                  <ArrowRight className='h-4 w-4 transition-transform group-hover:translate-x-0.5' />
-                </Button>
-              </GetStarted>
-            </Reveal>
+            </div>
 
-            {/* Right — booking card */}
-            <Reveal
-              delay={120}
-              className='border border-accent/20 bg-background p-7 lg:p-8'
-            >
-              <div className='flex items-center justify-between gap-4 border-b border-secondary/10 pb-5'>
-                <div className='flex flex-col'>
-                  <h3 className='text-lg font-bold text-secondary'>
-                    Select a time
+            <div className='min-w-0 bg-canvas p-6 text-ink min-[681px]:p-7'>
+              <div className='border-b border-advisory-rule pb-4'>
+                  <h3 id='booking-time-title' className='m-0 mb-2 font-advisory-heading text-[23px] leading-[1.35] font-bold tracking-normal text-midnight'>
+                    Select a preferred time
                   </h3>
-                  <span className='text-xs text-muted-foreground'>
+                  <p className='m-0 text-sm leading-[1.65]'>
                     A 30-minute strategy call
-                  </span>
-                </div>
-                <span className='flex h-10 w-10 items-center justify-center border-[1.5px] border-accent/30'>
-                  <CalendarDays className='h-5 w-5 text-accent' />
-                </span>
+                  </p>
               </div>
 
-              <div className='mt-6 grid grid-cols-2 gap-3'>
+              <div role='group' aria-labelledby='booking-time-title' className='mt-4 grid grid-cols-1 gap-2.5 min-[360px]:grid-cols-2'>
                 {slots.map((slot) => {
                   const active = selected === slot;
                   return (
                     <button
                       key={slot}
+                      type='button'
+                      aria-pressed={active}
                       onClick={() => setSelected(slot)}
-                      className={`border px-4 py-3.5 text-sm font-medium transition-colors ${
+                      className={cn(
+                        'min-h-11 cursor-pointer border px-3 py-2.5 text-sm font-medium transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-midnight motion-reduce:transition-none',
                         active
-                          ? 'border-accent bg-accent text-primary'
-                          : 'border-secondary/15 bg-background text-secondary hover:border-accent hover:bg-accent-pale'
-                      }`}
+                          ? 'border-midnight bg-midnight text-white'
+                          : 'border-advisory-input bg-transparent text-midnight hover:border-midnight hover:bg-white',
+                      )}
                     >
                       {slot}
                     </button>
                   );
                 })}
               </div>
-            </Reveal>
-          </div>
-        </div>
+              <p aria-live='polite' className='m-0 mt-3 min-h-[23px] text-[13px] leading-[1.65]'>
+                {selected ? `Preferred time: ${selected}` : 'You can also enquire without choosing a time.'}
+              </p>
+              <Suspense fallback={<LandingButton disabled className='mt-4 w-full'>Schedule a confidential call</LandingButton>}>
+                <GetStarted
+                  selectedTime={selected ?? undefined}
+                  className={cn(landingButtonVariants(), 'mt-4 w-full')}
+                >
+                  Schedule a confidential call
+                </GetStarted>
+              </Suspense>
+            </div>
+        </LandingContainer>
       </section>
-    </Suspense>
+    </LandingTheme>
   );
 }

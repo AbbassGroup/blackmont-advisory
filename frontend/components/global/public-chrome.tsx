@@ -10,19 +10,22 @@ type PublicChromeProps = {
   children: ReactNode;
   footer: ReactNode;
   landingFooter: ReactNode;
+  interiorFooter: ReactNode;
 };
 
 /** Server-rendered page and footer slots retain their server component boundary. */
-export function PublicChrome({ children, footer, landingFooter }: PublicChromeProps) {
+export function PublicChrome({ children, footer, landingFooter, interiorFooter }: PublicChromeProps) {
   const pathname = usePathname();
   const isLanding = pathname === '/' || pathname === '/home' || pathname === '/home/';
+  const isExit = pathname === '/exit' || pathname === '/exit/';
+  const isResources = pathname === '/resources' || pathname === '/resources/';
 
-  if (isLanding) {
+  if (isLanding || isExit || isResources) {
     return (
       <LandingTheme data-landing-page className='flex flex-1 flex-col'>
-        <LandingHeader />
+        <LandingHeader homePath={isLanding ? '' : '/'} />
         <main id='top' className='flex-1'>{children}</main>
-        {landingFooter}
+        {isLanding ? landingFooter : interiorFooter}
       </LandingTheme>
     );
   }

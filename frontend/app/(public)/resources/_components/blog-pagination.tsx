@@ -18,26 +18,30 @@ export function BlogPagination({
   if (totalPages <= 1) return null;
 
   const href = (target: number) =>
-    target === 1 ? '/resources' : `/resources?page=${target}`;
+    target === 1 ? '/resources#articles' : `/resources?page=${target}#articles`;
 
   return (
     <nav
       aria-label='Blog pagination'
-      className='mt-14 flex items-center justify-center gap-2'
+      className='mt-10 flex flex-wrap items-center justify-center gap-2 border-t border-advisory-rule pt-6 min-[681px]:mt-12'
     >
       <PageLink
         href={href(page - 1)}
         disabled={page <= 1}
         aria-label='Previous page'
       >
-        <ChevronLeft className='h-4 w-4' />
+        <ChevronLeft aria-hidden='true' className='size-4' />
       </PageLink>
 
+      <span className='px-3 text-sm text-ink min-[681px]:hidden'>
+        Page {page} of {totalPages}
+      </span>
+      <div className='hidden flex-wrap items-center justify-center gap-2 min-[681px]:flex'>
       {pageWindow(page, totalPages).map((entry, idx) =>
         entry === 'gap' ? (
           <span
             key={`gap-${idx}`}
-            className='px-1 text-sm text-muted-foreground/60'
+            className='px-1 text-sm text-ink'
             aria-hidden='true'
           >
             &hellip;
@@ -54,9 +58,10 @@ export function BlogPagination({
           </PageLink>
         ),
       )}
+      </div>
 
       <PageLink href={href(page + 1)} disabled={page >= totalPages} aria-label='Next page'>
-        <ChevronRight className='h-4 w-4' />
+        <ChevronRight aria-hidden='true' className='size-4' />
       </PageLink>
     </nav>
   );
@@ -99,10 +104,10 @@ function PageLink({
   disabled?: boolean;
 } & React.ComponentProps<'a'>) {
   const className = cn(
-    'flex h-10 min-w-10 items-center justify-center border px-3 text-sm font-medium transition-colors',
+    'inline-flex min-h-11 min-w-11 items-center justify-center border px-3 text-sm font-medium transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-midnight motion-reduce:transition-none',
     active
-      ? 'border-accent bg-accent text-primary'
-      : 'border-secondary/15 bg-background text-secondary hover:border-accent/40 hover:text-accent',
+      ? 'border-midnight bg-midnight text-white'
+      : 'border-advisory-rule bg-transparent text-midnight hover:border-gilt hover:text-midnight',
     disabled && 'pointer-events-none opacity-40',
   );
 

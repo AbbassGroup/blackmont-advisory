@@ -16,7 +16,7 @@ const NAV_LINKS = [
   { label: 'Exit Planning', href: '/exit' },
 ];
 
-export function LandingHeader() {
+export function LandingHeader({ homePath = '' }: { homePath?: '' | '/' }) {
   const [open, setOpen] = useState(false);
   const menuId = useId();
   const headerRef = useRef<HTMLElement>(null);
@@ -102,7 +102,7 @@ export function LandingHeader() {
         }}
       >
         <LandingContainer className='flex min-h-[73px] items-center justify-between gap-2 min-[681px]:min-h-[78px] min-[681px]:gap-7 min-[931px]:min-h-[90px]'>
-          <LandingBrand />
+          <LandingBrand href={homePath || '#top'} />
           <button
             ref={toggleRef}
             type='button'
@@ -128,7 +128,7 @@ export function LandingHeader() {
             {NAV_LINKS.map((link) => (
               <LandingLink
                 key={link.href}
-                href={link.href}
+                href={link.href.startsWith('#') ? `${homePath}${link.href}` : link.href}
                 onClick={() => setOpen(false)}
                 className='py-[13px] text-[15px] leading-[1.5] font-semibold whitespace-nowrap transition-colors duration-200 ease-out hover:text-gilt hover:underline hover:underline-offset-[6px] focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none min-[1280px]:py-0 min-[1444px]:text-base'
               >
@@ -136,7 +136,7 @@ export function LandingHeader() {
               </LandingLink>
             ))}
             <LandingLink
-              href='#contact'
+              href={`${homePath}#contact`}
               onClick={() => setOpen(false)}
               className='mt-3 inline-flex min-h-[47px] items-center justify-center border border-gilt bg-gilt px-5 py-[13px] text-[15px] leading-[1.5] font-semibold whitespace-nowrap text-midnight transition-colors duration-200 ease-out hover:bg-midnight hover:text-gilt focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none min-[1280px]:mt-0 min-[1280px]:px-[15px] min-[1280px]:py-0 min-[1444px]:px-5 min-[1444px]:text-base'
             >

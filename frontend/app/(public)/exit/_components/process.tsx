@@ -1,21 +1,20 @@
-'use client';
-
-import { SectionHeading } from './section-heading';
-import { Reveal } from '@/components/landing/primitives';
+import { LandingTheme } from '@/components/landing/landing-theme';
+import {
+  LandingContainer,
+  LandingSectionIntro,
+  LandingTextLink,
+} from '@/components/landing/presentation';
 
 const steps = [
   {
-    number: '01',
     title: 'Access resources instantly',
     description: 'Get immediate access to the full suite of tools.',
   },
   {
-    number: '02',
     title: 'Book a strategy call',
     description: 'Schedule a confidential conversation at your convenience.',
   },
   {
-    number: '03',
     title: 'Receive tailored advice',
     description: 'Hear directly from the Blackmont Advisory team.',
   },
@@ -23,34 +22,41 @@ const steps = [
 
 export function Process() {
   return (
-    <section className='bg-muted py-20 lg:py-28'>
-      <div className='max-w-[1500px] mx-auto px-6 sm:px-10 lg:px-16'>
-        <SectionHeading label='Process' title='How the Process Works' />
-
-        <div className='relative mt-16'>
-          {/* Connector line through circle centers (desktop) */}
-          <div className='absolute left-[16.67%] right-[16.67%] top-7 hidden h-px bg-accent/25 lg:block' />
-
-          <Reveal className='grid grid-cols-1 gap-y-12 sm:grid-cols-3'>
+    <LandingTheme className='bg-canvas'>
+      <section
+        id='process'
+        aria-labelledby='exit-process-title'
+        className='py-10 min-[681px]:py-12'
+      >
+        <LandingContainer className='grid items-start gap-5 min-[931px]:grid-cols-[0.8fr_1.4fr] min-[931px]:gap-[clamp(40px,5vw,72px)]'>
+          <div className='min-w-0 min-[931px]:pt-3'>
+            <LandingSectionIntro
+              headingId='exit-process-title'
+              heading='How the process works'
+              className='mb-2 min-[681px]:mb-2'
+              headingClassName='max-w-[340px] text-[28px] min-[681px]:text-[34px]'
+            />
+            <LandingTextLink href='#resources' className='inline-flex min-h-11 items-center text-sm'>
+              Explore the free resources
+            </LandingTextLink>
+          </div>
+          <ol role='list' className='m-0 list-none border-b border-advisory-rule p-0'>
             {steps.map((step) => (
-              <div
-                key={step.number}
-                className='flex flex-col items-center text-center'
+              <li
+                key={step.title}
+                className='grid min-w-0 gap-1.5 border-t border-advisory-rule py-4 min-[1121px]:grid-cols-[1fr_1.1fr] min-[1121px]:items-baseline min-[1121px]:gap-6'
               >
-                <div className='relative z-10 flex h-14 w-14 items-center justify-center rounded-full bg-background text-base font-bold text-accent ring-1 ring-accent/25'>
-                  {step.number}
-                </div>
-                <h3 className='mt-6 text-lg font-bold text-secondary'>
+                <h3 className='m-0 font-advisory-heading text-xl leading-[1.4] font-bold tracking-normal text-midnight'>
                   {step.title}
                 </h3>
-                <p className='mt-2 max-w-[15rem] leading-relaxed text-muted-foreground'>
+                <p className='m-0 max-w-[420px] text-[15px] leading-[1.65] text-ink'>
                   {step.description}
                 </p>
-              </div>
+              </li>
             ))}
-          </Reveal>
-        </div>
-      </div>
-    </section>
+          </ol>
+        </LandingContainer>
+      </section>
+    </LandingTheme>
   );
 }

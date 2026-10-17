@@ -1,10 +1,11 @@
-'use client';
-
-import { ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { GetStarted } from './get-started';
 import { Suspense } from 'react';
-import { Container, Reveal } from '@/components/landing/primitives';
+import { LandingTheme } from '@/components/landing/landing-theme';
+import {
+  LandingButton,
+  LandingContainer,
+  landingButtonVariants,
+} from '@/components/landing/presentation';
 
 interface ScheduleCallCtaProps {
   title?: string;
@@ -16,29 +17,30 @@ export function ScheduleCallCta({
   subtitle = 'Speak confidentially with our senior advisory team about your business value, timing, and options. No obligation.',
 }: ScheduleCallCtaProps) {
   return (
-    <Suspense>
-      <section className='bg-background py-20 lg:py-28'>
-        <Container>
-          <Reveal className='relative border-[1.5px] border-secondary bg-secondary px-6 py-16 text-center sm:px-10 lg:py-20'>
-            <span
-              aria-hidden
-              className='absolute inset-x-10 top-0 h-0.5 bg-gradient-to-r from-transparent via-accent to-transparent'
-            />
-            <h2 className='mx-auto max-w-2xl text-3xl font-bold leading-[1.1] tracking-tight text-parchment sm:text-4xl lg:text-5xl'>
+    <LandingTheme className='bg-canvas'>
+      <section
+        aria-labelledby='exit-cta-title'
+        className='border-t border-advisory-rule py-[48px] min-[681px]:py-[64px]'
+      >
+        <LandingContainer className='flex flex-col items-start gap-7 min-[931px]:flex-row min-[931px]:items-center min-[931px]:justify-between min-[931px]:gap-12'>
+          <div className='min-w-0 max-w-[760px]'>
+            <h2
+              id='exit-cta-title'
+              className='m-0 mb-5 font-advisory-heading text-[32px] leading-[1.25] font-bold tracking-normal text-midnight min-[681px]:text-[clamp(34px,3.5vw,43px)]'
+            >
               {title}
             </h2>
-            <p className='mx-auto mt-5 max-w-xl text-lg font-light leading-relaxed text-parchment/60'>
+            <p className='m-0 max-w-[650px] text-base leading-[1.75] text-ink'>
               {subtitle}
             </p>
-            <GetStarted className='mt-9 inline-block'>
-              <Button className='group inline-flex h-auto items-center gap-2 rounded-none bg-accent px-8 py-4 text-xs font-bold uppercase tracking-[0.14em] text-primary transition-colors hover:bg-accent-light'>
-                Schedule a Confidential Call
-                <ArrowRight className='h-4 w-4 transition-transform group-hover:translate-x-0.5' />
-              </Button>
+          </div>
+          <Suspense fallback={<LandingButton disabled className='shrink-0'>Schedule a confidential call</LandingButton>}>
+            <GetStarted className={landingButtonVariants({ className: 'shrink-0' })}>
+              Schedule a confidential call
             </GetStarted>
-          </Reveal>
-        </Container>
+          </Suspense>
+        </LandingContainer>
       </section>
-    </Suspense>
+    </LandingTheme>
   );
 }

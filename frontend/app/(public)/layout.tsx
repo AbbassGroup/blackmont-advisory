@@ -25,7 +25,11 @@ export default function PublicLayout({
   return (
     <>
       <JsonLd data={organizationSchema} />
-      <PublicChrome footer={<Footer />} landingFooter={<LandingFooter />}>
+      <PublicChrome
+        footer={<Footer />}
+        landingFooter={<LandingFooter />}
+        interiorFooter={<LandingFooter homePath='/' />}
+      >
         {children}
       </PublicChrome>
     </>
