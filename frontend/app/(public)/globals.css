@@ -17,7 +17,7 @@
     var(--font-merriweather), Georgia, 'Times New Roman', serif;
   --font-advisory-body:
     var(--font-public-sans), Arial, Helvetica, sans-serif;
-  --container-advisory: 77.5rem; /* 1240px at the default root font size */
+  --container-advisory: 83.75rem; /* 1340px at the default root font size */
 
   --color-parchment: #f0ebe0; /* Light text/surface on dark */
   --color-linen: #e8e3d8; /* Tertiary section background */

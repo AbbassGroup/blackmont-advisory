@@ -8,7 +8,7 @@ import {
 } from './presentation';
 
 const PHOTO_SIZES =
-  '(max-width: 680px) calc(100vw - 38px), (max-width: 1120px) calc(50vw - 36px), (max-width: 1344px) calc(50vw - 52px), 620px';
+  '(max-width: 680px) calc(100vw - 38px), (max-width: 1120px) calc(50vw - 36px), (max-width: 1444px) calc(50vw - 52px), 670px';
 
 export function Selling() {
   return (

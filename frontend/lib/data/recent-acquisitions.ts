@@ -42,7 +42,7 @@ export const RECENT_ACQUISITIONS: readonly RecentAcquisition[] = [
   },
   {
     id: 'tradeServicesManaged',
-    image: '/carousel/trade-services.webp',
+    image: '/carousel/trade-services-managed.jpg',
     sector: 'Trade Services',
     title: 'Trade services',
     location: 'Melbourne',

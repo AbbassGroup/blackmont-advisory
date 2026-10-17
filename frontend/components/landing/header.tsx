@@ -12,6 +12,8 @@ const NAV_LINKS = [
   { label: 'Buying a business', href: '#buying' },
   { label: 'Recent acquisitions', href: '#acquisitions' },
   { label: 'About us', href: '#about' },
+  { label: 'Resources', href: '/resources' },
+  { label: 'Exit Planning', href: '/exit' },
 ];
 
 export function LandingHeader() {
@@ -39,7 +41,7 @@ export function LandingHeader() {
   }, []);
 
   useEffect(() => {
-    const desktop = window.matchMedia('(min-width: 931px)');
+    const desktop = window.matchMedia('(min-width: 1280px)');
     const closeOnDesktop = () => {
       if (desktop.matches) setOpen(false);
     };
@@ -81,7 +83,7 @@ export function LandingHeader() {
             <span aria-hidden='true' className='text-gilt'>|</span>
             <a
               href='mailto:info@blackmontadvisory.com'
-              className='hover:underline focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-gilt'
+              className='transition-colors duration-200 ease-out hover:text-gilt hover:underline focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none'
             >
               info@blackmontadvisory.com
             </a>
@@ -108,7 +110,7 @@ export function LandingHeader() {
             aria-expanded={open}
             aria-controls={menuId}
             onClick={() => setOpen((previous) => !previous)}
-            className='inline-flex size-11 shrink-0 cursor-pointer items-center justify-center bg-transparent text-white transition-colors duration-200 hover:bg-white/10 hover:text-gilt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gilt motion-reduce:transition-none min-[931px]:hidden'
+            className='inline-flex size-11 shrink-0 cursor-pointer items-center justify-center bg-transparent text-white transition-colors duration-200 hover:bg-white/10 hover:text-gilt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gilt motion-reduce:transition-none min-[1280px]:hidden'
           >
             {open ? (
               <X size={24} strokeWidth={1.75} aria-hidden='true' />
@@ -119,7 +121,7 @@ export function LandingHeader() {
           <div
             id={menuId}
             className={cn(
-              'absolute inset-x-0 top-full z-40 hidden flex-col items-stretch border-t border-white/[0.18] bg-midnight px-[22px] pt-[15px] pb-6 min-[681px]:px-[max(36px,calc((100%_-_720px)/2))] min-[681px]:pb-[25px] min-[931px]:static min-[931px]:ml-auto min-[931px]:flex min-[931px]:flex-row min-[931px]:items-center min-[931px]:justify-end min-[931px]:gap-4 min-[931px]:border-0 min-[931px]:p-0 min-[1121px]:gap-[clamp(18px,2.1vw,31px)]',
+              'absolute inset-x-0 top-full z-40 hidden max-h-[calc(100dvh_-_140px)] flex-col items-stretch overflow-y-auto border-t border-white/[0.18] bg-midnight px-[22px] pt-[15px] pb-6 min-[681px]:px-[max(36px,calc((100%_-_720px)/2))] min-[681px]:pb-[25px] min-[1280px]:static min-[1280px]:ml-auto min-[1280px]:flex min-[1280px]:max-h-none min-[1280px]:flex-row min-[1280px]:items-center min-[1280px]:justify-end min-[1280px]:gap-4 min-[1280px]:overflow-visible min-[1280px]:border-0 min-[1280px]:p-0 min-[1444px]:gap-[18px]',
               open && 'flex',
             )}
           >
@@ -128,7 +130,7 @@ export function LandingHeader() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
-                className='py-[13px] text-[15px] leading-[1.5] font-semibold whitespace-nowrap hover:underline hover:underline-offset-[6px] focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-gilt min-[931px]:py-0 min-[931px]:text-xs min-[1121px]:text-[15px] min-[1344px]:text-base'
+                className='py-[13px] text-[15px] leading-[1.5] font-semibold whitespace-nowrap transition-colors duration-200 ease-out hover:text-gilt hover:underline hover:underline-offset-[6px] focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none min-[1280px]:py-0 min-[1444px]:text-base'
               >
                 {link.label}
               </LandingLink>
@@ -136,7 +138,7 @@ export function LandingHeader() {
             <LandingLink
               href='#contact'
               onClick={() => setOpen(false)}
-              className='mt-3 inline-flex min-h-[47px] items-center justify-center bg-gilt px-5 py-[13px] text-[15px] leading-[1.5] font-semibold whitespace-nowrap text-midnight transition-colors duration-200 ease-out hover:bg-white focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none min-[931px]:mt-0 min-[931px]:px-[15px] min-[931px]:py-0 min-[931px]:text-xs min-[1121px]:px-5 min-[1121px]:text-[15px] min-[1344px]:text-base'
+              className='mt-3 inline-flex min-h-[47px] items-center justify-center border border-gilt bg-gilt px-5 py-[13px] text-[15px] leading-[1.5] font-semibold whitespace-nowrap text-midnight transition-colors duration-200 ease-out hover:bg-midnight hover:text-gilt focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none min-[1280px]:mt-0 min-[1280px]:px-[15px] min-[1280px]:py-0 min-[1444px]:px-5 min-[1444px]:text-base'
             >
               Talk to an advisor
             </LandingLink>

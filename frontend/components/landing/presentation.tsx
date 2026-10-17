@@ -3,7 +3,7 @@ import { LandingLink } from './landing-link';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
-/** Matches the reference's 1240px shell and 19px / 36px / 52px gutters. */
+/** Shared 1340px content shell with 19px / 36px / 52px gutters. */
 export function LandingContainer({
   className,
   ...props
@@ -133,7 +133,7 @@ export function LandingTextLink({
   return (
     <LandingLink
       className={cn(
-        'font-advisory-body text-[15px] font-bold tracking-normal underline decoration-1 underline-offset-[5px] hover:decoration-2 focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-gilt',
+        'font-advisory-body text-[15px] font-bold tracking-normal underline decoration-1 underline-offset-[5px] transition-colors duration-200 ease-out hover:text-gilt hover:decoration-2 focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none',
         {
           'text-midnight': tone === 'midnight',
           'text-gilt': tone === 'gilt',

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { FooterAssociationLogos } from './footer-association-logos';
 
 const exploreLinks = [
   { label: 'About', to: '/#about' },
@@ -34,10 +35,14 @@ export function Footer() {
               We represent business owners seeking a premium exit, and act as
               exclusive buyer advocates for those looking to acquire.
             </p>
-            <p className='mt-2 text-xs tracking-[0.08em] text-parchment/55'>
+            <p className='mt-2 text-xs leading-relaxed tracking-[0.08em] text-parchment/55'>
               Licence:{' '}
               <span className='font-medium text-accent'>BLA 092153L</span>
+              <br />
+              ABN{' '}
+              <span className='font-medium text-accent'>78 674 429 255</span>
             </p>
+            <FooterAssociationLogos />
             {/* <div className='flex gap-3'>
               {[
                 {
@@ -95,6 +100,7 @@ export function Footer() {
               Get in touch
             </h3>
             <ul className='space-y-2.5 text-sm text-parchment/55'>
+              <li>1/459 Toorak Road, Toorak, VIC 3149</li>
               <li>
                 <a
                   href='mailto:info@blackmontadvisory.com'

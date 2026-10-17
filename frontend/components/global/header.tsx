@@ -86,7 +86,7 @@ export function Header() {
                   'text-xs font-medium uppercase tracking-[0.1em] transition-colors',
                   active
                     ? 'text-accent'
-                    : 'text-parchment/55 hover:text-accent',
+                    : 'text-parchment/55 hover:text-gilt',
                 ].join(' ')}
               >
                 {link.label}
@@ -98,7 +98,7 @@ export function Header() {
         <div className='flex items-center gap-3'>
           <Link
             href='/#contact'
-            className='hidden whitespace-nowrap bg-accent px-6 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-primary transition-colors hover:bg-accent-light sm:inline-block'
+            className='hidden whitespace-nowrap border border-gilt bg-accent px-6 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em] text-primary transition-colors hover:bg-secondary hover:text-gilt sm:inline-block'
           >
             Begin Confidentially
           </Link>
@@ -133,7 +133,7 @@ export function Header() {
                           'rounded-md px-4 py-3 text-sm font-medium uppercase tracking-[0.1em] transition-colors',
                           active
                             ? 'bg-accent/15 text-accent'
-                            : 'text-parchment/70 hover:bg-white/10 hover:text-accent',
+                            : 'text-parchment/70 hover:bg-white/10 hover:text-gilt',
                         ].join(' ')}
                       >
                         {link.label}
@@ -143,7 +143,7 @@ export function Header() {
                   <Link
                     href='/#contact'
                     onClick={() => setIsOpen(false)}
-                    className='mt-4 bg-accent px-4 py-3 text-center text-xs font-bold uppercase tracking-[0.14em] text-primary transition-colors hover:bg-accent-light'
+                    className='mt-4 border border-gilt bg-accent px-4 py-3 text-center text-xs font-bold uppercase tracking-[0.14em] text-primary transition-colors hover:bg-secondary hover:text-gilt'
                   >
                     Begin Confidentially
                   </Link>

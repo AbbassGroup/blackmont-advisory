@@ -11,7 +11,7 @@ export function Contact() {
         className='pt-[77px] pb-[82px] min-[681px]:pt-[104px] min-[681px]:pb-[114px]'
       >
         <LandingContainer className='grid items-start gap-[33px] min-[681px]:grid-cols-[1fr_0.94fr] min-[681px]:gap-[45px] min-[931px]:gap-[clamp(70px,8vw,125px)]'>
-          <div className='min-w-0'>
+          <div className='min-w-0 min-[681px]:self-center'>
             <h2
               data-landing-reveal
               id='contact-title'

@@ -4,7 +4,7 @@ import type { RecentAcquisition } from '@/lib/data/recent-acquisitions';
 import { landingImages } from './images';
 
 const IMAGE_SIZES =
-  '(max-width: 600px) calc(100vw - 38px), (max-width: 680px) calc(50vw - 28px), (max-width: 930px) calc(50vw - 50px), (max-width: 1120px) calc(25vw - 33px), (max-width: 1344px) calc(25vw - 44px), 292px';
+  '(max-width: 600px) calc(100vw - 38px), (max-width: 680px) calc(50vw - 28px), (max-width: 930px) calc(50vw - 50px), (max-width: 1120px) calc(25vw - 33px), (max-width: 1444px) calc(25vw - 44px), 317px';
 
 export function TransactionCard({ deal }: { deal: RecentAcquisition }) {
   const image = landingImages[deal.id];
@@ -21,6 +21,7 @@ export function TransactionCard({ deal }: { deal: RecentAcquisition }) {
           <LandingImage
             src={image.src}
             alt={image.alt}
+            unoptimized={deal.id === 'tradeServicesManaged'}
             quality={85}
             loading='lazy'
             sizes={IMAGE_SIZES}

@@ -1,4 +1,5 @@
 import { LandingBrand } from './brand';
+import { FooterAssociationLogos } from '@/components/global/footer-association-logos';
 import { LandingContainer, LandingTextLink } from './presentation';
 
 const EXPLORE_LINKS = [
@@ -15,7 +16,7 @@ export function LandingFooter() {
     <footer className='bg-midnight text-white'>
       <LandingContainer className='grid gap-x-6 gap-y-[38px] pt-[58px] pb-[51px] min-[426px]:grid-cols-2 min-[681px]:grid-cols-[1.3fr_0.78fr_0.9fr] min-[681px]:gap-[33px] min-[931px]:gap-[72px]'>
         <div className='min-w-0 min-[426px]:col-span-2 min-[681px]:col-span-1'>
-          <LandingBrand className='mb-[19px]' />
+          <LandingBrand placement='footer' className='mb-[19px]' />
           <p className='m-0 mb-3 max-w-[425px] text-[15px] leading-[1.75]'>
             Helping business owners sell and buyers acquire established businesses
             with careful, confidential advice.
@@ -24,7 +25,10 @@ export function LandingFooter() {
             Melbourne, Australia
             <br />
             Business agent licence BLA 092153L
+            <br />
+            ABN 78 674 429 255
           </p>
+          <FooterAssociationLogos />
         </div>
         <div className='min-w-0'>
           <h3 className='m-0 mb-4 text-[15px] leading-[1.5] font-bold'>Explore</h3>
@@ -43,6 +47,9 @@ export function LandingFooter() {
         </div>
         <div className='min-w-0'>
           <h3 className='m-0 mb-4 text-[15px] leading-[1.5] font-bold'>Get in touch</h3>
+          <p className='m-0 mb-[13px] text-[15px] leading-[1.7]'>
+            1/459 Toorak Road, Toorak, VIC 3149
+          </p>
           <p className='m-0 mb-[13px] text-[15px] leading-[1.7]'>
             <LandingTextLink
               href='mailto:info@blackmontadvisory.com'

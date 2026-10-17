@@ -7,6 +7,7 @@ import networkBuildings from '@/public/abbass.avif';
 import alliedHealth from '@/public/carousel/allied-health.webp';
 import fencing from '@/public/carousel/fencing.webp';
 import tradeServices from '@/public/carousel/trade-services.webp';
+import tradeServicesManaged from '@/public/carousel/trade-services-managed.jpg';
 import transport from '@/public/carousel/transport.webp';
 
 /**
@@ -39,8 +40,8 @@ export const landingImages = {
     alt: 'Illustrative photograph of an industrial trade services business',
   },
   tradeServicesManaged: {
-    src: tradeServices,
-    alt: 'Illustrative photograph accompanying the fully managed trade services acquisition',
+    src: tradeServicesManaged,
+    alt: 'Illustrative photograph of electrical maintenance work on a circuit breaker panel',
   },
   transport: {
     src: transport,

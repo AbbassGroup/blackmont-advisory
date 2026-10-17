@@ -84,7 +84,7 @@ function ContactField({
   };
 
   return (
-    <div className='mb-[17px] min-w-0'>
+    <div className='mb-[14px] min-w-0'>
       <label htmlFor={id} className='mb-1.5 block text-sm font-semibold'>
         {label}
         {required && <span aria-hidden='true'> *</span>}
@@ -234,7 +234,7 @@ export function ContactForm() {
       <div
         role='group'
         aria-label='Type of enquiry'
-        className='mb-6 grid grid-cols-2 gap-2'
+        className='mb-5 grid grid-cols-2 gap-2'
       >
         {(['sell', 'buy'] as const).map((type) => (
           <button
@@ -264,22 +264,33 @@ export function ContactForm() {
           required
         />
       </div>
-      <ContactField
-        {...fieldProps(phoneField)}
-        label='Phone number'
-        type='tel'
-        autoComplete='tel'
-        required
-      />
+      <div className='grid min-[931px]:grid-cols-2 min-[931px]:gap-x-[13px]'>
+        <ContactField
+          {...fieldProps(phoneField)}
+          label='Phone number'
+          type='tel'
+          autoComplete='tel'
+          required
+        />
+        {enquiryType === 'sell' ? (
+          <ContactField {...fieldProps('industry')} label='Industry' required />
+        ) : (
+          <ContactField
+            {...fieldProps('industryInterest')}
+            label='Industry interest'
+          />
+        )}
+      </div>
       {enquiryType === 'sell' ? (
         <>
-          <ContactField {...fieldProps('industry')} label='Industry' required />
-          <ContactField {...fieldProps('location')} label='Location' required />
-          <ContactField
-            {...fieldProps('turnover')}
-            label='Annual turnover'
-            required
-          />
+          <div className='grid min-[931px]:grid-cols-2 min-[931px]:gap-x-[13px]'>
+            <ContactField {...fieldProps('location')} label='Location' required />
+            <ContactField
+              {...fieldProps('turnover')}
+              label='Annual turnover'
+              required
+            />
+          </div>
           <ContactField
             {...fieldProps('comments')}
             label='Tell us about your business or enquiry'
@@ -287,14 +298,10 @@ export function ContactForm() {
           />
         </>
       ) : (
-        <>
-          <ContactField
-            {...fieldProps('industryInterest')}
-            label='Industry interest'
-          />
+        <div className='grid min-[931px]:grid-cols-2 min-[931px]:gap-x-[13px]'>
           <ContactField {...fieldProps('budget')} label='Budget' />
           <ContactField {...fieldProps('timeline')} label='Timeline to buy' />
-        </>
+        </div>
       )}
       <LandingButton type='submit' disabled={loading} className='mt-0.5 w-full'>
         {loading ? 'Sending enquiry…' : 'Send confidential enquiry'}
