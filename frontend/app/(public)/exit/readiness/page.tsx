@@ -31,17 +31,21 @@ const jsonLd = [
 
 export default function ReadinessPage() {
   return (
-    <main className='min-h-screen bg-muted'>
+    <div className='min-h-screen bg-white'>
       <JsonLd data={jsonLd} />
       <AccessTracker resource='Sale Readiness Score' />
       <ToolHeader
         crumbs={CRUMBS}
-        title='Is Your Business Sale Ready?'
+        appearance='advisory'
+        layout='stacked'
+        title='Is your business sale ready?'
         subtitle='Answer 10 questions to receive your personalised readiness score, category breakdown, and tailored recommendations.'
-      />
-      <Scorecard />
+      >
+        <Scorecard />
+      </ToolHeader>
 
       <ToolNotes
+        appearance='advisory'
         heading='How to read your score'
         paragraphs={[
           'Ten dimensions, each scored from zero to ten. The total gives you a band, but the total is the least useful part of the result. What matters is which two or three areas came back weakest, because those are the ones a buyer will find and price against.',
@@ -58,6 +62,6 @@ export default function ReadinessPage() {
           detail: 'For what a strong answer looks like on each dimension, see',
         }}
       />
-    </main>
+    </div>
   );
 }

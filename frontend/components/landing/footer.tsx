@@ -13,10 +13,10 @@ const EXPLORE_LINKS = [
 
 export function LandingFooter({ homePath = '' }: { homePath?: '' | '/' }) {
   return (
-    <footer className='bg-midnight text-white'>
+    <footer className='bg-midnight text-white [&_a]:no-underline'>
       <LandingContainer className='grid gap-x-6 gap-y-[38px] pt-[58px] pb-[51px] min-[426px]:grid-cols-2 min-[681px]:grid-cols-[1.3fr_0.78fr_0.9fr] min-[681px]:gap-[33px] min-[931px]:gap-[72px]'>
         <div className='min-w-0 min-[426px]:col-span-2 min-[681px]:col-span-1'>
-          <LandingBrand placement='footer' href={homePath || '#top'} className='mb-[19px]' />
+          <LandingBrand placement='footer' href={`${homePath}#top`} className='mb-[19px]' />
           <p className='m-0 mb-3 max-w-[425px] text-[15px] leading-[1.75]'>
             Helping business owners sell and buyers acquire established businesses
             with careful, confidential advice.

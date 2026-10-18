@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { LandingImage } from '@/components/landing/landing-image';
-import { landingImages } from '@/components/landing/images';
+import workshopPlanning from '@/public/landing/exit-workshop-planning.jpeg';
 import { LandingTheme } from '@/components/landing/landing-theme';
 import {
   LandingButton,
@@ -60,17 +60,16 @@ export function SellHero() {
         </LandingContainer>
         <figure className='group/image relative m-0 h-[clamp(280px,65vw,440px)] w-full overflow-hidden min-[931px]:absolute min-[931px]:inset-y-0 min-[931px]:right-0 min-[931px]:h-auto min-[931px]:w-[60%]'>
           <LandingImage
-            src={landingImages.sellingConversation.src}
-            alt={landingImages.sellingConversation.alt}
-            quality={85}
+            src={workshopPlanning}
+            alt='Illustrative photograph of a carpenter planning work at a bench in a sunlit workshop'
+            unoptimized
             preload
             fill
-            sizes='(max-width: 930px) 100vw, 60vw'
-            className='object-cover object-[65%_center]'
+            className='object-cover object-[62%_40%]'
           />
           <div
             aria-hidden='true'
-            className='pointer-events-none absolute inset-0 bg-linear-to-b from-canvas via-canvas/60 via-[8%] to-canvas/0 to-[35%] min-[931px]:bg-linear-to-r min-[931px]:via-canvas/90 min-[931px]:via-[22%] min-[931px]:to-[55%]'
+            className='pointer-events-none absolute inset-0 bg-linear-to-b from-canvas via-canvas/60 via-[6%] to-canvas/0 to-[22%] min-[931px]:bg-linear-to-r min-[931px]:via-canvas/90 min-[931px]:via-[22%] min-[931px]:to-[55%]'
           />
         </figure>
       </section>

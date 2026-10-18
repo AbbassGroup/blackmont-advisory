@@ -1,25 +1,38 @@
 'use client';
 
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 import { Loader2, Check } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
+import { LandingButton } from '@/components/landing/presentation';
+import { landingFontVariables } from '@/components/landing/fonts';
+import { cn } from '@/lib/utils';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { trackAccessEvent } from '@/lib/track';
 
 const NEXAR_API_URL =
   process.env.NEXT_PUBLIC_NEXAR_API_URL ||
   'https://blackmont-api.nexartechnologies.com';
+
+const consultationFields = [
+  { name: 'name', label: 'Name', type: 'text', autoComplete: 'name', placeholder: 'Your full name' },
+  { name: 'email', label: 'Email', type: 'email', autoComplete: 'email', placeholder: 'you@business.com.au' },
+  { name: 'phone', label: 'Phone', type: 'tel', autoComplete: 'tel', placeholder: 'Enter your phone number' },
+  { name: 'industry', label: 'Industry', type: 'text', autoComplete: undefined, placeholder: 'Enter industry' },
+  { name: 'location', label: 'Location', type: 'text', autoComplete: 'address-level2', placeholder: 'Enter your location' },
+  { name: 'turnover', label: 'Annual turnover', type: 'text', autoComplete: undefined, placeholder: 'Enter revenue' },
+  { name: 'comments', label: 'Comments', type: 'text', autoComplete: undefined, placeholder: 'Enter your comments' },
+] as const;
 
 async function submitResourceLead({
   name,
@@ -73,6 +86,7 @@ export function GetStarted({
   consultationTrigger = false,
   children,
 }: GetStartedProps) {
+  const formId = useId();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -233,173 +247,79 @@ export function GetStarted({
         </motion.button>
       </DialogTrigger>
 
-      <DialogContent className='p-6 sm:max-w-110 gap-0'>
+      <DialogContent className={cn(landingFontVariables, 'max-h-[calc(100dvh-2rem)] max-w-[calc(100%-2rem)] gap-0 overflow-y-auto rounded-none border border-advisory-rule bg-white p-6 font-advisory-body text-ink ring-0 sm:max-w-[480px] sm:p-7 [&>[data-slot=dialog-close]]:rounded-none [&>[data-slot=dialog-close]]:text-midnight')}>
         {success ? (
-          <div className='py-4 text-center'>
-            <div className='mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-accent/10'>
-              <Check className='h-7 w-7 text-accent' />
-            </div>
-            <DialogTitle className='text-lg font-semibold text-secondary'>
+          <div>
+            <Check className='mb-4 size-6 text-midnight' aria-hidden />
+            <DialogTitle className='pr-8 font-advisory-heading text-[23px] leading-[1.35] font-bold tracking-normal text-midnight sm:text-[25px]'>
               Request received
             </DialogTitle>
-            <p className='mx-auto mt-2 max-w-xs text-sm text-muted-foreground'>
+            <DialogDescription className='mt-3 text-[15px] leading-[1.75] text-ink'>
               Thanks! Our team will be in touch shortly to arrange your
               confidential call.
-            </p>
-            <Button
+            </DialogDescription>
+            <LandingButton
+              size='compact'
               onClick={() => handleOpenChange(false)}
-              className='bg-accent mt-5 w-full'
+              className='mt-6 w-full'
             >
               Close
-            </Button>
+            </LandingButton>
           </div>
         ) : (
           <>
-            <DialogHeader className='space-y-1.5'>
-              <DialogTitle className='text-base sm:text-lg font-semibold text-secondary'>
-                Schedule a Confidential Call
+            <DialogHeader>
+              <DialogTitle className='pr-8 font-advisory-heading text-[23px] leading-[1.35] font-bold tracking-normal text-midnight sm:text-[25px]'>
+                Schedule a confidential call
               </DialogTitle>
+              <DialogDescription className='sr-only'>
+                Enter your details to request a confidential call.
+              </DialogDescription>
             </DialogHeader>
 
-            <form onSubmit={handleSubmit} className='mt-4 space-y-4'>
-              <div className='space-y-1.5'>
-                <Label htmlFor='rg-name' className='text-sm font-medium'>
-                  Name<span className='text-red-500'>*</span>
-                </Label>
-                <Input
-                  id='rg-name'
-                  value={form.name}
-                  onChange={(e) => update('name', e.target.value)}
-                  placeholder='Your full name'
-                  disabled={loading}
-                  className={errors.name ? 'border-red-500' : ''}
-                />
-                {errors.name && (
-                  <p className='text-xs font-medium text-red-500'>
-                    {errors.name}
-                  </p>
-                )}
-              </div>
+            <form onSubmit={handleSubmit} className='mt-6 space-y-4'>
+              {consultationFields.map((field) => {
+                const inputId = `${formId}-${field.name}`;
+                const errorId = `${inputId}-error`;
+                const error = errors[field.name];
+                const required = field.name !== 'comments';
 
-              <div className='space-y-1.5'>
-                <Label htmlFor='rg-email' className='text-sm font-medium'>
-                  Email<span className='text-red-500'>*</span>
-                </Label>
-                <Input
-                  id='rg-email'
-                  type='email'
-                  value={form.email}
-                  onChange={(e) => update('email', e.target.value)}
-                  placeholder='you@business.com.au'
-                  disabled={loading}
-                  className={errors.email ? 'border-red-500' : ''}
-                />
-                {errors.email && (
-                  <p className='text-xs font-medium text-red-500'>
-                    {errors.email}
-                  </p>
-                )}
-              </div>
-              <div className='space-y-1.5'>
-                <Label htmlFor='rg-phone' className='text-sm font-medium'>
-                  Phone<span className='text-red-500'>*</span>
-                </Label>
-                <Input
-                  id='rg-phone'
-                  type='phone'
-                  value={form.phone}
-                  onChange={(e) => update('phone', e.target.value)}
-                  placeholder='Enter your phone number'
-                  disabled={loading}
-                  className={errors.phone ? 'border-red-500' : ''}
-                />
-                {errors.phone && (
-                  <p className='text-xs font-medium text-red-500'>
-                    {errors.phone}
-                  </p>
-                )}
-              </div>
-              <div className='space-y-1.5'>
-                <Label htmlFor='rg-industry' className='text-sm font-medium'>
-                  Industry<span className='text-red-500'>*</span>
-                </Label>
-                <Input
-                  id='rg-industry'
-                  type='industry'
-                  value={form.industry}
-                  onChange={(e) => update('industry', e.target.value)}
-                  placeholder='Enter industry'
-                  disabled={loading}
-                  className={errors.industry ? 'border-red-500' : ''}
-                />
-                {errors.industry && (
-                  <p className='text-xs font-medium text-red-500'>
-                    {errors.industry}
-                  </p>
-                )}
-              </div>
-              <div className='space-y-1.5'>
-                <Label htmlFor='rg-location' className='text-sm font-medium'>
-                  Location<span className='text-red-500'>*</span>
-                </Label>
-                <Input
-                  id='rg-location'
-                  type='location'
-                  value={form.location}
-                  onChange={(e) => update('location', e.target.value)}
-                  placeholder='Enter your location'
-                  disabled={loading}
-                  className={errors.location ? 'border-red-500' : ''}
-                />
-                {errors.location && (
-                  <p className='text-xs font-medium text-red-500'>
-                    {errors.location}
-                  </p>
-                )}
-              </div>
-              <div className='space-y-1.5'>
-                <Label htmlFor='rg-turnover' className='text-sm font-medium'>
-                  Annual Turnover<span className='text-red-500'>*</span>
-                </Label>
-                <Input
-                  id='rg-turnover'
-                  type='text'
-                  value={form.turnover}
-                  onChange={(e) => update('turnover', e.target.value)}
-                  placeholder='Enter revenue'
-                  disabled={loading}
-                  className={errors.turnover ? 'border-red-500' : ''}
-                />
-                {errors.turnover && (
-                  <p className='text-xs font-medium text-red-500'>
-                    {errors.turnover}
-                  </p>
-                )}
-              </div>
-              <div className='space-y-1.5'>
-                <Label htmlFor='rg-comments' className='text-sm font-medium'>
-                  Comments
-                </Label>
-                <Input
-                  id='rg-comments'
-                  type='text'
-                  value={form.comments}
-                  onChange={(e) => update('comments', e.target.value)}
-                  placeholder='Enter your comments'
-                  disabled={loading}
-                />
-              </div>
+                return (
+                  <div key={field.name} className='space-y-1.5'>
+                    <Label htmlFor={inputId} className='text-sm font-medium text-midnight'>
+                      {field.label}{required && <span className='text-red-700'>*</span>}
+                    </Label>
+                    <Input
+                      id={inputId}
+                      name={field.name}
+                      type={field.type}
+                      autoComplete={field.autoComplete}
+                      value={form[field.name]}
+                      onChange={(e) => update(field.name, e.target.value)}
+                      placeholder={field.placeholder}
+                      disabled={loading}
+                      aria-required={required}
+                      aria-invalid={!!error}
+                      aria-describedby={error ? errorId : undefined}
+                      className={cn('h-12 rounded-none border-advisory-input bg-white px-3 text-base text-midnight shadow-none transition-colors placeholder:text-ink/70 focus-visible:border-midnight focus-visible:ring-0 aria-invalid:border-red-700 aria-invalid:ring-0 motion-reduce:transition-none md:text-base', error && 'border-red-700 focus-visible:border-red-700')}
+                    />
+                    {error && (
+                      <p id={errorId} role='alert' className='text-sm font-medium text-red-700'>{error}</p>
+                    )}
+                  </div>
+                );
+              })}
 
               {failed && (
-                <p className='text-center text-sm font-medium text-red-500'>
+                <p role='alert' className='text-sm font-medium text-red-700'>
                   Something went wrong. Please try again.
                 </p>
               )}
 
-              <Button type='submit' disabled={loading} className='w-full'>
-                {loading && <Loader2 className='h-4 w-4 animate-spin' />}
+              <LandingButton type='submit' size='compact' disabled={loading} className='w-full'>
+                {loading && <Loader2 className='size-4 animate-spin' aria-hidden />}
                 {loading ? 'Submitting…' : 'Submit'}
-              </Button>
+              </LandingButton>
             </form>
           </>
         )}

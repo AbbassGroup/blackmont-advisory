@@ -31,17 +31,21 @@ const jsonLd = [
 
 export default function BenchmarksPage() {
   return (
-    <main className='min-h-screen bg-muted'>
+    <div className='min-h-screen bg-white'>
       <JsonLd data={jsonLd} />
       <AccessTracker resource='Industry Benchmark Report' />
       <ToolHeader
         crumbs={CRUMBS}
-        title='Industry Benchmark Report'
+        appearance='advisory'
+        layout='wide'
+        title='Industry benchmark report'
         subtitle='Current Australian SME market data. Select your industry to see typical EBITDA multiples, sale price ranges, and what buyers are really looking for.'
-      />
-      <BenchmarkReport />
+      >
+        <BenchmarkReport />
+      </ToolHeader>
 
       <ToolNotes
+        appearance='advisory'
         heading='How to use these benchmarks'
         paragraphs={[
           'Select your sector to see the typical multiple, price range, time to sell and buyer demand, along with the five factors buyers weigh most heavily in that industry.',
@@ -59,6 +63,6 @@ export default function BenchmarksPage() {
           detail: 'For every sector side by side, plus how the multiple changes with the size of the business, see',
         }}
       />
-    </main>
+    </div>
   );
 }

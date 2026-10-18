@@ -102,7 +102,7 @@ export function LandingHeader({ homePath = '' }: { homePath?: '' | '/' }) {
         }}
       >
         <LandingContainer className='flex min-h-[73px] items-center justify-between gap-2 min-[681px]:min-h-[78px] min-[681px]:gap-7 min-[931px]:min-h-[90px]'>
-          <LandingBrand href={homePath || '#top'} />
+          <LandingBrand href={`${homePath}#top`} />
           <button
             ref={toggleRef}
             type='button'

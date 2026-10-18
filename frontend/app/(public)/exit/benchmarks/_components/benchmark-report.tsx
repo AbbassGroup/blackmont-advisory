@@ -1,11 +1,10 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { ToolCta } from '../../_components/tool-cta';
 import { PrintButton } from '../../_components/print-button';
 import { BenchmarksPdf } from '../../_components/pdf/benchmarks-pdf';
-
+import { landingButtonVariants } from '@/components/landing/presentation';
 import { INDUSTRY_BENCHMARKS as industries } from '@/lib/data/industry-benchmarks';
 
 export function BenchmarkReport() {
@@ -16,160 +15,134 @@ export function BenchmarkReport() {
   useEffect(() => {
     if (selected === null || !detailRef.current) return;
     if (!window.matchMedia('(max-width: 767px)').matches) return;
-    detailRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    detailRef.current.scrollIntoView({
+      behavior: reducedMotion ? 'auto' : 'smooth',
+      block: 'start',
+    });
   }, [selected]);
 
   return (
-    <section className='py-12 lg:py-16'>
-      <div className='mx-auto max-w-275 px-5 lg:px-8'>
-        <div className='grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5'>
+    <div className='min-w-0'>
+      <fieldset className='m-0 min-w-0 border-0 p-0'>
+        <legend className='mb-4 text-sm font-semibold text-midnight'>
+          Select your industry · EBITDA multiples
+        </legend>
+        <div className='grid grid-cols-2 gap-3 min-[681px]:grid-cols-3 min-[1121px]:grid-cols-5'>
           {industries.map((item, i) => {
             const active = selected === i;
             return (
               <button
                 key={item.name}
+                type='button'
+                aria-pressed={active}
+                aria-controls='industry-benchmark-detail'
                 onClick={() => setSelected(i)}
-                className={` border p-4 text-left transition-all cursor-pointer ${
+                className={`flex cursor-pointer flex-col items-start justify-between gap-3 border p-4 text-left transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gilt motion-reduce:transition-none min-[681px]:p-5 ${
                   active
-                    ? 'border-accent bg-accent text-primary shadow-[0_12px_30px_-14px_rgba(201, 168, 76, 0.7)]'
-                    : 'border-secondary/15 bg-background hover:border-accent hover:bg-accent/5 hover:shadow-sm'
+                    ? 'border-midnight bg-midnight text-white'
+                    : 'border-advisory-rule bg-white text-midnight hover:border-midnight hover:bg-canvas'
                 }`}
               >
-                <div
-                  className={`text-[13px] font-semibold ${
-                    active ? 'text-primary/80' : 'text-secondary'
-                  }`}
-                >
+                <span className='text-sm leading-[1.5] font-semibold'>
                   {item.name}
-                </div>
-                <div
-                  className={`mt-2 text-2xl font-extrabold tracking-tight ${
-                    active ? 'text-primary' : 'text-accent'
-                  }`}
-                >
+                </span>
+                <span className='font-advisory-heading text-[22px] leading-[1.3] min-[681px]:text-[24px]'>
                   {item.multi}
-                </div>
-                <div
-                  className={`mt-0.5 text-[10px] uppercase tracking-[0.07em] ${
-                    active ? 'text-primary/55' : 'text-muted-foreground'
-                  }`}
-                >
-                  EBITDA multiple
-                </div>
+                </span>
               </button>
             );
           })}
         </div>
+      </fieldset>
 
-        <AnimatePresence mode='wait'>
-          {ind && (
-            <motion.div
-              key={ind.name}
-              ref={detailRef}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 8 }}
-              transition={{ duration: 0.3 }}
-              className='mt-6 scroll-mt-24  border border-secondary/15 bg-background p-7 lg:p-8'
-            >
-              <div className='flex flex-wrap items-center justify-between gap-3'>
-                <h2 className='text-2xl font-extrabold tracking-tight text-secondary'>
-                  {ind.name}
-                </h2>
-                <span
-                  className='rounded-full border px-3 py-1 text-xs font-semibold'
-                  style={{
-                    background: `${ind.demandCol}1a`,
-                    color: ind.demandCol,
-                    borderColor: `${ind.demandCol}40`,
-                  }}
-                >
-                  Buyer demand: {ind.demand}
-                </span>
-              </div>
+      <div
+        id='industry-benchmark-detail'
+        ref={detailRef}
+        className='mt-6 scroll-mt-28 border border-advisory-rule bg-white p-6 min-[681px]:p-8'
+      >
+        {ind ? (
+          <>
+            <div className='flex flex-wrap items-center justify-between gap-4'>
+              <h2 className='m-0 font-advisory-heading text-[28px] leading-[1.3] font-bold tracking-normal text-midnight min-[681px]:text-[32px]'>
+                {ind.name}
+              </h2>
+              <p className='m-0 flex items-center gap-2 text-sm text-midnight'>
+                <span aria-hidden className='size-2 shrink-0 rounded-full' style={{ backgroundColor: ind.demandCol }} />
+                Buyer demand: <strong className='font-semibold'>{ind.demand}</strong>
+              </p>
+            </div>
 
-              <div className='mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3'>
-                {[
-                  { val: ind.multi, label: 'EBITDA multiple' },
-                  { val: ind.price, label: 'Typical price range' },
-                  { val: ind.days, label: 'Average time to sell' },
-                ].map((m) => (
-                  <div
-                    key={m.label}
-                    className=' bg-muted p-4 text-center'
-                  >
-                    <div className='text-xl font-extrabold tracking-tight text-secondary'>
-                      {m.val}
-                    </div>
-                    <div className='mt-1 text-[11px] uppercase tracking-[0.07em] text-muted-foreground'>
-                      {m.label}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <h3 className='mt-7 text-sm font-semibold text-secondary'>
-                What buyers are looking at
-              </h3>
-              <div className='mt-3 flex flex-wrap gap-2'>
-                {ind.drivers.map((d) => (
-                  <span
-                    key={d}
-                    className='rounded-full border border-secondary/15 bg-muted px-3 py-1.5 text-xs font-medium text-secondary'
-                  >
-                    {d}
-                  </span>
-                ))}
-              </div>
-
-              <div className='mt-6 border-t border-secondary/15 pt-5'>
-                <div className='text-xs font-bold uppercase tracking-[0.08em] text-accent'>
-                  Blackmont market insight
+            <dl className='my-6 grid divide-y divide-advisory-rule border-y border-advisory-rule min-[681px]:my-8 min-[681px]:grid-cols-3 min-[681px]:divide-x min-[681px]:divide-y-0'>
+              {[
+                { val: ind.multi, label: 'EBITDA multiple' },
+                { val: ind.price, label: 'Typical price range' },
+                { val: ind.days, label: 'Average time to sell' },
+              ].map((metric) => (
+                <div key={metric.label} className='min-w-0 py-5 min-[681px]:px-5 min-[681px]:first:pl-0 min-[681px]:last:pr-0'>
+                  <dt className='text-sm leading-[1.5] text-ink'>{metric.label}</dt>
+                  <dd className='m-0 mt-2 font-advisory-heading text-[clamp(22px,2.2vw,30px)] leading-[1.35] font-bold text-midnight'>
+                    {metric.val}
+                  </dd>
                 </div>
-                <p className='mt-2 text-sm leading-relaxed text-muted-foreground'>
-                  {ind.insight}
-                </p>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              ))}
+            </dl>
 
-        {!ind && (
-          <p className='mt-6  border border-dashed border-secondary/20 bg-background/50 p-8 text-center text-sm text-muted-foreground'>
-            Select an industry above to see typical multiples, price ranges, and
-            what buyers look for.
+            <div className='grid items-start gap-7 min-[931px]:grid-cols-[0.9fr_1.1fr] min-[931px]:gap-10'>
+              <div>
+                <h3 className='m-0 mb-4 font-advisory-heading text-[22px] leading-[1.4] font-bold tracking-normal text-midnight'>
+                  What buyers are looking at
+                </h3>
+                <ul className='m-0 list-disc space-y-2 pl-5 text-[15px] leading-[1.75] text-ink marker:text-gilt'>
+                  {ind.drivers.map((driver) => <li key={driver}>{driver}</li>)}
+                </ul>
+              </div>
+
+              <aside className='bg-canvas p-5 min-[681px]:p-6'>
+                <h3 className='m-0 mb-3 font-advisory-heading text-[22px] leading-[1.4] font-bold tracking-normal text-midnight'>
+                  Blackmont market insight
+                </h3>
+                <p className='m-0 text-[15px] leading-[1.8] text-ink'>{ind.insight}</p>
+              </aside>
+            </div>
+
+            <div className='mt-7 border-t border-advisory-rule pt-5'>
+              <PrintButton
+                resource='Industry Benchmark Report'
+                label='Print report'
+                className={landingButtonVariants({ variant: 'outline', size: 'compact' })}
+                fileName={`Blackmont-${ind.name.replace(/[^a-z0-9]+/gi, '-')}-Benchmark.pdf`}
+                buildDocument={(assets) => (
+                  <BenchmarksPdf
+                    assets={assets}
+                    industryName={ind.name}
+                    demand={ind.demand}
+                    multi={ind.multi}
+                    price={ind.price}
+                    days={ind.days}
+                    drivers={ind.drivers}
+                    insight={ind.insight}
+                  />
+                )}
+              />
+            </div>
+          </>
+        ) : (
+          <p className='m-0 text-[15px] leading-[1.75] text-ink'>
+            Select an industry above to see typical multiples, price ranges, and what buyers look for.
           </p>
         )}
+      </div>
 
-        {ind && (
-          <div className='mt-6 flex justify-center'>
-            <PrintButton
-              resource='Industry Benchmark Report'
-              label='Print Report'
-              fileName={`Blackmont-${ind.name.replace(/[^a-z0-9]+/gi, '-')}-Benchmark.pdf`}
-              buildDocument={(assets) => (
-                <BenchmarksPdf
-                  assets={assets}
-                  industryName={ind.name}
-                  demand={ind.demand}
-                  multi={ind.multi}
-                  price={ind.price}
-                  days={ind.days}
-                  drivers={ind.drivers}
-                  insight={ind.insight}
-                />
-              )}
-            />
-          </div>
-        )}
-
+      <div className='mt-6'>
         <ToolCta
+          appearance='advisory'
           resource='Industry Benchmark Report'
           title="What's your business worth?"
           subtitle='Get a free, confidential market appraisal from Blackmont Advisory.'
-          button='Get an Appraisal'
+          button='Get an appraisal'
         />
       </div>
-    </section>
+    </div>
   );
 }

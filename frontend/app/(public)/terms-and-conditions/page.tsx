@@ -1,13 +1,11 @@
-'use client';
-
-import { useEffect, useState } from 'react';
-import { PageBanner } from '@/components/global/page-banner';
+import { LegalPage } from '@/components/global/legal-page';
 
 const TERMS_DATA = {
   title: 'Terms & Conditions',
   sections: [
     {
       id: 'about',
+      navLabel: 'About the website',
       heading: '1. About the Website',
       paragraphs: [
         '(a) Welcome to www.blackmontadvisory.com. The Website provides you with an opportunity to browse various services that have been listed for sale through the Website (Services). The Website provides this service by way of granting you access to the content on the Website (Services).',
@@ -17,6 +15,7 @@ const TERMS_DATA = {
     },
     {
       id: 'acceptance',
+      navLabel: 'Acceptance',
       heading: '2. Acceptance of the Terms',
       paragraphs: [
         'You ("The customer") accept the Terms by remaining on the Website. You may also accept the Terms by clicking to accept or agree to the Terms where this option is made available to you by   Blackmont Advisory in the user interface.',
@@ -24,6 +23,7 @@ const TERMS_DATA = {
     },
     {
       id: 'registration',
+      navLabel: 'Registration',
       heading: '3. Registration to be Contacted',
       paragraphs: [
         '(a) In order to be contacted by Blackmont Advisory, you must first register your contact details. As part of this process, you may be required to provide personal information about yourself (such as identification or contact details), including:',
@@ -34,6 +34,7 @@ const TERMS_DATA = {
     },
     {
       id: 'copyright',
+      navLabel: 'Copyright and ownership',
       heading: '4. Copyright and Intellectual Property',
       paragraphs: [
         '(a) The Website and all of the related Services of   Blackmont Advisory are subject to copyright. The material on the Website is protected by copyright under the laws of Australia and through international treaties. Unless otherwise indicated, all rights (including copyright) in the site content and compilation of the website (including text, graphics, logos, button icons, video images, audio clips and software) (Content) are owned or controlled for these purposes, and are reserved by   Blackmont Advisory or its contributors.',
@@ -45,6 +46,7 @@ const TERMS_DATA = {
     },
     {
       id: 'privacy',
+      navLabel: 'Privacy',
       heading: '5. Privacy',
       paragraphs: [
         "  Blackmont Advisory takes your privacy seriously and any information provided through your use of the Website and/or the Services are subject to   Blackmont Advisory's Privacy Policy, which is available on the Website.",
@@ -52,6 +54,7 @@ const TERMS_DATA = {
     },
     {
       id: 'disclaimer',
+      navLabel: 'General disclaimer',
       heading: '6. General Disclaimer',
       paragraphs: [
         '(a) You acknowledge that   Blackmont Advisory does not make any terms, guarantees, warranties, representations or conditions whatsoever regarding the Services other than provided for pursuant to these Terms.',
@@ -67,6 +70,7 @@ const TERMS_DATA = {
     },
     {
       id: 'liability',
+      navLabel: 'Liability',
       heading: '7. Limitation of Liability',
       paragraphs: [
         "(a)   Blackmont Advisory's total liability arising out of or in connection with the services or these Terms, however arising, including under contract, tort (including negligence), in equity, under statute or otherwise, will not exceed the most recent Purchase Price paid by you under these Terms or where you have not paid the Purchase Price, then the total liability of   Blackmont Advisory is the resupply of information or services to you.",
@@ -76,6 +80,7 @@ const TERMS_DATA = {
     },
     {
       id: 'indemnity',
+      navLabel: 'Indemnity',
       heading: '8. Indemnity',
       paragraphs: [
         '(a) You agree to indemnify   Blackmont Advisory, its affiliates, employees, agents, contributors, third party content providers and licensors from and against:',
@@ -86,6 +91,7 @@ const TERMS_DATA = {
     },
     {
       id: 'dispute-resolution',
+      navLabel: 'Dispute resolution',
       heading: '9. Dispute Resolution',
       paragraphs: [
         '9.1. Compulsory\nIf a dispute arises out of or relates to the Terms, either party may not commence any Tribunal or Court proceedings in relation to the dispute, unless the following clauses have been complied with (except where urgent interlocutory relief is sought).',
@@ -101,6 +107,7 @@ const TERMS_DATA = {
     },
     {
       id: 'jurisdiction',
+      navLabel: 'Jurisdiction',
       heading: '10. Venue and Jurisdiction',
       paragraphs: [
         'The Services offered by   Blackmont Advisory are intended to be used by residents of Australia. In the event of any dispute arising out of or in relation to the Website, you agree that the exclusive venue for resolving any dispute shall be in the courts of Victoria, Australia.',
@@ -108,6 +115,7 @@ const TERMS_DATA = {
     },
     {
       id: 'governing-law',
+      navLabel: 'Governing law',
       heading: '11. Governing Law',
       paragraphs: [
         'The Terms are governed by the laws of Victoria, Australia. Any dispute, controversy, proceeding or claim of whatever nature arising out of or in any way relating to the Terms and the rights created hereby shall be governed, interpreted and construed by, under and pursuant to the laws of Victoria Australia, without reference to conflict of law principles, notwithstanding mandatory rules. The validity of this governing law clause is not contested. The Terms shall be binding to the benefit of the parties hereto and their successors and assigns.',
@@ -115,6 +123,7 @@ const TERMS_DATA = {
     },
     {
       id: 'severance',
+      navLabel: 'Severance',
       heading: '12. Severance',
       paragraphs: [
         'If any part of these Terms is found to be void or unenforceable by a Court of competent jurisdiction, that part shall be severed and the rest of the Terms shall remain in force.',
@@ -124,105 +133,12 @@ const TERMS_DATA = {
 };
 
 export default function TermsPage() {
-  const [activeId, setActiveId] = useState(TERMS_DATA.sections[0].id);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const sectionElements = TERMS_DATA.sections
-        .map((s) => document.getElementById(s.id))
-        .filter((el): el is HTMLElement => el !== null);
-
-      const scrollPosition = window.scrollY + 200;
-
-      let currentActiveId = TERMS_DATA.sections[0].id;
-      for (const el of sectionElements) {
-        if (el.offsetTop <= scrollPosition) {
-          currentActiveId = el.id;
-        }
-      }
-      setActiveId(currentActiveId);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const scrollToSection = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      const offset = 120;
-      const top = el.getBoundingClientRect().top + window.scrollY - offset;
-      window.scrollTo({ top, behavior: 'smooth' });
-    }
-  };
-
   return (
-    <>
-      <PageBanner
-        title={TERMS_DATA.title}
-        description='Please read these terms and conditions carefully.'
-        image='https://images.pexels.com/photos/8730374/pexels-photo-8730374.jpeg'
-      />
-
-      <section className='bg-background py-20 lg:py-28'>
-        <div className='mx-auto max-w-[1500px] px-6 sm:px-10 lg:px-16'>
-          <div className='flex flex-col items-start gap-12 lg:flex-row lg:gap-16'>
-            {/* Sidebar */}
-            <aside className='hidden shrink-0 lg:sticky lg:top-28 lg:block lg:w-[300px]'>
-              <nav className='flex flex-col border-l border-secondary/10'>
-                {TERMS_DATA.sections.map((section) => (
-                  <button
-                    key={section.id}
-                    onClick={() => scrollToSection(section.id)}
-                    className={`-ml-px border-l-2 px-5 py-2.5 text-left text-sm font-medium transition-colors ${
-                      activeId === section.id
-                        ? 'border-accent bg-accent-pale text-secondary'
-                        : 'border-transparent text-muted-foreground hover:text-secondary'
-                    }`}
-                  >
-                    {section.heading.replace(/^\d+\.\s*/, '')}
-                  </button>
-                ))}
-              </nav>
-            </aside>
-
-            {/* Main Content */}
-            <div className='flex-1 lg:max-w-[850px]'>
-              <div className='flex flex-col gap-12'>
-                {TERMS_DATA.sections.map((section) => (
-                  <section
-                    key={section.id}
-                    id={section.id}
-                    className='scroll-mt-28'
-                  >
-                    <h2 className='mb-5 text-xl font-bold tracking-tight text-secondary md:text-2xl'>
-                      {section.heading.replace(/^\d+\.\s*/, '')}
-                    </h2>
-                    <div className='flex flex-col gap-4 leading-relaxed text-muted-foreground'>
-                      {section.paragraphs.map((p, i) => (
-                        <p
-                          key={i}
-                          className={
-                            p.startsWith('(i)') || p.startsWith('9.') ? 'pl-5' : ''
-                          }
-                        >
-                          {p.split('\n').map((line, j) => (
-                            <span key={j}>
-                              {line}
-                              {j < p.split('\n').length - 1 && <br />}
-                            </span>
-                          ))}
-                        </p>
-                      ))}
-                    </div>
-                  </section>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </>
+    <LegalPage
+      title={TERMS_DATA.title}
+      description='Please read these terms and conditions carefully.'
+      path='/terms-and-conditions'
+      sections={TERMS_DATA.sections}
+    />
   );
 }

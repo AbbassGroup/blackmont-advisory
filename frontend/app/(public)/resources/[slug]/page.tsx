@@ -8,6 +8,7 @@ import {
   type Blog,
 } from '@/lib/blogs';
 import { JsonLd } from '@/components/seo/json-ld';
+import { landingFontVariables } from '@/components/landing/fonts';
 
 const SITE_URL = 'https://blackmontadvisory.com';
 
@@ -24,27 +25,32 @@ type BlogPostPageProps = {
  * links, images and rules — not just what the old static data happened to use.
  */
 const ARTICLE_CLASS = [
+  'font-advisory-body text-base leading-[1.8] text-ink md:text-[17px]',
   '[&>*:first-child]:mt-0',
-  '[&_h2]:mb-4 [&_h2]:mt-10 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:tracking-tight [&_h2]:text-secondary',
-  '[&_h3]:mb-3 [&_h3]:mt-8 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:tracking-tight [&_h3]:text-secondary',
-  '[&_h4]:mb-3 [&_h4]:mt-6 [&_h4]:text-lg [&_h4]:font-semibold [&_h4]:text-secondary',
-  '[&_p]:mb-6 [&_p]:leading-relaxed [&_p]:text-muted-foreground',
-  '[&_strong]:font-semibold [&_strong]:text-secondary',
+  '[&_:is(h1,h2,h3,h4,h5,h6)]:font-advisory-heading [&_:is(h1,h2,h3,h4,h5,h6)]:font-bold [&_:is(h1,h2,h3,h4,h5,h6)]:tracking-normal [&_:is(h1,h2,h3,h4,h5,h6)]:text-midnight',
+  '[&_h1]:mb-4 [&_h1]:mt-10 [&_h1]:text-[28px] [&_h1]:leading-[1.35] md:[&_h1]:text-[32px]',
+  '[&_h2]:mb-4 [&_h2]:mt-10 [&_h2]:text-[25px] [&_h2]:leading-[1.4] md:[&_h2]:text-[28px]',
+  '[&_h3]:mb-3 [&_h3]:mt-8 [&_h3]:text-[21px] [&_h3]:leading-[1.4] md:[&_h3]:text-[23px]',
+  '[&_h4]:mb-3 [&_h4]:mt-6 [&_h4]:text-[19px] [&_h4]:leading-[1.45] md:[&_h4]:text-xl',
+  '[&_h5]:mb-3 [&_h5]:mt-6 [&_h5]:text-lg [&_h5]:leading-[1.5]',
+  '[&_h6]:mb-3 [&_h6]:mt-6 [&_h6]:text-base [&_h6]:leading-[1.5]',
+  '[&_p]:mb-6 [&_p]:leading-[1.8] [&_p]:text-ink',
+  '[&_strong]:font-bold [&_strong]:text-midnight',
   // `list-outside`, not `list-inside`: the editor stores list items as
   // <li><p>…</p></li>, and an inside marker sits inline with the first *inline*
   // content — so a block-level <p> pushes the bullet onto its own line. An
   // outside marker sits in the gutter and works for both that shape and the
   // bare <li>text</li> the imported articles use.
-  '[&_ul]:mb-6 [&_ul]:list-outside [&_ul]:list-disc [&_ul]:space-y-2 [&_ul]:pl-6 [&_ul]:text-muted-foreground [&_ul]:marker:text-accent',
-  '[&_ol]:mb-6 [&_ol]:list-outside [&_ol]:list-decimal [&_ol]:space-y-2 [&_ol]:pl-6 [&_ol]:text-muted-foreground [&_ol]:marker:text-accent',
-  '[&_li]:leading-relaxed',
+  '[&_ul]:mb-6 [&_ul]:list-outside [&_ul]:list-disc [&_ul]:space-y-2 [&_ul]:pl-6 [&_ul]:text-ink [&_ul]:marker:text-gilt',
+  '[&_ol]:mb-6 [&_ol]:list-outside [&_ol]:list-decimal [&_ol]:space-y-2 [&_ol]:pl-6 [&_ol]:text-ink [&_ol]:marker:text-midnight',
+  '[&_li]:leading-[1.8]',
   // Paragraphs inside a list item must not carry the body paragraph's margin,
   // or every bullet gains a gap the authored content never asked for.
   '[&_li_p]:mb-0',
   // `[&_a:hover]` targets the link's own hover. `hover:[&_a]` would instead fire
   // when the article body is hovered, restyling every link at once.
-  '[&_a]:text-accent [&_a]:underline [&_a]:transition-opacity [&_a:hover]:opacity-80',
-  '[&_blockquote]:my-6 [&_blockquote]:border-l-2 [&_blockquote]:border-accent [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-muted-foreground',
+  '[&_a]:text-midnight [&_a]:underline [&_a]:decoration-gilt [&_a]:underline-offset-4 [&_a]:transition-colors [&_a:hover]:text-gilt [&_a:focus-visible]:outline-2 [&_a:focus-visible]:outline-offset-3 [&_a:focus-visible]:outline-gilt motion-reduce:[&_a]:transition-none',
+  '[&_blockquote]:my-6 [&_blockquote]:border-l-2 [&_blockquote]:border-accent [&_blockquote]:pl-4 [&_blockquote]:font-advisory-heading [&_blockquote]:text-lg [&_blockquote]:leading-[1.75] [&_blockquote]:italic [&_blockquote]:text-ink',
   '[&_img]:my-8 [&_img]:h-auto [&_img]:w-full',
   '[&_hr]:my-10 [&_hr]:border-secondary/10',
 ].join(' ');
@@ -142,7 +148,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   ];
 
   return (
-    <main className='min-h-screen bg-muted pb-24'>
+    <div className={`${landingFontVariables} min-h-screen bg-white pb-24 font-advisory-body text-ink`}>
       <JsonLd data={structuredData} />
 
       {/* ── Article Header ───────────────────────────── */}
@@ -163,12 +169,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <div className='relative z-10 mx-auto w-full max-w-[1500px] px-6 pt-24 sm:px-10 lg:px-16'>
           <Link
             href='/resources'
-            className='group mb-6 inline-flex items-center text-sm font-semibold uppercase tracking-[0.1em] text-parchment/70 transition-colors hover:text-accent'
+            className='group mb-6 inline-flex items-center text-[15px] font-semibold tracking-normal text-parchment transition-colors hover:text-accent'
           >
             <ArrowLeft className='mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1' />
             Back to Resources
           </Link>
-          <h1 className='max-w-4xl text-3xl font-bold leading-tight tracking-tight text-parchment md:text-5xl lg:text-6xl'>
+          <h1 className='max-w-4xl font-advisory-heading text-[32px] leading-[1.25] font-bold tracking-normal text-parchment md:text-[42px] lg:text-[50px]'>
             {blog.title}
           </h1>
         </div>
@@ -179,10 +185,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <div className='flex flex-col gap-8 lg:flex-row lg:gap-12'>
           {/* ── Article Body ───────────────────────────── */}
           <div className='flex-1 lg:w-2/3'>
-            <article className='border border-secondary/10 bg-background p-6 md:p-10 lg:p-12'>
+            <article className='border border-secondary/10 bg-white p-6 md:p-10 lg:p-12'>
               {/* Summary / Lead */}
               {blog.metaDescription && (
-                <div className='mb-10 border-b border-secondary/10 pb-10 text-lg font-light leading-relaxed text-muted-foreground md:text-xl'>
+                <div className='mb-10 border-b border-secondary/10 pb-10 text-lg leading-[1.8] font-normal text-ink md:text-[19px]'>
                   {blog.metaDescription}
                 </div>
               )}
@@ -200,12 +206,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <aside className='mt-8 w-full lg:mt-0 lg:w-1/3 lg:pt-12'>
               <div className='sticky top-24'>
                 <div className='mb-6 flex items-center justify-between'>
-                  <h2 className='text-xl font-bold tracking-tight text-secondary'>
+                  <h2 className='font-advisory-heading text-[23px] leading-[1.4] font-bold tracking-normal text-midnight'>
                     Recent Articles
                   </h2>
                   <Link
                     href='/resources'
-                    className='text-xs font-bold uppercase tracking-[0.12em] text-accent hover:underline'
+                    className='text-sm font-bold tracking-normal text-midnight hover:text-gilt hover:underline'
                   >
                     View all
                   </Link>
@@ -216,9 +222,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                     <Link
                       key={item._id}
                       href={`/resources/${item.url}`}
-                      className='group flex overflow-hidden border border-secondary/10 bg-background transition-colors hover:border-accent/40'
+                      className='group flex overflow-hidden border border-secondary/10 bg-white transition-colors hover:border-accent/40'
                     >
-                      <div className='relative w-32 shrink-0 bg-muted'>
+                      <div className='relative w-32 shrink-0 bg-white'>
                         {item.image && (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img
@@ -229,7 +235,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                         )}
                       </div>
                       <div className='flex flex-1 flex-col justify-center p-4'>
-                        <h3 className='line-clamp-3 pr-2 text-sm font-bold tracking-tight text-secondary transition-colors group-hover:text-accent'>
+                        <h3 className='line-clamp-3 pr-2 font-advisory-heading text-base leading-[1.5] font-bold tracking-normal text-midnight transition-colors group-hover:text-accent'>
                           {item.title}
                         </h3>
                       </div>
@@ -241,6 +247,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           )}
         </div>
       </div>
-    </main>
+    </div>
   );
 }

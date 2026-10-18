@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import Link from 'next/link';
 import { Check, Loader2, Mail } from 'lucide-react';
 import axios from 'axios';
@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
@@ -16,6 +17,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { trackAccessEvent } from '@/lib/track';
 import type { PdfAssets } from './pdf/shared';
+import { LandingButton } from '@/components/landing/presentation';
+import { landingFontVariables } from '@/components/landing/fonts';
+import { cn } from '@/lib/utils';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
@@ -99,6 +103,8 @@ export function PrintButton({
   label = 'Print Report',
   className,
 }: PrintButtonProps) {
+  const emailId = useId();
+  const emailErrorId = `${emailId}-error`;
   const [busy, setBusy] = useState(false);
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState('');
@@ -181,37 +187,38 @@ export function PrintButton({
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className='gap-0 overflow-hidden p-0 sm:max-w-md'>
+        <DialogContent className={cn(landingFontVariables, 'max-h-[calc(100dvh-2rem)] max-w-[calc(100%-2rem)] gap-0 overflow-y-auto rounded-none border border-advisory-rule bg-white p-0 font-advisory-body text-ink ring-0 sm:max-w-[480px] [&>[data-slot=dialog-close]]:rounded-none [&>[data-slot=dialog-close]]:text-midnight')}>
           <div className='px-6 pt-7 pb-2 sm:px-7'>
             <DialogHeader className='text-left'>
-              <DialogTitle className='text-lg leading-snug font-semibold text-secondary sm:text-xl'>
+              <DialogTitle className='pr-8 font-advisory-heading text-[23px] leading-[1.35] font-bold tracking-normal text-midnight sm:text-[25px]'>
                 {sent ? 'Report sent' : 'Email your report'}
               </DialogTitle>
             </DialogHeader>
             {!sent && (
-              <p className='mt-2 text-sm leading-relaxed text-muted-foreground'>
+              <DialogDescription className='mt-3 text-[15px] leading-[1.75] text-ink'>
                 We will email the report to the address below.
-              </p>
+              </DialogDescription>
             )}
           </div>
 
           {sent ? (
             <div className='px-6 pt-4 pb-7 sm:px-7'>
-              <p className='flex items-start gap-2.5 text-sm leading-relaxed text-secondary'>
-                <Check className='mt-0.5 h-4 w-4 shrink-0 text-accent' aria-hidden />
-                <span>
+              <DialogDescription className='flex items-start gap-2.5 text-[15px] leading-[1.75] text-ink'>
+                <Check className='mt-1 h-4 w-4 shrink-0 text-midnight' aria-hidden />
+                <span className='min-w-0 break-words'>
                   Sent to <strong className='font-semibold'>{email.trim()}</strong>.
                   It should arrive within a minute. Check your spam folder if it
                   does not.
                 </span>
-              </p>
-              <Button
+              </DialogDescription>
+              <LandingButton
                 type='button'
+                size='compact'
                 onClick={() => setOpen(false)}
-                className='mt-6 h-12 w-full rounded-lg bg-primary text-base font-semibold'
+                className='mt-6 w-full'
               >
                 Done
-              </Button>
+              </LandingButton>
             </div>
           ) : (
           <form
@@ -224,13 +231,13 @@ export function PrintButton({
           >
             <div className='space-y-1.5'>
               <Label
-                htmlFor='pdf-email'
-                className='text-[13px] font-medium text-secondary'
+                htmlFor={emailId}
+                className='text-sm font-medium text-midnight'
               >
-                Email <span className='text-red-500'>*</span>
+                Email <span className='text-red-700'>*</span>
               </Label>
               <Input
-                id='pdf-email'
+                id={emailId}
                 type='email'
                 autoComplete='email'
                 inputMode='email'
@@ -241,17 +248,21 @@ export function PrintButton({
                 }}
                 placeholder='you@business.com.au'
                 disabled={busy}
-                className={`h-11 rounded-lg ${error ? 'border-red-500' : ''}`}
+                required
+                aria-invalid={!!error}
+                aria-describedby={error ? emailErrorId : undefined}
+                className={cn('h-12 rounded-none border-advisory-input bg-white px-3 text-base text-midnight shadow-none transition-colors placeholder:text-ink/70 focus-visible:border-midnight focus-visible:ring-0 aria-invalid:border-red-700 aria-invalid:ring-0 motion-reduce:transition-none md:text-base', error && 'border-red-700 focus-visible:border-red-700')}
               />
               {error && (
-                <p className='text-xs font-medium text-red-500'>{error}</p>
+                <p id={emailErrorId} role='alert' className='text-sm font-medium text-red-700'>{error}</p>
               )}
             </div>
 
-            <Button
+            <LandingButton
               type='submit'
+              size='compact'
               disabled={busy}
-              className='h-12 w-full rounded-lg bg-primary text-base font-semibold'
+              className='w-full'
             >
               {busy ? (
                 <>
@@ -261,14 +272,14 @@ export function PrintButton({
               ) : (
                 'Send report'
               )}
-            </Button>
+            </LandingButton>
 
-            <p className='text-center text-[11px] leading-relaxed text-muted-foreground'>
+            <p className='text-center text-xs leading-[1.75] text-ink'>
               By submitting, you agree to our{' '}
               <Link
                 href='/privacy'
                 target='_blank'
-                className='text-blue-600 underline-offset-2 hover:underline'
+                className='text-gilt underline underline-offset-3 transition-colors hover:text-midnight focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gilt motion-reduce:transition-none'
               >
                 Privacy Policy
               </Link>{' '}
@@ -276,7 +287,7 @@ export function PrintButton({
               <Link
                 href='/terms-and-conditions'
                 target='_blank'
-                className='text-blue-600 underline-offset-2 hover:underline'
+                className='text-gilt underline underline-offset-3 transition-colors hover:text-midnight focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gilt motion-reduce:transition-none'
               >
                 Terms &amp; Conditions
               </Link>

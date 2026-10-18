@@ -71,9 +71,13 @@ export function LandingSectionIntro({
 }
 
 export const landingButtonVariants = cva(
-  'inline-flex min-h-[51px] cursor-pointer items-center justify-center gap-2 rounded-none border px-[23px] py-[13px] font-advisory-body text-center text-sm leading-[1.45] font-bold tracking-normal no-underline transition-colors duration-200 ease-out focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none disabled:cursor-not-allowed disabled:opacity-50',
+  'inline-flex cursor-pointer items-center justify-center gap-2 rounded-none border font-advisory-body text-center text-sm leading-[1.45] font-bold tracking-normal no-underline transition-colors duration-200 ease-out focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none disabled:cursor-not-allowed disabled:opacity-50',
   {
     variants: {
+      size: {
+        default: 'min-h-[51px] px-[23px] py-[13px]',
+        compact: 'h-auto min-h-10 px-5 py-2',
+      },
       variant: {
         midnight: 'border-midnight bg-midnight text-white hover:bg-deep-navy',
         gilt: 'border-gilt bg-gilt text-midnight hover:bg-white',
@@ -83,6 +87,7 @@ export const landingButtonVariants = cva(
     },
     defaultVariants: {
       variant: 'midnight',
+      size: 'default',
     },
   },
 );
@@ -93,13 +98,14 @@ type LandingButtonProps = ComponentProps<'button'> &
 export function LandingButton({
   className,
   variant,
+  size,
   type = 'button',
   ...props
 }: LandingButtonProps) {
   return (
     <button
       type={type}
-      className={cn(landingButtonVariants({ variant }), className)}
+      className={cn(landingButtonVariants({ variant, size }), className)}
       {...props}
     />
   );
@@ -111,11 +117,12 @@ type LandingButtonLinkProps = ComponentProps<typeof LandingLink> &
 export function LandingButtonLink({
   className,
   variant,
+  size,
   ...props
 }: LandingButtonLinkProps) {
   return (
     <LandingLink
-      className={cn(landingButtonVariants({ variant }), className)}
+      className={cn(landingButtonVariants({ variant, size }), className)}
       {...props}
     />
   );

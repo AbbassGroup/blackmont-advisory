@@ -1,16 +1,16 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useMemo, useState } from 'react';
 import { Check } from 'lucide-react';
 import { ToolCta } from '../../_components/tool-cta';
 import { PrintButton } from '../../_components/print-button';
 import { ExitPlanningPdf } from '../../_components/pdf/exit-planning-pdf';
-
+import { landingButtonVariants } from '@/components/landing/presentation';
 import { EXIT_PHASES as phases } from '@/lib/data/exit-phases';
 
-
 const totalTasks = phases.reduce((n, p) => n + p.tasks.length, 0);
+const progressKey = 'bm_exit_planning_progress';
+const taskKeys = new Set(phases.flatMap((phase, pi) => phase.tasks.map((_, ti) => `${pi}-${ti}`)));
 
 function progressCopy(pct: number) {
   if (pct === 0)
@@ -43,9 +43,33 @@ function progressCopy(pct: number) {
     s: "Your business is ready to go to market. Let's talk about next steps.",
   };
 }
-
+ 
 export function ExitGuide() {
   const [done, setDone] = useState<Record<string, boolean>>({});
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    try {
+      const stored: unknown = JSON.parse(window.localStorage.getItem(progressKey) ?? '{}');
+      if (stored && typeof stored === 'object' && !Array.isArray(stored)) {
+        setDone(Object.fromEntries(
+          Object.entries(stored).filter(([key, value]) => taskKeys.has(key) && value === true),
+        ));
+      }
+    } catch {
+      // The checklist remains usable when storage is unavailable or invalid.
+    }
+    setLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (!loaded) return;
+    try {
+      window.localStorage.setItem(progressKey, JSON.stringify(done));
+    } catch {
+      // Keep the current session usable when the browser blocks storage.
+    }
+  }, [done, loaded]);
 
   const toggle = (key: string) => {
     setDone((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -59,99 +83,19 @@ export function ExitGuide() {
   const copy = progressCopy(pct);
 
   return (
-    <section className='py-12 lg:py-16'>
-      <div className='mx-auto max-w-3xl px-5 lg:px-8'>
-        {/* Overall progress */}
-        <div className='flex items-center gap-6 border-[1.5px] border-secondary bg-secondary px-6 py-6 lg:px-8'>
-          <div className='relative flex h-[68px] w-[68px] shrink-0 flex-col items-center justify-center rounded-full border-2 border-accent/40 bg-white/5'>
-            <span className='text-xl font-extrabold leading-none text-accent'>
-              {pct}%
-            </span>
-            <span className='text-[10px] text-parchment/40'>complete</span>
+    <div className='min-w-0'>
+      <section aria-labelledby='exit-guide-progress-title' className='border border-advisory-rule bg-white p-6 min-[681px]:p-8'>
+        <div className='flex flex-wrap items-start justify-between gap-5'>
+          <div className='min-w-0 flex-1 basis-[280px]'>
+            <h2 id='exit-guide-progress-title' className='m-0 font-advisory-heading text-[25px] leading-[1.35] font-bold tracking-normal text-midnight'>
+              {copy.h}
+            </h2>
+            <p className='m-0 mt-2 max-w-[520px] text-[15px] leading-[1.75] text-ink'>{copy.s}</p>
           </div>
-          <div>
-            <h2 className='text-lg font-bold text-parchment'>{copy.h}</h2>
-            <p className='mt-1 text-sm text-parchment/55'>{copy.s}</p>
-          </div>
-        </div>
-
-        {/* Phases */}
-        <div className='mt-8 space-y-7'>
-          {phases.map((phase, pi) => {
-            const phaseDone = phase.tasks.filter(
-              (_, ti) => done[`${pi}-${ti}`],
-            ).length;
-            const complete = phaseDone === phase.tasks.length;
-            return (
-              <motion.div
-                key={phase.title}
-                initial={{ opacity: 0, y: 14 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-60px' }}
-                transition={{ duration: 0.4 }}
-              >
-                <div className='flex items-center gap-4'>
-                  <div
-                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-extrabold transition-colors ${
-                      complete ? 'bg-green-600 text-white' : 'bg-accent text-primary'
-                    }`}
-                  >
-                    {complete ? <Check className='h-5 w-5' /> : pi + 1}
-                  </div>
-                  <div className='flex-1'>
-                    <h3 className='text-[17px] font-semibold text-secondary'>
-                      {phase.title}
-                    </h3>
-                    <p className='text-xs text-muted-foreground'>{phase.label}</p>
-                  </div>
-                  <span className='whitespace-nowrap text-xs font-semibold text-accent'>
-                    {phaseDone} / {phase.tasks.length} done
-                  </span>
-                </div>
-
-                <div className='ml-5 mt-3 space-y-2 border-l border-secondary/15 pl-7'>
-                  {phase.tasks.map((task, ti) => {
-                    const key = `${pi}-${ti}`;
-                    const checked = !!done[key];
-                    return (
-                      <button
-                        key={ti}
-                        onClick={() => toggle(key)}
-                        className={`flex w-full items-start gap-3 rounded-lg border px-4 py-3 text-left transition-colors ${
-                          checked
-                            ? 'border-green-200 bg-green-50'
-                            : 'border-secondary/15 bg-background hover:border-accent'
-                        }`}
-                      >
-                        <span
-                          className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-colors ${
-                            checked
-                              ? 'border-green-600 bg-green-600 text-white'
-                              : 'border-secondary/20'
-                          }`}
-                        >
-                          {checked && <Check className='h-3 w-3' />}
-                        </span>
-                        <span
-                          className={`text-sm leading-snug ${
-                            checked ? 'text-muted-foreground' : 'text-secondary'
-                          }`}
-                        >
-                          {task}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
-
-        <div className='mt-8 flex justify-center'>
           <PrintButton
             resource='Exit Planning Guide'
-            label='Print Exit Guide'
+            label='Print exit guide'
+            className={landingButtonVariants({ variant: 'outline', size: 'compact', className: 'shrink-0' })}
             fileName='Blackmont-Exit-Planning-Guide.pdf'
             buildDocument={(assets) => (
               <ExitPlanningPdf
@@ -170,14 +114,81 @@ export function ExitGuide() {
             )}
           />
         </div>
+        <div className='mt-6 flex flex-wrap items-center justify-between gap-2 text-sm text-midnight' aria-live='polite' aria-atomic='true'>
+          <span>{doneCount} of {totalTasks} tasks complete</span>
+          <span className='font-semibold'>{pct}%</span>
+        </div>
+        <div
+          role='progressbar'
+          aria-label='Exit planning progress'
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={pct}
+          className='mt-3 h-1 overflow-hidden bg-advisory-rule'
+        >
+          <div className='h-full origin-left bg-gilt transition-transform duration-300 ease-out motion-reduce:transition-none' style={{ transform: `scaleX(${pct / 100})` }} />
+        </div>
+      </section>
 
+      <div className='mt-8 border border-advisory-rule bg-white px-5 min-[681px]:px-8'>
+        {phases.map((phase, pi) => {
+          const phaseDone = phase.tasks.filter((_, ti) => done[`${pi}-${ti}`]).length;
+          const complete = phaseDone === phase.tasks.length;
+          return (
+            <section
+              key={phase.title}
+              aria-labelledby={`exit-phase-${pi}`}
+              className='border-b border-advisory-rule py-6 last:border-b-0 min-[681px]:py-8'
+            >
+              <div className='flex flex-wrap items-start justify-between gap-x-5 gap-y-3'>
+                <div className='min-w-0 flex-1 basis-[260px]'>
+                  <h2 id={`exit-phase-${pi}`} className='m-0 font-advisory-heading text-[23px] leading-[1.4] font-bold tracking-normal text-midnight min-[681px]:text-[25px]'>
+                    {phase.title}
+                  </h2>
+                  <p className='m-0 mt-2 text-sm leading-[1.5] text-ink'>{phase.label}</p>
+                </div>
+                <span className='flex shrink-0 items-center gap-2 text-sm leading-[1.5] text-midnight min-[681px]:pt-2'>
+                  {complete && <Check aria-hidden className='size-4' />}
+                  {phaseDone} / {phase.tasks.length} done
+                </span>
+              </div>
+
+              <ul className='m-0 mt-5 list-none divide-y divide-advisory-rule/60 p-0'>
+                {phase.tasks.map((task, ti) => {
+                  const key = `${pi}-${ti}`;
+                  const checked = !!done[key];
+                  return (
+                    <li key={key}>
+                      <label className='flex cursor-pointer items-start gap-3 px-1 py-3 transition-colors duration-200 hover:bg-canvas motion-reduce:transition-none min-[681px]:gap-4'>
+                        <input
+                          type='checkbox'
+                          checked={checked}
+                          disabled={!loaded}
+                          onChange={() => toggle(key)}
+                          className='mt-1 size-[18px] shrink-0 cursor-pointer accent-midnight focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-gilt disabled:cursor-wait'
+                        />
+                        <span className={`text-[15px] leading-[1.75] ${checked ? 'text-ink/75' : 'text-midnight'}`}>
+                          {task}
+                        </span>
+                      </label>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          );
+        })}
+      </div>
+
+      <div className='mt-8'>
         <ToolCta
+          appearance='advisory'
           resource='Exit Planning Guide'
           title='Not sure where to start?'
           subtitle='Our brokers will build a personalised exit roadmap for your business.'
-          button='Book Strategy Call'
+          button='Book a strategy call'
         />
       </div>
-    </section>
+    </div>
   );
 }

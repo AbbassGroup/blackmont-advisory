@@ -1,10 +1,10 @@
 'use client';
 
 import { Suspense, useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
 import { trackAccessEvent } from '@/lib/track';
-import { ArrowLeft, ArrowRight, Calculator } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { LandingButton, landingButtonVariants } from '@/components/landing/presentation';
+import { landingFontVariables } from '@/components/landing/fonts';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -23,6 +23,10 @@ import { PrintButton } from '../../_components/print-button';
 import { ValuationPdf } from '../../_components/pdf/valuation-pdf';
 
 const MANAGEMENT_TYPES = ['Fully Managed', 'Semi-Managed', 'Owner Operated'];
+
+const FIELD_CLASS =
+  'h-12 w-full rounded-none border-advisory-input bg-white px-3 text-base text-ink shadow-none transition-colors duration-150 focus:border-midnight focus-visible:border-midnight focus-visible:ring-0 data-[size=default]:h-12 md:text-base motion-reduce:transition-none';
+const SELECT_PANEL_CLASS = `${landingFontVariables} max-h-80 rounded-none border border-advisory-rule bg-white font-advisory-body text-ink ring-0`;
 
 const valuationQuestions = [
   { id: 'industry', question: 'What industry are you in?' },
@@ -118,10 +122,10 @@ function ValuationFieldInput({
   if (field === 'industry') {
     return (
       <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className='h-11 w-full  border-secondary/15 bg-background px-3 shadow-none'>
+        <SelectTrigger aria-labelledby='valuation-question' className={FIELD_CLASS}>
           <SelectValue placeholder='Select industry' />
         </SelectTrigger>
-        <SelectContent position='popper' className='max-h-80'>
+        <SelectContent position='popper' className={SELECT_PANEL_CLASS}>
           {industries.map((industry) => (
             <SelectGroup key={industry.id}>
               <SelectLabel>{industry.industry_name}</SelectLabel>
@@ -140,10 +144,10 @@ function ValuationFieldInput({
   if (field === 'location') {
     return (
       <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className='h-11 w-full  border-secondary/15 bg-background px-3 shadow-none'>
+        <SelectTrigger aria-labelledby='valuation-question' className={FIELD_CLASS}>
           <SelectValue placeholder='Select location' />
         </SelectTrigger>
-        <SelectContent position='popper'>
+        <SelectContent position='popper' className={SELECT_PANEL_CLASS}>
           {locations.map((location) => (
             <SelectItem key={location.id} value={location.location}>
               {location.location}
@@ -157,10 +161,10 @@ function ValuationFieldInput({
   if (field === 'management') {
     return (
       <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className='h-11 w-full  border-secondary/15 bg-background px-3 shadow-none'>
+        <SelectTrigger aria-labelledby='valuation-question' className={FIELD_CLASS}>
           <SelectValue placeholder='Choose one' />
         </SelectTrigger>
-        <SelectContent position='popper'>
+        <SelectContent position='popper' className={SELECT_PANEL_CLASS}>
           {MANAGEMENT_TYPES.map((type) => (
             <SelectItem key={type} value={type}>
               {type}
@@ -175,10 +179,11 @@ function ValuationFieldInput({
     <Input
       type='text'
       inputMode='numeric'
+      aria-labelledby='valuation-question'
       value={value}
       onChange={(e) => onChange(e.target.value.replace(/\D/g, ''))}
       placeholder='e.g. 850000'
-      className='h-11  border-secondary/15 bg-background text-base shadow-none placeholder:italic'
+      className={FIELD_CLASS}
     />
   );
 }
@@ -229,46 +234,42 @@ export function ValuationTool() {
 
   return (
     <Suspense>
-      <section className='py-12 lg:py-16'>
-        <div className='mx-auto max-w-2xl px-5 lg:px-8'>
+        <div className='min-w-0'>
           {result ? (
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35 }}
-              className=' border border-secondary/15 bg-background p-7 text-center sm:p-9'
+            <div
+              role='region'
+              aria-labelledby='valuation-result-title'
+              className='border border-advisory-rule bg-white p-6 min-[681px]:p-8'
             >
-              <div className='mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-accent/10'>
-                <Calculator className='h-8 w-8 text-accent' />
-              </div>
-              <h2 className='mt-5 text-2xl font-semibold text-secondary'>
-                Your Estimated Business Value
+              <h2 id='valuation-result-title' className='m-0 mb-5 font-advisory-heading text-[26px] leading-[1.35] font-bold tracking-normal text-midnight min-[681px]:text-[30px]'>
+                Your estimated business value
               </h2>
-              <div className='mt-4 text-3xl font-extrabold tracking-tight text-accent sm:text-4xl'>
-                {formatMoney(result.min)} - {formatMoney(result.max)}
+              <div className='flex flex-wrap items-baseline gap-x-3 gap-y-1 font-advisory-heading text-[clamp(24px,5vw,36px)] leading-[1.4] font-bold tracking-normal text-midnight'>
+                <span>{formatMoney(result.min)}</span>
+                <span>–</span>
+                <span>{formatMoney(result.max)}</span>
               </div>
-              <p className='mx-auto mt-4 max-w-md text-sm leading-relaxed text-muted-foreground'>
+              <p className='m-0 mt-4 max-w-[540px] text-[15px] leading-[1.75] text-ink'>
                 This is an indicative range based on your revenue, profit,
                 industry, and management structure.
               </p>
 
-              <div className='mt-7 flex flex-col gap-3 sm:flex-row sm:justify-center'>
-                <GetStarted resourceTitle='Valuation Tool'>
-                  <Button className='rounded-full px-6 py-4'>
-                    Schedule a Confidential Call
-                  </Button>
+              <div className='mt-7 flex flex-wrap items-start gap-3 border-t border-advisory-rule pt-6'>
+                <GetStarted resourceTitle='Valuation Tool' className={landingButtonVariants({ size: 'compact' })}>
+                  Schedule a confidential call
                 </GetStarted>
-                <Button
+                <LandingButton
                   type='button'
                   variant='outline'
                   onClick={startOver}
-                  className='rounded-full px-6 py-4'
+                  size='compact'
                 >
-                  Start Over
-                </Button>
+                  Start over
+                </LandingButton>
                 <PrintButton
                   resource='Valuation Tool'
-                  label='Print Appraisal'
+                  label='Print appraisal'
+                  className={landingButtonVariants({ variant: 'outline', size: 'compact' })}
                   fileName='Blackmont-Business-Valuation.pdf'
                   buildDocument={(assets) => (
                     <ValuationPdf
@@ -289,71 +290,76 @@ export function ValuationTool() {
                   )}
                 />
               </div>
-            </motion.div>
+            </div>
           ) : (
-            <div className=' border border-secondary/15 bg-background p-7 sm:p-9'>
+            <form
+              aria-labelledby='valuation-question'
+              onSubmit={(event) => { event.preventDefault(); next(); }}
+              className='border border-advisory-rule bg-white p-6 min-[681px]:p-8'
+            >
               <div className='mb-7'>
-                <div className='mb-2 flex items-center justify-between text-xs font-semibold uppercase tracking-[0.12em]'>
-                  <span className='text-accent'>
+                <div className='mb-3 flex items-center justify-between gap-3 text-sm leading-[1.5]'>
+                  <span role='status' className='font-semibold text-midnight'>
                     Question {step + 1} of {valuationQuestions.length}
                   </span>
-                  <span className='text-muted-foreground'>{progress}%</span>
+                  <span className='text-ink'>{progress}%</span>
                 </div>
-                <div className='h-1.5 overflow-hidden rounded-full bg-secondary/10'>
-                  <motion.div
-                    className='h-full rounded-full bg-accent'
-                    animate={{ width: `${progress}%` }}
-                    transition={{ duration: 0.4, ease: 'easeOut' }}
+                <div
+                  role='progressbar'
+                  aria-label='Valuation questionnaire progress'
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-valuenow={progress}
+                  className='h-1 overflow-hidden bg-advisory-rule'
+                >
+                  <div
+                    className='h-full w-full origin-left bg-gilt transition-transform duration-200 ease-out motion-reduce:transition-none'
+                    style={{ transform: `scaleX(${progress / 100})` }}
                   />
                 </div>
               </div>
 
-              <motion.div
+              <div
                 key={current.id}
-                initial={{ opacity: 0, x: 12 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.25 }}
               >
-                <h2 className='text-xl font-semibold leading-snug text-secondary'>
+                <h2 id='valuation-question' className='m-0 font-advisory-heading text-[24px] leading-[1.4] font-bold tracking-normal text-midnight min-[681px]:text-[28px]'>
                   {current.question}
                 </h2>
-                <div className='mt-6'>
+                <div className='mt-5'>
                   <ValuationFieldInput
                     field={current.id}
                     value={data[current.id]}
                     onChange={(value) => update(current.id, value)}
                   />
                 </div>
-              </motion.div>
+              </div>
 
-              <div className='mt-7 flex gap-3'>
+              <div className='mt-6 flex flex-wrap items-center gap-3 border-t border-advisory-rule pt-6'>
                 {step > 0 && (
-                  <Button
+                  <LandingButton
                     type='button'
                     variant='outline'
                     onClick={() => setStep((prev) => Math.max(0, prev - 1))}
-                    className='px-6 rounded-full py-4'
+                    size='compact'
                   >
-                    <ArrowLeft className='h-4 w-4' />
+                    <ArrowLeft aria-hidden='true' className='size-4' />
                     Back
-                  </Button>
+                  </LandingButton>
                 )}
-                <Button
-                  type='button'
-                  onClick={next}
+                <LandingButton
+                  type='submit'
                   disabled={!canContinue}
-                  className='bg-accent px-6 rounded-full py-4'
+                  size='compact'
                 >
                   {step === valuationQuestions.length - 1
-                    ? 'Get Your Appraisal'
+                    ? 'Get your appraisal'
                     : 'Next'}
-                  <ArrowRight className='h-4 w-4' />
-                </Button>
+                  <ArrowRight aria-hidden='true' className='size-4' />
+                </LandingButton>
               </div>
-            </div>
+            </form>
           )}
         </div>
-      </section>
     </Suspense>
   );
 }

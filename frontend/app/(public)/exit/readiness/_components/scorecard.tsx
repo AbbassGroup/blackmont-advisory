@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { trackAccessEvent } from '@/lib/track';
 import {
   ArrowLeft,
@@ -15,7 +14,8 @@ import {
 import { ToolCta } from '../../_components/tool-cta';
 import { PrintButton } from '../../_components/print-button';
 import { ReadinessPdf } from '../../_components/pdf/readiness-pdf';
-import { Button } from '@/components/ui/button';
+import { LandingButton, landingButtonVariants } from '@/components/landing/presentation';
+import { cn } from '@/lib/utils';
 
 import { READINESS_QUESTIONS as questions } from '@/lib/data/readiness';
 
@@ -137,134 +137,122 @@ export function Scorecard() {
   const name = 'there';
 
   return (
-    <section className='py-12 lg:py-16'>
-      <div className='mx-auto max-w-2xl px-4 lg:px-8'>
+      <div className='min-w-0' data-tool-results={view === 'results' ? true : undefined}>
         {/* QUIZ */}
         {view === 'quiz' && (
-          <div>
-            <div className='mb-7 h-1.5 overflow-hidden rounded-full bg-secondary/10'>
-              <motion.div
-                className='h-full rounded-full bg-accent'
-                animate={{ width: `${pct}%` }}
-                transition={{ duration: 0.4, ease: 'easeOut' }}
+          <form
+            aria-labelledby='readiness-question'
+            onSubmit={(event) => { event.preventDefault(); next(); }}
+            className='border border-advisory-rule bg-white p-6 min-[681px]:p-8'
+          >
+            <div className='mb-3 flex items-center justify-between gap-3 text-sm leading-[1.5]'>
+              <span role='status' className='font-semibold text-midnight'>Question {curQ + 1} of {questions.length}</span>
+              <span className='text-ink'>{pct}%</span>
+            </div>
+            <div
+              role='progressbar'
+              aria-label='Readiness questionnaire progress'
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={pct}
+              className='mb-7 h-1 overflow-hidden bg-advisory-rule'
+            >
+              <div
+                className='h-full w-full origin-left bg-gilt transition-transform duration-200 ease-out motion-reduce:transition-none'
+                style={{ transform: `scaleX(${pct / 100})` }}
               />
             </div>
 
-            <div className=' border border-secondary/15 bg-background p-7 lg:p-9'>
-              <div className='text-xs font-semibold uppercase tracking-[0.12em] text-accent'>
-                Question {curQ + 1} of {questions.length}
-              </div>
-              <AnimatePresence mode='wait'>
-                <motion.div
-                  key={curQ}
-                  initial={{ opacity: 0, x: 12 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -12 }}
-                  transition={{ duration: 0.25 }}
-                >
-                  <h2 className='mt-3 text-xl font-semibold leading-snug text-secondary'>
+            <div>
+                <fieldset key={curQ} className='m-0 min-w-0 border-0 p-0'>
+                  <legend id='readiness-question' className='mb-5 w-full font-advisory-heading text-[24px] leading-[1.4] font-bold tracking-normal text-midnight min-[681px]:text-[28px]'>
                     {questions[curQ].text}
-                  </h2>
+                  </legend>
 
-                  <div className='mt-6 flex flex-col gap-2.5'>
+                  <div className='flex flex-col gap-2.5'>
                     {questions[curQ].opts.map((opt, i) => {
                       const active = answers[curQ] === i;
                       return (
-                        <button
+                        <label
                           key={i}
-                          onClick={() => select(i)}
-                          className={`flex items-start gap-3  border px-4 py-3.5 text-left text-sm transition-all ${
+                          className={cn('flex min-h-11 cursor-pointer items-start gap-3 border px-3 py-3 text-left text-[15px] leading-[1.6] transition-colors duration-150 focus-within:border-midnight motion-reduce:transition-none',
                             active
-                              ? 'border-accent bg-accent/5'
-                              : 'border-secondary/15 bg-background hover:border-accent/60'
-                          }`}
+                              ? 'border-midnight bg-canvas'
+                              : 'border-advisory-input bg-white hover:border-midnight',
+                          )}
                         >
-                          <span
-                            className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
-                              active
-                                ? 'border-accent bg-accent'
-                                : 'border-secondary/20'
-                            }`}
-                          >
-                            {active && (
-                              <span className='h-2 w-2 rounded-full bg-background' />
-                            )}
-                          </span>
-                          <span className='leading-snug text-secondary'>
+                          <input
+                            type='radio'
+                            name={`readiness-question-${curQ}`}
+                            value={i}
+                            checked={active}
+                            onChange={() => select(i)}
+                            className='mt-1 size-4 shrink-0 accent-midnight focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gilt'
+                          />
+                          <span className='text-ink'>
                             {opt.label}
                           </span>
-                        </button>
+                        </label>
                       );
                     })}
                   </div>
-                </motion.div>
-              </AnimatePresence>
+                </fieldset>
 
-              <div className='mt-7 flex gap-3'>
+              <div className='mt-6 flex flex-wrap items-center gap-3 border-t border-advisory-rule pt-6'>
                 {curQ > 0 && (
-                  <Button
+                  <LandingButton
+                    type='button'
                     variant='outline'
                     onClick={() => setCurQ((q) => q - 1)}
-                    className='px-6 rounded-full py-4'
+                    size='compact'
                   >
-                    <ArrowLeft className='h-4 w-4' /> Back
-                  </Button>
+                    <ArrowLeft aria-hidden='true' className='size-4' /> Back
+                  </LandingButton>
                 )}
-                <Button
-                  onClick={next}
+                <LandingButton
+                  type='submit'
                   disabled={answers[curQ] === null}
-                  className='bg-accent px-6 rounded-full py-4'
-                  // className='inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-primary transition-colors hover:bg-accent-light disabled:cursor-not-allowed disabled:opacity-50'
+                  size='compact'
                 >
-                  {curQ === questions.length - 1 ? 'See My Score' : 'Next'}
-                  <ArrowRight className='h-4 w-4' />
-                </Button>
+                  {curQ === questions.length - 1 ? 'See my score' : 'Next'}
+                  <ArrowRight aria-hidden='true' className='size-4' />
+                </LandingButton>
               </div>
             </div>
-          </div>
+          </form>
         )}
 
         {/* RESULTS */}
         {view === 'results' && (
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className='space-y-5'
+          <div
+            role='region'
+            aria-labelledby='readiness-result-title'
+            className='space-y-6'
           >
             {/* Hero */}
-            <div className=' border border-secondary/15 bg-background p-8 text-center'>
-              <div
-                className='mx-auto flex h-28 w-28 flex-col items-center justify-center rounded-full border-4'
-                style={{ background: tier.bg, borderColor: `${tier.color}55` }}
-              >
-                <span
-                  className='text-4xl font-extrabold leading-none'
-                  style={{ color: tier.color }}
-                >
-                  {total}
-                </span>
-                <span className='text-xs text-muted-foreground'>out of 100</span>
+            <div className='border border-advisory-rule bg-white p-6 min-[681px]:p-8'>
+              <div className='flex flex-wrap items-start justify-between gap-5'>
+                <div>
+                  <h2 id='readiness-result-title' className='m-0 mb-3 font-advisory-heading text-[28px] leading-[1.3] font-bold tracking-normal text-midnight'>Your readiness score</h2>
+                  <p className='m-0 flex items-center gap-2 text-lg font-semibold' style={{ color: tier.text }}>
+                    <tier.icon aria-hidden='true' className='size-5 shrink-0' />
+                    {tier.grade}
+                  </p>
+                </div>
+                <p className='m-0 flex items-baseline gap-2 text-midnight'>
+                  <span className='font-advisory-heading text-[44px] leading-[1.2] font-bold'>{total}</span>
+                  <span className='text-sm'>out of 100</span>
+                </p>
               </div>
-              <div
-                className='mt-5 flex items-center justify-center gap-2 text-2xl font-bold'
-                style={{ color: tier.text }}
-              >
-                <tier.icon
-                  className='h-6 w-6 shrink-0'
-                  strokeWidth={2}
-                  style={{ color: tier.color }}
-                />
-                {tier.grade}
-              </div>
-              <p className='mx-auto mt-2 max-w-lg text-sm leading-relaxed text-muted-foreground'>
+              <p className='m-0 mt-5 max-w-[900px] text-[15px] leading-[1.8] text-ink'>
                 {tier.blurb(name)}
               </p>
             </div>
 
             {/* Breakdown */}
-            <div className=' border border-secondary/15 bg-background p-7'>
-              <h3 className='text-base font-semibold text-secondary'>
+            <div className='grid items-start gap-6 min-[931px]:grid-cols-2'>
+            <div className='min-w-0 border border-advisory-rule bg-white p-6 min-[681px]:p-8'>
+              <h3 className='m-0 font-advisory-heading text-[23px] leading-[1.4] font-bold text-midnight'>
                 Score breakdown by category
               </h3>
               <div className='mt-5 space-y-3.5'>
@@ -281,21 +269,18 @@ export function Scorecard() {
                         : '#dc2626';
                   return (
                     <div key={i}>
-                      <div className='mb-1.5 flex justify-between text-sm'>
-                        <span className='text-secondary'>
+                      <div className='mb-2 flex justify-between gap-4 text-sm leading-[1.6]'>
+                        <span className='text-ink'>
                           {questions[i].cat}
                         </span>
-                        <span className='font-semibold' style={{ color: col }}>
+                        <span className='shrink-0 font-semibold text-midnight'>
                           {isNa ? 'N/A' : `${pts}/10`}
                         </span>
                       </div>
-                      <div className='h-1.5 overflow-hidden rounded-full bg-secondary/10'>
-                        <motion.div
-                          className='h-full rounded-full'
-                          style={{ background: col }}
-                          initial={{ width: 0 }}
-                          animate={{ width: isNa ? '100%' : `${pts * 10}%` }}
-                          transition={{ duration: 0.9, delay: i * 0.05 }}
+                      <div aria-hidden='true' className='h-1.5 overflow-hidden bg-advisory-rule'>
+                        <div
+                          className='h-full'
+                          style={{ background: col, width: isNa ? '100%' : `${pts * 10}%` }}
                         />
                       </div>
                     </div>
@@ -305,28 +290,30 @@ export function Scorecard() {
             </div>
 
             {/* Recommendations */}
-            <div className=' border border-secondary/15 bg-background p-7'>
-              <h3 className='text-base font-semibold text-secondary'>
+            <div className='min-w-0 border border-advisory-rule bg-white p-6 min-[681px]:p-8'>
+              <h3 className='m-0 font-advisory-heading text-[23px] leading-[1.4] font-bold text-midnight'>
                 Your personalised next steps
               </h3>
-              <div className='mt-5 space-y-3'>
+              <ol role='list' className='m-0 mt-5 list-none space-y-4 p-0'>
                 {tier.recs.map((r, i) => (
-                  <div key={i} className='flex items-start gap-3'>
-                    <span className='flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-bold text-primary'>
-                      {i + 1}
+                  <li key={i} className='flex items-start gap-3'>
+                    <span aria-hidden='true' className='shrink-0 text-[15px] leading-[1.75] font-bold text-midnight'>
+                      {i + 1}.
                     </span>
-                    <span className='text-sm leading-relaxed text-secondary'>
+                    <span className='text-[15px] leading-[1.75] text-ink'>
                       {r}
                     </span>
-                  </div>
+                  </li>
                 ))}
-              </div>
+              </ol>
+            </div>
             </div>
 
-            <div className='flex justify-center'>
+            <div className='flex flex-wrap items-center gap-3'>
               <PrintButton
                 resource='Sale Readiness Score'
-                label='Print Checklist'
+                label='Print checklist'
+                className={landingButtonVariants({ variant: 'outline', size: 'compact' })}
                 fileName='Blackmont-Sale-Readiness-Checklist.pdf'
                 buildDocument={(assets) => (
                   <ReadinessPdf
@@ -344,17 +331,28 @@ export function Scorecard() {
                   />
                 )}
               />
+              <LandingButton
+                variant='outline'
+                size='compact'
+                onClick={() => {
+                  setCurQ(0);
+                  setAnswers(new Array(questions.length).fill(null));
+                  setView('quiz');
+                }}
+              >
+                Start over
+              </LandingButton>
             </div>
 
             <ToolCta
+              appearance='advisory'
               resource='Sale Readiness Score'
               title='Ready to take the next step?'
               subtitle='Book a free, confidential 30-minute call with our team.'
-              button='Book a Call'
+              button='Book a call'
             />
-          </motion.div>
+          </div>
         )}
       </div>
-    </section>
   );
 }

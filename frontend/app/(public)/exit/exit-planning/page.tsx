@@ -31,17 +31,21 @@ const jsonLd = [
 
 export default function ExitPlanningPage() {
   return (
-    <main className='min-h-screen bg-muted'>
+    <div className='min-h-screen bg-white'>
       <JsonLd data={jsonLd} />
       <AccessTracker resource='Exit Planning Guide' />
       <ToolHeader
         crumbs={CRUMBS}
-        title='Your Exit Planning Roadmap'
+        appearance='advisory'
+        layout='stacked'
+        title='Your exit planning roadmap'
         subtitle='A practical phase-by-phase checklist to prepare your business for a successful sale. Tick off tasks as you complete them, your progress is saved automatically.'
-      />
-      <ExitGuide />
+      >
+        <ExitGuide />
+      </ToolHeader>
 
       <ToolNotes
+        appearance='advisory'
         heading='How to use this checklist'
         paragraphs={[
           'Five phases, running from around two years before a sale through to being under offer. It is built to be worked through rather than read, so tick items off as you complete them and come back to it.',
@@ -59,6 +63,6 @@ export default function ExitPlanningPage() {
           detail: 'For time to sell by industry and what causes delays, see',
         }}
       />
-    </main>
+    </div>
   );
 }

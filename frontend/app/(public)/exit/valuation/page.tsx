@@ -31,17 +31,20 @@ const jsonLd = [
 
 export default function ValuationPage() {
   return (
-    <main className='min-h-screen bg-muted'>
+    <div className='min-h-screen bg-white'>
       <JsonLd data={jsonLd} />
       <AccessTracker resource='Valuation Tool' />
       <ToolHeader
         crumbs={CRUMBS}
-        title='Business Valuation Tool'
+        appearance='advisory'
+        title='Business valuation tool'
         subtitle='Answer 5 quick questions to get an indicative value range for your business, based on revenue, profit, industry, and management structure.'
-      />
-      <ValuationTool />
+      >
+        <ValuationTool />
+      </ToolHeader>
 
       <ToolNotes
+        appearance='advisory'
         heading='How to read your range'
         paragraphs={[
           'The tool applies a multiple to your EBITDA, adjusted for the size of the business, your industry and how the business is managed. What it returns is a range rather than a valuation, and the width of that range is deliberate.',
@@ -59,6 +62,6 @@ export default function ValuationPage() {
           detail: 'For the typical multiples and price ranges in your sector, see',
         }}
       />
-    </main>
+    </div>
   );
 }
