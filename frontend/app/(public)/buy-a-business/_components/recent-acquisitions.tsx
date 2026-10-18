@@ -1,18 +1,22 @@
-import { DealsCarousel } from '@/components/global/deals-carousel';
+import { RECENT_ACQUISITIONS } from '@/lib/data/recent-acquisitions';
+import { AcquisitionsCarousel } from '@/components/landing/acquisitions-carousel';
+import { TransactionCard } from '@/components/landing/transaction-card';
+import { LandingTheme } from '@/components/landing/landing-theme';
+import { LandingContainer, LandingSectionIntro } from '@/components/landing/presentation';
 
 export function RecentAcquisitions() {
   return (
-    <section className='bg-linen py-20 lg:py-28'>
-      <div className='max-w-[1500px] mx-auto px-6 sm:px-10 lg:px-16'>
-        <div className='text-center mb-16'>
-          <h2 className='text-3xl font-bold leading-tight tracking-tight text-secondary sm:text-4xl lg:text-5xl'>
-            Recent Acquisitions
-          </h2>
-        </div>
-
-        {/* Already on the buy page, so the cards don't link anywhere. */}
-        <DealsCarousel tone='light' />
-      </div>
-    </section>
+    <LandingTheme className='bg-canvas'>
+      <section id='recent-acquisitions' aria-labelledby='acquisitions-title' className='py-14 min-[681px]:py-20'>
+        <LandingContainer>
+          <LandingSectionIntro headingId='acquisitions-title' heading='Recent acquisitions' />
+          <AcquisitionsCarousel>
+            {RECENT_ACQUISITIONS.map((deal) => (
+              <TransactionCard key={deal.id} deal={deal} href={null} />
+            ))}
+          </AcquisitionsCarousel>
+        </LandingContainer>
+      </section>
+    </LandingTheme>
   );
 }

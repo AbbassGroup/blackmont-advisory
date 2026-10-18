@@ -1,7 +1,6 @@
-'use client';
-
-import { SectionHeading } from './section-heading';
-import Image from 'next/image';
+import { LandingImage } from '@/components/landing/landing-image';
+import { LandingContainer } from '@/components/landing/presentation';
+import financialPlanning from '@/public/landing/partnership-financial-planning.jpeg';
 
 const focusPoints = [
   'Strategic preparation',
@@ -13,60 +12,57 @@ const focusPoints = [
 
 export function OurApproach() {
   return (
-    <section className='py-20 lg:py-28 bg-white relative overflow-hidden'>
-      {/* Decorative gradient orb */}
-      <div className='absolute bottom-[10%] -right-[8%] w-[450px] h-[450px] rounded-full bg-[radial-gradient(circle,rgba(201,168,76,0.05)_0%,transparent_70%)] pointer-events-none' />
-
-      <div className='max-w-[1500px] mx-auto px-6 sm:px-10 lg:px-16 relative z-10'>
-        <SectionHeading title='Our Approach' className='mb-16' />
-
-        <div className='grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-20 items-center'>
-          {/* Text Content */}
-          <div className='md:col-span-7'>
-            <h3 className='text-xl lg:text-2xl font-bold text-secondary mb-6 tracking-wide'>
-              Boutique. Strategic. Relationship-Driven.
+    <section
+      aria-labelledby='partnership-approach-title'
+      className='bg-white py-14 text-ink min-[681px]:py-16 min-[1121px]:py-20'
+    >
+      <LandingContainer>
+        <h2
+          id='partnership-approach-title'
+          className='m-0 font-advisory-heading text-[clamp(29px,6.5vw,38px)] leading-[1.25] font-bold tracking-normal text-midnight min-[681px]:text-[clamp(32px,3.4vw,43px)]'
+        >
+          Our approach
+        </h2>
+        <div className='mt-8 grid items-stretch gap-8 min-[681px]:mt-10 min-[931px]:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] min-[931px]:gap-12 min-[1121px]:gap-16'>
+          <div className='min-w-0 min-[931px]:self-center'>
+            <h3 className='m-0 mb-5 max-w-[560px] font-advisory-heading text-[24px] leading-[1.45] font-bold tracking-normal text-midnight min-[681px]:text-[27px]'>
+              Boutique. Strategic. Relationship-driven.
             </h3>
-
-            <p className='text-[1.05rem] text-muted-foreground leading-relaxed mb-4'>
+            <p className='m-0 max-w-[70ch] text-base leading-[1.8] min-[681px]:text-[17px]'>
               Blackmont Advisory is a Melbourne-based firm specialising in
               business sales across Australia.
             </p>
 
-            <p className='text-muted-foreground mb-4'>We focus on:</p>
-
-            <div className='flex flex-wrap gap-3 mb-10'>
+            <p className='mt-5 mb-3 text-base leading-[1.8]'>We focus on:</p>
+            <ul role='list' className='m-0 grid list-none gap-x-6 gap-y-3 p-0 min-[681px]:grid-cols-2'>
               {focusPoints.map((point) => (
-                <div
+                <li
                   key={point}
-                  className='px-4 py-2  text-sm font-semibold bg-accent/5 border border-accent/20 text-secondary'
+                  className='flex items-start gap-3 text-base leading-[1.7] min-[681px]:text-[17px]'
                 >
+                  <span aria-hidden='true' className='mt-3 size-1 shrink-0 bg-gilt' />
                   {point}
-                </div>
+                </li>
               ))}
-            </div>
-
-            <div className='pl-6 border-l-[3px] border-[#c9a84c]'>
-              <p className='text-[1.05rem] text-secondary font-medium italic leading-relaxed'>
-                Our approach aligns naturally with professional advisory firms
-                who prioritise quality and reputation.
-              </p>
-            </div>
+            </ul>
+            <p className='mt-6 mb-0 max-w-[70ch] border-t border-advisory-rule pt-5 text-base leading-[1.8] font-medium text-midnight'>
+              Our approach aligns naturally with professional advisory firms
+              who prioritise quality and reputation.
+            </p>
           </div>
-
-          {/* Image Content */}
-          <div className='hidden md:block md:col-span-5'>
-            <div className='relative w-full aspect-square'>
-              <Image
-                src='/assets/partnership.webp'
-                alt='Our boutique, strategic approach'
-                fill
-                className='object-cover'
-                unoptimized
-              />
-            </div>
-          </div>
+          <figure className='group/image relative m-0 aspect-[4/3] overflow-hidden min-[931px]:aspect-auto min-[931px]:min-h-[460px]'>
+            <LandingImage
+              src={financialPlanning}
+              alt='Illustrative photograph of a professional reviewing printed business charts and reports'
+              fill
+              sizes='(max-width: 930px) 100vw, (max-width: 1444px) 52vw, 670px'
+              className='object-cover object-[center_85%]'
+              unoptimized
+              loading='lazy'
+            />
+          </figure>
         </div>
-      </div>
+      </LandingContainer>
     </section>
   );
 }

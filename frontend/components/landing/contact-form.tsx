@@ -78,8 +78,8 @@ function ContactField({
     'aria-invalid': Boolean(error),
     'aria-describedby': error ? errorId : undefined,
     className: cn(
-      'block min-h-[42px] w-full rounded-none border border-advisory-input bg-white px-3 py-2.5 text-[15px] leading-[1.65] text-ink outline-none transition-colors duration-150 focus:border-midnight motion-reduce:transition-none disabled:cursor-not-allowed disabled:opacity-50',
-      error && 'border-destructive',
+      'block min-h-[42px] w-full rounded-none border border-white/40 bg-deep-navy px-3 py-2.5 text-[15px] leading-[1.65] text-white caret-gilt outline-none transition-colors duration-150 placeholder:text-white/60 focus:border-gilt motion-reduce:transition-none disabled:cursor-not-allowed disabled:opacity-50',
+      error && 'border-red-300',
     ),
   };
 
@@ -99,7 +99,7 @@ function ContactField({
         <input {...inputProps} type={type} />
       )}
       {error && (
-        <p id={errorId} className='m-0 mt-1.5 text-xs text-destructive'>
+        <p id={errorId} className='m-0 mt-1.5 text-xs text-red-300'>
           {error}
         </p>
       )}
@@ -219,15 +219,15 @@ export function ContactForm() {
       noValidate
       aria-labelledby={headingId}
       aria-busy={loading}
-      className='min-w-0 bg-canvas px-[23px] py-[29px] min-[681px]:p-[clamp(27px,3vw,44px)]'
+      className='min-w-0 border border-white/15 bg-midnight/90 px-[23px] py-[29px] text-white [color-scheme:dark] min-[681px]:p-[clamp(27px,3vw,44px)]'
     >
       <h3
         id={headingId}
-        className='m-0 mb-[7px] font-advisory-heading text-[23px] leading-[1.25] font-bold tracking-normal text-midnight'
+        className='m-0 mb-[7px] font-advisory-heading text-[23px] leading-[1.25] font-bold tracking-normal text-white'
       >
         Get in touch
       </h3>
-      <p className='m-0 mb-[19px] text-sm leading-[1.65]'>
+      <p className='m-0 mb-[19px] text-sm leading-[1.65] text-white/80'>
         Tell us a little about what you have in mind. A senior advisor will be in
         touch.
       </p>
@@ -243,7 +243,7 @@ export function ContactForm() {
             aria-pressed={enquiryType === type}
             disabled={loading}
             onClick={() => switchEnquiryType(type)}
-            className='min-h-[42px] cursor-pointer border border-midnight bg-transparent p-2.5 text-[13px] font-semibold text-midnight focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-gilt disabled:cursor-not-allowed disabled:opacity-50 aria-pressed:bg-midnight aria-pressed:text-white'
+            className='min-h-[42px] cursor-pointer border border-white/40 bg-transparent p-2.5 text-[13px] font-semibold text-white transition-colors duration-150 hover:border-gilt focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none disabled:cursor-not-allowed disabled:opacity-50 aria-pressed:border-gilt aria-pressed:bg-gilt/15 aria-pressed:text-gilt'
           >
             {type === 'sell' ? 'Sell a business' : 'Buy a business'}
           </button>
@@ -303,7 +303,7 @@ export function ContactForm() {
           <ContactField {...fieldProps('timeline')} label='Timeline to buy' />
         </div>
       )}
-      <LandingButton type='submit' disabled={loading} className='mt-0.5 w-full'>
+      <LandingButton type='submit' variant='gilt' disabled={loading} className='mt-0.5 w-full'>
         {loading ? 'Sending enquiry…' : 'Send confidential enquiry'}
       </LandingButton>
       {feedback && (
@@ -311,13 +311,13 @@ export function ContactForm() {
           role={feedback.kind === 'error' ? 'alert' : 'status'}
           className={cn(
             'm-0 mt-[15px] text-sm leading-[1.6]',
-            feedback.kind === 'error' ? 'text-destructive' : 'text-midnight',
+            feedback.kind === 'error' ? 'text-red-300' : 'text-white',
           )}
         >
           {feedback.message}
         </p>
       )}
-      <p className='m-0 mt-[15px] text-xs leading-[1.6]'>
+      <p className='m-0 mt-[15px] text-xs leading-[1.6] text-white/80'>
         Your details will only be used to respond to your enquiry.
       </p>
     </form>

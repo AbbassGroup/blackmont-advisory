@@ -4,10 +4,9 @@ import { WhyUseAgent } from './_components/why-use-agent';
 import { BuyingProcess } from './_components/buying-process';
 import { RecentAcquisitions } from './_components/recent-acquisitions';
 import { WhoWeWorkWith } from './_components/who-we-work-with';
-import { TalkToAgent } from './_components/talk-to-agent';
 import { WhyBlackmont } from './_components/why-blackmont';
 import { CTASection } from './_components/cta-section';
-import { PageBanner } from '@/components/global/page-banner';
+import { BuyingBanner } from './_components/banner';
 
 export const metadata: Metadata = {
   title: 'Buy a Business | Business Buyers Agents | Blackmont Advisory',
@@ -22,17 +21,8 @@ export const metadata: Metadata = {
 
 export default function BuyBusinessPage() {
   return (
-    <main className='min-h-screen bg-background'>
-      <PageBanner
-        title={
-          <>
-            Buy a Business{' '}
-            <span className='font-light text-accent'>With Confidence</span>
-          </>
-        }
-        description='Buy Side Deal Origination by Blackmont Advisory'
-        image='/buy-a-business.webp'
-      />
+    <div className='min-h-screen bg-background'>
+      <BuyingBanner />
 
       {/* ── Page Sections ───────────────────────────── */}
       <IntroSection />
@@ -40,9 +30,8 @@ export default function BuyBusinessPage() {
       <BuyingProcess />
       <RecentAcquisitions />
       <WhoWeWorkWith />
-      <TalkToAgent />
       <WhyBlackmont />
       <CTASection />
-    </main>
+    </div>
   );
 }

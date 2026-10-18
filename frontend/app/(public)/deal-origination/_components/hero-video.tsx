@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Play } from 'lucide-react';
 
 const BASE = 'https://res.cloudinary.com/dneuyu9wi/video/upload';
@@ -20,18 +20,26 @@ const MP4 = `${BASE}/vc_h264,q_auto:eco,w_1280/${ASSET}.mp4`;
 
 export function HeroVideo() {
   const [playing, setPlaying] = useState(false);
+  const playerRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (playing) playerRef.current?.focus({ preventScroll: true });
+  }, [playing]);
 
   return (
-    <div className='mx-auto mt-12 w-full max-w-3xl'>
-      <div className='relative aspect-video w-full overflow-hidden bg-secondary/10 shadow-[0_24px_60px_-24px_rgba(0,0,0,0.45)] ring-1 ring-secondary/15'>
+    <div className='w-full min-w-0'>
+      <div className='relative aspect-video w-full overflow-hidden border border-advisory-rule bg-midnight'>
         {playing ? (
           <video
-            className='h-full w-full object-cover'
+            ref={playerRef}
+            aria-label='Buy side deal origination by Blackmont Advisory'
+            tabIndex={0}
+            className='h-full w-full object-contain focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-gilt'
             poster={POSTER}
             controls
             autoPlay
             playsInline
-            preload='auto'
+            preload='metadata'
           >
             <source src={WEBM} type='video/webm' />
             <source src={MP4} type='video/mp4' />
@@ -42,31 +50,33 @@ export function HeroVideo() {
             type='button'
             onClick={() => setPlaying(true)}
             aria-label='Play video: Buy side deal origination by Blackmont Advisory'
-            className='group absolute inset-0 h-full w-full cursor-pointer'
+            className='group absolute inset-0 h-full w-full cursor-pointer focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-gilt'
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={POSTER}
               srcSet={POSTER_SRCSET}
-              sizes='(min-width: 768px) 768px, 100vw'
+              sizes='(max-width: 680px) calc(100vw - 38px), (max-width: 930px) calc(100vw - 72px), (max-width: 1444px) 52vw, 730px'
               alt=''
               width={1280}
               height={720}
               decoding='async'
-              className='h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]'
+              fetchPriority='high'
+              className='h-full w-full object-cover transition-transform duration-[900ms] ease-out motion-safe:group-hover:scale-[1.03] motion-reduce:transition-none'
             />
 
             <span
               aria-hidden
-              className='absolute inset-0 bg-secondary/25 transition-colors duration-300 group-hover:bg-secondary/15'
+              className='absolute inset-0 bg-midnight/20 transition-colors duration-200 group-hover:bg-midnight/10 motion-reduce:transition-none'
             />
 
             <span
               aria-hidden
               className='absolute inset-0 grid place-items-center'
             >
-              <span className='grid h-16 w-16 place-items-center bg-accent shadow-lg transition-transform duration-300 group-hover:scale-110 sm:h-20 sm:w-20'>
-                <Play className='h-6 w-6 fill-primary text-primary sm:h-7 sm:w-7' />
+              <span className='inline-flex min-h-[51px] items-center justify-center gap-3 border border-gilt bg-gilt px-5 py-3 font-advisory-body text-sm leading-[1.45] font-bold text-midnight transition-colors duration-200 group-hover:bg-white group-focus-visible:bg-white motion-reduce:transition-none'>
+                <Play className='size-[18px] fill-current' />
+                Watch the video
               </span>
             </span>
           </button>

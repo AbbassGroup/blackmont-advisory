@@ -1,48 +1,32 @@
-'use client';
-
-import { Button } from '@/components/ui/button';
-import Image from 'next/image';
 import { PartnershipModal } from '@/components/global/partnership-modal';
+import { LandingButton, LandingContainer } from '@/components/landing/presentation';
 
 export function IntroSection() {
   return (
-    <section className='py-20 lg:py-28 bg-background overflow-hidden'>
-      <div className='max-w-[1500px] mx-auto px-6 sm:px-10 lg:px-16'>
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 items-center'>
-          {/* Left Content */}
-          <div className='mx-auto max-w-[600px] text-center md:mx-0 md:text-left'>
-            <h2 className='mb-6 text-3xl font-bold leading-tight tracking-tight text-secondary sm:text-4xl lg:text-5xl'>
-              Helping Your Clients Buy or Sell a Business
-            </h2>
-            <p className='mb-8 text-lg font-light leading-relaxed text-muted-foreground'>
-              Blackmont Advisory works alongside partners to provide expert
-              business sale and acquisition support, while you remain the
-              trusted advisor.
-            </p>
-
-            <div className='inline-block'>
-              <PartnershipModal>
-                <Button className='h-auto rounded-none bg-accent px-8 py-4 text-xs font-bold uppercase tracking-[0.14em] text-primary transition-colors hover:bg-accent-light'>
-                  Book a Confidential Discussion
-                </Button>
-              </PartnershipModal>
-            </div>
-          </div>
-
-          {/* Right SVG Graphic */}
-          <div className='hidden md:flex justify-center'>
-            <div className='relative w-full max-w-[400px] aspect-square'>
-              <Image
-                src='/partnership.svg'
-                alt='Business Partnership'
-                fill
-                className='object-contain'
-                unoptimized
-              />
-            </div>
-          </div>
+    <section
+      aria-labelledby='partnership-intro-title'
+      className='bg-white py-12 text-ink min-[681px]:py-16 min-[1121px]:py-20'
+    >
+      <LandingContainer>
+        <h2
+          id='partnership-intro-title'
+          className='m-0 font-advisory-heading text-[clamp(29px,6.5vw,38px)] leading-[1.25] font-bold tracking-normal text-midnight min-[681px]:text-[clamp(32px,3.4vw,43px)]'
+        >
+          Helping your clients buy or sell a business
+        </h2>
+        <div className='mt-6 flex flex-col items-start gap-6'>
+          <p className='m-0 max-w-[780px] text-base leading-[1.8] min-[681px]:text-[17px]'>
+            Blackmont Advisory works alongside partners to provide expert
+            business sale and acquisition support, while you remain the
+            trusted advisor.
+          </p>
+          <PartnershipModal>
+            <LandingButton variant='outline' className='max-w-full'>
+              Book a confidential discussion
+            </LandingButton>
+          </PartnershipModal>
         </div>
-      </div>
+      </LandingContainer>
     </section>
   );
 }

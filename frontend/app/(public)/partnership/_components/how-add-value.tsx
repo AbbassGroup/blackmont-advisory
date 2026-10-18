@@ -1,7 +1,4 @@
-'use client';
-
-import { Store, ShoppingBag, Lightbulb } from 'lucide-react';
-import { SectionHeading } from './section-heading';
+import { LandingContainer } from '@/components/landing/presentation';
 
 const sellingPoints = [
   'Accurate market positioning',
@@ -20,103 +17,77 @@ const buyingPoints = [
   'Acquisition structuring support',
 ];
 
-interface ValueColumnProps {
-  icon: any;
+type ValueColumnProps = {
+  headingId: string;
   title: string;
   subtitle: string;
   points: string[];
   resultText: string;
-  accentColor: string;
-  accentBg: string;
-  accentBorder: string;
-}
+};
 
 function ValueColumn({
-  icon: Icon,
+  headingId,
   title,
   subtitle,
   points,
   resultText,
-  accentColor,
-  accentBg,
-  accentBorder,
 }: ValueColumnProps) {
   return (
-    <div className='flex flex-col h-full'>
-      <div className='flex items-center gap-4 mb-4'>
-        <div
-          className={`w-14 h-14  flex items-center justify-center shrink-0 ${accentBg}`}
-        >
-          <Icon className={`w-7 h-7 ${accentColor}`} />
-        </div>
-        <h3 className='text-xl lg:text-2xl font-bold text-secondary leading-snug'>
-          {title}
-        </h3>
-      </div>
-
-      <div className='pl-18 flex-1'>
-        <p className='text-muted-foreground font-medium mb-4'>{subtitle}</p>
-        <div className={`w-12 h-1 rounded-full mb-6 ${accentBg}`} />
-
-        <div className='flex flex-wrap gap-2 mb-8'>
-          {points.map((point) => (
-            <div
-              key={point}
-              className={`px-4 py-2  text-sm font-semibold border ${accentBorder} ${accentBg} text-secondary`}
-            >
-              {point}
-            </div>
-          ))}
-        </div>
-
-        <div className='flex items-start gap-3 mt-auto'>
-          <Lightbulb className={`w-6 h-6 shrink-0 mt-0.5 ${accentColor}`} />
-          <p className='text-muted-foreground italic leading-relaxed'>{resultText}</p>
-        </div>
-      </div>
-    </div>
+    <section
+      aria-labelledby={headingId}
+      className='grid min-w-0 min-[931px]:row-span-4 min-[931px]:grid-rows-subgrid'
+    >
+      <h3
+        id={headingId}
+        className='m-0 pb-3 font-advisory-heading text-[24px] leading-[1.4] font-bold tracking-normal text-midnight min-[681px]:text-[28px]'
+      >
+        {title}
+      </h3>
+      <p className='m-0 pb-5 text-base leading-[1.8] min-[681px]:text-[17px]'>{subtitle}</p>
+      <ul role='list' className='m-0 list-none p-0 pb-6'>
+        {points.map((point) => (
+          <li key={point} className='border-t border-advisory-rule py-3 text-base leading-[1.7] min-[681px]:text-[17px]'>
+            {point}
+          </li>
+        ))}
+      </ul>
+      <p className='m-0 border-t border-advisory-rule pt-5 text-[15px] leading-[1.8] font-medium text-midnight'>
+        {resultText}
+      </p>
+    </section>
   );
 }
 
 export function HowAddValue() {
   return (
-    <section className='relative overflow-hidden bg-background py-20 lg:py-28'>
-      <div className='relative z-10 mx-auto max-w-[1500px] px-6 sm:px-10 lg:px-16'>
-        <SectionHeading
-          title='How We Add Value to Your Clients'
-          className='mb-16'
-        />
-
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-stretch'>
+    <section
+      aria-labelledby='partnership-value-title'
+      className='bg-canvas py-14 text-ink min-[681px]:py-16 min-[1121px]:py-20'
+    >
+      <LandingContainer>
+        <h2
+          id='partnership-value-title'
+          className='m-0 font-advisory-heading text-[clamp(29px,6.5vw,38px)] leading-[1.25] font-bold tracking-normal text-midnight min-[681px]:text-[clamp(32px,3.4vw,43px)]'
+        >
+          How we add value to your clients
+        </h2>
+        <div className='mt-8 grid gap-10 min-[681px]:mt-10 min-[931px]:grid-cols-2 min-[931px]:gap-x-12 min-[931px]:gap-y-0 min-[1121px]:gap-x-16'>
           <ValueColumn
-            icon={Store}
-            title='For Clients Selling a Business'
+            headingId='partnership-selling-value-title'
+            title='For clients selling a business'
             subtitle='We provide:'
             points={sellingPoints}
             resultText='Greater sales confidence, smoother transactions, and stronger outcomes.'
-            accentColor='text-[#c9a84c]'
-            accentBg='bg-[#c9a84c]/10'
-            accentBorder='border-[#c9a84c]/20'
           />
-
-          {/* Divider visible only on md+ */}
-          <div className='hidden md:block absolute left-1/2 top-48 bottom-12 w-px border-l-2 border-dashed border-accent/20 -translate-x-1/2' />
-
-          {/* Divider visible only on mobile */}
-          <div className='block md:hidden w-full border-t-2 border-dashed border-accent/20 my-4' />
-
           <ValueColumn
-            icon={ShoppingBag}
-            title='For Clients Buying a Business'
+            headingId='partnership-buying-value-title'
+            title='For clients buying a business'
             subtitle='We assist with:'
             points={buyingPoints}
             resultText='We work collaboratively with you to ensure the deal is structured correctly for our mutual client.'
-            accentColor='text-[#c9a84c]'
-            accentBg='bg-[#c9a84c]/10'
-            accentBorder='border-[#c9a84c]/20'
           />
         </div>
-      </div>
+      </LandingContainer>
     </section>
   );
 }

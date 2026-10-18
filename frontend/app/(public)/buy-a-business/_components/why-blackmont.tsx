@@ -1,70 +1,76 @@
 import { ContactFormModal } from '@/components/global/contact-form-modal';
-import { Shield, Lightbulb, Handshake, ShieldCheck } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { LandingTheme } from '@/components/landing/landing-theme';
+import { LandingImage } from '@/components/landing/landing-image';
+import { LandingButton, LandingContainer } from '@/components/landing/presentation';
+import independentAdvice from '@/public/landing/buyer-independent-advice.jpeg';
 
 const advantages = [
   {
     title: 'Independent advice',
     description: 'We work for you not the seller',
-    icon: <Shield className='w-6 h-6' />,
   },
   {
     title: 'Experience across industries',
     description: 'We have experience working across various industries',
-    icon: <Lightbulb className='w-6 h-6' />,
   },
   {
     title: 'End-to-end guidance',
     description: 'From search to settlement',
-    icon: <Handshake className='w-6 h-6' />,
   },
   {
     title: 'Confidential and strategic',
     description: 'Protecting your privacy and your goals',
-    icon: <ShieldCheck className='w-6 h-6' />,
   },
 ];
 
 export function WhyBlackmont() {
   return (
-    <section className='bg-muted py-20 lg:py-28'>
-      <div className='max-w-[1500px] mx-auto px-6 sm:px-10 lg:px-16'>
-        <div className='text-center mb-16'>
-          <h2 className='text-3xl font-bold leading-tight tracking-tight text-secondary sm:text-4xl lg:text-5xl'>
+    <LandingTheme className='bg-white'>
+      <section aria-labelledby='buying-why-blackmont-title' className='py-14 min-[681px]:py-20'>
+        <LandingContainer>
+          <h2
+            id='buying-why-blackmont-title'
+            className='m-0 mb-8 font-advisory-heading text-[clamp(29px,6.5vw,38px)] leading-[1.25] font-bold tracking-normal text-midnight min-[681px]:mb-10 min-[681px]:text-[clamp(32px,3.4vw,43px)]'
+          >
             Why Blackmont Advisory
           </h2>
-        </div>
-
-        <div className='grid grid-cols-1 sm:grid-cols-2 gap-6 mb-16 max-w-4xl mx-auto'>
-          {advantages.map((adv, i) => (
-            <div
-              key={i}
-              className='bg-background  p-8 border border-secondary/10 flex items-center gap-6 transition-colors hover:border-accent/40'
-            >
-              <div className='w-14 h-14 border-[1.5px] border-accent/30 text-accent flex items-center justify-center shrink-0'>
-                {adv.icon}
-              </div>
-              <div>
-                <h4 className='text-lg font-bold text-secondary mb-1'>
-                  {adv.title}
-                </h4>
-                <p className='text-sm text-muted-foreground'>{adv.description}</p>
+          <div className='grid gap-8 min-[931px]:grid-cols-[0.95fr_1.05fr] min-[931px]:gap-[clamp(40px,5vw,72px)]'>
+            <figure className='group/image relative m-0 aspect-[1.5] min-w-0 overflow-hidden min-[681px]:aspect-[1.8] min-[931px]:min-h-[440px] min-[931px]:aspect-auto'>
+              <LandingImage
+                src={independentAdvice}
+                alt='Illustrative photograph of an advisor explaining financial documents to a client'
+                unoptimized
+                fill
+                loading='lazy'
+                sizes='(max-width: 680px) calc(100vw - 38px), (max-width: 930px) calc(100vw - 72px), (max-width: 1444px) 45vw, 600px'
+                className='object-cover object-[55%_center]'
+              />
+            </figure>
+            <div className='min-w-0'>
+              <p className='m-0 mb-6 text-base leading-[1.8] text-ink min-[681px]:text-[17px]'>
+                Blackmont Advisory is a boutique firm built on trust, expertise, and excellence.
+              </p>
+              <ul role='list' className='m-0 list-none border-b border-advisory-rule p-0'>
+                {advantages.map((advantage) => (
+                  <li key={advantage.title} className='min-w-0 border-t border-advisory-rule py-4'>
+                    <h3 className='m-0 mb-2 font-advisory-heading text-xl leading-[1.4] font-bold tracking-normal text-midnight min-[681px]:text-[22px]'>
+                      {advantage.title}
+                    </h3>
+                    <p className='m-0 text-[15px] leading-[1.75] text-ink'>
+                      {advantage.description}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+              <div className='mt-6'>
+                <ContactFormModal>
+                  <LandingButton variant='outline'>Book a free consultation</LandingButton>
+                </ContactFormModal>
               </div>
             </div>
-          ))}
-        </div>
-
-        <div className='text-center'>
-          <p className='text-xl font-bold text-secondary mb-8 max-w-2xl mx-auto leading-relaxed'>
-            Blackmont Advisory is a boutique firm built on trust, expertise, and excellence.
-          </p>
-          <ContactFormModal>
-            <Button className='h-auto rounded-none bg-accent px-8 py-4 text-xs font-bold uppercase tracking-[0.14em] text-primary transition-colors hover:bg-accent-light'>
-              Book a Free Consultation
-            </Button>
-          </ContactFormModal>
-        </div>
-      </div>
-    </section>
+          </div>
+        </LandingContainer>
+      </section>
+    </LandingTheme>
   );
 }

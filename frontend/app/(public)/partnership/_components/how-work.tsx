@@ -1,78 +1,58 @@
-'use client';
-
-import { Users, EyeOff, Handshake, ShieldCheck } from 'lucide-react';
-import { SectionHeading } from './section-heading';
+import { ShieldCheck } from 'lucide-react';
+import { LandingContainer } from '@/components/landing/presentation';
 
 const partnershipOptions = [
   {
-    title: 'Referral Model',
+    title: 'Referral model',
     description:
       'You introduce the client. We manage the sale or acquisition process and keep you informed at every stage.',
-    icon: Handshake,
-    iconColor: 'text-[#c9a84c]',
-    iconBgColor: 'bg-[#c9a84c]/10',
-    cardStyles: 'bg-background',
   },
   {
-    title: 'Co-Branded Approach',
+    title: 'Co-branded approach',
     description:
       'We collaborate under both brands, reinforcing your involvement throughout the process.',
-    icon: Users,
-    iconColor: 'text-[#c9a84c]',
-    iconBgColor: 'bg-[#c9a84c]/10',
-    cardStyles: 'bg-background',
   },
   {
-    title: 'White-Label Support',
+    title: 'White-label support',
     description:
       'We operate under your brand with our licence as an extension of your firms service offerings.',
-    icon: EyeOff,
-    iconColor: 'text-[#c9a84c]',
-    iconBgColor: 'bg-[#c9a84c]/10',
-    cardStyles: 'bg-background',
   },
 ];
 
 export function HowWork() {
   return (
-    <section className='py-20 lg:py-28 bg-background'>
-      <div className='max-w-[1500px] mx-auto px-6 sm:px-10 lg:px-16'>
-        <SectionHeading title='How We Work With You' className='mb-16' />
-
-        {/* Options Cards */}
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-8 mb-16'>
-          {partnershipOptions.map((option) => {
-            const Icon = option.icon;
-            return (
-              <div
-                key={option.title}
-                className={`flex flex-col items-center text-center p-8 lg:p-10  border border-accent/10 shadow-sm h-full ${option.cardStyles}`}
-              >
-                <div
-                  className={`w-20 h-20 rounded-full flex items-center justify-center mb-6 shrink-0 ${option.iconBgColor}`}
-                >
-                  <Icon className={`w-10 h-10 ${option.iconColor}`} />
-                </div>
-                <h3 className='text-xl lg:text-2xl font-bold text-secondary mb-4 leading-snug'>
-                  {option.title}
-                </h3>
-                <p className='text-muted-foreground leading-relaxed text-[1.05rem]'>
-                  {option.description}
-                </p>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Trust Banner */}
-        <div className='flex items-center justify-center gap-3 max-w-4xl mx-auto'>
-          <ShieldCheck className='w-8 h-8 text-[#c9a84c] shrink-0' />
-          <p className='text-secondary font-semibold text-center'>
+    <section
+      id='partnership-models'
+      aria-labelledby='partnership-models-title'
+      className='scroll-mt-28 bg-white py-14 text-ink min-[681px]:py-16 min-[1121px]:py-20'
+    >
+      <LandingContainer>
+        <h2
+          id='partnership-models-title'
+          className='m-0 font-advisory-heading text-[clamp(29px,6.5vw,38px)] leading-[1.25] font-bold tracking-normal text-midnight min-[681px]:text-[clamp(32px,3.4vw,43px)]'
+        >
+          How we work with you
+        </h2>
+        <dl className='m-0 mt-8 grid gap-7 min-[681px]:mt-10 min-[931px]:grid-cols-3 min-[931px]:gap-10 min-[1121px]:gap-12'>
+          {partnershipOptions.map(({ title, description }) => (
+            <div key={title} className='min-w-0 border-t border-advisory-rule pt-5'>
+              <dt className='font-advisory-heading text-[24px] leading-[1.4] font-bold text-midnight min-[681px]:text-[27px]'>
+                {title}
+              </dt>
+              <dd className='m-0 mt-4 max-w-[70ch] text-base leading-[1.8] min-[681px]:text-[17px]'>
+                {description}
+              </dd>
+            </div>
+          ))}
+        </dl>
+        <div className='mt-8 flex items-start gap-3 border-t border-advisory-rule pt-5 min-[681px]:mt-9'>
+          <ShieldCheck aria-hidden='true' className='mt-1 size-5 shrink-0 text-gilt' />
+          <p className='m-0 text-[15px] leading-[1.8]'>
             All models are designed around transparency, compliance, and
             protecting your client relationship.
           </p>
         </div>
-      </div>
+      </LandingContainer>
     </section>
   );
 }

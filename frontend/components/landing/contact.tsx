@@ -1,4 +1,6 @@
 import { ContactForm } from './contact-form';
+import { landingImages } from './images';
+import { LandingImage } from './landing-image';
 import { LandingTheme } from './landing-theme';
 import { LandingContainer, LandingTextLink } from './presentation';
 
@@ -8,14 +10,28 @@ export function Contact() {
       <section
         id='contact'
         aria-labelledby='contact-title'
-        className='pt-[77px] pb-[82px] min-[681px]:pt-[104px] min-[681px]:pb-[114px]'
+        className='relative isolate overflow-hidden bg-midnight pt-[77px] pb-[82px] min-[681px]:pt-[104px] min-[681px]:pb-[114px]'
       >
-        <LandingContainer className='grid items-start gap-[33px] min-[681px]:grid-cols-[1fr_0.94fr] min-[681px]:gap-[45px] min-[931px]:gap-[clamp(70px,8vw,125px)]'>
-          <div className='min-w-0 min-[681px]:self-center'>
+        <LandingImage
+          src={landingImages.network.src}
+          alt=''
+          aria-hidden='true'
+          fill
+          unoptimized
+          loading='lazy'
+          sizes='100vw'
+          className='pointer-events-none object-cover object-center'
+        />
+        <div
+          aria-hidden='true'
+          className='pointer-events-none absolute inset-0 bg-midnight/[0.72]'
+        />
+        <LandingContainer className='relative z-10 grid items-start gap-[33px] min-[681px]:grid-cols-[1fr_0.94fr] min-[681px]:gap-[45px] min-[931px]:gap-[clamp(70px,8vw,125px)]'>
+          <div className='min-w-0 text-white min-[681px]:self-center'>
             <h2
               data-landing-reveal
               id='contact-title'
-              className='m-0 mb-[30px] max-w-[540px] font-advisory-heading text-[36px] leading-[1.3] font-bold tracking-normal text-midnight min-[681px]:text-[clamp(34px,3.5vw,45px)]'
+              className='m-0 mb-[30px] max-w-[540px] font-advisory-heading text-[36px] leading-[1.3] font-bold tracking-normal text-white min-[681px]:text-[clamp(34px,3.5vw,45px)]'
             >
               Every transaction starts with a conversation.
             </h2>
@@ -33,6 +49,7 @@ export function Contact() {
                 <dd className='m-0 text-[15px]'>
                   <LandingTextLink
                     href='mailto:info@blackmontadvisory.com'
+                    tone='white'
                     className='break-all font-normal'
                   >
                     info@blackmontadvisory.com

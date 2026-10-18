@@ -1,14 +1,12 @@
 import type { Metadata } from 'next';
 
-import { PageBanner } from '@/components/global/page-banner';
 import { IntroSection } from '../buy-a-business/_components/intro-section';
 import { WhyUseAgent } from '../buy-a-business/_components/why-use-agent';
 import { BuyingProcess } from '../buy-a-business/_components/buying-process';
 import { WhoWeWorkWith } from '../buy-a-business/_components/who-we-work-with';
-import { TalkToAgent } from '../buy-a-business/_components/talk-to-agent';
 import { WhyBlackmont } from '../buy-a-business/_components/why-blackmont';
 import { CTASection } from '../buy-a-business/_components/cta-section';
-import { HeroVideo } from './_components/hero-video';
+import { DealOriginationBanner } from './_components/banner';
 
 export const metadata: Metadata = {
   title: 'Buy a Business | Business Buyers Agents | Blackmont Advisory',
@@ -21,35 +19,18 @@ export const metadata: Metadata = {
   },
 };
 
-export default function BuyBusinessPage() {
+export default function DealOriginationPage() {
   return (
-    <main className='min-h-screen bg-background'>
-      <PageBanner
-        title={
-          <>
-            Buy a Business{' '}
-            <span className='font-light text-accent'>With Confidence</span>
-          </>
-        }
-        description={
-          <span className='font-bold'>
-            Buy Side Deal Origination by Blackmont Advisory
-          </span>
-        }
-        image='/buy-a-business.webp'
-        align='center'
-      >
-        <HeroVideo />
-      </PageBanner>
+    <div className='min-h-screen bg-background'>
+      <DealOriginationBanner />
 
       {/* ── Page Sections ───────────────────────────── */}
       <IntroSection />
       <WhyUseAgent />
       <BuyingProcess />
       <WhoWeWorkWith />
-      <TalkToAgent />
       <WhyBlackmont />
       <CTASection />
-    </main>
+    </div>
   );
 }

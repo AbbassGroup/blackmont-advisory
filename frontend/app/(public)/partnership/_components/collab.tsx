@@ -1,102 +1,45 @@
-'use client';
-
-import {
-  UserSearch,
-  Users,
-  ClipboardCheck,
-  Settings,
-  Building2,
-} from 'lucide-react';
-import { SectionHeading } from './section-heading';
+import { LandingContainer } from '@/components/landing/presentation';
 
 const steps = [
-  {
-    number: '1',
-    text: 'You identify a client considering sale or acquisition.',
-    icon: UserSearch,
-    color: 'text-[#c9a84c]',
-    borderColor: 'border-[#c9a84c]/40',
-    bgLight: 'bg-[#c9a84c]/5',
-  },
-  {
-    number: '2',
-    text: 'We meet jointly (or independently if preferred).',
-    icon: Users,
-    color: 'text-[#c9a84c]',
-    borderColor: 'border-[#c9a84c]/40',
-    bgLight: 'bg-[#c9a84c]/5',
-  },
-  {
-    number: '3',
-    text: 'We assess readiness and provide a structured plan.',
-    icon: ClipboardCheck,
-    color: 'text-[#c9a84c]',
-    borderColor: 'border-[#c9a84c]/40',
-    bgLight: 'bg-[#c9a84c]/5',
-  },
-  {
-    number: '4',
-    text: 'We manage the transaction process.',
-    icon: Settings,
-    color: 'text-[#c9a84c]',
-    borderColor: 'border-[#c9a84c]/40',
-    bgLight: 'bg-[#c9a84c]/5',
-  },
-  {
-    number: '5',
-    text: 'We keep you informed throughout the process, whilst maintaining client confidentiality.',
-    icon: Building2,
-    color: 'text-[#c9a84c]',
-    borderColor: 'border-[#c9a84c]/40',
-    bgLight: 'bg-[#c9a84c]/5',
-  },
+  'You identify a client considering sale or acquisition.',
+  'We meet jointly (or independently if preferred).',
+  'We assess readiness and provide a structured plan.',
+  'We manage the transaction process.',
+  'We keep you informed throughout the process, whilst maintaining client confidentiality.',
 ];
 
 export function Collab() {
   return (
-    <section className='border-t border-secondary/10 bg-background py-20 lg:py-28'>
-      <div className='mx-auto max-w-[760px] px-6 sm:px-10 lg:px-16'>
-        <SectionHeading
-          title='What a Typical Collaboration Looks Like'
-          className='mb-16'
-        />
-
-        <div className='flex flex-col'>
-          {steps.map((step, index) => {
-            const Icon = step.icon;
-            const isLast = index === steps.length - 1;
-            return (
-              <div key={index} className='flex items-stretch gap-5 sm:gap-6'>
-                {/* Node + connecting line */}
-                <div className='flex flex-col items-center'>
-                  <div
-                    className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 bg-background shadow-sm ${step.borderColor} ${step.bgLight}`}
-                  >
-                    <Icon className={`h-6 w-6 ${step.color}`} />
-                  </div>
-                  {!isLast && (
-                    <div className='my-2 w-0.5 grow rounded-full bg-linear-to-b from-accent/30 to-accent/5' />
-                  )}
-                </div>
-
-                {/* Step card */}
-                <div className={isLast ? 'flex-1' : 'flex-1 pb-8'}>
-                  <div className=' border border-secondary/10 bg-muted/60 p-5 transition-colors hover:border-accent/30 sm:p-6'>
-                    <span
-                      className={`text-xs font-bold uppercase tracking-widest ${step.color}`}
-                    >
-                      Step {step.number}
-                    </span>
-                    <p className='mt-2 text-[1.05rem] font-medium leading-relaxed text-secondary'>
-                      {step.text}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+    <section
+      aria-labelledby='partnership-collaboration-title'
+      className='bg-canvas py-14 text-ink min-[681px]:py-16 min-[1121px]:py-20'
+    >
+      <LandingContainer>
+        <h2
+          id='partnership-collaboration-title'
+          className='m-0 font-advisory-heading text-[clamp(29px,6.5vw,38px)] leading-[1.25] font-bold tracking-normal text-midnight min-[681px]:text-[clamp(32px,3.4vw,43px)]'
+        >
+          What a typical collaboration looks like
+        </h2>
+        <ol
+          role='list'
+          className='m-0 mt-8 grid list-none gap-x-8 gap-y-6 p-0 min-[681px]:mt-10 min-[681px]:grid-cols-2 min-[1121px]:grid-cols-5'
+        >
+          {steps.map((step, index) => (
+            <li
+              key={step}
+              className='grid min-w-0 grid-cols-[28px_minmax(0,1fr)] items-start gap-4 border-t border-advisory-rule pt-5 min-[1121px]:block'
+            >
+              <span aria-hidden='true' className='font-advisory-heading text-[27px] leading-[1.2] text-midnight'>
+                {index + 1}
+              </span>
+              <p className='m-0 text-base leading-[1.8] min-[681px]:text-[17px] min-[1121px]:mt-4'>
+                {step}
+              </p>
+            </li>
+          ))}
+        </ol>
+      </LandingContainer>
     </section>
   );
 }

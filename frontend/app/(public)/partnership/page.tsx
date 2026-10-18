@@ -1,5 +1,3 @@
-'use client';
-
 import { PartnershipHero } from './_components/hero';
 import { IntroSection } from './_components/intro-section';
 
@@ -14,7 +12,7 @@ import { HowWork } from './_components/how-work';
 
 export default function PartnershipPage() {
   return (
-    <main className='min-h-screen bg-background'>
+    <div className='min-h-screen bg-background'>
       <PartnershipHero />
       <div className='min-h-screen bg-background'>
         <IntroSection />
@@ -29,6 +27,6 @@ export default function PartnershipPage() {
 
         <CTASection />
       </div>
-    </main>
+    </div>
   );
 }

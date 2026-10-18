@@ -1,10 +1,5 @@
-'use client';
-
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown } from 'lucide-react';
-import { SectionHeading } from './section-heading';
-import Image from 'next/image';
+import { Minus, Plus } from 'lucide-react';
+import { LandingContainer } from '@/components/landing/presentation';
 import { BookDiscussionButton } from './book-discussion-button';
 
 const faqs = [
@@ -31,73 +26,44 @@ const faqs = [
 ];
 
 function FAQItem({ faq }: { faq: (typeof faqs)[0] }) {
-  const [open, setOpen] = useState(false);
   return (
-    <div className='border-b border-accent/15 overflow-hidden'>
-      <button
-        onClick={() => setOpen((p) => !p)}
-        className='w-full flex items-center justify-between gap-4 py-5 text-left transition-colors duration-150 group'
-      >
-        <span
-          className={`font-semibold text-[1.05rem] transition-colors ${open ? 'text-secondary' : 'text-secondary group-hover:text-accent'}`}
-        >
+    <details className='group border-t border-advisory-rule'>
+      <summary className='flex min-h-16 cursor-pointer list-none items-start justify-between gap-5 py-5 text-midnight transition-colors duration-200 hover:text-gilt focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gilt motion-reduce:transition-none min-[681px]:py-6 [&::-webkit-details-marker]:hidden'>
+        <span className='font-advisory-heading text-[21px] leading-[1.45] font-bold tracking-normal min-[681px]:text-[24px]'>
           {faq.q}
         </span>
-        <ChevronDown
-          className={`w-5 h-5 shrink-0 transition-transform duration-300 ${open ? 'rotate-180 text-accent' : 'text-muted-foreground'}`}
-        />
-      </button>
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className='overflow-hidden'
-          >
-            <div className='pb-6 text-muted-foreground leading-relaxed text-[1rem]'>
-              {faq.a}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+        <Plus aria-hidden='true' className='mt-1 size-5 shrink-0 text-gilt group-open:hidden' />
+        <Minus aria-hidden='true' className='mt-1 hidden size-5 shrink-0 text-gilt group-open:block' />
+      </summary>
+      <p className='m-0 max-w-[960px] pr-10 pb-6 text-base leading-[1.8] min-[681px]:pb-7 min-[681px]:text-[17px]'>
+        {faq.a}
+      </p>
+    </details>
   );
 }
 
 export function FAQSection() {
   return (
-    <section className='py-20 lg:py-28 bg-background'>
-      <div className='max-w-[1500px] mx-auto px-6 sm:px-10 lg:px-16'>
-        <SectionHeading title='Frequent Questions' className='mb-16' />
-
-        <div className='grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-20 items-center text-left'>
-          {/* Left FAQs */}
-          <div className='md:col-span-7 flex flex-col'>
-            {faqs.map((faq, index) => (
-              <FAQItem key={index} faq={faq} />
-            ))}
-          </div>
-
-          {/* Right SVG */}
-          <div className='hidden md:block md:col-span-5'>
-            <div className='relative w-full max-w-[400px] mx-auto aspect-square'>
-              <Image
-                src='/faq.svg'
-                alt='Frequently Asked Questions'
-                fill
-                className='object-contain'
-                unoptimized
-              />
-            </div>
-          </div>
+    <section
+      aria-labelledby='partnership-faq-title'
+      className='bg-white py-14 text-ink min-[681px]:py-16 min-[1121px]:py-20'
+    >
+      <LandingContainer>
+        <h2
+          id='partnership-faq-title'
+          className='m-0 font-advisory-heading text-[clamp(29px,6.5vw,38px)] leading-[1.25] font-bold tracking-normal text-midnight min-[681px]:text-[clamp(32px,3.4vw,43px)]'
+        >
+          Frequent questions
+        </h2>
+        <div className='mt-8 border-b border-advisory-rule min-[681px]:mt-10'>
+          {faqs.map((faq) => (
+            <FAQItem key={faq.q} faq={faq} />
+          ))}
         </div>
-      </div>
-
-      <div className='mt-12'>
-        <BookDiscussionButton />
-      </div>
+        <div className='mt-7 flex justify-start min-[681px]:mt-8'>
+          <BookDiscussionButton />
+        </div>
+      </LandingContainer>
     </section>
   );
 }
