@@ -84,8 +84,8 @@ function ContactField({
   };
 
   return (
-    <div className='mb-[14px] min-w-0'>
-      <label htmlFor={id} className='mb-1.5 block text-sm font-semibold'>
+    <div className='mb-5 min-w-0'>
+      <label htmlFor={id} className='mb-2 block text-sm font-semibold'>
         {label}
         {required && <span aria-hidden='true'> *</span>}
       </label>
@@ -174,7 +174,9 @@ export function ContactForm() {
       if (enquiryType === 'sell') {
         const turnover = form.turnover.trim();
         const comments = form.comments.trim();
-        const mergedComments = comments ? `${turnover} - ${comments}` : turnover;
+        const mergedComments = comments
+          ? `${turnover} - ${comments}`
+          : turnover;
 
         await axios.put(`${NEXAR_API_URL}/deals/update/by-email`, {
           stage: 'Enquiry',
@@ -219,17 +221,17 @@ export function ContactForm() {
       noValidate
       aria-labelledby={headingId}
       aria-busy={loading}
-      className='min-w-0 border border-white/15 bg-midnight/90 px-[23px] py-[29px] text-white [color-scheme:dark] min-[681px]:p-[clamp(27px,3vw,44px)]'
+      className='min-w-0 border border-white/15 bg-midnight/90 p-6 min-[681px]:p-8 text-white [color-scheme:dark]'
     >
       <h3
         id={headingId}
-        className='m-0 mb-[7px] font-advisory-heading text-[23px] leading-[1.25] font-bold tracking-normal text-white'
+        className='m-0 mb-[8px] font-advisory-heading text-[23px] leading-[1.25] font-bold tracking-normal text-white'
       >
         Get in touch
       </h3>
-      <p className='m-0 mb-[19px] text-sm leading-[1.65] text-white/80'>
-        Tell us a little about what you have in mind. A senior advisor will be in
-        touch.
+      <p className='m-0 mb-[20px] text-sm leading-[1.65] text-white/80'>
+        Tell us a little about what you have in mind. A senior advisor will be
+        in touch.
       </p>
       <div
         role='group'
@@ -249,7 +251,7 @@ export function ContactForm() {
           </button>
         ))}
       </div>
-      <div className='grid min-[426px]:grid-cols-2 min-[426px]:gap-x-[13px]'>
+      <div className='grid min-[426px]:grid-cols-2 min-[426px]:gap-x-6'>
         <ContactField
           {...fieldProps('name')}
           label='Your name'
@@ -264,7 +266,7 @@ export function ContactForm() {
           required
         />
       </div>
-      <div className='grid min-[931px]:grid-cols-2 min-[931px]:gap-x-[13px]'>
+      <div className='grid min-[931px]:grid-cols-2 min-[931px]:gap-x-6'>
         <ContactField
           {...fieldProps(phoneField)}
           label='Phone number'
@@ -281,10 +283,24 @@ export function ContactForm() {
           />
         )}
       </div>
-      {enquiryType === 'sell' ? (
-        <>
-          <div className='grid min-[931px]:grid-cols-2 min-[931px]:gap-x-[13px]'>
-            <ContactField {...fieldProps('location')} label='Location' required />
+      {/* Both panels size the same grid row so switching does not resize the background. */}
+      <div className='grid'>
+        <fieldset
+          aria-label='Selling enquiry details'
+          aria-hidden={enquiryType !== 'sell'}
+          inert={enquiryType !== 'sell'}
+          disabled={loading || enquiryType !== 'sell'}
+          className={cn(
+            'col-start-1 row-start-1 m-0 min-w-0 border-0 p-0',
+            enquiryType !== 'sell' && 'invisible pointer-events-none',
+          )}
+        >
+          <div className='grid min-[931px]:grid-cols-2 min-[931px]:gap-x-6'>
+            <ContactField
+              {...fieldProps('location')}
+              label='Location'
+              required
+            />
             <ContactField
               {...fieldProps('turnover')}
               label='Annual turnover'
@@ -296,30 +312,42 @@ export function ContactForm() {
             label='Tell us about your business or enquiry'
             multiline
           />
-        </>
-      ) : (
-        <div className='grid min-[931px]:grid-cols-2 min-[931px]:gap-x-[13px]'>
-          <ContactField {...fieldProps('budget')} label='Budget' />
-          <ContactField {...fieldProps('timeline')} label='Timeline to buy' />
-        </div>
-      )}
-      <LandingButton type='submit' variant='gilt' disabled={loading} className='mt-0.5 w-full'>
+        </fieldset>
+        <fieldset
+          aria-label='Buying enquiry details'
+          aria-hidden={enquiryType !== 'buy'}
+          inert={enquiryType !== 'buy'}
+          disabled={loading || enquiryType !== 'buy'}
+          className={cn(
+            'col-start-1 row-start-1 m-0 min-w-0 border-0 p-0',
+            enquiryType !== 'buy' && 'invisible pointer-events-none',
+          )}
+        >
+          <div className='grid min-[931px]:grid-cols-2 min-[931px]:gap-x-6'>
+            <ContactField {...fieldProps('budget')} label='Budget' />
+            <ContactField {...fieldProps('timeline')} label='Timeline to buy' />
+          </div>
+        </fieldset>
+      </div>
+      <LandingButton
+        type='submit'
+        variant='gilt'
+        disabled={loading}
+        className='mt-0.5 w-full'
+      >
         {loading ? 'Sending enquiry…' : 'Send confidential enquiry'}
       </LandingButton>
       {feedback && (
         <p
           role={feedback.kind === 'error' ? 'alert' : 'status'}
           className={cn(
-            'm-0 mt-[15px] text-sm leading-[1.6]',
+            'm-0 mt-[16px] text-sm leading-[1.6]',
             feedback.kind === 'error' ? 'text-red-300' : 'text-white',
           )}
         >
           {feedback.message}
         </p>
       )}
-      <p className='m-0 mt-[15px] text-xs leading-[1.6] text-white/80'>
-        Your details will only be used to respond to your enquiry.
-      </p>
     </form>
   );
 }

@@ -16,7 +16,7 @@ export function ToolCta({ title, subtitle, button, resource, appearance = 'legac
   if (appearance === 'advisory') {
     const buttonClass = landingButtonVariants({ variant: 'gilt', size: 'compact', className: 'shrink-0' });
     return (
-      <div className='flex flex-col items-start gap-6 bg-midnight p-6 text-white min-[681px]:p-8 min-[931px]:flex-row min-[931px]:items-center min-[931px]:justify-between'>
+      <div className='flex flex-col items-start gap-6 bg-midnight text-white min-[931px]:flex-row min-[931px]:items-center min-[931px]:justify-between p-6 min-[681px]:p-8'>
         <div className='min-w-0'>
           <h3 className='m-0 mb-3 font-advisory-heading text-[25px] leading-[1.35] font-bold tracking-normal'>{title}</h3>
           <p className='m-0 text-[15px] leading-[1.75] text-white/90'>{subtitle}</p>

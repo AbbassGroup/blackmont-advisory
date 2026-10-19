@@ -1,8 +1,7 @@
 'use client';
 
-import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { ProposalDocument } from '@/components/proposal/proposal-document';
 import {
@@ -11,42 +10,10 @@ import {
   type FeeOption,
 } from '@/components/proposal/types';
 
-const PROPOSAL_EXPIRY_DAYS = 30;
+import { ProposalLoading, ProposalNotice, ProposalSuccessPage } from './_components/proposal-state';
+import styles from './proposal.module.css';
 
-function ProposalSuccessPage({ businessName }: { businessName?: string }) {
-  return (
-    <div className='min-h-screen bg-background flex items-center justify-center p-6'>
-      <div className='max-w-[500px] w-full text-center bg-card border border-border overflow-hidden shadow-xl'>
-        <div className='bg-secondary py-12 px-8'>
-          <div className='w-20 h-20 rounded-full border border-accent/30 bg-accent/15 flex items-center justify-center mx-auto mb-5'>
-            <CheckCircle2 className='w-12 h-12 text-accent' />
-          </div>
-          <h2 className='text-3xl font-bold text-parchment mb-2'>Thank You!</h2>
-          <p className='text-parchment/70 text-[15px] leading-relaxed'>
-            Your agreement for {businessName ? businessName : 'your business'}{' '}
-            will be prepared shortly.
-          </p>
-        </div>
-        <div className='p-8 bg-card text-left'>
-          <div className='bg-muted p-6 mb-6'>
-            <p className='text-muted-foreground text-[13px] uppercase tracking-wider mb-2 font-bold'>
-              Questions?
-            </p>
-            {/* <p className='text-foreground text-[14px] mb-1'>
-              <strong>Phone:</strong> (03) 9103 1317
-            </p> */}
-            <p className='text-foreground text-[14px]'>
-              <strong>Email:</strong> info@blackmontadvisory.com
-            </p>
-          </div>
-          <p className='text-muted-foreground text-[13px] text-center'>
-            Blackmont Advisory
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
+const PROPOSAL_EXPIRY_DAYS = 30;
 
 /** Fee options are matched by id so the tick survives an autosave round-trip
  *  replacing the objects underneath it. */
@@ -235,70 +202,40 @@ function ProposalContent() {
   }
 
   if (loading) {
-    return (
-      <div className='min-h-[60vh] flex flex-col items-center justify-center p-8'>
-        <Loader2 className='w-12 h-12 animate-spin text-accent mb-4' />
-        <p className='text-muted-foreground font-medium text-lg'>
-          Loading your business appraisal...
-        </p>
-      </div>
-    );
+    return <ProposalLoading />;
   }
 
   if (error) {
-    return (
-      <div className='min-h-[60vh] flex flex-col items-center justify-center p-8 max-w-2xl mx-auto text-center'>
-        <div className='bg-red-50 text-red-700 p-6 rounded-2xl border border-red-100 mb-6'>
-          <AlertCircle className='w-8 h-8 mx-auto mb-3 opacity-90' />
-          <p className='font-medium'>{error}</p>
-        </div>
-        <p className='text-secondary font-bold mb-2'>
-          If you believe this is an error, please contact us at:
-        </p>
-        <p className='text-muted-foreground'>Email: info@blackmontadvisory.com</p>
-        {/* <p className='text-muted-foreground'>Phone: (03) 9103 1317</p> */}
-      </div>
-    );
+    return <ProposalNotice title='Unable to load your proposal' detail={error} />;
   }
 
   if (isProposalExpired) {
     return (
-      <div className='min-h-[60vh] flex flex-col items-center justify-center p-8 max-w-2xl mx-auto text-center'>
-        <div className='bg-orange-50 text-orange-700 p-6 rounded-2xl border border-orange-100 mb-6'>
-          <AlertCircle className='w-8 h-8 mx-auto mb-3 opacity-90' />
-          <p className='font-medium'>
-            Proposal has expired. Please contact your broker.
-          </p>
-        </div>
-        <p className='text-muted-foreground'>Email: info@blackmontadvisory.com</p>
-        {/* <p className='text-muted-foreground'>Phone: (03) 9103 1317</p> */}
-      </div>
+      <ProposalNotice
+        title='Proposal expired'
+        detail='Proposal has expired. Please contact your broker.'
+      />
     );
   }
 
   if (!proposal) {
-    return (
-      <div className='min-h-[60vh] flex flex-col items-center justify-center p-8'>
-        <div className='bg-yellow-50 text-yellow-700 p-6 rounded-2xl border border-yellow-100'>
-          <p className='font-medium'>No proposal data available.</p>
-        </div>
-      </div>
-    );
+    return <ProposalNotice title='No proposal data available.' />;
   }
 
   return (
-    <div className='min-h-screen bg-white'>
+    <div className={styles.document}>
       {/* Printing / "Save as PDF" from this page should give the document
           alone, without the marketing chrome around it. */}
       <style>{`@media print {
-        /* The nav and footer are direct children of <body>; the cover's own
-           <header> lives inside <main> and is untouched. */
-        body > header, body > footer { display: none !important; }
+        /* Hide the shared site chrome while retaining the document cover. */
+        [data-landing-page] > header, [data-landing-page] > footer { display: none !important; }
         * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         @page { margin: 12mm; }
       }`}</style>
 
       <ProposalDocument
+        appearance='advisory'
+        contentClassName='mx-auto w-[calc(100%_-_40px)] max-w-advisory min-[681px]:w-[calc(100%_-_72px)] min-[1121px]:w-[calc(100%_-_104px)]'
         sections={proposal.sections ?? []}
         context={{
           template: proposal.template ?? 'business_appraisal',
@@ -327,14 +264,7 @@ function ProposalContent() {
 
 export default function ProposalPageWrapper() {
   return (
-    <Suspense
-      fallback={
-        <div className='min-h-[60vh] flex flex-col items-center justify-center p-8'>
-          <Loader2 className='w-12 h-12 animate-spin text-accent mb-4' />
-          <p className='text-muted-foreground font-medium text-lg'>Loading...</p>
-        </div>
-      }
-    >
+    <Suspense fallback={<ProposalLoading message='Loading...' />}>
       <ProposalContent />
     </Suspense>
   );

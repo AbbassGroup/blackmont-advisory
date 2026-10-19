@@ -9,7 +9,7 @@ export function BuyerValueDrivers({ drivers, details }: BuyerValueDriversProps) 
   return (
     <section
       aria-labelledby='buyer-value-drivers-title'
-      className='bg-white py-14 text-ink min-[681px]:py-16 min-[1121px]:py-20'
+      className='bg-white text-ink py-14 min-[681px]:py-16 min-[1121px]:py-20'
     >
       <LandingContainer>
         <h2

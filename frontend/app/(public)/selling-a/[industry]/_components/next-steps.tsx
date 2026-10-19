@@ -20,7 +20,7 @@ const actions = [
 
 export function IndustryNextSteps() {
   return (
-    <section aria-label='Your next step' className='bg-midnight py-12 text-white min-[681px]:py-14'>
+    <section aria-label='Your next step' className='bg-midnight text-white py-10 min-[681px]:py-12 min-[1121px]:py-16'>
       <LandingContainer className='grid gap-10 min-[931px]:grid-cols-2 min-[931px]:gap-12 min-[1121px]:gap-16'>
         {actions.map(({ href, title, detail, button }, index) => (
           <div key={href} className='flex min-w-0 flex-col items-start'>

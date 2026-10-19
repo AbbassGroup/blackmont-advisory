@@ -10,7 +10,7 @@ export function Contact() {
       <section
         id='contact'
         aria-labelledby='contact-title'
-        className='relative isolate overflow-hidden bg-midnight pt-[77px] pb-[82px] min-[681px]:pt-[104px] min-[681px]:pb-[114px]'
+        className='relative isolate overflow-hidden bg-midnight py-14 min-[681px]:py-16 min-[1121px]:py-20'
       >
         <LandingImage
           src={landingImages.network.src}
@@ -26,24 +26,21 @@ export function Contact() {
           aria-hidden='true'
           className='pointer-events-none absolute inset-0 bg-midnight/[0.72]'
         />
-        <LandingContainer className='relative z-10 grid items-start gap-[33px] min-[681px]:grid-cols-[1fr_0.94fr] min-[681px]:gap-[45px] min-[931px]:gap-[clamp(70px,8vw,125px)]'>
-          <div className='min-w-0 text-white min-[681px]:self-center'>
+        <LandingContainer className='relative z-10 grid items-start min-[681px]:grid-cols-[1fr_0.94fr] gap-8 min-[681px]:gap-10 min-[1121px]:gap-16'>
+          <div className='min-w-0 self-start text-white'>
             <h2
               data-landing-reveal
               id='contact-title'
-              className='m-0 mb-[30px] max-w-[540px] font-advisory-heading text-[36px] leading-[1.3] font-bold tracking-normal text-white min-[681px]:text-[clamp(34px,3.5vw,45px)]'
+              className='m-0 mb-6 max-w-[540px] font-advisory-heading text-[36px] leading-[1.3] font-bold tracking-normal text-white min-[681px]:text-[clamp(34px,3.5vw,45px)]'
             >
               Every transaction starts with a conversation.
             </h2>
-            <p className='m-0 mb-[1.1em] max-w-[520px] text-base leading-[1.75]'>
-              Thinking about selling, buying, or simply considering your options?
-              Speak directly with Blackmont about the next step.
+            <p className='m-0 mb-6 max-w-[520px] text-base leading-[1.75]'>
+              Thinking about selling, buying, or simply considering your
+              options? Speak directly with Blackmont about the next step.
             </p>
-            <p className='m-0 mb-[1.1em] max-w-[520px] text-base leading-[1.75]'>
-              Your enquiry is treated confidentially. We can arrange an NDA before
-              discussing sensitive information.
-            </p>
-            <dl className='m-0 mt-[30px] space-y-[17px]'>
+
+            <dl className='m-0 mt-[32px] space-y-[16px]'>
               <div>
                 <dt className='text-sm font-bold'>Email</dt>
                 <dd className='m-0 text-[15px]'>

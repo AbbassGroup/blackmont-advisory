@@ -72,10 +72,10 @@ export function LegalPage({ title, description, path, intro, sections }: LegalPa
 
   return (
     <div className='bg-white'>
-      <section aria-labelledby='legal-page-title' className='border-b border-advisory-rule bg-canvas py-9 min-[681px]:py-12'>
+      <section aria-labelledby='legal-page-title' className='border-b border-advisory-rule bg-canvas py-10 min-[681px]:py-12 min-[1121px]:py-16'>
         <LandingContainer>
           <Breadcrumbs items={[{ name: 'Home', path: '' }, { name: title, path }]} tone='light' />
-          <h1 id='legal-page-title' className='m-0 mt-7 font-advisory-heading text-[clamp(32px,6.5vw,44px)] leading-[1.25] font-bold tracking-normal text-midnight'>
+          <h1 id='legal-page-title' className='m-0 mt-8 font-advisory-heading text-[clamp(32px,6.5vw,44px)] leading-[1.25] font-bold tracking-normal text-midnight'>
             {title}
           </h1>
           <p className='m-0 mt-5 max-w-[760px] text-base leading-[1.8] text-ink min-[681px]:text-[17px]'>
@@ -84,7 +84,7 @@ export function LegalPage({ title, description, path, intro, sections }: LegalPa
         </LandingContainer>
       </section>
 
-      <LandingContainer className='grid items-start gap-8 py-9 min-[681px]:py-14 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-14 min-[1280px]:gap-[72px]'>
+      <LandingContainer className='grid items-start gap-8 min-[681px]:gap-10 min-[1121px]:gap-16 py-10 min-[681px]:py-12 min-[1121px]:py-16 lg:grid-cols-[260px_minmax(0,1fr)]'>
         <aside className='min-w-0 lg:sticky lg:top-32 lg:max-h-[calc(100dvh-160px)] lg:overflow-y-auto lg:pr-2'>
           <details className='group border-y border-advisory-rule lg:hidden'>
             <summary className='flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 py-3 text-base font-semibold text-midnight focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gilt [&::-webkit-details-marker]:hidden'>
@@ -118,7 +118,7 @@ export function LegalPage({ title, description, path, intro, sections }: LegalPa
                 <h2 id={`${section.id}-heading`} className='m-0 mb-4 font-advisory-heading text-[23px] leading-[1.4] font-bold tracking-normal text-midnight min-[681px]:text-[26px]'>
                   {section.heading.replace(/^\d+\.\s*/, '')}
                 </h2>
-                <div className='space-y-4 text-base leading-[1.85] text-ink min-[681px]:text-[17px]'>
+                <div className='space-y-6 text-base leading-[1.85] text-ink min-[681px]:text-[17px]'>
                   {section.paragraphs.map((paragraph, i) => (
                     <p key={i} className='m-0 whitespace-pre-line'>
                       {paragraph.split('info@blackmontadvisory.com').map((part, partIndex) => (

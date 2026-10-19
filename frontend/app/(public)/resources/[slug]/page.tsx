@@ -148,11 +148,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   ];
 
   return (
-    <div className={`${landingFontVariables} min-h-screen bg-white pb-24 font-advisory-body text-ink`}>
+    <div className={`${landingFontVariables} min-h-screen bg-white pb-14 min-[681px]:pb-16 min-[1121px]:pb-20 font-advisory-body text-ink`}>
       <JsonLd data={structuredData} />
 
       {/* ── Article Header ───────────────────────────── */}
-      <div className='relative flex min-h-[44vh] w-full flex-col justify-end overflow-hidden pb-12 pt-[80px] md:min-h-[52vh]'>
+      <div className='relative flex min-h-[44vh] w-full flex-col justify-end overflow-hidden py-12 min-[681px]:py-14 min-[931px]:py-16 min-[1121px]:py-20 md:min-h-[52vh]'>
         <div className='absolute inset-0 z-0'>
           {blog.image && (
             // eslint-disable-next-line @next/next/no-img-element
@@ -166,7 +166,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <div className='absolute inset-0 bg-gradient-to-t from-primary via-primary/70 to-primary/20' />
         </div>
 
-        <div className='relative z-10 mx-auto w-full max-w-[1500px] px-6 pt-24 sm:px-10 lg:px-16'>
+        <div className='relative z-10 mx-auto w-[calc(100%_-_40px)] max-w-advisory min-[681px]:w-[calc(100%_-_72px)] min-[1121px]:w-[calc(100%_-_104px)]'>
           <Link
             href='/resources'
             className='group mb-6 inline-flex items-center text-[15px] font-semibold tracking-normal text-parchment transition-colors hover:text-accent'
@@ -181,11 +181,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       </div>
 
       {/* ── Main Content Area ────────────────────────── */}
-      <div className='relative z-20 mx-auto -mt-8 max-w-[1500px] px-6 sm:px-10 lg:px-16'>
-        <div className='flex flex-col gap-8 lg:flex-row lg:gap-12'>
+      <div className='relative z-20 mx-auto -mt-8 w-[calc(100%_-_40px)] max-w-advisory min-[681px]:w-[calc(100%_-_72px)] min-[1121px]:w-[calc(100%_-_104px)]'>
+        <div className='gap-8 min-[681px]:gap-10 min-[1121px]:gap-16 flex flex-col lg:flex-row'>
           {/* ── Article Body ───────────────────────────── */}
           <div className='flex-1 lg:w-2/3'>
-            <article className='border border-secondary/10 bg-white p-6 md:p-10 lg:p-12'>
+            <article className='border border-secondary/10 bg-white p-6 min-[681px]:p-8'>
               {/* Summary / Lead */}
               {blog.metaDescription && (
                 <div className='mb-10 border-b border-secondary/10 pb-10 text-lg leading-[1.8] font-normal text-ink md:text-[19px]'>
@@ -203,7 +203,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
           {/* ── Sidebar (Related Articles) ─────────────── */}
           {related.length > 0 && (
-            <aside className='mt-8 w-full lg:mt-0 lg:w-1/3 lg:pt-12'>
+            <aside className='w-full lg:w-1/3 lg:pt-8'>
               <div className='sticky top-24'>
                 <div className='mb-6 flex items-center justify-between'>
                   <h2 className='font-advisory-heading text-[23px] leading-[1.4] font-bold tracking-normal text-midnight'>

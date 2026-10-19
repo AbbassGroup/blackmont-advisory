@@ -16,19 +16,19 @@ export function Hero() {
         className='relative isolate overflow-hidden'
       >
         <LandingContainer className='pointer-events-none relative z-10 min-[931px]:flex min-[931px]:min-h-[620px] min-[931px]:items-center min-[1121px]:min-h-[660px]'>
-          <div className='pointer-events-auto min-w-0 pt-[50px] pb-7 motion-safe:animate-advisory-hero focus-within:animate-none min-[681px]:pt-[60px] min-[681px]:pb-9 min-[931px]:w-[55%] min-[931px]:py-[76px] min-[1121px]:w-[54%] min-[1121px]:py-[88px]'>
+          <div className='pointer-events-auto min-w-0 motion-safe:animate-advisory-hero focus-within:animate-none min-[931px]:w-[55%] min-[1121px]:w-[54%] py-12 min-[681px]:py-14 min-[931px]:py-16 min-[1121px]:py-20'>
             <h1
               id='hero-title'
-              className='m-0 mb-6 max-w-[570px] font-advisory-heading text-[clamp(38px,9.5vw,54px)] leading-[1.14] font-bold tracking-normal text-midnight min-[681px]:mb-[30px] min-[681px]:max-w-[650px] min-[681px]:text-[clamp(37px,5.15vw,52px)] min-[931px]:text-[clamp(42px,5.1vw,58px)] min-[1121px]:text-[clamp(46px,4.85vw,66px)]'
+              className='m-0 mb-6 max-w-[570px] font-advisory-heading text-[clamp(38px,9.5vw,54px)] leading-[1.14] font-bold tracking-normal text-midnight min-[681px]:mb-[32px] min-[681px]:max-w-[650px] min-[681px]:text-[clamp(37px,5.15vw,52px)] min-[931px]:text-[clamp(42px,5.1vw,58px)] min-[1121px]:text-[clamp(46px,4.85vw,66px)]'
             >
               Thinking about selling your business?
             </h1>
-            <p className='m-0 mb-[27px] max-w-[560px] text-[17px] leading-[1.7] text-ink min-[681px]:mb-[33px] min-[681px]:max-w-[580px] min-[681px]:text-base min-[681px]:leading-[1.8] min-[931px]:text-[17px] min-[1121px]:text-lg'>
+            <p className='m-0 mb-8 max-w-[560px] text-[17px] leading-[1.7] text-ink min-[681px]:mb-[32px] min-[681px]:max-w-[580px] min-[681px]:text-base min-[681px]:leading-[1.8] min-[931px]:text-[17px] min-[1121px]:text-lg'>
               You have spent years building your business. When the time comes
               to sell, you deserve an advisor who handles the process carefully,
               protects your confidentiality and works for your best outcome.
             </p>
-            <div className='flex flex-col flex-wrap items-start gap-[13px] min-[426px]:flex-row min-[426px]:items-center min-[426px]:gap-3.5 min-[681px]:flex-col min-[681px]:items-start min-[931px]:flex-row min-[931px]:items-center min-[931px]:gap-x-[27px] min-[931px]:gap-y-[22px]'>
+            <div className='flex flex-col flex-wrap items-start gap-[12px] min-[426px]:flex-row min-[426px]:items-center min-[426px]:gap-3.5 min-[681px]:flex-col min-[681px]:items-start min-[931px]:flex-row min-[931px]:items-center min-[931px]:gap-x-[28px] min-[931px]:gap-y-[24px]'>
               <LandingButtonLink href='#contact'>
                 Discuss selling my business
               </LandingButtonLink>

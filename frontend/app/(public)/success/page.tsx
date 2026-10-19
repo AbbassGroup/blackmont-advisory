@@ -8,12 +8,12 @@ export const metadata: Metadata = {
 
 export default function SuccessPage() {
   return (
-    <section className='relative min-h-screen flex items-center justify-center px-4 py-16 bg-background overflow-hidden'>
+    <section className='relative min-h-[60vh] flex items-center justify-center px-5 py-10 min-[681px]:py-12 min-[1121px]:py-16 bg-background overflow-hidden'>
       <div className='absolute -top-20 -left-20 h-64 w-64 rounded-full bg-accent/15 blur-3xl' />
       <div className='absolute -bottom-24 -right-16 h-72 w-72 rounded-full bg-secondary/10 blur-3xl' />
 
       <div className='relative w-full max-w-3xl'>
-        <div className='border border-border bg-card/90 backdrop-blur-sm p-8 md:p-12 text-center'>
+        <div className='border border-border bg-card/90 backdrop-blur-sm p-6 min-[681px]:p-8 text-center'>
           <div className='mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-accent text-primary shadow'>
             <Check />
           </div>

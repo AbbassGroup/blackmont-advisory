@@ -21,8 +21,8 @@ export function ToolNotes({
   if (appearance === 'advisory') {
     return (
       <LandingTheme>
-        <section aria-labelledby='tool-notes-title' className='py-10 min-[681px]:py-16'>
-          <LandingContainer className='grid items-start gap-8 min-[931px]:grid-cols-[1.3fr_0.8fr] min-[931px]:gap-[clamp(40px,5vw,72px)]'>
+        <section aria-labelledby='tool-notes-title' className='py-10 min-[681px]:py-12 min-[1121px]:py-16'>
+          <LandingContainer className='grid items-start min-[931px]:grid-cols-[1.3fr_0.8fr] gap-8 min-[681px]:gap-10 min-[1121px]:gap-16'>
             <div className='min-w-0'>
               <h2 id='tool-notes-title' className='m-0 mb-6 font-advisory-heading text-[28px] leading-[1.3] font-bold tracking-normal text-midnight min-[681px]:text-[34px]'>
                 {heading}

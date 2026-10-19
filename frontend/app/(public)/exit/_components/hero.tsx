@@ -20,14 +20,14 @@ export function SellHero() {
         className='relative isolate overflow-hidden'
       >
         <LandingContainer className='pointer-events-none relative z-10 min-[931px]:flex min-[931px]:min-h-[600px] min-[931px]:items-center min-[1121px]:min-h-[640px]'>
-          <div className='pointer-events-auto min-w-0 pt-[50px] pb-7 motion-safe:animate-advisory-hero focus-within:animate-none min-[681px]:pt-[60px] min-[681px]:pb-9 min-[931px]:w-[57%] min-[931px]:py-[76px] min-[1121px]:w-[55%] min-[1121px]:py-[88px]'>
+          <div className='pointer-events-auto min-w-0 motion-safe:animate-advisory-hero focus-within:animate-none min-[931px]:w-[57%] min-[1121px]:w-[55%] py-12 min-[681px]:py-14 min-[931px]:py-16 min-[1121px]:py-20'>
             <h1
               id='exit-hero-title'
-              className='m-0 mb-6 max-w-[570px] font-advisory-heading text-[clamp(38px,9.5vw,54px)] leading-[1.14] font-bold tracking-normal text-midnight min-[681px]:mb-[30px] min-[681px]:max-w-[650px] min-[681px]:text-[clamp(37px,5.15vw,52px)] min-[931px]:text-[clamp(42px,5.1vw,58px)] min-[1121px]:text-[clamp(46px,4.85vw,66px)]'
+              className='m-0 mb-6 max-w-[570px] font-advisory-heading text-[clamp(38px,9.5vw,54px)] leading-[1.14] font-bold tracking-normal text-midnight min-[681px]:mb-[32px] min-[681px]:max-w-[650px] min-[681px]:text-[clamp(37px,5.15vw,52px)] min-[931px]:text-[clamp(42px,5.1vw,58px)] min-[1121px]:text-[clamp(46px,4.85vw,66px)]'
             >
               Thinking about selling your business?
             </h1>
-            <p className='m-0 mb-[27px] max-w-[540px] text-[17px] leading-[1.7] text-ink min-[681px]:mb-[33px] min-[1121px]:text-lg'>
+            <p className='m-0 mb-[28px] max-w-[540px] text-[17px] leading-[1.7] text-ink min-[681px]:mb-[32px] min-[1121px]:text-lg'>
               Access free valuation tools, exit-readiness checklists, and
               confidential advice from Blackmont Advisory.
             </p>

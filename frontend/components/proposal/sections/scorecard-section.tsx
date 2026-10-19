@@ -197,7 +197,7 @@ function FactorCard({
   onRemove: (index: number) => void;
 }) {
   return (
-    <div className='group/row flex flex-col border border-border bg-white p-5 text-center'>
+    <div data-proposal-factor className='group/row flex flex-col border border-border bg-white p-5 text-center'>
       {editable && (
         <div className='mb-2 flex items-center justify-between gap-2'>
           <span className='text-[10px] font-semibold uppercase tracking-wide text-muted-foreground'>

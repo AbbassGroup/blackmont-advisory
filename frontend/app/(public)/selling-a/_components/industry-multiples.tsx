@@ -15,7 +15,7 @@ export function IndustryMultiples() {
     <section
       id='industry-multiples'
       aria-labelledby='industry-multiples-title'
-      className='scroll-mt-28 bg-white py-14 text-ink min-[681px]:py-16 min-[1121px]:py-20'
+      className='scroll-mt-28 bg-white text-ink py-14 min-[681px]:py-16 min-[1121px]:py-20'
     >
       <LandingContainer>
         <h2

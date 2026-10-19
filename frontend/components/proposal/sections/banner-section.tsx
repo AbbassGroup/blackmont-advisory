@@ -3,6 +3,8 @@
 import { useRef, useState } from 'react';
 import { ImageUp, Loader2 } from 'lucide-react';
 import { InlineText } from '@/components/im';
+import { LandingImage } from '@/components/landing/landing-image';
+import { LandingContainer } from '@/components/landing/presentation';
 import {
   DEFAULT_BANNER_IMAGE,
   type ProposalBannerData,
@@ -26,6 +28,7 @@ function MetaCell({ label, value }: { label: string; value: string }) {
 /** LOCKED SECTION — the cover. */
 export function ProposalBannerSection({
   data,
+  appearance = 'document',
   template = 'business_appraisal',
   brokerName,
   customerName,
@@ -36,6 +39,7 @@ export function ProposalBannerSection({
   onCommit,
 }: {
   data: ProposalBannerData;
+  appearance?: 'document' | 'advisory';
   template?: ProposalTemplate;
   brokerName?: string;
   customerName?: string;
@@ -73,6 +77,50 @@ export function ProposalBannerSection({
     { label: 'Date', value: preparedOn },
     { label: 'By', value: brokerName },
   ].filter((m) => m.value) as { label: string; value: string }[];
+
+  if (appearance === 'advisory' && !editable) {
+    return (
+      <header className='relative isolate overflow-hidden border-b border-advisory-rule bg-canvas'>
+        <LandingContainer className='pointer-events-none relative z-10 min-[931px]:flex min-[931px]:min-h-[560px] min-[931px]:items-center'>
+          <div className='pointer-events-auto min-w-0 min-[931px]:w-[53%] py-12 min-[681px]:py-14 min-[931px]:py-16 min-[1121px]:py-20'>
+            <h1 className='m-0 max-w-[680px] break-words font-advisory-heading text-[clamp(34px,7.5vw,46px)] leading-[1.22] font-bold tracking-normal text-midnight min-[681px]:text-[clamp(40px,4.2vw,56px)]'>
+              {data.businessName || '[Business Name]'}
+            </h1>
+            {data.eyebrow && (
+              <p className='mt-5 mb-0 text-lg leading-[1.7] text-ink'>{data.eyebrow}</p>
+            )}
+            {isAppraisal && data.businessValue && (
+              <p className='mt-5 mb-0 font-advisory-heading text-[27px] leading-[1.4] font-bold text-midnight min-[681px]:text-[32px]'>
+                {data.businessValue}
+              </p>
+            )}
+            {meta.length > 0 && (
+              <dl className='mt-8 mb-0 flex flex-wrap gap-x-9 gap-y-5'>
+                {meta.map(({ label, value }) => (
+                  <div key={label} className='min-w-0 max-w-full'>
+                    <dt className='text-sm leading-[1.6] text-ink'>{label}</dt>
+                    <dd className='mt-2 break-words text-base leading-[1.7] font-medium text-midnight'>{value}</dd>
+                  </div>
+                ))}
+              </dl>
+            )}
+          </div>
+        </LandingContainer>
+        <figure className='relative m-0 h-[clamp(260px,60vw,420px)] w-full overflow-hidden min-[931px]:absolute min-[931px]:inset-y-0 min-[931px]:right-0 min-[931px]:h-auto min-[931px]:w-[58%]'>
+          <LandingImage
+            src={bg}
+            alt=''
+            fill
+            preload
+            unoptimized
+            sizes='(max-width: 930px) 100vw, 58vw'
+            className='object-cover'
+          />
+          <div aria-hidden='true' className='pointer-events-none absolute inset-0 bg-linear-to-b from-canvas via-canvas/60 via-[6%] to-canvas/0 to-[22%] min-[931px]:bg-linear-to-r min-[931px]:via-canvas/90 min-[931px]:via-[18%] min-[931px]:to-[48%]' />
+        </figure>
+      </header>
+    );
+  }
 
   return (
     <header className='relative isolate flex min-h-[600px] w-full flex-col overflow-hidden border-b-2 border-accent bg-secondary sm:min-h-[780px]'>

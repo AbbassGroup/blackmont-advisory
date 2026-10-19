@@ -11,7 +11,6 @@ const BASE_URL = 'https://blackmontadvisory.com';
 // No priority/changeFrequency: Google ignores both. lastModified only where real.
 const staticPages = [
   '',
-  '/agents',
   '/buy-a-business',
   '/partnership',
   '/resources',

@@ -73,6 +73,8 @@ export interface ProposalDocumentProps {
   sections: DocSection[];
   context: ProposalDocumentContext;
   editable?: boolean;
+  /** Public site presentation; the editor and exports retain the document layout. */
+  appearance?: 'document' | 'advisory';
   onSectionChange?: (index: number, patch: SectionPatch) => void;
   onUploadFile?: (file: File) => Promise<string | null>;
   onCommit?: () => void;
@@ -87,6 +89,7 @@ function ProposalDocumentImpl({
   sections,
   context,
   editable = false,
+  appearance = 'document',
   onSectionChange,
   onUploadFile,
   onCommit,
@@ -102,6 +105,7 @@ function ProposalDocumentImpl({
       case 'banner':
         return (
           <ProposalBannerSection
+            appearance={appearance}
             data={data as unknown as ProposalBannerData}
             template={context.template}
             brokerName={context.brokerName}
@@ -155,6 +159,7 @@ function ProposalDocumentImpl({
       case 'investment':
         return (
           <InvestmentSection
+            appearance={appearance}
             ref={interaction?.investmentRef}
             data={data as unknown as InvestmentData}
             editable={editable}
@@ -170,6 +175,7 @@ function ProposalDocumentImpl({
       case 'accept':
         return (
           <AcceptSection
+            appearance={appearance}
             data={data as unknown as AcceptData}
             editable={editable}
             onChange={onChange}
@@ -203,7 +209,7 @@ function ProposalDocumentImpl({
         return <ProposalAboutSection />;
 
       case 'contact':
-        return <ProposalContactSection />;
+        return <ProposalContactSection appearance={appearance} />;
 
       // Shared with the Information Memorandum engine — the whole block system
       // (text, tables, buttons, photos, video, PDF) and the chart builder.

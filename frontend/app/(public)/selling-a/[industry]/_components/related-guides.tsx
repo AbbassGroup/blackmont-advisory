@@ -14,7 +14,7 @@ type RelatedGuidesProps = {
 
 export function IndustryRelatedGuides({ industries, guides }: RelatedGuidesProps) {
   return (
-    <div className='bg-white py-14 text-ink min-[681px]:py-16 min-[1121px]:py-20'>
+    <div className='bg-white text-ink py-14 min-[681px]:py-16 min-[1121px]:py-20'>
       <LandingContainer>
         {industries.length > 0 && (
           <section aria-labelledby='related-industries-title'>

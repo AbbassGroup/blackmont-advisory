@@ -20,7 +20,7 @@ export function ScheduleCallCta({
     <LandingTheme className='bg-canvas'>
       <section
         aria-labelledby='exit-cta-title'
-        className='border-t border-advisory-rule py-[48px] min-[681px]:py-[64px]'
+        className='border-t border-advisory-rule py-10 min-[681px]:py-12 min-[1121px]:py-16'
       >
         <LandingContainer className='flex flex-col items-start gap-7 min-[931px]:flex-row min-[931px]:items-center min-[931px]:justify-between min-[931px]:gap-12'>
           <div className='min-w-0 max-w-[760px]'>

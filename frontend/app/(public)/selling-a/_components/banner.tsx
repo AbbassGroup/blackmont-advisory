@@ -13,11 +13,11 @@ export function SellingBanner({ title, crumbs }: { title: string; crumbs: Crumb[
     <LandingTheme className='bg-canvas'>
       <section aria-labelledby='selling-overview-title' className='relative isolate overflow-hidden'>
         <LandingContainer className='pointer-events-none relative z-10 min-[931px]:flex min-[931px]:min-h-[600px] min-[931px]:items-center min-[1121px]:min-h-[640px]'>
-          <div className='pointer-events-auto min-w-0 pt-10 pb-8 min-[681px]:pt-12 min-[681px]:pb-9 min-[931px]:w-[58%] min-[931px]:py-14 min-[1121px]:w-[57%] min-[1121px]:py-16'>
+          <div className='pointer-events-auto min-w-0 min-[931px]:w-[58%] min-[1121px]:w-[57%] py-12 min-[681px]:py-14 min-[931px]:py-16 min-[1121px]:py-20'>
             <Breadcrumbs items={crumbs} tone='light' />
             <h1
               id='selling-overview-title'
-              className='m-0 mt-7 mb-6 max-w-[680px] font-advisory-heading text-[clamp(34px,8.5vw,48px)] leading-[1.18] font-bold tracking-normal text-midnight min-[681px]:text-[clamp(38px,4.8vw,50px)] min-[931px]:text-[clamp(40px,4.1vw,54px)] min-[1121px]:text-[clamp(44px,4.2vw,58px)]'
+              className='m-0 mt-8 mb-6 max-w-[680px] font-advisory-heading text-[clamp(34px,8.5vw,48px)] leading-[1.18] font-bold tracking-normal text-midnight min-[681px]:text-[clamp(38px,4.8vw,50px)] min-[931px]:text-[clamp(40px,4.1vw,54px)] min-[1121px]:text-[clamp(44px,4.2vw,58px)]'
             >
               {title}
             </h1>

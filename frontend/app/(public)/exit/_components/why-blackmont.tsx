@@ -40,14 +40,14 @@ export function WhyBlackmont() {
       <section
         id='why-blackmont'
         aria-labelledby='exit-why-title'
-        className='py-[56px] min-[681px]:py-[80px]'
+        className='py-14 min-[681px]:py-16 min-[1121px]:py-20'
       >
         <LandingContainer>
           <LandingSectionIntro
             headingId='exit-why-title'
             heading='Why business owners choose Blackmont Advisory'
           />
-          <div className='grid gap-8 min-[931px]:grid-cols-[0.95fr_1.05fr] min-[931px]:gap-[clamp(40px,5vw,72px)]'>
+          <div className='grid min-[931px]:grid-cols-[0.95fr_1.05fr] gap-8 min-[681px]:gap-10 min-[1121px]:gap-16'>
             <figure className='group/image relative m-0 aspect-[1.25] min-w-0 overflow-hidden bg-canvas min-[681px]:aspect-[1.7] min-[931px]:aspect-auto min-[931px]:min-h-[520px]'>
               <LandingImage
                 src={advisoryReview}

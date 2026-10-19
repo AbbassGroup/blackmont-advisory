@@ -27,9 +27,9 @@ export function Booking() {
       <section
         id='booking'
         aria-labelledby='exit-booking-title'
-        className='py-10 min-[681px]:py-14'
+        className='py-14 min-[681px]:py-16 min-[1121px]:py-20'
       >
-        <LandingContainer className='grid items-center gap-7 min-[931px]:grid-cols-[1fr_0.94fr] min-[931px]:gap-[clamp(40px,5vw,72px)]'>
+        <LandingContainer className='grid items-center min-[931px]:grid-cols-[1fr_0.94fr] gap-8 min-[681px]:gap-10 min-[1121px]:gap-16'>
             <div className='min-w-0'>
               <h2
                 id='exit-booking-title'
@@ -43,7 +43,7 @@ export function Booking() {
               </p>
             </div>
 
-            <div className='min-w-0 bg-canvas p-6 text-ink min-[681px]:p-7'>
+            <div className='min-w-0 bg-canvas text-ink p-6 min-[681px]:p-8'>
               <div className='border-b border-advisory-rule pb-4'>
                   <h3 id='booking-time-title' className='m-0 mb-2 font-advisory-heading text-[23px] leading-[1.35] font-bold tracking-normal text-midnight'>
                     Select a preferred time

@@ -8,7 +8,7 @@ import {
 } from './presentation';
 
 const PHOTO_SIZES =
-  '(max-width: 680px) calc(100vw - 38px), (max-width: 1120px) calc(50vw - 36px), (max-width: 1444px) calc(50vw - 52px), 670px';
+  '(max-width: 680px) calc(100vw - 40px), (max-width: 1120px) calc(50vw - 36px), (max-width: 1444px) calc(50vw - 52px), 670px';
 
 export function Selling() {
   return (
@@ -16,7 +16,7 @@ export function Selling() {
       <section
         id='selling'
         aria-labelledby='selling-title'
-        className='pt-[67px] pb-[72px] min-[681px]:pt-[91px] min-[681px]:pb-[105px]'
+        className='py-14 min-[681px]:py-16 min-[1121px]:py-20'
       >
         <LandingContainer>
           <LandingSectionIntro
@@ -24,12 +24,12 @@ export function Selling() {
             heading='A well-run sale starts before the first buyer is approached.'
           />
           <div className='grid min-[681px]:grid-cols-2'>
-            <article className='flex min-w-0 flex-col items-start justify-center bg-canvas px-[27px] pt-[37px] pb-[39px] min-[681px]:min-h-[355px] min-[681px]:p-10 min-[931px]:p-[clamp(42px,5vw,73px)]'>
+            <article className='flex min-w-0 flex-col items-start justify-center bg-canvas p-6 min-[681px]:p-8 min-[681px]:min-h-[355px]'>
               <div className='flex min-w-0 flex-col items-start'>
-                <h3 className='m-0 mb-4 font-advisory-heading text-[25px] leading-[1.3] font-bold tracking-normal text-midnight min-[681px]:mb-[22px] min-[681px]:text-[clamp(25px,2.4vw,31px)]'>
+                <h3 className='m-0 mb-4 font-advisory-heading text-[25px] leading-[1.3] font-bold tracking-normal text-midnight min-[681px]:mb-[24px] min-[681px]:text-[clamp(25px,2.4vw,31px)]'>
                   First, we listen.
                 </h3>
-                <p className='m-0 mb-[15px] max-w-[450px] text-[15px] leading-[1.75] min-[681px]:text-base'>
+                <p className='m-0 mb-[16px] max-w-[450px] text-[15px] leading-[1.75] min-[681px]:text-base'>
                   What you’ve built, what it is worth to you and what you want to do
                   next. We begin with a private conversation and an honest view of
                   your options.
@@ -51,16 +51,16 @@ export function Selling() {
                 className='object-cover object-[center_46%]'
               />
             </figure>
-            <article className='flex min-w-0 flex-col items-start justify-center bg-deep-navy px-[27px] pt-[37px] pb-[39px] text-white min-[681px]:col-start-2 min-[681px]:row-start-2 min-[681px]:min-h-[355px] min-[681px]:p-10 min-[931px]:p-[clamp(42px,5vw,73px)]'>
+            <article className='flex min-w-0 flex-col items-start justify-center bg-deep-navy p-6 min-[681px]:p-8 text-white min-[681px]:col-start-2 min-[681px]:row-start-2 min-[681px]:min-h-[355px]'>
               <div className='flex min-w-0 flex-col items-start'>
-                <h3 className='m-0 mb-4 font-advisory-heading text-[25px] leading-[1.3] font-bold tracking-normal text-white min-[681px]:mb-[22px] min-[681px]:text-[clamp(25px,2.4vw,31px)]'>
+                <h3 className='m-0 mb-4 font-advisory-heading text-[25px] leading-[1.3] font-bold tracking-normal text-white min-[681px]:mb-[24px] min-[681px]:text-[clamp(25px,2.4vw,31px)]'>
                   Then, we do the work.
                 </h3>
-                <p className='m-0 mb-[15px] max-w-[450px] text-[15px] leading-[1.75] min-[681px]:text-base'>
+                <p className='m-0 mb-[16px] max-w-[450px] text-[15px] leading-[1.75] min-[681px]:text-base'>
                   Valuation guidance, a properly prepared Information Memorandum,
                   private buyer outreach and negotiation through to settlement.
                 </p>
-                <p className='m-0 mb-[15px] max-w-[450px] text-[15px] leading-[1.75] min-[681px]:text-base'>
+                <p className='m-0 mb-[16px] max-w-[450px] text-[15px] leading-[1.75] min-[681px]:text-base'>
                   Nothing is disclosed without your approval. Your advisor stays
                   involved from start to finish.
                 </p>

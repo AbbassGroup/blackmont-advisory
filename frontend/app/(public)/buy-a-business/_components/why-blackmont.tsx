@@ -26,15 +26,15 @@ const advantages = [
 export function WhyBlackmont() {
   return (
     <LandingTheme className='bg-white'>
-      <section aria-labelledby='buying-why-blackmont-title' className='py-14 min-[681px]:py-20'>
+      <section aria-labelledby='buying-why-blackmont-title' className='py-14 min-[681px]:py-16 min-[1121px]:py-20'>
         <LandingContainer>
           <h2
             id='buying-why-blackmont-title'
-            className='m-0 mb-8 font-advisory-heading text-[clamp(29px,6.5vw,38px)] leading-[1.25] font-bold tracking-normal text-midnight min-[681px]:mb-10 min-[681px]:text-[clamp(32px,3.4vw,43px)]'
+            className='m-0 font-advisory-heading text-[clamp(29px,6.5vw,38px)] leading-[1.25] font-bold tracking-normal text-midnight min-[681px]:text-[clamp(32px,3.4vw,43px)] mb-8 min-[681px]:mb-10'
           >
             Why Blackmont Advisory
           </h2>
-          <div className='grid gap-8 min-[931px]:grid-cols-[0.95fr_1.05fr] min-[931px]:gap-[clamp(40px,5vw,72px)]'>
+          <div className='grid min-[931px]:grid-cols-[0.95fr_1.05fr] gap-8 min-[681px]:gap-10 min-[1121px]:gap-16'>
             <figure className='group/image relative m-0 aspect-[1.5] min-w-0 overflow-hidden min-[681px]:aspect-[1.8] min-[931px]:min-h-[440px] min-[931px]:aspect-auto'>
               <LandingImage
                 src={independentAdvice}
@@ -42,7 +42,7 @@ export function WhyBlackmont() {
                 unoptimized
                 fill
                 loading='lazy'
-                sizes='(max-width: 680px) calc(100vw - 38px), (max-width: 930px) calc(100vw - 72px), (max-width: 1444px) 45vw, 600px'
+                sizes='(max-width: 680px) calc(100vw - 40px), (max-width: 930px) calc(100vw - 72px), (max-width: 1444px) 45vw, 600px'
                 className='object-cover object-[55%_center]'
               />
             </figure>

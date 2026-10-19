@@ -8,9 +8,9 @@ import { LandingBrand } from './brand';
 import { LandingContainer } from './presentation';
 
 const NAV_LINKS = [
-  { label: 'Selling a business', href: '#selling' },
-  { label: 'Buying a business', href: '#buying' },
-  { label: 'Recent acquisitions', href: '#acquisitions' },
+  { label: 'Selling a Business', href: '#selling' },
+  { label: 'Buying a Business', href: '#buying' },
+  { label: 'Recent Acquisitions', href: '#acquisitions' },
   { label: 'About us', href: '#about' },
   { label: 'Resources', href: '/resources' },
   { label: 'Exit Planning', href: '/exit' },
@@ -78,7 +78,7 @@ export function LandingHeader({ homePath = '' }: { homePath?: '' | '/' }) {
     >
       <div ref={utilityRef} className='border-b border-white/[0.17] text-[10px] leading-[1.35] min-[681px]:text-xs'>
         <LandingContainer className='flex min-h-[37px] items-center justify-between gap-5 min-[681px]:min-h-[42px]'>
-          <div className='flex flex-wrap items-center gap-x-[9px] min-[681px]:gap-x-[13px]'>
+          <div className='flex flex-wrap items-center gap-x-[9px] min-[681px]:gap-x-[12px]'>
             <span>Melbourne, Australia</span>
             <span aria-hidden='true' className='text-gilt'>|</span>
             <a
@@ -121,7 +121,7 @@ export function LandingHeader({ homePath = '' }: { homePath?: '' | '/' }) {
           <div
             id={menuId}
             className={cn(
-              'absolute inset-x-0 top-full z-40 hidden max-h-[calc(100dvh_-_140px)] flex-col items-stretch overflow-y-auto border-t border-white/[0.18] bg-midnight px-[22px] pt-[15px] pb-6 min-[681px]:px-[max(36px,calc((100%_-_720px)/2))] min-[681px]:pb-[25px] min-[1280px]:static min-[1280px]:ml-auto min-[1280px]:flex min-[1280px]:max-h-none min-[1280px]:flex-row min-[1280px]:items-center min-[1280px]:justify-end min-[1280px]:gap-4 min-[1280px]:overflow-visible min-[1280px]:border-0 min-[1280px]:p-0 min-[1444px]:gap-[18px]',
+              'absolute inset-x-0 top-full z-40 hidden max-h-[calc(100dvh_-_140px)] flex-col items-stretch overflow-y-auto border-t border-white/[0.18] bg-midnight px-[24px] pt-[16px] pb-6 min-[681px]:px-[max(36px,calc((100%_-_720px)/2))] min-[681px]:pb-[25px] min-[1280px]:static min-[1280px]:ml-auto min-[1280px]:flex min-[1280px]:max-h-none min-[1280px]:flex-row min-[1280px]:items-center min-[1280px]:justify-end min-[1280px]:gap-4 min-[1280px]:overflow-visible min-[1280px]:border-0 min-[1280px]:p-0 min-[1444px]:gap-[20px]',
               open && 'flex',
             )}
           >
@@ -130,7 +130,7 @@ export function LandingHeader({ homePath = '' }: { homePath?: '' | '/' }) {
                 key={link.href}
                 href={link.href.startsWith('#') ? `${homePath}${link.href}` : link.href}
                 onClick={() => setOpen(false)}
-                className='py-[13px] text-[15px] leading-[1.5] font-semibold whitespace-nowrap transition-colors duration-200 ease-out hover:text-gilt hover:underline hover:underline-offset-[6px] focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none min-[1280px]:py-0 min-[1444px]:text-base'
+                className='py-[12px] text-[15px] leading-[1.5] font-semibold whitespace-nowrap transition-colors duration-200 ease-out hover:text-gilt hover:underline hover:underline-offset-[6px] focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none min-[1280px]:py-0 min-[1444px]:text-base'
               >
                 {link.label}
               </LandingLink>
@@ -138,7 +138,7 @@ export function LandingHeader({ homePath = '' }: { homePath?: '' | '/' }) {
             <LandingLink
               href={`${homePath}#contact`}
               onClick={() => setOpen(false)}
-              className='mt-3 inline-flex min-h-[47px] items-center justify-center border border-gilt bg-gilt px-5 py-[13px] text-[15px] leading-[1.5] font-semibold whitespace-nowrap text-midnight transition-colors duration-200 ease-out hover:bg-midnight hover:text-gilt focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none min-[1280px]:mt-0 min-[1280px]:px-[15px] min-[1280px]:py-0 min-[1444px]:px-5 min-[1444px]:text-base'
+              className='mt-3 inline-flex min-h-[47px] items-center justify-center border border-gilt bg-gilt px-5 py-[12px] text-[15px] leading-[1.5] font-semibold whitespace-nowrap text-midnight transition-colors duration-200 ease-out hover:bg-midnight hover:text-gilt focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none min-[1280px]:mt-0 min-[1280px]:px-[16px] min-[1280px]:py-0 min-[1444px]:px-5 min-[1444px]:text-base'
             >
               Talk to an advisor
             </LandingLink>

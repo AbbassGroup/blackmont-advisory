@@ -76,7 +76,7 @@ export function BlogCard({ blog }: { blog: Blog }) {
         <p className='m-0 mb-4 line-clamp-2 flex-1 text-[15px] leading-[1.65] text-ink'>
           {blog.metaDescription}
         </p>
-        <div className='mt-auto flex min-h-11 items-center justify-between gap-3 border-t border-advisory-rule pt-[14px] text-sm font-bold text-midnight transition-colors duration-200 group-hover:text-gilt group-focus-visible:text-gilt motion-reduce:transition-none'>
+        <div className='mt-auto flex min-h-11 items-center justify-between gap-3 border-t border-advisory-rule pt-[16px] text-sm font-bold text-midnight transition-colors duration-200 group-hover:text-gilt group-focus-visible:text-gilt motion-reduce:transition-none'>
           Read article
           <ArrowRight aria-hidden='true' className='size-4 shrink-0' />
         </div>

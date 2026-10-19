@@ -27,7 +27,7 @@ export function WhyBlackmont() {
   return (
     <section
       aria-labelledby='partnership-reasons-title'
-      className='bg-midnight py-14 text-white min-[681px]:py-16 min-[1121px]:py-20'
+      className='bg-midnight text-white py-14 min-[681px]:py-16 min-[1121px]:py-20'
     >
       <LandingContainer>
         <h2

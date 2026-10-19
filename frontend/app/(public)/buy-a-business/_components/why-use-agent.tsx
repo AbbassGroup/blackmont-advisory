@@ -38,16 +38,16 @@ const buyerServices = [
 export function WhyUseAgent() {
   return (
     <LandingTheme className='bg-canvas'>
-      <section aria-labelledby='buyer-representation-title' className='py-14 min-[681px]:py-20'>
+      <section aria-labelledby='buyer-representation-title' className='py-14 min-[681px]:py-16 min-[1121px]:py-20'>
         <LandingContainer>
           <h2
             id='buyer-representation-title'
-            className='m-0 mb-8 font-advisory-heading text-[clamp(29px,6.5vw,38px)] leading-[1.25] font-bold tracking-normal text-midnight min-[681px]:mb-10 min-[681px]:text-[clamp(32px,3.4vw,43px)]'
+            className='m-0 font-advisory-heading text-[clamp(29px,6.5vw,38px)] leading-[1.25] font-bold tracking-normal text-midnight min-[681px]:text-[clamp(32px,3.4vw,43px)] mb-8 min-[681px]:mb-10'
           >
             Why use a business buyer&apos;s agent
           </h2>
 
-          <div className='grid items-center gap-7 min-[931px]:grid-cols-[0.95fr_1.05fr] min-[931px]:gap-[clamp(40px,5vw,72px)]'>
+          <div className='grid items-center min-[931px]:grid-cols-[0.95fr_1.05fr] gap-8 min-[681px]:gap-10 min-[1121px]:gap-16'>
             <div className='order-1 min-w-0 min-[931px]:order-2'>
               <div className='space-y-4 text-base leading-[1.8] text-ink min-[681px]:text-[17px]'>
                 <p className='m-0'>
@@ -77,7 +77,7 @@ export function WhyUseAgent() {
                 unoptimized
                 fill
                 loading='lazy'
-                sizes='(max-width: 680px) calc(100vw - 38px), (max-width: 930px) calc(100vw - 72px), (max-width: 1444px) 45vw, 600px'
+                sizes='(max-width: 680px) calc(100vw - 40px), (max-width: 930px) calc(100vw - 72px), (max-width: 1444px) 45vw, 600px'
                 className='object-cover object-[58%_66%]'
               />
             </figure>

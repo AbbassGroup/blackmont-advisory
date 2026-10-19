@@ -9,7 +9,7 @@ export function Network() {
         aria-labelledby='network-title'
         className='border-t border-advisory-rule'
       >
-        <LandingContainer className='grid items-start gap-[23px] pt-[72px] pb-[78px] min-[681px]:grid-cols-2 min-[681px]:gap-[74px] min-[681px]:pt-[96px] min-[681px]:pb-[100px]'>
+        <LandingContainer className='py-14 min-[681px]:py-16 min-[1121px]:py-20 gap-8 min-[681px]:gap-10 min-[1121px]:gap-16 grid items-start min-[681px]:grid-cols-2'>
           <h2
             data-landing-reveal
             id='network-title'

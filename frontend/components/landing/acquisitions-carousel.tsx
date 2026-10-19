@@ -76,11 +76,11 @@ export function AcquisitionsCarousel({ children }: { children: ReactNode }) {
         duration: reducedMotion ? 0 : 25,
       }}
     >
-      <CarouselContent className='-ml-[18px] touch-pan-y touch-pinch-zoom min-[681px]:-ml-7 min-[931px]:-ml-[19px] min-[1121px]:-ml-6'>
+      <CarouselContent className='-ml-[20px] touch-pan-y touch-pinch-zoom min-[681px]:-ml-7 min-[931px]:-ml-[20px] min-[1121px]:-ml-6'>
         {Children.map(children, (child, index) => (
           <CarouselItem
             aria-label={`${index + 1} of ${count}`}
-            className='flex basis-full pl-[18px] min-[601px]:basis-1/2 min-[681px]:pl-7 min-[931px]:basis-1/4 min-[931px]:pl-[19px] min-[1121px]:pl-6'
+            className='flex basis-full pl-[20px] min-[601px]:basis-1/2 min-[681px]:pl-7 min-[931px]:basis-1/4 min-[931px]:pl-[20px] min-[1121px]:pl-6'
           >
             {child}
           </CarouselItem>

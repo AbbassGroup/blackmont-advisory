@@ -9,9 +9,9 @@ export function Buying() {
       <section
         id='buying'
         aria-labelledby='buying-title'
-        className='py-16 min-[681px]:py-[90px]'
+        className='py-14 min-[681px]:py-16 min-[1121px]:py-20'
       >
-        <LandingContainer className='grid items-center gap-10 min-[681px]:grid-cols-2 min-[681px]:gap-[clamp(48px,8vw,110px)]'>
+        <LandingContainer className='grid items-center min-[681px]:grid-cols-2 gap-8 min-[681px]:gap-10 min-[1121px]:gap-16'>
           <div className='min-w-0'>
             <h2
               data-landing-reveal

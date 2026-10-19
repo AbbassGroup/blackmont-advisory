@@ -19,7 +19,7 @@ export function DisclaimerSection({
         </div>
       )}
 
-      <div className='mb-8 space-y-4'>
+      <div data-proposal-disclaimer-body className='mb-8 space-y-4'>
         <h3 className='mb-4 text-lg font-bold text-secondary'>{c.subtitle}</h3>
 
         {c.paragraphs.map((text, index) => (
@@ -29,7 +29,7 @@ export function DisclaimerSection({
         ))}
       </div>
 
-      <div className='pt-2'>
+      <div data-proposal-disclaimer-details className='pt-2'>
         <p className='font-bold text-secondary'>{c.entityName}</p>
         <p className='mt-1 text-sm text-muted-foreground'>{c.abn}</p>
         <p className='text-sm text-muted-foreground'>{c.license}</p>

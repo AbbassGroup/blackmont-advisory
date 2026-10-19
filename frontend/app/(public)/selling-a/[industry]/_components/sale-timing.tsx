@@ -9,7 +9,7 @@ export function IndustrySaleTiming({ days, description }: IndustrySaleTimingProp
   return (
     <section
       aria-labelledby='industry-sale-timing-title'
-      className='bg-canvas py-14 text-ink min-[681px]:py-16 min-[1121px]:py-20'
+      className='bg-canvas text-ink py-14 min-[681px]:py-16 min-[1121px]:py-20'
     >
       <LandingContainer>
         <h2

@@ -1,6 +1,6 @@
 export default function AgreementContent() {
   return (
-    <div className='text-xs text-gray-500 leading-relaxed [&_p]:mb-2 [&_ol]:list-none [&_ol]:pl-5 [&_li]:mb-1 [&_strong]:text-gray-700'>
+    <div className='max-w-[75ch] text-[15px] leading-[1.85] text-ink min-[681px]:text-base [&_p]:mb-4 [&_ol]:pl-6 [&_li]:mb-3 [&_strong]:font-semibold [&_strong]:text-midnight [&_ol[type=A]]:list-[upper-alpha] [&_ol[type=I]]:list-[upper-roman] [&_ol[type=a]]:list-[lower-alpha]'>
       <p>
         You request further information concerning the business for the purpose
         of determining whether to pursue its acquisition.
@@ -9,7 +9,7 @@ export default function AgreementContent() {
       <p>
         <strong>In this Agreement:</strong>
       </p>
-      <ol type='A' className='list-none pl-5 space-y-1 mb-2'>
+      <ol type='A' className='mb-5 list-[upper-alpha] space-y-3 pl-6'>
         <li>
           <strong>&quot;The Vendor&quot;</strong> is the proprietor of the
           business that is advertised for sale.

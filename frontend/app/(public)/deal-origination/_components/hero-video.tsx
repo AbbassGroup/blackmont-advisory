@@ -56,7 +56,7 @@ export function HeroVideo() {
             <img
               src={POSTER}
               srcSet={POSTER_SRCSET}
-              sizes='(max-width: 680px) calc(100vw - 38px), (max-width: 930px) calc(100vw - 72px), (max-width: 1444px) 52vw, 730px'
+              sizes='(max-width: 680px) calc(100vw - 40px), (max-width: 930px) calc(100vw - 72px), (max-width: 1444px) 52vw, 730px'
               alt=''
               width={1280}
               height={720}

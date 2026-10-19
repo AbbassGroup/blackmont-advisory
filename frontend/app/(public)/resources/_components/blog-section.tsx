@@ -24,7 +24,7 @@ export function BlogSection({
       <section
         id='articles'
         aria-labelledby='resources-articles-title'
-        className='border-t border-advisory-rule py-[56px] min-[681px]:py-[80px]'
+        className='border-t border-advisory-rule py-14 min-[681px]:py-16 min-[1121px]:py-20'
       >
         <LandingContainer>
           <LandingSectionIntro headingId='resources-articles-title' heading='Blogs' />

@@ -26,9 +26,9 @@ export function Process() {
       <section
         id='process'
         aria-labelledby='exit-process-title'
-        className='py-10 min-[681px]:py-12'
+        className='py-14 min-[681px]:py-16 min-[1121px]:py-20'
       >
-        <LandingContainer className='grid items-start gap-5 min-[931px]:grid-cols-[0.8fr_1.4fr] min-[931px]:gap-[clamp(40px,5vw,72px)]'>
+        <LandingContainer className='grid items-start min-[931px]:grid-cols-[0.8fr_1.4fr] gap-8 min-[681px]:gap-10 min-[1121px]:gap-16'>
           <div className='min-w-0 min-[931px]:pt-3'>
             <LandingSectionIntro
               headingId='exit-process-title'

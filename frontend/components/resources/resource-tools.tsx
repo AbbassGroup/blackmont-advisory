@@ -65,15 +65,15 @@ function CardInner({ resource }: { resource: Resource }) {
           fill
           quality={85}
           loading='lazy'
-          sizes='(max-width: 680px) calc(100vw - 38px), (max-width: 1120px) calc(50vw - 48px), (max-width: 1444px) calc(25vw - 44px), 317px'
+          sizes='(max-width: 680px) calc(100vw - 40px), (max-width: 1120px) calc(50vw - 48px), (max-width: 1444px) calc(25vw - 44px), 317px'
           className='object-cover'
         />
       </div>
-      <div className='flex flex-1 flex-col pt-[18px]'>
+      <div className='flex flex-1 flex-col pt-[20px]'>
         <h3 className='m-0 mb-3 font-advisory-heading text-xl leading-[1.4] font-bold tracking-normal text-midnight min-[681px]:text-[22px]'>
           {resource.title}
         </h3>
-        <p className='m-0 mb-[22px] flex-1 text-[15px] leading-[1.75] text-ink'>
+        <p className='m-0 mb-[24px] flex-1 text-[15px] leading-[1.75] text-ink'>
           {resource.summary}
         </p>
         <div className='mt-auto flex min-h-14 items-center justify-between gap-3 border-t border-advisory-rule py-4 text-base font-bold text-midnight transition-colors duration-200 group-hover:text-gilt group-focus-visible:text-gilt motion-reduce:transition-none'>
@@ -99,7 +99,7 @@ export function ResourceTools({
       <section
         id={id}
         aria-labelledby={headingId}
-        className='py-[64px] min-[681px]:py-[88px]'
+        className='py-14 min-[681px]:py-16 min-[1121px]:py-20'
       >
         <LandingContainer>
           <LandingSectionIntro

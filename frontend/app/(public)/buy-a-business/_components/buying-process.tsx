@@ -46,13 +46,13 @@ export function BuyingProcess() {
       <section
         id='buying-process'
         aria-labelledby='buying-process-title'
-        className='py-14 min-[681px]:py-20'
+        className='py-14 min-[681px]:py-16 min-[1121px]:py-20'
       >
         <LandingContainer>
           <div className='mb-7 min-[681px]:mb-9'>
             <h2
               id='buying-process-title'
-              className='m-0 mb-5 font-advisory-heading text-[clamp(29px,6.5vw,38px)] leading-[1.25] font-bold tracking-normal text-midnight min-[681px]:text-[clamp(32px,3.4vw,43px)]'
+              className='m-0 mb-6 font-advisory-heading text-[clamp(29px,6.5vw,38px)] leading-[1.25] font-bold tracking-normal text-midnight min-[681px]:text-[clamp(32px,3.4vw,43px)]'
             >
               Our business buying process
             </h2>
@@ -70,7 +70,7 @@ export function BuyingProcess() {
                 <span aria-hidden className='pt-0.5 text-base leading-[1.75] font-semibold text-midnight tabular-nums'>
                   {step.step}.
                 </span>
-                <div className='grid min-w-0 gap-2 min-[931px]:grid-cols-[0.8fr_1.2fr] min-[931px]:gap-[clamp(32px,4vw,56px)]'>
+                <div className='grid min-w-0 min-[931px]:grid-cols-[0.8fr_1.2fr] gap-8 min-[681px]:gap-10 min-[1121px]:gap-16'>
                   <h3 className='m-0 font-advisory-heading text-xl leading-[1.4] font-bold tracking-normal text-midnight min-[681px]:text-[23px]'>
                     {step.title}
                   </h3>

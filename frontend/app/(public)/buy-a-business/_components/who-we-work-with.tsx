@@ -39,16 +39,16 @@ export function WhoWeWorkWith() {
     <LandingTheme className='bg-midnight text-white'>
       <section
         aria-labelledby='buyer-clients-title'
-        className='py-14 min-[681px]:py-20'
+        className='py-14 min-[681px]:py-16 min-[1121px]:py-20'
       >
         <LandingContainer>
           <h2
             id='buyer-clients-title'
-            className='m-0 mb-5 font-advisory-heading text-[clamp(29px,6.5vw,38px)] leading-[1.25] font-bold tracking-normal text-white min-[681px]:text-[clamp(32px,3.4vw,43px)]'
+            className='m-0 mb-6 font-advisory-heading text-[clamp(29px,6.5vw,38px)] leading-[1.25] font-bold tracking-normal text-white min-[681px]:text-[clamp(32px,3.4vw,43px)]'
           >
             Who we work with
           </h2>
-          <p className='m-0 mb-8 max-w-[760px] text-base leading-[1.8] text-white/90 min-[681px]:mb-10 min-[681px]:text-[17px]'>
+          <p className='m-0 max-w-[760px] text-base leading-[1.8] text-white/90 min-[681px]:text-[17px] mb-8 min-[681px]:mb-10'>
             No matter your background, we tailor our approach to your goals,
             budget, and risk profile.
           </p>

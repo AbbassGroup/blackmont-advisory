@@ -14,7 +14,7 @@ export function WhyMatters() {
   return (
     <section
       aria-labelledby='partnership-why-matters-title'
-      className='bg-deep-navy py-14 text-white min-[681px]:py-16 min-[1121px]:py-20'
+      className='bg-deep-navy text-white py-14 min-[681px]:py-16 min-[1121px]:py-20'
     >
       <LandingContainer>
         <h2

@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowUpRight } from 'lucide-react';
 import { JsonLd } from '@/components/seo/json-ld';
 import {
   articleJsonLd,
@@ -8,10 +7,6 @@ import {
   faqJsonLd,
   gatedMetadata,
 } from '@/lib/seo';
-import { SHELL, H2, TH, TD } from '@/lib/seo-layout';
-import { Breadcrumbs } from '@/components/seo/breadcrumbs';
-import { FaqSection } from '@/components/seo/faq-section';
-import { LastUpdated } from '@/components/seo/last-updated';
 import { guideBySlug } from '@/lib/data/guides';
 import { EXIT_PHASES } from '@/lib/data/exit-phases';
 import {
@@ -19,6 +14,8 @@ import {
   INDUSTRY_BENCHMARKS,
   indexableIndustryPages,
 } from '@/lib/data/industry-benchmarks';
+
+import { GuideArticle, GuideActions, GuideFaqs, guideHeading, guideSubheading } from '../_components/article';
 
 const guide = guideBySlug('how-long-does-it-take-to-sell-a-business')!;
 
@@ -112,65 +109,57 @@ export default function TimeToSellGuidePage() {
   );
 
   return (
-    <main className='min-h-screen bg-background'>
+    <div className='bg-white'>
       <JsonLd data={jsonLd} />
-
-      <section className='relative overflow-hidden border-b border-accent/15 bg-secondary pb-16 pt-28 lg:pt-32'>
-        <span
-          aria-hidden
-          className='absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent'
-        />
-        <div className={`relative z-10 ${SHELL}`}>
-          <Breadcrumbs items={CRUMBS} />
-
-          <h1 className='mt-6 text-3xl font-bold leading-[1.1] tracking-tight text-parchment md:text-4xl lg:text-5xl'>
-            {guide.h1}
-          </h1>
-          <p className='mt-6 max-w-3xl text-lg font-light leading-relaxed text-parchment/70'>
-            Most Australian businesses find a buyer within 60 to 240 days of
-            listing, depending on the sector. That is the part owners ask about.
-            The part that decides the outcome happens before it.
-          </p>
-        </div>
-      </section>
-
-      <div className={`${SHELL} py-16 lg:py-20`}>
-        <section>
-          <h2 className={H2}>Time on the market, by industry</h2>
-          <p className='mt-5 leading-relaxed text-muted-foreground'>
+      <GuideArticle
+        title={guide.h1}
+        crumbs={CRUMBS}
+        intro={"Most Australian businesses find a buyer within 60 to 240 days of listing, depending on the sector. That is the part owners ask about. The part that decides the outcome happens before it."}
+        contents={[
+          { id: 'industry-timing', label: 'Time by industry' },
+          { id: 'preparation-timeline', label: 'Before you list' },
+          { id: 'sale-delays', label: 'What causes delays' },
+          { id: 'common-questions', label: 'Common questions' },
+          { id: 'next-steps', label: 'Your next step' },
+        ]}
+      >
+        <section id='industry-timing' aria-labelledby='industry-timing-title' className='scroll-mt-32'>
+          <h2 id='industry-timing-title' className={guideHeading}>Time on the market, by industry</h2>
+          <p className='mt-5 mb-0 max-w-[75ch] leading-[1.85] text-ink'>
             These are the ranges from listing to an accepted offer. They vary by
             a factor of four across sectors, and the difference is almost never
             buyer demand.
           </p>
 
-          <div className='mt-8 overflow-x-auto'>
+          <div role='region' aria-label='Time to sell by industry' tabIndex={0} className='mt-8 overflow-x-auto focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gilt'>
             <table className='w-full min-w-[520px] border-collapse text-left'>
+              <caption className='sr-only'>Typical time to sell and buyer demand by industry</caption>
               <thead>
-                <tr className='border-b-[1.5px] border-secondary/20'>
-                  <th className={TH}>Industry</th>
-                  <th className={TH}>Time to sell</th>
-                  <th className={TH}>Buyer demand</th>
+                <tr className='border-y border-advisory-rule bg-canvas'>
+                  <th scope='col' className='px-4 py-3 text-sm font-medium text-midnight'>Industry</th>
+                  <th scope='col' className='px-4 py-3 text-sm font-medium text-midnight'>Time to sell</th>
+                  <th scope='col' className='px-4 py-3 text-sm font-medium text-midnight'>Buyer demand</th>
                 </tr>
               </thead>
               <tbody>
                 {INDUSTRY_BENCHMARKS.map(({ name, days, demand }) => {
                   const slug = linkable.get(name);
                   return (
-                    <tr key={name} className='border-b border-secondary/10'>
-                      <td className={`${TD} font-semibold text-secondary`}>
+                    <tr key={name} className='border-b border-advisory-rule'>
+                      <th scope='row' className='px-4 py-4 text-[15px] font-medium text-midnight'>
                         {slug ? (
                           <Link
                             href={`/selling-a/${slug}`}
-                            className='transition-colors hover:text-accent'
+                            className='underline decoration-advisory-rule underline-offset-4 transition-colors duration-200 hover:text-gilt focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none'
                           >
                             {name}
                           </Link>
                         ) : (
                           name
                         )}
-                      </td>
-                      <td className={TD}>{days}</td>
-                      <td className={TD}>{demand}</td>
+                      </th>
+                      <td className='px-4 py-4 text-[15px] text-ink'>{days}</td>
+                      <td className='px-4 py-4 text-[15px] text-ink'>{demand}</td>
                     </tr>
                   );
                 })}
@@ -178,7 +167,7 @@ export default function TimeToSellGuidePage() {
             </table>
           </div>
 
-          <p className='mt-6 leading-relaxed text-muted-foreground'>
+          <p className='mt-6 mb-0 max-w-[75ch] leading-[1.85] text-ink'>
             Trades move fastest because the buyer pool is deep and there is
             little to transfer beyond the work itself. Childcare and
             manufacturing sit at the other end, and in both cases the delay is
@@ -188,36 +177,36 @@ export default function TimeToSellGuidePage() {
           </p>
         </section>
 
-        <section className='mt-14'>
-          <h2 className={H2}>The timeline before you list</h2>
-          <p className='mt-5 leading-relaxed text-muted-foreground'>
+        <section id='preparation-timeline' aria-labelledby='preparation-timeline-title' className='mt-12 min-[681px]:mt-14 scroll-mt-32'>
+          <h2 id='preparation-timeline-title' className={guideHeading}>The timeline before you list</h2>
+          <p className='mt-5 mb-0 max-w-[75ch] leading-[1.85] text-ink'>
             Time on the market is the visible part. Owners who achieve the
             strongest outcomes start two years out, because the things that lift
             a price cannot be arranged quickly. This is the sequence we work
             through with sellers.
           </p>
 
-          <ol className='mt-10 space-y-8'>
+          <ol className='mt-8 border-t border-advisory-rule'>
             {EXIT_PHASES.map((phase) => (
-              <li key={phase.title} className='border-l-2 border-accent pl-6'>
-                <span className='text-[0.7rem] font-bold uppercase tracking-[0.14em] text-accent'>
+              <li key={phase.title} className='grid gap-2 border-b border-advisory-rule py-6 min-[681px]:grid-cols-[145px_minmax(0,1fr)] min-[681px]:gap-x-7'>
+                <span className='pt-1 text-sm font-medium text-midnight min-[681px]:row-span-2'>
                   {phase.label}
                 </span>
-                <h3 className='mt-1.5 text-lg font-bold tracking-tight text-secondary'>
+                <h3 className={guideSubheading}>
                   {phase.title}
                 </h3>
-                <p className='mt-2 leading-relaxed text-muted-foreground'>
+                <p className='mt-2 mb-0 max-w-[75ch] leading-[1.85] text-ink'>
                   {PHASE_NOTES[phase.title]}
                 </p>
               </li>
             ))}
           </ol>
 
-          <p className='mt-8 leading-relaxed text-muted-foreground'>
+          <p className='mt-8 mb-0 max-w-[75ch] leading-[1.85] text-ink'>
             Each phase has a working checklist behind it.{' '}
             <Link
               href='/exit/exit-planning'
-              className='text-accent underline underline-offset-4 transition-opacity hover:opacity-75'
+              className='font-medium text-midnight underline underline-offset-4 transition-colors duration-200 hover:text-gilt focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none'
             >
               Open the exit planning guide
             </Link>{' '}
@@ -225,56 +214,40 @@ export default function TimeToSellGuidePage() {
           </p>
         </section>
 
-        <section className='mt-14'>
-          <h2 className={H2}>What actually causes delays</h2>
-          <p className='mt-5 leading-relaxed text-muted-foreground'>
+        <section id='sale-delays' aria-labelledby='sale-delays-title' className='mt-12 min-[681px]:mt-14 scroll-mt-32'>
+          <h2 id='sale-delays-title' className={guideHeading}>What actually causes delays</h2>
+          <p className='mt-5 mb-0 max-w-[75ch] leading-[1.85] text-ink'>
             When a sale runs long, it is rarely because no buyer could be found.
             These are the five things that hold transactions up, in roughly the
             order we encounter them.
           </p>
-          <dl className='mt-8 space-y-6'>
+          <dl className='mt-7 border-t border-advisory-rule'>
             {DELAYS.map(({ label, detail }) => (
-              <div key={label}>
-                <dt className='font-semibold text-secondary'>{label}</dt>
-                <dd className='mt-1.5 leading-relaxed text-muted-foreground'>
+              <div key={label} className='border-b border-advisory-rule py-5'>
+                <dt className='font-semibold text-midnight'>{label}</dt>
+                <dd className='mt-2 max-w-[75ch] leading-[1.85] text-ink'>
                   {detail}
                 </dd>
               </div>
             ))}
           </dl>
         </section>
-
-        <FaqSection items={FAQS} />
-
-        <section className='mt-16 grid gap-px border-[1.5px] border-secondary/10 bg-secondary/10 sm:grid-cols-2'>
-          <Link
-            href='/guides/is-my-business-ready-to-sell'
-            className='group bg-muted px-8 py-9 transition-colors hover:bg-accent-pale'
-          >
-            <span className='flex items-center justify-between text-lg font-bold tracking-tight text-secondary'>
-              Is my business ready to sell?
-              <ArrowUpRight className='h-5 w-5 text-accent transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5' />
-            </span>
-            <span className='mt-2 block text-sm text-muted-foreground'>
-              The ten things buyers check before making an offer.
-            </span>
-          </Link>
-          <Link
-            href='/selling-a'
-            className='group bg-muted px-8 py-9 transition-colors hover:bg-accent-pale'
-          >
-            <span className='flex items-center justify-between text-lg font-bold tracking-tight text-secondary'>
-              What businesses sell for
-              <ArrowUpRight className='h-5 w-5 text-accent transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5' />
-            </span>
-            <span className='mt-2 block text-sm text-muted-foreground'>
-              Multiples and price ranges across ten sectors.
-            </span>
-          </Link>
-        </section>
-
-        <LastUpdated />
-      </div>
-    </main>
+        <GuideFaqs items={FAQS} />
+        <GuideActions
+          items={[
+            {
+              href: '/guides/is-my-business-ready-to-sell',
+              title: 'Is my business ready to sell?',
+              detail: 'The ten things buyers check before making an offer.',
+            },
+            {
+              href: '/selling-a',
+              title: 'What businesses sell for',
+              detail: 'Multiples and price ranges across ten sectors.',
+            },
+          ]}
+        />
+      </GuideArticle>
+    </div>
   );
 }

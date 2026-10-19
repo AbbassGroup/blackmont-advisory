@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { CheckCircle, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { LandingButton } from '@/components/landing/presentation';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -10,7 +10,7 @@ const CONTACT_API_URL =
   'https://blackmont-api.nexartechnologies.com/api/v1/contacts/create';
 
 const inputCls =
-  'bg-[#f9fafb] border-secondary/15 focus-visible:ring-secondary/20 focus-visible:border-secondary text-sm h-11';
+  'h-12 rounded-none border-advisory-input bg-white px-3 text-base text-midnight shadow-none outline-none transition-colors duration-200 placeholder:text-ink/70 focus-visible:border-midnight focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none md:text-base';
 
 const initialForm = {
   firstName: '',
@@ -25,27 +25,30 @@ const initialForm = {
 };
 
 function Label({
+  htmlFor,
   children,
   optional,
 }: {
+  htmlFor: string;
   children: React.ReactNode;
   optional?: boolean;
 }) {
   return (
-    <label className='mb-1.5 block text-xs font-semibold uppercase tracking-wide text-muted-foreground'>
+    <label htmlFor={htmlFor} className='mb-2 block text-sm leading-[1.5] font-medium text-midnight'>
       {children}
       {optional ? (
-        <span className='ml-1 font-normal normal-case text-muted-foreground'>
+        <span className='ml-1 font-normal text-ink'>
           (optional)
         </span>
       ) : (
-        <span className='ml-1 text-accent'>*</span>
+        <span aria-hidden='true' className='ml-1'>*</span>
       )}
     </label>
   );
 }
 
 export function AcquisitionInterestForm() {
+  const formId = useId();
   const [form, setForm] = useState(initialForm);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -102,12 +105,12 @@ export function AcquisitionInterestForm() {
 
   if (submitted) {
     return (
-      <div className='flex flex-col items-center justify-center  border border-accent/15 bg-accent/5 px-6 py-12 text-center'>
-        <CheckCircle className='mb-4 h-14 w-14 text-accent' />
-        <h2 className='mb-2 text-xl font-bold text-secondary'>
+      <div role='status' className='mt-8 bg-canvas text-midnight p-6 min-[681px]:p-8'>
+        <CheckCircle aria-hidden='true' className='mb-4 size-8 text-midnight' />
+        <h3 className='mt-0 mb-3 font-advisory-heading text-[25px] leading-[1.4] font-bold tracking-normal'>
           Interest Registered
-        </h2>
-        <p className='max-w-md text-sm leading-relaxed text-muted-foreground'>
+        </h3>
+        <p className='m-0 max-w-[650px] text-base leading-[1.8] text-ink'>
           Thank you. Our team will review your requirements and contact you when
           suitable acquisition opportunities become available.
         </p>
@@ -116,11 +119,14 @@ export function AcquisitionInterestForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className='space-y-5'>
-      <div className='grid grid-cols-1 gap-5 md:grid-cols-2'>
+    <form onSubmit={handleSubmit} aria-busy={loading} className='mt-8 space-y-6 bg-canvas p-6 min-[681px]:p-8'>
+      <div className='grid grid-cols-1 min-[681px]:grid-cols-2 gap-y-5 gap-x-6'>
         <div>
-          <Label>First Name</Label>
+          <Label htmlFor={`${formId}-firstName`}>First name</Label>
           <Input
+            id={`${formId}-firstName`}
+            name='firstName'
+            autoComplete='given-name'
             className={inputCls}
             required
             value={form.firstName}
@@ -129,8 +135,11 @@ export function AcquisitionInterestForm() {
           />
         </div>
         <div>
-          <Label>Last Name</Label>
+          <Label htmlFor={`${formId}-lastName`}>Last name</Label>
           <Input
+            id={`${formId}-lastName`}
+            name='lastName'
+            autoComplete='family-name'
             className={inputCls}
             required
             value={form.lastName}
@@ -139,8 +148,11 @@ export function AcquisitionInterestForm() {
           />
         </div>
         <div>
-          <Label>Mobile</Label>
+          <Label htmlFor={`${formId}-mobile`}>Mobile</Label>
           <Input
+            id={`${formId}-mobile`}
+            name='mobile'
+            autoComplete='tel'
             className={inputCls}
             type='tel'
             required
@@ -150,8 +162,11 @@ export function AcquisitionInterestForm() {
           />
         </div>
         <div>
-          <Label>Email</Label>
+          <Label htmlFor={`${formId}-email`}>Email</Label>
           <Input
+            id={`${formId}-email`}
+            name='email'
+            autoComplete='email'
             className={inputCls}
             type='email'
             required
@@ -161,8 +176,10 @@ export function AcquisitionInterestForm() {
           />
         </div>
         <div>
-          <Label>Industry Preference</Label>
+          <Label htmlFor={`${formId}-industryPreference`}>Industry preference</Label>
           <Input
+            id={`${formId}-industryPreference`}
+            name='industryPreference'
             className={inputCls}
             required
             value={form.industryPreference}
@@ -171,8 +188,10 @@ export function AcquisitionInterestForm() {
           />
         </div>
         <div>
-          <Label>Purchase Price Range</Label>
+          <Label htmlFor={`${formId}-purchasePriceRange`}>Purchase price range</Label>
           <Input
+            id={`${formId}-purchasePriceRange`}
+            name='purchasePriceRange'
             className={inputCls}
             required
             value={form.purchasePriceRange}
@@ -181,8 +200,10 @@ export function AcquisitionInterestForm() {
           />
         </div>
         <div>
-          <Label>EBITDA Requirements</Label>
+          <Label htmlFor={`${formId}-ebitdaRequirements`}>EBITDA requirements</Label>
           <Input
+            id={`${formId}-ebitdaRequirements`}
+            name='ebitdaRequirements'
             className={inputCls}
             required
             value={form.ebitdaRequirements}
@@ -191,8 +212,10 @@ export function AcquisitionInterestForm() {
           />
         </div>
         <div>
-          <Label>Location Preference</Label>
+          <Label htmlFor={`${formId}-locationPreference`}>Location preference</Label>
           <Input
+            id={`${formId}-locationPreference`}
+            name='locationPreference'
             className={inputCls}
             required
             value={form.locationPreference}
@@ -203,9 +226,11 @@ export function AcquisitionInterestForm() {
       </div>
 
       <div>
-        <Label optional>Comments</Label>
+        <Label htmlFor={`${formId}-comments`} optional>Comments</Label>
         <Textarea
-          className='min-h-[120px] bg-[#f9fafb] text-sm border-secondary/15 focus-visible:ring-secondary/20 focus-visible:border-secondary'
+          id={`${formId}-comments`}
+          name='comments'
+          className='min-h-[120px] resize-y rounded-none border-advisory-input bg-white px-3 py-3 text-base text-midnight shadow-none outline-none transition-colors duration-200 focus-visible:border-midnight focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none md:text-base'
           value={form.comments}
           onChange={set('comments')}
           disabled={loading}
@@ -213,19 +238,19 @@ export function AcquisitionInterestForm() {
       </div>
 
       {error && (
-        <p className=' border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-500'>
+        <p role='alert' className='m-0 border border-red-200 bg-red-50 px-4 py-3 text-sm leading-[1.7] text-red-800'>
           {error}
         </p>
       )}
 
-      <Button
+      <LandingButton
         type='submit'
         disabled={loading}
-        className='h-12 w-full rounded-none bg-accent font-bold uppercase tracking-[0.12em] text-primary hover:bg-accent-light sm:w-auto sm:px-8'
+        className='w-full min-[681px]:w-auto'
       >
-        {loading && <Loader2 className='h-4 w-4 animate-spin' />}
-        {loading ? 'Submitting...' : 'Register Interest'}
-      </Button>
+        {loading && <Loader2 aria-hidden='true' className='size-4 animate-spin motion-reduce:animate-none' />}
+        {loading ? 'Submitting...' : 'Register interest'}
+      </LandingButton>
     </form>
   );
 }

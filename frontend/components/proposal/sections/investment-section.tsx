@@ -93,6 +93,8 @@ const sameOption = (a?: FeeOption | null, b?: FeeOption | null) =>
   !!a && !!b && (a.id ? a.id === b.id : a === b);
 
 interface FeeGroupProps {
+  appearance?: 'document' | 'advisory';
+  groupLabel: string;
   options: FeeOption[];
   selected?: FeeOption | null;
   onSelect?: (option: FeeOption) => void;
@@ -108,6 +110,8 @@ interface FeeGroupProps {
 }
 
 function FeeGroup({
+  appearance = 'document',
+  groupLabel,
   options,
   selected,
   onSelect,
@@ -120,20 +124,47 @@ function FeeGroup({
   onAdd,
   addLabel,
 }: FeeGroupProps) {
+  const groupId = React.useId();
   // With a single option there is nothing to choose, so the tick is noise.
   const showTicks = !editable && !(hideSelectionIfSingle && options.length <= 1);
+  const canSelect = !editable && !!onSelect && !(hideSelectionIfSingle && options.length <= 1);
 
   return (
     <>
-      <div className={`grid gap-6 ${gridCols(Math.max(options.length, 1))}`}>
+      <div
+        data-proposal-fees
+        role={canSelect ? 'radiogroup' : undefined}
+        aria-label={canSelect ? groupLabel : undefined}
+        className={`grid gap-6 ${gridCols(Math.max(options.length, 1))}`}
+      >
         {options.map((item, index) => {
           const isSelected = sameOption(selected, item);
           return (
             <div
               key={item.id ?? index}
-              onClick={() => !editable && onSelect?.(item)}
+              data-proposal-fee
+              role={canSelect ? 'radio' : undefined}
+              aria-checked={canSelect ? isSelected : undefined}
+              aria-describedby={canSelect ? `${groupId}-${index}` : undefined}
+              aria-label={canSelect ? `${groupLabel}, option ${index + 1}: ${formatAmount(item.amount, item.unit)}` : undefined}
+              tabIndex={canSelect ? (isSelected || (!selected && index === 0) ? 0 : -1) : undefined}
+              onClick={canSelect ? () => onSelect?.(item) : undefined}
+              onKeyDown={canSelect ? (event) => {
+                if (event.key === ' ' || event.key === 'Enter') {
+                  event.preventDefault();
+                  onSelect?.(item);
+                } else if (['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(event.key)) {
+                  event.preventDefault();
+                  const direction = event.key === 'ArrowRight' || event.key === 'ArrowDown' ? 1 : -1;
+                  const next = (index + direction + options.length) % options.length;
+                  onSelect?.(options[next]);
+                  event.currentTarget.parentElement?.querySelectorAll<HTMLElement>('[data-proposal-fee]')[next]?.focus();
+                }
+              } : undefined}
               className={`group/row flex h-full flex-col border p-6 transition-all duration-200 ${
-                editable
+                appearance === 'advisory' && !editable
+                  ? `border ${isSelected ? 'border-gilt bg-canvas' : 'border-advisory-rule bg-white'} ${canSelect ? 'cursor-pointer hover:border-gilt' : ''} focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none`
+                  : editable
                   ? 'border-border bg-white'
                   : `cursor-pointer ${
                       isSelected
@@ -167,7 +198,7 @@ function FeeGroup({
                 </div>
               )}
 
-              <div className='mb-6 w-full flex-1 text-center'>
+              <div id={`${groupId}-${index}`} className='mb-6 w-full flex-1 text-center'>
                 {editable ? (
                   <div className='text-left'>
                     <RichTextEditor
@@ -206,7 +237,7 @@ function FeeGroup({
                     </select>
                   </div>
                 ) : (
-                  <div className='inline-block bg-accent px-6 py-1.5 text-center text-primary shadow-sm'>
+                  <div data-proposal-fee-amount className='inline-block bg-accent px-6 py-1.5 text-center text-primary shadow-sm'>
                     <span className='text-base font-bold sm:text-lg'>
                       {formatAmount(item.amount, item.unit)}
                     </span>
@@ -232,6 +263,7 @@ function FeeGroup({
 }
 
 export interface InvestmentSectionProps {
+  appearance?: 'document' | 'advisory';
   data: InvestmentData;
   editable?: boolean;
   onChange?: SectionChangeHandler<InvestmentData>;
@@ -248,6 +280,7 @@ export const InvestmentSection = forwardRef<HTMLDivElement, InvestmentSectionPro
   function InvestmentSection(
     {
       data,
+      appearance = 'document',
       editable,
       onChange,
       selectedAdvertisement,
@@ -301,6 +334,8 @@ export const InvestmentSection = forwardRef<HTMLDivElement, InvestmentSectionPro
               className='mb-6 text-xl font-bold text-accent'
             />
             <FeeGroup
+              appearance={appearance}
+              groupLabel={data.advertisementTitle || 'Advertisement'}
               options={advertisement}
               selected={selectedAdvertisement}
               onSelect={onSelectAdvertisement}
@@ -329,7 +364,7 @@ export const InvestmentSection = forwardRef<HTMLDivElement, InvestmentSectionPro
             placeholder='Engagement'
             className='mb-6 text-xl font-bold text-accent'
           />
-          <div className='w-full border border-border bg-white p-8 text-center shadow-sm'>
+          <div data-proposal-engagement className='w-full border border-border bg-white p-8 text-center shadow-sm'>
             {editable ? (
               <div className='mx-auto mb-8 max-w-2xl text-left'>
                 <RichTextEditor
@@ -358,7 +393,7 @@ export const InvestmentSection = forwardRef<HTMLDivElement, InvestmentSectionPro
                 />
               </div>
             ) : (
-              <div className='inline-block bg-accent px-7 py-1.5 text-primary shadow-sm'>
+              <div data-proposal-fee-amount className='inline-block bg-accent px-7 py-1.5 text-primary shadow-sm'>
                 <span className='text-base font-bold sm:text-lg'>
                   ${data.engagementFee || '0'}
                 </span>
@@ -380,6 +415,8 @@ export const InvestmentSection = forwardRef<HTMLDivElement, InvestmentSectionPro
               className='mb-6 text-xl font-bold text-accent'
             />
             <FeeGroup
+              appearance={appearance}
+              groupLabel={data.successFeeTitle || 'Success fee'}
               options={successFee}
               selected={selectedSuccessFee}
               onSelect={onSelectSuccessFee}

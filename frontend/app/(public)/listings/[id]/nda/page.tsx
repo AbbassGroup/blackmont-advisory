@@ -1,12 +1,12 @@
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
-import { ArrowLeft, MapPin } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import type { Metadata } from 'next';
 import {
   PINNED_ACQUISITION_LISTING,
   PINNED_ACQUISITION_LISTING_ID,
 } from '@/data/pinned-listing';
-import { PageBanner } from '@/components/global/page-banner';
+import { LandingContainer, LandingTextLink } from '@/components/landing/presentation';
+import { Breadcrumbs } from '@/components/seo/breadcrumbs';
 import NDAFormInline from '../../_components/nda-form-inline';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL;
@@ -75,54 +75,55 @@ export default async function ListingNDAPage({
       : listing.price;
 
   return (
-    <main className='min-h-screen bg-muted'>
-      <PageBanner
-        eyebrow='Confidentiality Agreement'
-        title='Sign NDA'
-        description={listing.title}
-        image={listing.image}
-      />
+    <div className='bg-white'>
+      <header className='border-b border-advisory-rule bg-canvas text-ink py-10 min-[681px]:py-12 min-[1121px]:py-16'>
+        <LandingContainer className='max-w-[1040px]'>
+          <Breadcrumbs
+            tone='light'
+            items={[
+              { name: 'Home', path: '' },
+              { name: 'Buying a business', path: '/buy-a-business' },
+              { name: listing.title, path: `/listings/${listing._id}` },
+              { name: 'Sign NDA', path: `/listings/${listing._id}/nda` },
+            ]}
+          />
+          <h1 className='mt-8 mb-0 font-advisory-heading text-[clamp(32px,7vw,42px)] leading-[1.25] font-bold tracking-normal text-midnight min-[681px]:text-[48px]'>
+            Confidentiality agreement
+          </h1>
+          <p className='mt-5 mb-0 max-w-[900px] text-[19px] leading-[1.65] font-medium text-midnight min-[681px]:text-[21px]'>
+            {listing.title}
+          </p>
+          <p className='mt-5 mb-0 max-w-[850px] text-base leading-[1.8] min-[681px]:text-[17px]'>
+            To access detailed information about this business, please review
+            the confidentiality agreement below and complete the form. We will
+            be in touch shortly after your submission.
+          </p>
+          {(price || listing.suburb || listing.location) && (
+            <dl className='mt-6 mb-0 flex flex-wrap items-start gap-x-10 gap-y-4'>
+              {(listing.suburb || listing.location) && (
+                <div>
+                  <dt className='text-sm'>Location</dt>
+                  <dd className='mt-2 text-base font-medium text-midnight'>{listing.suburb || listing.location}</dd>
+                </div>
+              )}
+              {price && (
+                <div>
+                  <dt className='text-sm'>{listing._id === PINNED_ACQUISITION_LISTING_ID ? 'Acquisition value' : 'Asking price'}</dt>
+                  <dd className='mt-1 font-advisory-heading text-[26px] leading-[1.4] font-bold text-midnight'>{price}</dd>
+                </div>
+              )}
+            </dl>
+          )}
+          <LandingTextLink href={`/listings/${listing._id}`} className='mt-6 inline-flex min-h-11 items-center gap-2'>
+            <ArrowLeft aria-hidden='true' className='size-4 shrink-0' />
+            Back to listing
+          </LandingTextLink>
+        </LandingContainer>
+      </header>
 
-      <div className='mx-auto max-w-[1040px] px-6 py-12 sm:px-10 lg:px-16'>
-        <div className='mb-8 flex flex-wrap gap-3'>
-          <Link
-            href={`/listings/${listing._id}`}
-            className='inline-flex items-center gap-2  border border-secondary/15 bg-background px-4 py-2.5 text-sm font-semibold text-muted-foreground transition-colors hover:border-accent hover:text-accent'
-          >
-            <ArrowLeft className='h-4 w-4' />
-            Back to Listing
-          </Link>
-        </div>
-
-        <div className=' border border-secondary/10 bg-background shadow-sm'>
-          <div className='flex flex-wrap gap-6 border-b border-secondary/10 px-6 py-5 md:px-8'>
-            {(listing.suburb || listing.location) && (
-              <div className='flex items-center gap-2'>
-                <MapPin className='h-4 w-4 shrink-0 text-accent' />
-                <span className='text-lg font-semibold text-secondary'>
-                  {listing.suburb || listing.location}
-                </span>
-              </div>
-            )}
-            {price && (
-              <div className='text-lg font-bold text-accent'>{price}</div>
-            )}
-          </div>
-
-          <div className='space-y-8 px-6 py-7 md:px-8'>
-            <p className='text-base leading-relaxed text-muted-foreground md:text-lg'>
-              To access detailed information about this business, please review
-              the confidentiality agreement below and complete the form. We will
-              be in touch shortly after your submission.
-            </p>
-
-            <NDAFormInline
-              listingTitle={listing.title}
-              listingId={listing._id}
-            />
-          </div>
-        </div>
-      </div>
-    </main>
+      <LandingContainer className='max-w-[1040px] py-10 min-[681px]:py-12 min-[1121px]:py-16'>
+        <NDAFormInline listingTitle={listing.title} listingId={listing._id} />
+      </LandingContainer>
+    </div>
   );
 }

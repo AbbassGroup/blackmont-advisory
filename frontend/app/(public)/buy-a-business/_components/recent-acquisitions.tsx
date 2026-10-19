@@ -7,7 +7,7 @@ import { LandingContainer, LandingSectionIntro } from '@/components/landing/pres
 export function RecentAcquisitions() {
   return (
     <LandingTheme className='bg-canvas'>
-      <section id='recent-acquisitions' aria-labelledby='acquisitions-title' className='py-14 min-[681px]:py-20'>
+      <section id='recent-acquisitions' aria-labelledby='acquisitions-title' className='py-14 min-[681px]:py-16 min-[1121px]:py-20'>
         <LandingContainer>
           <LandingSectionIntro headingId='acquisitions-title' heading='Recent acquisitions' />
           <AcquisitionsCarousel>

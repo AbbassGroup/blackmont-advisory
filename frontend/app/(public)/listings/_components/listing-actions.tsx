@@ -1,9 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import {
-  ArrowLeft,
   Share2,
   Facebook,
   Linkedin,
@@ -12,7 +10,7 @@ import {
   MessageCircle,
   FileDown,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { LandingButton, LandingButtonLink } from '@/components/landing/presentation';
 import {
   Dialog,
   DialogContent,
@@ -104,32 +102,15 @@ export default function ListingActions({ listingId, listingTitle }: Props) {
 
   return (
     <>
-      <div className='flex flex-wrap gap-3 mb-8'>
-        <Button
-          asChild
-          className='rounded-none bg-accent hover:bg-accent-light text-primary font-bold uppercase tracking-[0.12em]  px-5'
-        >
-          <Link href={`/listings/${listingId}/nda`}>Sign NDA</Link>
-        </Button>
-        {/* <Button onClick={() => setEoiOpen(true)}
-          className='bg-[#1c2434] hover:bg-[#1c2434]/90 text-white font-semibold  px-5'>
-          Express Interest (EOI)
-        </Button> */}
-        <Button
-          variant='outline'
-          onClick={() => setShareOpen(true)}
-          className='gap-2  border-secondary/15 text-muted-foreground hover:border-accent hover:text-accent font-semibold'
-        >
-          <Share2 className='w-4 h-4' /> Share
-        </Button>
-        <Button
-          variant='outline'
-          onClick={() => window.print()}
-          className='gap-2  border-secondary/15 text-muted-foreground hover:border-accent hover:text-accent font-semibold'
-        >
-          <FileDown className='w-4 h-4' /> Download PDF
-        </Button>
-      </div>
+      <nav aria-label='Listing actions' className='flex flex-wrap items-center gap-3'>
+        <LandingButtonLink href={`/listings/${listingId}/nda`}>Sign NDA</LandingButtonLink>
+        <LandingButton variant='outline' onClick={() => setShareOpen(true)}>
+          <Share2 aria-hidden='true' className='size-4 shrink-0' /> Share
+        </LandingButton>
+        <LandingButton variant='outline' onClick={() => window.print()}>
+          <FileDown aria-hidden='true' className='size-4 shrink-0' /> Download PDF
+        </LandingButton>
+      </nav>
 
       <EOIForm
         open={eoiOpen}

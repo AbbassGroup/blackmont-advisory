@@ -2,11 +2,13 @@
 
 import { AlertCircle, Loader2 } from 'lucide-react';
 import { InlineText } from '@/components/im';
+import { landingButtonVariants } from '@/components/landing/presentation';
 import type { AcceptData, SectionChangeHandler } from './shared';
 
 /** LOCKED SECTION — the customer's way to accept. */
 export function AcceptSection({
   data,
+  appearance = 'document',
   editable,
   onChange,
   onAccept,
@@ -14,6 +16,7 @@ export function AcceptSection({
   acceptError,
 }: {
   data: AcceptData;
+  appearance?: 'document' | 'advisory';
   editable?: boolean;
   onChange?: SectionChangeHandler<AcceptData>;
   onAccept?: () => void;
@@ -21,9 +24,9 @@ export function AcceptSection({
   acceptError?: string;
 }) {
   return (
-    <div className='relative z-20 my-10 text-center'>
+    <div className={appearance === 'advisory' ? 'relative flex flex-col items-center text-center' : 'relative z-20 my-10 text-center'}>
       {acceptError && (
-        <div className='mx-auto mb-6 flex max-w-[600px] items-center justify-center gap-2 border border-red-200 bg-red-50 p-4 text-red-700'>
+        <div role='alert' className='mx-auto mb-6 flex max-w-[600px] items-center justify-center gap-2 border border-red-200 bg-red-50 p-4 text-red-700'>
           <AlertCircle className='h-5 w-5 shrink-0' />
           <span className='text-sm'>{acceptError}</span>
         </div>
@@ -33,7 +36,9 @@ export function AcceptSection({
         type='button'
         onClick={editable ? undefined : onAccept}
         disabled={editable || accepting}
-        className='mx-auto flex min-w-[190px] items-center justify-center gap-2.5 bg-accent px-7 py-2.5 text-sm font-bold uppercase tracking-[0.14em] text-primary shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:bg-accent-light disabled:transform-none disabled:cursor-default disabled:opacity-70'
+        className={appearance === 'advisory'
+          ? landingButtonVariants({ variant: 'midnight' })
+          : 'mx-auto flex min-w-[190px] items-center justify-center gap-2.5 bg-accent px-7 py-2.5 text-sm font-bold uppercase tracking-[0.14em] text-primary shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:bg-accent-light disabled:transform-none disabled:cursor-default disabled:opacity-70'}
       >
         {accepting ? (
           <>
@@ -67,7 +72,7 @@ export function AcceptSection({
           value={data.note}
           onChange={(v) => onChange?.({ note: v })}
           placeholder='Optional note beneath the button'
-          className='mx-auto mt-4 max-w-xl text-sm text-muted-foreground'
+          className={appearance === 'advisory' ? 'mt-4 max-w-xl text-sm leading-[1.8] text-ink' : 'mx-auto mt-4 max-w-xl text-sm text-muted-foreground'}
         />
       )}
     </div>

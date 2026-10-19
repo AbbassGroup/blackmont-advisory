@@ -3,7 +3,7 @@ import { LandingLink } from './landing-link';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
-/** Shared 1340px content shell with 19px / 36px / 52px gutters. */
+/** Shared 1340px content shell with 20px / 36px / 52px gutters. */
 export function LandingContainer({
   className,
   ...props
@@ -11,7 +11,7 @@ export function LandingContainer({
   return (
     <div
       className={cn(
-        'mx-auto w-[calc(100%_-_38px)] max-w-advisory min-[681px]:w-[calc(100%_-_72px)] min-[1121px]:w-[calc(100%_-_104px)]',
+        'mx-auto w-[calc(100%_-_40px)] max-w-advisory min-[681px]:w-[calc(100%_-_72px)] min-[1121px]:w-[calc(100%_-_104px)]',
         className,
       )}
       {...props}
@@ -39,9 +39,9 @@ export function LandingSectionIntro({
   return (
     <div
       className={cn(
-        'mb-[30px] grid items-start gap-[22px] min-[681px]:mb-[35px]',
+        'mb-8 min-[681px]:mb-10 grid items-start gap-6',
         description &&
-          'min-[681px]:grid-cols-[1.05fr_0.78fr] min-[681px]:gap-[35px] min-[931px]:gap-[60px]',
+          'min-[681px]:grid-cols-[1.05fr_0.78fr] min-[681px]:gap-10 min-[1121px]:gap-16',
         className,
       )}
     >
@@ -75,7 +75,7 @@ export const landingButtonVariants = cva(
   {
     variants: {
       size: {
-        default: 'min-h-[51px] px-[23px] py-[13px]',
+        default: 'min-h-[51px] px-[24px] py-[12px]',
         compact: 'h-auto min-h-10 px-5 py-2',
       },
       variant: {

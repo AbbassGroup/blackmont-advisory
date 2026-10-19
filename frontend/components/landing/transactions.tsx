@@ -10,13 +10,12 @@ export function Transactions() {
       <section
         id='acquisitions'
         aria-labelledby='acquisitions-title'
-        className='pt-[6px] pb-[73px] min-[681px]:pt-[23px] min-[681px]:pb-[107px]'
+        className='py-14 min-[681px]:py-16 min-[1121px]:py-20'
       >
         <LandingContainer id='transactions'>
           <LandingSectionIntro
             headingId='acquisitions-title'
             heading='Recent acquisitions'
-            className='min-[681px]:mb-[39px]'
           />
           <AcquisitionsCarousel>
             {RECENT_ACQUISITIONS.map((deal) => (

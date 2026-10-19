@@ -27,10 +27,10 @@ export function ToolHeader({
   if (appearance === 'advisory') {
     return (
       <LandingTheme className='bg-canvas'>
-        <section aria-labelledby='tool-page-title' className={cn('border-b border-advisory-rule', layout !== 'split' ? 'py-8 min-[681px]:py-10' : 'py-9 min-[681px]:py-14')}>
+        <section aria-labelledby='tool-page-title' className='border-b border-advisory-rule py-10 min-[681px]:py-12 min-[1121px]:py-16'>
           <LandingContainer className={layout === 'stacked' ? 'max-w-[880px] has-[[data-tool-results]]:max-w-advisory' : undefined}>
             <Breadcrumbs items={crumbs} tone='light' />
-            <div className={cn('mt-7 grid items-start gap-8', layout === 'split' && 'min-[931px]:grid-cols-[0.85fr_1.15fr] min-[931px]:gap-[clamp(40px,5vw,72px)] min-[931px]:has-[[data-tool-results]]:grid-cols-1')}>
+            <div className={cn('mt-8 grid items-start gap-8 min-[681px]:gap-10 min-[1121px]:gap-16', layout === 'split' && 'min-[931px]:grid-cols-[0.85fr_1.15fr] min-[931px]:has-[[data-tool-results]]:grid-cols-1')}>
               <div className={cn('min-w-0', layout === 'split' && 'min-[931px]:pt-4')}>
                 <h1 id='tool-page-title' className={cn('m-0 mb-6 font-advisory-heading text-[clamp(32px,6.5vw,40px)] leading-[1.2] font-bold tracking-normal text-midnight min-[1121px]:text-[44px]', layout !== 'split' && 'mb-4')}>
                   {title}

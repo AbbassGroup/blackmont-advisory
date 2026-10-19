@@ -29,11 +29,11 @@ export function IndustryBanner({
         className='relative isolate overflow-hidden bg-canvas'
       >
         <LandingContainer className='pointer-events-none relative z-10 min-[931px]:flex min-[931px]:min-h-[620px] min-[931px]:items-center'>
-          <div className='pointer-events-auto min-w-0 pt-10 pb-8 min-[681px]:pt-12 min-[681px]:pb-9 min-[931px]:w-[58%] min-[931px]:py-12 min-[1121px]:w-[57%] min-[1121px]:py-14'>
+          <div className='pointer-events-auto min-w-0 min-[931px]:w-[58%] min-[1121px]:w-[57%] py-12 min-[681px]:py-14 min-[931px]:py-16 min-[1121px]:py-20'>
             <Breadcrumbs items={crumbs} tone='light' />
             <h1
               id='industry-title'
-              className='m-0 mt-7 mb-6 max-w-[690px] font-advisory-heading text-[clamp(34px,8vw,48px)] leading-[1.2] font-bold tracking-normal text-midnight min-[931px]:text-[clamp(38px,3.8vw,54px)]'
+              className='m-0 mt-8 mb-6 max-w-[690px] font-advisory-heading text-[clamp(34px,8vw,48px)] leading-[1.2] font-bold tracking-normal text-midnight min-[931px]:text-[clamp(38px,3.8vw,54px)]'
             >
               {title}
             </h1>

@@ -4,7 +4,7 @@ import type { RecentAcquisition } from '@/lib/data/recent-acquisitions';
 import { landingImages } from './images';
 
 const IMAGE_SIZES =
-  '(max-width: 600px) calc(100vw - 38px), (max-width: 680px) calc(50vw - 28px), (max-width: 930px) calc(50vw - 50px), (max-width: 1120px) calc(25vw - 33px), (max-width: 1444px) calc(25vw - 44px), 317px';
+  '(max-width: 600px) calc(100vw - 40px), (max-width: 680px) calc(50vw - 28px), (max-width: 930px) calc(50vw - 50px), (max-width: 1120px) calc(25vw - 33px), (max-width: 1444px) calc(25vw - 44px), 317px';
 
 export function TransactionCard({
   deal,
@@ -31,17 +31,17 @@ export function TransactionCard({
       </div>
       <h3
         id={headingId}
-        className='m-0 mt-[17px] mb-px font-advisory-heading text-lg leading-[1.35] font-bold tracking-normal text-midnight min-[681px]:text-xl'
+        className='m-0 mt-[16px] mb-px font-advisory-heading text-lg leading-[1.35] font-bold tracking-normal text-midnight min-[681px]:text-xl'
       >
         {deal.title}
       </h3>
-      <p className='m-0 mb-[13px] text-[13px] leading-[1.65] min-[681px]:text-[15px]'>
+      <p className='m-0 mb-[12px] text-[13px] leading-[1.65] min-[681px]:text-[15px]'>
         {deal.location}, {deal.state}
       </p>
-      <p className='m-0 mb-[17px] text-sm leading-[1.65] min-[601px]:min-h-[74px] min-[681px]:min-h-[50px] min-[681px]:text-[15px] min-[931px]:min-h-[75px]'>
+      <p className='m-0 mb-[16px] text-sm leading-[1.65] min-[601px]:min-h-[74px] min-[681px]:min-h-[50px] min-[681px]:text-[15px] min-[931px]:min-h-[75px]'>
         {deal.description}
       </p>
-      <dl className='m-0 mt-auto flex items-start justify-between gap-3 border-t border-advisory-rule pt-[13px]'>
+      <dl className='m-0 mt-auto flex items-start justify-between gap-3 border-t border-advisory-rule pt-[12px]'>
         <div>
           <dt className='text-xs leading-[1.5]'>Deal size</dt>
           <dd className='m-0 font-advisory-heading text-xl leading-[1.4] font-bold text-midnight min-[681px]:text-[22px]'>

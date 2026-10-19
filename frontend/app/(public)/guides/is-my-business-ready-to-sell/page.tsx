@@ -1,6 +1,4 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
-import { ArrowUpRight } from 'lucide-react';
 import { JsonLd } from '@/components/seo/json-ld';
 import {
   articleJsonLd,
@@ -8,13 +6,11 @@ import {
   faqJsonLd,
   gatedMetadata,
 } from '@/lib/seo';
-import { SHELL, H2 } from '@/lib/seo-layout';
-import { Breadcrumbs } from '@/components/seo/breadcrumbs';
-import { FaqSection } from '@/components/seo/faq-section';
-import { LastUpdated } from '@/components/seo/last-updated';
 import { guideBySlug } from '@/lib/data/guides';
 import { READINESS_QUESTIONS } from '@/lib/data/readiness';
 import { CONTENT_UPDATED } from '@/lib/data/industry-benchmarks';
+
+import { GuideArticle, GuideActions, GuideFaqs, guideHeading, guideSubheading } from '../_components/article';
 
 const guide = guideBySlug('is-my-business-ready-to-sell')!;
 
@@ -86,40 +82,29 @@ const jsonLd = [
 
 export default function ReadinessGuidePage() {
   return (
-    <main className='min-h-screen bg-background'>
+    <div className='bg-white'>
       <JsonLd data={jsonLd} />
-
-      <section className='relative overflow-hidden border-b border-accent/15 bg-secondary pb-16 pt-28 lg:pt-32'>
-        <span
-          aria-hidden
-          className='absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent'
-        />
-        <div className={`relative z-10 ${SHELL}`}>
-          <Breadcrumbs items={CRUMBS} />
-
-          <h1 className='mt-6 text-3xl font-bold leading-[1.1] tracking-tight text-parchment md:text-4xl lg:text-5xl'>
-            {guide.h1}
-          </h1>
-          <p className='mt-6 max-w-3xl text-lg font-light leading-relaxed text-parchment/70'>
-            Buyers assess the same ten things in almost every transaction. Below
-            is each one, the question a buyer is really asking, and the
-            difference between an answer that costs you money and one that
-            supports your price.
-          </p>
-        </div>
-      </section>
-
-      <div className={`${SHELL} py-16 lg:py-20`}>
-        <section>
-          <h2 className={H2}>The ten things buyers check</h2>
-          <p className='mt-5 leading-relaxed text-muted-foreground'>
+      <GuideArticle
+        title={guide.h1}
+        crumbs={CRUMBS}
+        intro={"Buyers assess the same ten things in almost every transaction. Below is each one, the question a buyer is really asking, and the difference between an answer that costs you money and one that supports your price."}
+        contents={[
+          { id: 'ten-buyer-checks', label: 'The ten things buyers check' },
+          { id: 'losing-value', label: 'Where owners lose value' },
+          { id: 'common-questions', label: 'Common questions' },
+          { id: 'next-steps', label: 'Your next step' },
+        ]}
+      >
+        <section id='ten-buyer-checks' aria-labelledby='ten-buyer-checks-title' className='scroll-mt-32'>
+          <h2 id='ten-buyer-checks-title' className={guideHeading}>The ten things buyers check</h2>
+          <p className='mt-5 mb-0 max-w-[75ch] leading-[1.85] text-ink'>
             Nothing here is a surprise to a buyer. They will work through all ten
             during due diligence whether or not you have looked at them first.
             The advantage of going through them yourself is that you get to fix
             the weak ones before anybody is negotiating against them.
           </p>
 
-          <div className='mt-10 space-y-10'>
+          <div className='mt-8 space-y-10 min-[681px]:space-y-12'>
             {READINESS_QUESTIONS.map(({ cat, text, opts }) => {
               const scored = opts.filter((o) => !o.na);
               const weakest = scored.reduce((a, b) => (a.pts <= b.pts ? a : b));
@@ -127,30 +112,30 @@ export default function ReadinessGuidePage() {
 
               return (
                 <div key={cat}>
-                  <h3 className='text-lg font-bold tracking-tight text-secondary'>
+                  <h3 className={guideSubheading}>
                     {cat}
                   </h3>
-                  <p className='mt-2 text-sm font-medium text-secondary/70'>
+                  <p className='mt-3 mb-0 font-medium text-midnight'>
                     {text}
                   </p>
-                  <p className='mt-4 leading-relaxed text-muted-foreground'>
+                  <p className='mt-4 mb-0 max-w-[75ch] leading-[1.85] text-ink'>
                     {COMMENTARY[cat]}
                   </p>
 
-                  <dl className='mt-5 grid gap-px border-[1.5px] border-secondary/10 bg-secondary/10 sm:grid-cols-2'>
-                    <div className='bg-muted px-5 py-4'>
-                      <dt className='text-[0.7rem] font-bold uppercase tracking-[0.1em] text-muted-foreground'>
+                  <dl className='mt-5 grid gap-5 bg-canvas p-5 min-[681px]:grid-cols-2 min-[681px]:gap-7 min-[681px]:p-6'>
+                    <div>
+                      <dt className='text-sm font-semibold text-midnight'>
                         Costs you money
                       </dt>
-                      <dd className='mt-1.5 text-sm leading-relaxed text-secondary'>
+                      <dd className='mt-2 text-[15px] leading-[1.8] text-ink'>
                         {weakest.label}
                       </dd>
                     </div>
-                    <div className='bg-muted px-5 py-4'>
-                      <dt className='text-[0.7rem] font-bold uppercase tracking-[0.1em] text-accent'>
+                    <div>
+                      <dt className='text-sm font-semibold text-midnight'>
                         Supports your price
                       </dt>
-                      <dd className='mt-1.5 text-sm leading-relaxed text-secondary'>
+                      <dd className='mt-2 text-[15px] leading-[1.8] text-ink'>
                         {strongest.label}
                       </dd>
                     </div>
@@ -161,54 +146,38 @@ export default function ReadinessGuidePage() {
           </div>
         </section>
 
-        <section className='mt-14'>
-          <h2 className={H2}>Where owners most often lose value</h2>
-          <p className='mt-5 leading-relaxed text-muted-foreground'>
+        <section id='losing-value' aria-labelledby='losing-value-title' className='mt-12 min-[681px]:mt-14 scroll-mt-32'>
+          <h2 id='losing-value-title' className={guideHeading}>Where owners most often lose value</h2>
+          <p className='mt-5 mb-0 max-w-[75ch] leading-[1.85] text-ink'>
             Of the ten, two account for most of the gap between what owners
             expect and what they achieve. The first is financial records, because
             weak books do not reduce a price so much as remove the buyers who
             need finance to complete. The second is owner dependency, because it
             is the one thing a buyer cannot fix by working harder than you did.
           </p>
-          <p className='mt-4 leading-relaxed text-muted-foreground'>
+          <p className='mt-4 mb-0 max-w-[75ch] leading-[1.85] text-ink'>
             Both take months rather than weeks to improve, which is the argument
             for looking at this list well before you intend to sell. The items
             that can be fixed quickly, presentation and tidying up paperwork,
             are also the ones that move the price least.
           </p>
         </section>
-
-        <FaqSection items={FAQS} />
-
-        <section className='mt-16 grid gap-px border-[1.5px] border-secondary/10 bg-secondary/10 sm:grid-cols-2'>
-          <Link
-            href='/exit/readiness'
-            className='group bg-muted px-8 py-9 transition-colors hover:bg-accent-pale'
-          >
-            <span className='flex items-center justify-between text-lg font-bold tracking-tight text-secondary'>
-              Score your business
-              <ArrowUpRight className='h-5 w-5 text-accent transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5' />
-            </span>
-            <span className='mt-2 block text-sm text-muted-foreground'>
-              Answer the ten questions and get a readiness score with next steps.
-            </span>
-          </Link>
-          <Link
-            href='/selling-a'
-            className='group bg-muted px-8 py-9 transition-colors hover:bg-accent-pale'
-          >
-            <span className='flex items-center justify-between text-lg font-bold tracking-tight text-secondary'>
-              What businesses sell for
-              <ArrowUpRight className='h-5 w-5 text-accent transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5' />
-            </span>
-            <span className='mt-2 block text-sm text-muted-foreground'>
-              Multiples, price ranges and time to sell across ten sectors.
-            </span>
-          </Link>
-        </section>
-
-        <LastUpdated />
-      </div>
-    </main>
+        <GuideFaqs items={FAQS} />
+        <GuideActions
+          items={[
+            {
+              href: '/exit/readiness',
+              title: 'Score your business',
+              detail: 'Answer the ten questions and get a readiness score with next steps.',
+            },
+            {
+              href: '/selling-a',
+              title: 'What businesses sell for',
+              detail: 'Multiples, price ranges and time to sell across ten sectors.',
+            },
+          ]}
+        />
+      </GuideArticle>
+    </div>
   );
 }
