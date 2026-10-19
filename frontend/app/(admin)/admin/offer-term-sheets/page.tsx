@@ -1,57 +1,63 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
-import {
-  Archive,
-  ArchiveRestore,
-  Edit,
-  Eye,
-  Loader2,
-  Plus,
-  Search,
-  Trash2,
-} from 'lucide-react';
+import { Archive, ArchiveRestore, Edit, Eye, Loader2, Plus, Search, Trash2 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { useAdminAuth } from '@/context/admin-auth-context';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import DashboardLayout from '@/components/global/dashboard-layout';
+import { AdminPageLayout } from '@/components/admin/page-layout';
+import { LandingButton } from '@/components/landing/presentation';
+import { landingFontVariables } from '@/components/landing/fonts';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { getBrokerByEmail } from '@/lib/data/brokers';
 import { cn } from '@/lib/utils';
 import {
   EDITABLE_STATUSES,
-  STATUS_CLASSES,
   STATUS_LABELS,
   WAITING_LABELS,
   formatMoney,
   type OfferTermSheetRow,
+  type SheetStatus,
 } from '@/components/offer-term-sheet';
 
 const BASE = '/api/offer-term-sheets';
-
 const TABS = [
   { id: 'active', label: 'Active' },
   { id: 'awaiting', label: 'Awaiting approval' },
   { id: 'completed', label: 'Signed' },
   { id: 'archived', label: 'Archived' },
 ] as const;
-
 type TabId = (typeof TABS)[number]['id'];
-
 const TAB_PARAMS: Record<TabId, Record<string, string>> = {
   active: {},
   awaiting: { status: 'pending_approval_buyer,pending_approval_vendor' },
   completed: { status: 'completed' },
   archived: { archived: 'true' },
 };
+const STATUS_STYLE: Record<SheetStatus, string> = {
+  draft: 'bg-canvas text-ink',
+  changes_requested: 'bg-amber-50 text-amber-900',
+  pending_approval_buyer: 'bg-gilt/15 text-midnight',
+  pending_approval_vendor: 'bg-gilt/15 text-midnight',
+  sent_to_buyer: 'bg-sky-50 text-sky-900',
+  sent_to_vendor: 'bg-sky-50 text-sky-900',
+  completed: 'bg-emerald-50 text-emerald-800',
+  declined: 'bg-red-50 text-red-800',
+  cancelled: 'bg-canvas text-ink',
+};
+const ROW_ACTION_CLASS = 'inline-flex size-10 shrink-0 cursor-pointer items-center justify-center border border-transparent text-ink transition-colors duration-150 hover:border-advisory-rule hover:bg-canvas hover:text-midnight focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gilt disabled:pointer-events-none disabled:opacity-40 motion-reduce:transition-none';
+
+function displayDate(value?: string | null) {
+  if (!value) return '—';
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? '—' : format(date, 'dd MMM yyyy, h:mma');
+}
 
 export default function OfferTermSheetsPage() {
   const router = useRouter();
   const { user } = useAdminAuth();
-
   const [tab, setTab] = useState<TabId>('active');
   const [sheets, setSheets] = useState<OfferTermSheetRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -60,446 +66,266 @@ export default function OfferTermSheetsPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [creating, setCreating] = useState(false);
   const [actionId, setActionId] = useState<string | null>(null);
-  const [archiveId, setArchiveId] = useState<string | null>(null);
-  const [permId, setPermId] = useState<string | null>(null);
-  const [error, setError] = useState('');
+  const [confirmation, setConfirmation] = useState<{ id: string; name: string; permanent: boolean } | null>(null);
+  const [listError, setListError] = useState(false);
+  const [actionError, setActionError] = useState('');
+  const listRequest = useRef(0);
+  const controlsBusy = creating || Boolean(actionId);
+  const isArchived = tab === 'archived';
 
   const fetchSheets = useCallback(async () => {
+    const request = ++listRequest.current;
     setLoading(true);
+    setListError(false);
     try {
       const { data } = await apiClient.get(BASE, {
         params: { page, limit: 10, search, ...TAB_PARAMS[tab] },
       });
+      if (request !== listRequest.current) return;
       setSheets(data.sheets ?? []);
-      setTotalPages(data.totalPages ?? 1);
-      setError('');
+      setTotalPages(Math.max(1, data.totalPages ?? 1));
     } catch {
-      setSheets([]);
-      setError('Could not load term sheets. Please try again.');
+      if (request === listRequest.current) setListError(true);
     } finally {
-      setLoading(false);
+      if (request === listRequest.current) setLoading(false);
     }
   }, [page, search, tab]);
 
   useEffect(() => {
-    fetchSheets();
+    void fetchSheets();
+    return () => { listRequest.current += 1; };
   }, [fetchSheets]);
 
-  const switchTab = (next: TabId) => {
-    if (next === tab) return;
-    setTab(next);
-    setPage(1);
-  };
-
   const handleCreate = async () => {
+    if (controlsBusy) return;
     setCreating(true);
-    setError('');
+    setActionError('');
     try {
       const { data } = await apiClient.post(BASE, {});
       router.push(`/admin/offer-term-sheets/${data.sheet._id}`);
     } catch {
-      setError('Could not create a term sheet. Please try again.');
+      setActionError('Could not create a term sheet. Please try again.');
       setCreating(false);
     }
   };
 
   const runAction = async (id: string, action: () => Promise<unknown>) => {
+    if (controlsBusy) return;
     setActionId(id);
-    setError('');
+    setActionError('');
     try {
       await action();
-      await fetchSheets();
+      setConfirmation(null);
+      if (sheets.length === 1 && page > 1) setPage((value) => value - 1);
+      else await fetchSheets();
     } catch {
-      setError('That action could not be completed. Please try again.');
+      setActionError('That action could not be completed. Please try again.');
     } finally {
       setActionId(null);
     }
   };
 
-  const isArchived = tab === 'archived';
+  const closeConfirmation = () => {
+    if (actionId) return;
+    setConfirmation(null);
+    setActionError('');
+  };
 
   return (
-    <DashboardLayout
-      title='Offer Term Sheet'
-      description='Create and track Letters of Intent through to signature'
-      button={
-        <Button
-          onClick={handleCreate}
-          disabled={creating}
-          className='gap-2 rounded-none bg-accent font-semibold text-primary hover:bg-accent-light'
-        >
-          {creating ? (
-            <Loader2 className='h-4 w-4 animate-spin' />
-          ) : (
-            <Plus className='h-4 w-4' />
-          )}
-          New Term Sheet
-        </Button>
+    <AdminPageLayout
+      title='Offer term sheets'
+      description='Create and track Letters of Intent through to signature.'
+      action={
+        <LandingButton size='compact' onClick={() => void handleCreate()} disabled={controlsBusy}>
+          {creating ? <Loader2 aria-hidden='true' className='size-4 animate-spin motion-reduce:animate-none' /> : <Plus aria-hidden='true' className='size-4' />}
+          {creating ? 'Creating…' : 'New term sheet'}
+        </LandingButton>
       }
     >
-      <div className='rounded-none border border-border bg-card p-4 shadow-sm'>
-        <div className='flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between'>
-          <div className='relative w-full max-w-sm'>
-            <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/70' />
-            <Input
-              placeholder='Search by business, buyer or vendor...'
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              className='border-border bg-muted pl-9'
-            />
-          </div>
-
-          <div className='flex w-fit shrink-0 gap-1 rounded-none border border-border bg-muted p-1'>
-            {TABS.map((t) => (
-              <TabButton
-                key={t.id}
-                active={tab === t.id}
-                onClick={() => switchTab(t.id)}
-              >
-                {t.id === 'archived' && <Archive className='h-3.5 w-3.5' />}
-                {t.label}
-              </TabButton>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {error && (
-        <div className='rounded-none border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-600'>
-          {error}
-        </div>
+      {actionError && !confirmation && (
+        <p role='alert' className='m-0 border border-red-200 bg-red-50 px-5 py-4 text-sm leading-[1.75] text-red-800'>{actionError}</p>
       )}
 
-      <div className='overflow-hidden rounded-none border border-border bg-card shadow-sm'>
-        <div className='overflow-x-auto'>
-          <table className='w-full text-sm'>
-            <thead>
-              <tr className='border-b border-border bg-muted/80'>
-                <Th>Term Sheet</Th>
-                <Th className='hidden md:table-cell'>Buyer</Th>
-                <Th className='hidden xl:table-cell'>Vendor</Th>
-                <Th>Price</Th>
-                <Th>Status</Th>
-                <Th className='hidden lg:table-cell'>Waiting on</Th>
-                <Th className='hidden lg:table-cell'>
-                  {isArchived ? 'Archived' : 'Updated'}
-                </Th>
-                <Th className='text-right'>Actions</Th>
-              </tr>
-            </thead>
-            <tbody className='divide-y divide-border'>
-              {loading ? (
-                <tr>
-                  <td colSpan={8} className='py-12 text-center text-muted-foreground/70'>
-                    <Loader2 className='mx-auto mb-2 h-6 w-6 animate-spin' />
-                    Loading term sheets...
-                  </td>
-                </tr>
-              ) : sheets.length === 0 ? (
-                <tr>
-                  <td colSpan={8} className='py-12 text-center text-muted-foreground/70'>
-                    <EmptyMessage tab={tab} searching={!!search} />
-                  </td>
-                </tr>
-              ) : (
-                sheets.map((sheet) => {
-                  const busy = actionId === sheet._id;
-                  const editable = EDITABLE_STATUSES.includes(sheet.status);
+      <section aria-label='Offer term sheets' aria-busy={loading} className='min-w-0 border border-advisory-rule bg-white'>
+        <div className='flex flex-col gap-5 border-b border-advisory-rule p-5 min-[681px]:p-6'>
+          <div role='group' aria-label='Filter term sheets by stage' className='grid grid-cols-2 gap-1 border border-advisory-rule bg-canvas p-1 min-[681px]:flex min-[681px]:w-fit min-[681px]:flex-wrap'>
+            {TABS.map((item) => (
+              <button
+                key={item.id}
+                type='button'
+                aria-pressed={tab === item.id}
+                disabled={controlsBusy}
+                onClick={() => { if (item.id !== tab) { setTab(item.id); setPage(1); } }}
+                className={cn('inline-flex min-h-10 cursor-pointer items-center justify-center gap-2 px-4 py-2 text-sm leading-[1.5] font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-gilt disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none', tab === item.id ? 'bg-midnight text-white' : 'text-ink hover:bg-white hover:text-midnight')}
+              >
+                {item.id === 'archived' && <Archive aria-hidden='true' className='size-4 shrink-0' />}
+                {item.label}
+              </button>
+            ))}
+          </div>
+          <div className='flex flex-col gap-3 min-[681px]:flex-row min-[681px]:items-center min-[681px]:justify-between'>
+            <div className='relative w-full min-w-0 min-[681px]:max-w-md'>
+              <label htmlFor='term-sheet-search' className='sr-only'>Search by business, buyer or vendor</label>
+              <Search aria-hidden='true' className='pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-ink/60' />
+              <input
+                id='term-sheet-search'
+                type='search'
+                placeholder='Search by business, buyer or vendor…'
+                value={search}
+                disabled={controlsBusy}
+                onChange={(event) => { setSearch(event.target.value); setPage(1); }}
+                className='h-10 w-full min-w-0 rounded-none border border-advisory-input bg-white py-2 pr-3 pl-10 font-advisory-body text-base text-midnight outline-none transition-colors duration-150 placeholder:text-ink/65 focus:border-gilt disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none min-[681px]:text-sm'
+              />
+            </div>
+            <p className='m-0 shrink-0 text-sm leading-[1.6] text-ink'>
+              {loading ? 'Loading term sheets…' : listError ? 'List unavailable' : `${sheets.length} ${sheets.length === 1 ? 'term sheet' : 'term sheets'} on this page`}
+            </p>
+          </div>
+        </div>
 
+        {loading ? (
+          <div className='px-5 min-[681px]:px-6'>
+            <p role='status' className='sr-only'>Loading term sheets.</p>
+            <div aria-hidden='true' className='divide-y divide-advisory-rule'>
+              {Array.from({ length: 5 }, (_, index) => (
+                <div key={index} className='flex items-center justify-between gap-8 py-6'>
+                  <div className='min-w-0 flex-1 space-y-3'>
+                    <div className='h-4 w-2/5 animate-pulse bg-canvas motion-reduce:animate-none' />
+                    <div className='h-3 w-3/5 animate-pulse bg-canvas motion-reduce:animate-none' />
+                  </div>
+                  <div className='h-7 w-24 shrink-0 animate-pulse bg-canvas motion-reduce:animate-none' />
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : listError ? (
+          <div role='alert' className='p-6 min-[681px]:p-8'>
+            <h2 className='m-0 text-base font-semibold text-midnight'>We couldn&apos;t load your term sheets.</h2>
+            <p className='mt-2 mb-5 text-sm leading-[1.75] text-ink'>Please try again to refresh the list.</p>
+            <LandingButton variant='outline' size='compact' onClick={() => void fetchSheets()} disabled={controlsBusy}>Try again</LandingButton>
+          </div>
+        ) : sheets.length === 0 ? (
+          <div className='p-6 min-[681px]:p-8'>
+            <h2 className='m-0 text-base font-semibold text-midnight'>
+              {search ? 'No matching term sheets' : tab === 'archived' ? 'No archived term sheets' : tab === 'awaiting' ? 'Nothing is waiting for approval' : tab === 'completed' ? 'No signed term sheets yet' : 'No term sheets yet'}
+            </h2>
+            <p className='mt-2 mb-5 text-sm leading-[1.75] text-ink'>
+              {search ? 'Try another business, buyer or vendor name.' : tab === 'archived' ? 'Archived term sheets will appear here, where you can restore or permanently delete them.' : tab === 'awaiting' ? 'Term sheets submitted for buyer or vendor approval will appear here.' : tab === 'completed' ? 'Term sheets will appear here once both parties have signed.' : 'Create your first term sheet to start a Letter of Intent.'}
+            </p>
+            {search ? (
+              <LandingButton variant='outline' size='compact' disabled={controlsBusy} onClick={() => { setSearch(''); setPage(1); }}>Clear search</LandingButton>
+            ) : tab === 'active' ? (
+              <LandingButton size='compact' onClick={() => void handleCreate()} disabled={controlsBusy}>{creating ? 'Creating…' : 'New term sheet'}</LandingButton>
+            ) : (
+              <LandingButton variant='outline' size='compact' disabled={controlsBusy} onClick={() => { setTab('active'); setPage(1); }}>View active term sheets</LandingButton>
+            )}
+          </div>
+        ) : (
+          <div role='region' aria-label='Term sheet table' tabIndex={0} className='min-w-0 overflow-x-auto focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-gilt'>
+            <table className='w-full min-w-[1120px] text-left text-sm leading-[1.65]'>
+              <caption className='sr-only'>Letters of Intent, parties, workflow status and management actions.</caption>
+              <thead className='border-b border-advisory-rule bg-canvas'>
+                <tr>
+                  <Th>Term sheet</Th><Th>Buyer</Th><Th>Vendor</Th><Th>Price</Th><Th>Status</Th><Th>Waiting on</Th><Th>{isArchived ? 'Archived' : 'Updated'}</Th><Th className='text-right'>Actions</Th>
+                </tr>
+              </thead>
+              <tbody className='divide-y divide-advisory-rule'>
+                {sheets.map((sheet) => {
+                  const editable = EDITABLE_STATUSES.includes(sheet.status);
+                  const name = sheet.businessName || 'Untitled business';
                   return (
-                    <tr
-                      key={sheet._id}
-                      className='transition-colors hover:bg-muted/60'
-                    >
-                      <td className='px-5 py-4'>
-                        <p className='font-semibold text-foreground'>
-                          {sheet.businessName || 'Untitled'}
-                        </p>
-                        {user?.user?.role === 'superadmin' && (
-                          <p className='text-xs text-muted-foreground/70'>
-                            {getBrokerByEmail(sheet.brokerEmail)?.name ||
-                              sheet.brokerEmail}
-                          </p>
-                        )}
+                    <tr key={sheet._id} className='transition-colors duration-150 hover:bg-canvas/50 motion-reduce:transition-none'>
+                      <td className='min-w-48 px-5 py-5 align-top'>
+                        <Link href={`/admin/offer-term-sheets/${sheet._id}`} className='font-semibold text-midnight no-underline transition-colors duration-150 hover:text-gilt focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none'>{name}</Link>
+                        {user?.user?.role === 'superadmin' && <p className='mt-1 mb-0 break-words text-xs leading-[1.75] text-ink'>{getBrokerByEmail(sheet.brokerEmail)?.name || sheet.brokerEmail}</p>}
                       </td>
-                      <td className='hidden px-5 py-4 text-foreground/80 md:table-cell'>
-                        <p>{sheet.purchaserName || '-'}</p>
-                        <p className='text-xs text-muted-foreground/70'>
-                          {sheet.purchaserEmail || sheet.buyerInviteEmail || '-'}
-                        </p>
+                      <td className='min-w-40 px-5 py-5 align-top'>
+                        <p className='m-0 text-midnight'>{sheet.purchaserName || '—'}</p>
+                        <p className='mt-1 mb-0 break-all text-xs leading-[1.75] text-ink'>{sheet.purchaserEmail || sheet.buyerInviteEmail || '—'}</p>
                       </td>
-                      <td className='hidden px-5 py-4 text-foreground/80 xl:table-cell'>
-                        <p>{sheet.vendorName || '-'}</p>
-                        <p className='text-xs text-muted-foreground/70'>
-                          {sheet.vendorEmail || '-'}
-                        </p>
+                      <td className='min-w-40 px-5 py-5 align-top'>
+                        <p className='m-0 text-midnight'>{sheet.vendorName || '—'}</p>
+                        <p className='mt-1 mb-0 break-all text-xs leading-[1.75] text-ink'>{sheet.vendorEmail || '—'}</p>
                       </td>
-                      <td className='px-5 py-4 text-foreground/80'>
-                        {formatMoney(sheet.purchasePrice)}
+                      <td className='px-5 py-5 align-top whitespace-nowrap tabular-nums text-midnight'>{formatMoney(sheet.purchasePrice)}</td>
+                      <td className='px-5 py-5 align-top'>
+                        <span className={cn('inline-flex px-2.5 py-1 text-xs leading-[1.5] font-medium', STATUS_STYLE[sheet.status])}>{STATUS_LABELS[sheet.status]}</span>
                       </td>
-                      <td className='px-5 py-4'>
-                        <span
-                          className={cn(
-                            'inline-flex rounded-none px-2.5 py-1 text-xs font-medium',
-                            STATUS_CLASSES[sheet.status],
-                          )}
-                        >
-                          {STATUS_LABELS[sheet.status]}
-                        </span>
-                      </td>
-                      <td className='hidden px-5 py-4 text-muted-foreground lg:table-cell'>
-                        {sheet.waitingOn ? WAITING_LABELS[sheet.waitingOn] : '-'}
-                      </td>
-                      <td className='hidden px-5 py-4 text-muted-foreground lg:table-cell'>
-                        {(() => {
-                          const at = isArchived
-                            ? sheet.archivedAt
-                            : sheet.updatedAt;
-                          return at
-                            ? format(new Date(at), 'MMM dd, yyyy, h:mma')
-                            : '-';
-                        })()}
-                      </td>
-                      <td className='px-5 py-4'>
+                      <td className='px-5 py-5 align-top whitespace-nowrap text-ink'>{sheet.waitingOn ? WAITING_LABELS[sheet.waitingOn] : '—'}</td>
+                      <td className='px-5 py-5 align-top whitespace-nowrap text-ink'>{displayDate(isArchived ? sheet.archivedAt : sheet.updatedAt)}</td>
+                      <td className='px-5 py-3 align-top'>
                         <div className='flex items-center justify-end gap-1'>
                           {isArchived ? (
                             <>
-                              <IconButton
-                                title='Restore'
-                                busy={busy}
-                                onClick={() =>
-                                  runAction(sheet._id, () =>
-                                    apiClient.patch(
-                                      `${BASE}/${sheet._id}/restore`,
-                                    ),
-                                  )
-                                }
-                                className='text-green-600 hover:bg-green-50'
-                              >
-                                <ArchiveRestore className='h-4 w-4' />
-                              </IconButton>
-                              <IconButton
-                                title='Delete permanently'
-                                onClick={() => setPermId(sheet._id)}
-                                className='text-red-500 hover:bg-red-50'
-                              >
-                                <Trash2 className='h-4 w-4' />
-                              </IconButton>
+                              <button type='button' title='Restore term sheet' aria-label={`Restore ${name}`} disabled={controlsBusy} onClick={() => void runAction(sheet._id, () => apiClient.patch(`${BASE}/${sheet._id}/restore`))} className={cn(ROW_ACTION_CLASS, 'text-emerald-800 hover:bg-emerald-50 hover:text-emerald-900')}>
+                                {actionId === sheet._id ? <Loader2 aria-hidden='true' className='size-4 animate-spin motion-reduce:animate-none' /> : <ArchiveRestore aria-hidden='true' className='size-4' />}
+                              </button>
+                              <button type='button' title='Delete permanently' aria-label={`Permanently delete ${name}`} disabled={controlsBusy} onClick={() => { setActionError(''); setConfirmation({ id: sheet._id, name, permanent: true }); }} className={cn(ROW_ACTION_CLASS, 'text-red-700 hover:bg-red-50 hover:text-red-800')}>
+                                <Trash2 aria-hidden='true' className='size-4' />
+                              </button>
                             </>
                           ) : (
                             <>
-                              <Link
-                                href={`/admin/offer-term-sheets/${sheet._id}`}
-                                title={editable ? 'Edit' : 'View'}
-                                className='flex rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground/80'
-                              >
-                                {editable ? (
-                                  <Edit className='h-4 w-4' />
-                                ) : (
-                                  <Eye className='h-4 w-4' />
-                                )}
+                              <Link href={`/admin/offer-term-sheets/${sheet._id}`} title={editable ? 'Edit term sheet' : 'View term sheet'} aria-label={`${editable ? 'Edit' : 'View'} ${name}`} className={ROW_ACTION_CLASS}>
+                                {editable ? <Edit aria-hidden='true' className='size-4' /> : <Eye aria-hidden='true' className='size-4' />}
                               </Link>
-                              <IconButton
-                                title='Archive'
-                                onClick={() => setArchiveId(sheet._id)}
-                                className='text-muted-foreground hover:bg-amber-50 hover:text-amber-600'
-                              >
-                                <Archive className='h-4 w-4' />
-                              </IconButton>
+                              <button type='button' title='Archive term sheet' aria-label={`Archive ${name}`} disabled={controlsBusy} onClick={() => { setActionError(''); setConfirmation({ id: sheet._id, name, permanent: false }); }} className={cn(ROW_ACTION_CLASS, 'hover:bg-amber-50 hover:text-amber-900')}>
+                                <Archive aria-hidden='true' className='size-4' />
+                              </button>
                             </>
                           )}
                         </div>
                       </td>
                     </tr>
                   );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {totalPages > 1 && (
-          <div className='flex items-center justify-between border-t border-border bg-muted/50 px-5 py-3.5'>
-            <p className='text-sm text-muted-foreground'>
-              Page {page} of {totalPages}
-            </p>
-            <div className='flex items-center gap-2'>
-              <Button
-                variant='outline'
-                size='sm'
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-              >
-                Previous
-              </Button>
-              <Button
-                variant='outline'
-                size='sm'
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page === totalPages}
-              >
-                Next
-              </Button>
-            </div>
+                })}
+              </tbody>
+            </table>
           </div>
         )}
-      </div>
 
-      <ConfirmDialog
-        open={!!archiveId}
-        title='Archive term sheet?'
-        body='It will move to Archived and stop appearing in the active list.'
-        confirmLabel='Archive'
-        confirmClass='bg-amber-500 text-white hover:bg-amber-600'
-        busy={!!actionId}
-        onCancel={() => setArchiveId(null)}
-        onConfirm={async () => {
-          const id = archiveId;
-          setArchiveId(null);
-          if (id) await runAction(id, () => apiClient.delete(`${BASE}/${id}`));
-        }}
-      />
+        {!loading && !listError && totalPages > 1 && (
+          <nav aria-label='Term sheet pagination' className='flex flex-wrap items-center justify-between gap-4 border-t border-advisory-rule px-5 py-4 min-[681px]:px-6'>
+            <p className='m-0 text-sm text-ink' aria-live='polite' aria-atomic='true'>Page {page} of {totalPages}</p>
+            <div className='flex gap-2'>
+              <LandingButton variant='outline' size='compact' onClick={() => setPage((value) => Math.max(1, value - 1))} disabled={page === 1 || controlsBusy}>Previous</LandingButton>
+              <LandingButton variant='outline' size='compact' onClick={() => setPage((value) => Math.min(totalPages, value + 1))} disabled={page === totalPages || controlsBusy}>Next</LandingButton>
+            </div>
+          </nav>
+        )}
+      </section>
 
-      <ConfirmDialog
-        open={!!permId}
-        title='Delete permanently?'
-        body='This removes the term sheet and its audit trail from the database. It cannot be undone.'
-        confirmLabel='Delete permanently'
-        confirmClass='bg-red-600 text-white hover:bg-red-700'
-        busy={!!actionId}
-        onCancel={() => setPermId(null)}
-        onConfirm={async () => {
-          const id = permId;
-          setPermId(null);
-          if (id)
-            await runAction(id, () =>
-              apiClient.delete(`${BASE}/${id}/permanent`),
-            );
-        }}
-      />
-    </DashboardLayout>
+      <Dialog open={Boolean(confirmation)} onOpenChange={(open) => { if (!open) closeConfirmation(); }}>
+        <DialogContent showCloseButton={false} className={cn(landingFontVariables, 'max-h-[85dvh] overflow-y-auto rounded-none border border-advisory-rule bg-white p-6 font-advisory-body text-midnight ring-0 sm:max-w-[460px] min-[681px]:p-8')}>
+          <DialogHeader>
+            <DialogTitle className='m-0 font-advisory-heading text-[23px] leading-[1.35] font-bold tracking-normal text-midnight'>{confirmation?.permanent ? 'Delete permanently?' : 'Archive term sheet?'}</DialogTitle>
+            <DialogDescription className='mt-3 text-sm leading-[1.8] text-ink'>
+              <span className='mb-2 block break-words font-semibold text-midnight'>{confirmation?.name}</span>
+              {confirmation?.permanent ? 'This removes the term sheet and its audit trail from the database. It cannot be undone.' : 'It will move to Archived and stop appearing in the active list. You can restore it from Archived.'}
+            </DialogDescription>
+          </DialogHeader>
+          {actionError && <p role='alert' className='m-0 text-sm leading-[1.75] text-red-800'>{actionError}</p>}
+          <div className='flex flex-wrap justify-end gap-3'>
+            <LandingButton variant='outline' size='compact' disabled={Boolean(actionId)} onClick={closeConfirmation}>Cancel</LandingButton>
+            <LandingButton
+              size='compact'
+              disabled={Boolean(actionId)}
+              className={confirmation?.permanent ? 'border-red-700 bg-red-700 text-white hover:bg-red-800' : undefined}
+              onClick={() => {
+                if (!confirmation) return;
+                const { id, permanent } = confirmation;
+                void runAction(id, () => apiClient.delete(`${BASE}/${id}${permanent ? '/permanent' : ''}`));
+              }}
+            >
+              {actionId ? <><Loader2 aria-hidden='true' className='size-4 animate-spin motion-reduce:animate-none' /> {confirmation?.permanent ? 'Deleting…' : 'Archiving…'}</> : confirmation?.permanent ? 'Delete permanently' : 'Archive'}
+            </LandingButton>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </AdminPageLayout>
   );
 }
 
-function EmptyMessage({ tab, searching }: { tab: TabId; searching: boolean }) {
-  if (searching) return <>No term sheets match that search.</>;
-  if (tab === 'archived') return <>No archived term sheets.</>;
-  if (tab === 'awaiting') return <>Nothing is waiting for approval.</>;
-  if (tab === 'completed') return <>No signed term sheets yet.</>;
-  return (
-    <>
-      No term sheets yet. Click <span className='font-medium'>New Term Sheet</span>{' '}
-      to start one.
-    </>
-  );
-}
-
-function TabButton({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={cn(
-        'flex items-center gap-1.5 rounded-md px-3.5 py-1 text-sm font-medium transition-colors',
-        active
-          ? 'bg-accent/10 text-accent'
-          : 'text-muted-foreground hover:bg-muted hover:text-foreground',
-      )}
-    >
-      {children}
-    </button>
-  );
-}
-
-function Th({
-  children,
-  className = '',
-}: {
-  children?: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <th
-      className={`px-5 py-3.5 text-left font-semibold text-muted-foreground ${className}`}
-    >
-      {children}
-    </th>
-  );
-}
-
-function IconButton({
-  children,
-  title,
-  onClick,
-  busy = false,
-  className = '',
-}: {
-  children: React.ReactNode;
-  title: string;
-  onClick: () => void;
-  busy?: boolean;
-  className?: string;
-}) {
-  return (
-    <button
-      type='button'
-      title={title}
-      onClick={onClick}
-      disabled={busy}
-      className={cn(
-        'rounded-md p-1.5 transition-colors disabled:opacity-50',
-        className,
-      )}
-    >
-      {busy ? <Loader2 className='h-4 w-4 animate-spin' /> : children}
-    </button>
-  );
-}
-
-function ConfirmDialog({
-  open,
-  title,
-  body,
-  confirmLabel,
-  confirmClass,
-  busy,
-  onCancel,
-  onConfirm,
-}: {
-  open: boolean;
-  title: string;
-  body: string;
-  confirmLabel: string;
-  confirmClass: string;
-  busy: boolean;
-  onCancel: () => void;
-  onConfirm: () => void;
-}) {
-  if (!open) return null;
-  return (
-    <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm'>
-      <div className='w-full max-w-sm rounded-none bg-card p-6 shadow-xl'>
-        <h3 className='mb-2 text-lg font-bold text-foreground'>{title}</h3>
-        <p className='mb-6 text-sm text-muted-foreground'>{body}</p>
-        <div className='flex justify-end gap-3'>
-          <Button variant='outline' onClick={onCancel}>
-            Cancel
-          </Button>
-          <Button onClick={onConfirm} disabled={busy} className={confirmClass}>
-            {busy ? <Loader2 className='h-4 w-4 animate-spin' /> : confirmLabel}
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
+function Th({ children, className }: { children: ReactNode; className?: string }) {
+  return <th scope='col' className={cn('px-5 py-4 font-semibold text-midnight', className)}>{children}</th>;
 }

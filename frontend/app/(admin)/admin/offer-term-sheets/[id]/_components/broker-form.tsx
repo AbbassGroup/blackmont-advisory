@@ -1,7 +1,7 @@
 'use client';
 
 import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
+import { Section, INPUT_CLASS, CHECKBOX_CLASS } from './presentation';
 import { cn } from '@/lib/utils';
 import {
   computeAmounts,
@@ -52,48 +52,52 @@ export function BrokerForm({
 
   return (
     <>
-      <Section title='The Business'>
-        <Field
-          keyName='businessName'
-          label='Business Name'
-          value={values.businessName}
-          readOnly={readOnly}
-          invalid={invalid}
-          onChange={(v) => onChange({ businessName: v })}
-        />
-        <Field
-          keyName='businessAddress'
-          label='Business Address'
-          value={values.businessAddress}
-          readOnly={readOnly}
-          invalid={invalid}
-          onChange={(v) => onChange({ businessAddress: v })}
-        />
+      <Section title='The business'>
+        <div className='grid gap-5 min-[681px]:grid-cols-2'>
+          <Field
+            keyName='businessName'
+            label='Business name'
+            value={values.businessName}
+            readOnly={readOnly}
+            invalid={invalid}
+            onChange={(v) => onChange({ businessName: v })}
+          />
+          <Field
+            keyName='businessAddress'
+            label='Business address'
+            value={values.businessAddress}
+            readOnly={readOnly}
+            invalid={invalid}
+            onChange={(v) => onChange({ businessAddress: v })}
+          />
+        </div>
       </Section>
 
-      <Section title='Vendor Details'>
-        <Field
-          keyName='vendorName'
-          label='Name'
-          value={values.vendorName}
-          readOnly={readOnly}
-          invalid={invalid}
-          onChange={(v) => onChange({ vendorName: v })}
-        />
-        <Field
-          keyName='vendorEmail'
-          label='Email'
-          type='email'
-          value={values.vendorEmail}
-          readOnly={readOnly}
-          invalid={invalid}
-          onChange={(v) => onChange({ vendorEmail: v })}
-          hint='The letter is sent here for signature after the second approval.'
-        />
+      <Section title='Vendor details'>
+        <div className='grid gap-5 min-[681px]:grid-cols-2'>
+          <Field
+            keyName='vendorName'
+            label='Name'
+            value={values.vendorName}
+            readOnly={readOnly}
+            invalid={invalid}
+            onChange={(v) => onChange({ vendorName: v })}
+          />
+          <Field
+            keyName='vendorEmail'
+            label='Email'
+            type='email'
+            value={values.vendorEmail}
+            readOnly={readOnly}
+            invalid={invalid}
+            onChange={(v) => onChange({ vendorEmail: v })}
+            hint='The letter is sent here for signature after the second approval.'
+          />
+        </div>
       </Section>
 
       <Section title='Offer'>
-        <div className='grid gap-5 sm:grid-cols-2'>
+        <div className='grid gap-5 min-[681px]:grid-cols-2'>
           <MoneyField
             keyName='purchasePrice'
             label='Purchase price'
@@ -134,13 +138,14 @@ export function BrokerForm({
       </Section>
 
       <Section title='Inclusions'>
-        <div className='space-y-3'>
+        <div className='flex flex-col gap-3'>
           {INCLUSION_ITEMS.map((item) => (
             <label
               key={item.key}
-              className='flex cursor-pointer items-center gap-3 text-sm text-foreground/80'
+              className='flex min-h-8 cursor-pointer items-start gap-3 py-1 text-sm leading-[1.75] text-midnight'
             >
               <Checkbox
+              className={CHECKBOX_CLASS}
                 checked={!!values.inclusions[item.key]}
                 disabled={readOnly}
                 onCheckedChange={(checked) =>
@@ -153,8 +158,9 @@ export function BrokerForm({
             </label>
           ))}
 
-          <label className='flex cursor-pointer items-center gap-3 text-sm text-foreground/80'>
+          <label className='flex min-h-8 cursor-pointer items-start gap-3 py-1 text-sm leading-[1.75] text-midnight'>
             <Checkbox
+                className={CHECKBOX_CLASS}
               checked={values.inclusions.otherEnabled}
               disabled={readOnly}
               onCheckedChange={(checked) =>
@@ -170,9 +176,12 @@ export function BrokerForm({
           {values.inclusions.otherEnabled && (
             <div
               data-field='inclusions.otherText'
-              className='scroll-mt-28 space-y-1.5 pl-7'
+              className='flex scroll-mt-28 flex-col gap-2 pl-7'
             >
-              <Input
+              <label htmlFor='inclusions.otherText' className='text-sm font-medium text-midnight'>Other inclusion</label>
+              <input
+                id='inclusions.otherText'
+                aria-invalid={invalid.has('inclusions.otherText')}
                 value={values.inclusions.otherText}
                 readOnly={readOnly}
                 placeholder='Describe the other inclusion'
@@ -190,23 +199,6 @@ export function BrokerForm({
         </div>
       </Section>
     </>
-  );
-}
-
-function Section({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className='border-t border-border px-6 py-6 sm:px-8'>
-      <h3 className='mb-5 text-xs font-bold uppercase tracking-wider text-muted-foreground'>
-        {title}
-      </h3>
-      <div className='space-y-5'>{children}</div>
-    </section>
   );
 }
 
@@ -232,17 +224,18 @@ function Field({
   const isInvalid = invalid.has(keyName);
 
   return (
-    <div data-field={keyName} className='scroll-mt-28 space-y-1.5'>
+    <div data-field={keyName} className='flex min-w-0 scroll-mt-28 flex-col gap-2'>
       <label
         htmlFor={keyName}
-        className='block text-sm font-medium text-foreground/80'
+        className='block text-sm leading-[1.6] font-medium text-midnight'
       >
         {label}
       </label>
-      <Input
+      <input
         id={keyName}
         type={type}
         value={value}
+        aria-invalid={isInvalid}
         readOnly={readOnly}
         onChange={(e) => onChange(e.target.value)}
         className={inputClass(readOnly, isInvalid)}
@@ -250,7 +243,7 @@ function Field({
       {isInvalid ? (
         <ErrorText>{label} is required</ErrorText>
       ) : (
-        hint && <p className='text-xs text-muted-foreground/70'>{hint}</p>
+        hint && <p className='m-0 text-xs leading-[1.75] text-ink'>{hint}</p>
       )}
     </div>
   );
@@ -276,22 +269,23 @@ function MoneyField({
   placeholder?: string;
 }) {
   return (
-    <div data-field={keyName} className='scroll-mt-28 space-y-1.5'>
+    <div data-field={keyName} className='flex min-w-0 scroll-mt-28 flex-col gap-2'>
       <label
         htmlFor={keyName}
-        className='block text-sm font-medium text-foreground/80'
+        className='block text-sm leading-[1.6] font-medium text-midnight'
       >
         {label}
       </label>
       <div className='relative'>
-        <span className='pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/70'>
+        <span className='pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink'>
           $
         </span>
-        <Input
+        <input
           id={keyName}
           inputMode='numeric'
           placeholder={placeholder}
           value={value ?? ''}
+          aria-invalid={!!error}
           readOnly={readOnly}
           onChange={(e) =>
             onChange(
@@ -306,22 +300,16 @@ function MoneyField({
       {error ? (
         <ErrorText>{error}</ErrorText>
       ) : (
-        hint && <p className='text-xs text-muted-foreground/70'>{hint}</p>
+        hint && <p className='m-0 text-xs leading-[1.75] text-ink'>{hint}</p>
       )}
     </div>
   );
 }
 
 function ErrorText({ children }: { children: React.ReactNode }) {
-  return <p className='text-xs font-medium text-red-500'>{children}</p>;
+  return <p role='alert' className='m-0 text-xs leading-[1.75] font-medium text-red-800'>{children}</p>;
 }
 
 function inputClass(readOnly: boolean, invalid: boolean) {
-  return cn(
-    'transition-colors',
-    readOnly ? 'bg-muted text-muted-foreground' : 'bg-card',
-    invalid
-      ? 'border-red-400 focus-visible:border-red-400'
-      : 'border-border focus-visible:border-accent',
-  );
+  return cn(INPUT_CLASS, readOnly && 'cursor-default', invalid && 'border-red-700 focus:border-red-700');
 }

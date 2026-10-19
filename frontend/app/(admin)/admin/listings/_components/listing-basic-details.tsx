@@ -1,210 +1,59 @@
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { RichTextEditor } from '@/components/proposal/rich-text-editor';
+import { cn } from '@/lib/utils';
+import { ListingSection, ListingField, ListingInput, LISTING_INPUT_CLASS } from './form-presentation';
 
-const LOCATIONS = [
-  'Australia',
-  'Adelaide',
-  'Perth',
-  'Melbourne',
-  'Geelong',
-  'Ballarat',
-  'Launceston',
-  'Brisbane',
-  'Hobart',
-  'Sydney',
-];
+const LOCATIONS = ['Australia', 'Adelaide', 'Perth', 'Melbourne', 'Geelong', 'Ballarat', 'Launceston', 'Brisbane', 'Hobart', 'Sydney'];
 
 interface BasicDetailsProps {
-  title: string;
-  setTitle: (v: string) => void;
-  category: string;
-  setCategory: (v: string) => void;
-  location: string;
-  setLocation: (v: string) => void;
-  suburb: string;
-  setSuburb: (v: string) => void;
-  price: string;
-  setPrice: (v: string) => void;
-  mapLink: string;
-  setMapLink: (v: string) => void;
-  summary: string;
-  setSummary: (v: string) => void;
-  about: string;
-  setAbout: (v: string) => void;
+  title: string; setTitle: (value: string) => void;
+  category: string; setCategory: (value: string) => void;
+  location: string; setLocation: (value: string) => void;
+  suburb: string; setSuburb: (value: string) => void;
+  price: string; setPrice: (value: string) => void;
+  mapLink: string; setMapLink: (value: string) => void;
+  summary: string; setSummary: (value: string) => void;
+  about: string; setAbout: (value: string) => void;
   errors?: Record<string, string>;
 }
 
 export function ListingBasicDetails({
-  title,
-  setTitle,
-  category,
-  setCategory,
-  location,
-  setLocation,
-  suburb,
-  setSuburb,
-  price,
-  setPrice,
-  mapLink,
-  setMapLink,
-  summary,
-  setSummary,
-  about,
-  setAbout,
-  errors = {},
+  title, setTitle, category, setCategory, location, setLocation, suburb, setSuburb,
+  price, setPrice, mapLink, setMapLink, summary, setSummary, about, setAbout, errors = {},
 }: BasicDetailsProps) {
   return (
-    <div className='border border-border bg-card p-6 space-y-6'>
-      <div className='flex items-center gap-2 border-b border-border pb-4 mb-4'>
-        <h2 className='text-lg font-semibold text-secondary'>Basic Details</h2>
-      </div>
-
-      <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-        <div className='space-y-2'>
-          <Label htmlFor='title' className={errors.title ? 'text-red-500' : ''}>
-            Title <span className='text-red-500'>*</span>
-          </Label>
-          <Input
-            id='title'
-            name='title'
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder='e.g. Turnkey Cafe in CBD'
-            className={
-              errors.title ? 'border-red-500 focus-visible:ring-red-500' : ''
-            }
-          />
-          {errors.title && (
-            <p className='text-sm text-red-500'>{errors.title}</p>
-          )}
-        </div>
-
-        <div className='space-y-2'>
-          <Label htmlFor='category'>Category</Label>
-          <Input
-            id='category'
-            name='category'
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            placeholder='e.g. Hospitality'
-          />
-        </div>
-
-        <div className='space-y-2'>
-          <Label
-            htmlFor='location'
-            className={errors.location ? 'text-red-500' : ''}
-          >
-            Location <span className='text-red-500'>*</span>
-          </Label>
-          <Select value={location} onValueChange={setLocation}>
-            <SelectTrigger
-              id='location'
-              name='location'
-              data-field='location'
-              className={
-                errors.location ? 'border-red-500 focus:ring-red-500' : ''
-              }
-            >
-              <SelectValue placeholder='Select Location' />
-            </SelectTrigger>
-            <SelectContent>
-              {LOCATIONS.map((loc) => (
-                <SelectItem key={loc} value={loc}>
-                  {loc}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {errors.location && (
-            <p className='text-sm text-red-500'>{errors.location}</p>
-          )}
-        </div>
-
-        <div className='space-y-2'>
-          <Label htmlFor='suburb'>Suburb / Town</Label>
-          <Input
-            id='suburb'
-            name='suburb'
-            value={suburb}
-            onChange={(e) => setSuburb(e.target.value)}
-            placeholder='e.g. Richmond'
-          />
-        </div>
-
-        <div className='space-y-2'>
-          <Label htmlFor='price' className={errors.price ? 'text-red-500' : ''}>
-            Price <span className='text-red-500'>*</span>
-          </Label>
-          <Input
-            id='price'
-            name='price'
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            placeholder='e.g. $250,000'
-            className={
-              errors.price ? 'border-red-500 focus-visible:ring-red-500' : ''
-            }
-          />
-          {errors.price && (
-            <p className='text-sm text-red-500'>{errors.price}</p>
-          )}
-        </div>
-
-        <div className='space-y-2'>
-          <Label htmlFor='mapLink'>Map Link (Google Maps Embed URL)</Label>
-          <Input
-            id='mapLink'
-            name='mapLink'
-            value={mapLink}
-            onChange={(e) => setMapLink(e.target.value)}
-            placeholder='https://www.google.com/maps/embed?...'
-          />
-        </div>
-
-        <div className='md:col-span-2 space-y-2'>
-          <Label
-            htmlFor='summary'
-            className={errors.summary ? 'text-red-500' : ''}
-          >
-            Summary <span className='text-red-500'>*</span>
-          </Label>
-          <Textarea
-            id='summary'
-            name='summary'
-            value={summary}
-            onChange={(e) => setSummary(e.target.value)}
-            placeholder='Short summary for the listing card preview...'
-            className={`h-20 ${errors.summary ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
-          />
-          {errors.summary && (
-            <p className='text-sm text-red-500'>{errors.summary}</p>
-          )}
-        </div>
-        <div className='md:col-span-2 space-y-2'>
-          <Label htmlFor='about' className={errors.about ? 'text-red-500' : ''}>
-            About <span className='text-red-500'>*</span>
-          </Label>
-          <div
-            className={`prose-editor-container rounded-lg ${errors.about ? 'ring-2 ring-red-500 ring-offset-1' : ''}`}
-            data-field='about'
-          >
+    <ListingSection id='basic-details' title='Basic details'>
+      <div className='grid gap-6 min-[681px]:grid-cols-2'>
+        <ListingField id='title' label='Title' required error={errors.title}>
+          <ListingInput id='title' name='title' value={title} onChange={(event) => setTitle(event.target.value)} placeholder='e.g. Turnkey Cafe in CBD' aria-required='true' aria-invalid={Boolean(errors.title)} aria-describedby={errors.title ? 'title-hint' : undefined} />
+        </ListingField>
+        <ListingField id='category' label='Category'>
+          <ListingInput id='category' name='category' value={category} onChange={(event) => setCategory(event.target.value)} placeholder='e.g. Hospitality' />
+        </ListingField>
+        <ListingField id='location' label='Location' required error={errors.location}>
+          <select id='location' name='location' value={location} onChange={(event) => setLocation(event.target.value)} aria-required='true' aria-invalid={Boolean(errors.location)} aria-describedby={errors.location ? 'location-hint' : undefined} className={LISTING_INPUT_CLASS}>
+            <option value='' disabled>Select location</option>
+            {location && !LOCATIONS.includes(location) && <option value={location}>{location}</option>}
+            {LOCATIONS.map((item) => <option key={item} value={item}>{item}</option>)}
+          </select>
+        </ListingField>
+        <ListingField id='suburb' label='Suburb / town'>
+          <ListingInput id='suburb' name='suburb' value={suburb} onChange={(event) => setSuburb(event.target.value)} placeholder='e.g. Richmond' />
+        </ListingField>
+        <ListingField id='price' label='Price' required error={errors.price}>
+          <ListingInput id='price' name='price' value={price} onChange={(event) => setPrice(event.target.value)} placeholder='e.g. $250,000' aria-required='true' aria-invalid={Boolean(errors.price)} aria-describedby={errors.price ? 'price-hint' : undefined} />
+        </ListingField>
+        <ListingField id='mapLink' label='Google Maps embed URL'>
+          <ListingInput id='mapLink' name='mapLink' value={mapLink} onChange={(event) => setMapLink(event.target.value)} placeholder='https://www.google.com/maps/embed?...' />
+        </ListingField>
+        <ListingField id='summary' label='Summary' required error={errors.summary} className='min-[681px]:col-span-2'>
+          <textarea id='summary' name='summary' value={summary} onChange={(event) => setSummary(event.target.value)} placeholder='Short summary for the listing card preview…' rows={3} aria-required='true' aria-invalid={Boolean(errors.summary)} aria-describedby={errors.summary ? 'summary-hint' : undefined} className={cn(LISTING_INPUT_CLASS, 'h-auto resize-y leading-[1.75]')} />
+        </ListingField>
+        <ListingField id='about' label='About' required error={errors.about} className='min-[681px]:col-span-2'>
+          <div id='about' role='group' aria-labelledby='about-label' aria-describedby={errors.about ? 'about-hint' : undefined} tabIndex={-1} className={cn('min-w-0 outline-none', errors.about && 'border border-red-700')}>
             <RichTextEditor value={about} onChange={setAbout} />
           </div>
-          {errors.about && (
-            <p className='text-sm text-red-500'>{errors.about}</p>
-          )}
-        </div>
+        </ListingField>
       </div>
-    </div>
+    </ListingSection>
   );
 }

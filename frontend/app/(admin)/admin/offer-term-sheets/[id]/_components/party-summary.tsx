@@ -3,7 +3,7 @@
 import { format } from 'date-fns';
 import { CheckCircle2, Clock } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
+import { Section, INPUT_CLASS, CHECKBOX_CLASS } from './presentation';
 import {
   STOCK_TREATMENT_OPTIONS,
   formatMoney,
@@ -29,7 +29,7 @@ export function PartySummary({
 
   return (
     <>
-      <Section title='Purchaser Details'>
+      <Section title='Purchaser details'>
         {buyerStarted ? (
           <Rows
             rows={[
@@ -57,15 +57,15 @@ export function PartySummary({
         )}
       </Section>
 
-      <Section title='Settlement Date'>
+      <Section title='Settlement date'>
         {settlementText(sheet) ? (
-          <p className='text-sm text-foreground/80'>{settlementText(sheet)}</p>
+          <p className='m-0 text-sm leading-[1.75] text-ink'>{settlementText(sheet)}</p>
         ) : (
           <Pending>The buyer sets a date, or a number of weeks.</Pending>
         )}
       </Section>
 
-      <Section title='Subject To'>
+      <Section title='Subject to'>
         {!readOnly ? (
           <SubjectToEditor
             value={subjectTo}
@@ -73,10 +73,10 @@ export function PartySummary({
             onChange={onSubjectToChange}
           />
         ) : conditions(sheet).length ? (
-          <ul className='space-y-1.5 text-sm text-foreground/80'>
+          <ul className='m-0 flex list-none flex-col gap-2 p-0 text-sm leading-[1.75] text-ink'>
             {conditions(sheet).map((c) => (
               <li key={c} className='flex items-start gap-2'>
-                <CheckCircle2 className='mt-0.5 h-4 w-4 shrink-0 text-accent' />
+                <CheckCircle2 className='mt-0.5 h-4 w-4 shrink-0 text-midnight' />
                 {c}
               </li>
             ))}
@@ -86,14 +86,14 @@ export function PartySummary({
         )}
       </Section>
 
-      <Section title='Executed by the Purchaser'>
+      <Section title='Executed by the purchaser'>
         <ExecutionBlock
           execution={sheet.purchaserExecution}
           pending='Signed by the buyer once the letter reaches them.'
         />
       </Section>
 
-      <Section title='Accepted by the Vendor'>
+      <Section title='Accepted by the vendor'>
         <ExecutionBlock
           execution={sheet.vendorExecution}
           pending='Signed by the vendor last, after the second approval.'
@@ -115,8 +115,8 @@ function SubjectToEditor({
   const patch = (next: Partial<SubjectTo>) => onChange({ ...value, ...next });
 
   return (
-    <div className='space-y-4'>
-      <p className='text-xs text-muted-foreground'>
+    <div className='flex flex-col gap-4'>
+      <p className='m-0 text-xs leading-[1.75] text-ink'>
         Set the initial conditions. The buyer can change them before signing.
       </p>
 
@@ -185,14 +185,15 @@ function SubjectToEditor({
         }
       />
       {value.otherEnabled && (
-        <div data-field='subjectTo.otherText' className='space-y-1.5 pl-7'>
+        <div data-field='subjectTo.otherText' className='flex min-w-0 flex-col gap-2 pl-7'>
           <label
             htmlFor='subjectTo.otherText'
-            className='block text-sm font-medium text-foreground/80'
+            className='block text-sm font-medium text-ink'
           >
             Other condition
           </label>
-          <Input
+          <input
+            className={INPUT_CLASS}
             id='subjectTo.otherText'
             value={value.otherText}
             maxLength={300}
@@ -201,7 +202,7 @@ function SubjectToEditor({
             onChange={(event) => patch({ otherText: event.target.value })}
           />
           {errors['subjectTo.otherText'] && (
-            <p className='text-xs text-red-500'>{errors['subjectTo.otherText']}</p>
+            <p role='alert' className='m-0 text-xs leading-[1.75] text-red-800'>{errors['subjectTo.otherText']}</p>
           )}
         </div>
       )}
@@ -219,8 +220,9 @@ function ConditionToggle({
   onChange: (checked: boolean) => void;
 }) {
   return (
-    <label className='flex cursor-pointer items-center gap-3 text-sm text-foreground/80'>
+    <label className='flex min-h-8 cursor-pointer items-start gap-3 py-1 text-sm leading-[1.75] text-midnight'>
       <Checkbox
+        className={CHECKBOX_CLASS}
         checked={checked}
         onCheckedChange={(next) => onChange(next === true)}
       />
@@ -247,12 +249,12 @@ function NumberCondition({
   onChange: (value: number | null) => void;
 }) {
   return (
-    <div data-field={field} className='space-y-1.5 pl-7'>
-      <label htmlFor={field} className='block text-sm font-medium text-foreground/80'>
+    <div data-field={field} className='flex min-w-0 flex-col gap-2 pl-7'>
+      <label htmlFor={field} className='block text-sm font-medium text-ink'>
         {label}
       </label>
       <div className='flex items-center gap-2.5'>
-        <Input
+        <input
           id={field}
           type='number'
           min={1}
@@ -263,11 +265,11 @@ function NumberCondition({
           onChange={(event) =>
             onChange(event.target.value === '' ? null : Number(event.target.value))
           }
-          className='max-w-24'
+          className={INPUT_CLASS + ' max-w-24'}
         />
-        <span className='text-sm text-muted-foreground'>{unit}</span>
+        <span className='m-0 text-sm leading-[1.75] text-ink'>{unit}</span>
       </div>
-      {error && <p className='text-xs text-red-500'>{error}</p>}
+      {error && <p role='alert' className='m-0 text-xs leading-[1.75] text-red-800'>{error}</p>}
     </div>
   );
 }
@@ -282,7 +284,7 @@ function ExecutionBlock({
   if (!execution?.signedAt) return <Pending>{pending}</Pending>;
 
   return (
-    <div className='space-y-3'>
+    <div className='flex flex-col gap-3'>
       <Rows
         rows={[
           ['Full Name', execution.fullName],
@@ -299,40 +301,23 @@ function ExecutionBlock({
         <img
           src={execution.signatureImage}
           alt='Signature'
-          className='h-16 rounded-md border border-border bg-card p-2'
+          className='h-16 w-fit max-w-full border border-advisory-rule bg-white p-2'
         />
       )}
-      <p className='text-xs text-muted-foreground/70'>
+      <p className='m-0 text-xs leading-[1.75] text-ink'>
         Signed {format(new Date(execution.signedAt), 'dd MMM yyyy, h:mma')}
       </p>
     </div>
   );
 }
 
-function Section({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className='border-t border-border px-6 py-5 sm:px-8'>
-      <h3 className='mb-3 text-xs font-bold uppercase tracking-wider text-muted-foreground'>
-        {title}
-      </h3>
-      {children}
-    </section>
-  );
-}
-
 function Rows({ rows }: { rows: [string, string | null | undefined][] }) {
   return (
-    <dl className='space-y-2'>
+    <dl className='m-0 flex flex-col gap-3'>
       {rows.map(([label, value]) => (
-        <div key={label} className='flex flex-col gap-0.5 sm:flex-row sm:gap-3'>
-          <dt className='w-56 shrink-0 text-sm text-muted-foreground'>{label}</dt>
-          <dd className='text-sm text-foreground'>{value || '-'}</dd>
+        <div key={label} className='grid min-w-0 gap-1 min-[681px]:grid-cols-[minmax(0,224px)_minmax(0,1fr)] min-[681px]:gap-4'>
+          <dt className='text-sm leading-[1.75] text-ink'>{label}</dt>
+          <dd className='m-0 break-words text-sm leading-[1.75] text-midnight'>{value || '-'}</dd>
         </div>
       ))}
     </dl>
@@ -341,8 +326,8 @@ function Rows({ rows }: { rows: [string, string | null | undefined][] }) {
 
 function Pending({ children }: { children: React.ReactNode }) {
   return (
-    <p className='flex items-center gap-2 text-sm text-muted-foreground/70'>
-      <Clock className='h-4 w-4 shrink-0' />
+    <p className='m-0 flex items-start gap-2 text-sm leading-[1.75] text-ink'>
+      <Clock aria-hidden='true' className='mt-1 h-4 w-4 shrink-0' />
       {children}
     </p>
   );

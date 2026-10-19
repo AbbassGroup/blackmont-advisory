@@ -30,6 +30,7 @@ import {
   Mail,
 } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
+import { cn } from '@/lib/utils';
 import {
   canRemoveSection,
   findSectionMeta,
@@ -64,7 +65,10 @@ const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   contact: Mail,
 };
 
-/** The Sections drawer: reorder, hide, duplicate, remove and add. */
+const SECTION_ACTION_CLASS =
+  'inline-flex size-8 shrink-0 cursor-pointer items-center justify-center border border-transparent text-ink transition-colors duration-150 hover:border-advisory-rule hover:bg-canvas hover:text-midnight focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gilt motion-reduce:transition-none disabled:cursor-not-allowed disabled:opacity-30';
+
+/** Reorder, show, duplicate, remove and add document sections. */
 export function SectionsPanel({
   sections,
   registry,
@@ -82,140 +86,84 @@ export function SectionsPanel({
   onDuplicate: (index: number) => void;
   onAdd: (type: string) => void;
 }) {
-  // A singleton type already in the document can't be added again.
-  const present = new Set(sections.map((s) => s.type));
-  const addable = registry.filter((m) => !m.singleton || !present.has(m.type));
+  const present = new Set(sections.map((section) => section.type));
+  const addable = registry.filter((meta) => !meta.singleton || !present.has(meta.type));
 
   return (
-    <div className="space-y-6">
-      <ul className="space-y-2">
+    <div className='flex min-w-0 flex-col gap-8'>
+      <ul className='m-0 flex list-none flex-col divide-y divide-advisory-rule border-y border-advisory-rule p-0'>
         {sections.map((section, index) => {
           const meta = findSectionMeta(registry, section.type);
-          const Icon = ICONS[section.type] ?? LayoutList;
           const enabled = section.enabled !== false;
           const removable = canRemoveSection(registry, sections, index);
-          const fixed = !!meta?.fixed;
-          // Show the section's own (edited) title when it has one, e.g. a custom
-          // section renamed to "Business Overview" — otherwise the registry label.
-          const dataTitle =
-            typeof section.data?.title === 'string' && section.data.title.trim()
-              ? section.data.title
-              : null;
+          const fixed = Boolean(meta?.fixed);
+          const dataTitle = typeof section.data?.title === 'string' && section.data.title.trim() ? section.data.title : null;
           const label = dataTitle ?? meta?.label ?? section.type;
+
           return (
-            <li
-              key={section.uid || section._id || index}
-              className="flex items-center gap-3 border border-border bg-card p-3"
-            >
-              <div className="flex flex-col">
-                <button
-                  onClick={() => onMove(index, -1)}
-                  disabled={index === 0}
-                  className="text-muted-foreground/60 transition hover:text-accent disabled:opacity-25 disabled:hover:text-muted-foreground/60"
-                  title="Move up"
-                >
-                  <ChevronUp className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={() => onMove(index, 1)}
-                  disabled={index === sections.length - 1}
-                  className="text-muted-foreground/60 transition hover:text-accent disabled:opacity-25 disabled:hover:text-muted-foreground/60"
-                  title="Move down"
-                >
-                  <ChevronDown className="h-4 w-4" />
-                </button>
-              </div>
-
-              <span
-                className={`flex h-9 w-9 shrink-0 items-center justify-center ${
-                  enabled
-                    ? 'bg-accent/15 text-accent'
-                    : 'bg-muted text-muted-foreground/60'
-                }`}
-              >
-                <Icon className="h-4 w-4" />
-              </span>
-
-              <div className="min-w-0 flex-1">
-                <p
-                  className={`flex items-center gap-1.5 truncate text-sm font-medium ${
-                    enabled ? 'text-secondary' : 'text-muted-foreground/60'
-                  }`}
-                >
-                  <span className="truncate">{label}</span>
-                  {fixed && (
-                    <Landmark
-                      className="h-3 w-3 shrink-0 text-muted-foreground/50"
-                      aria-label="Fixed content"
-                    />
-                  )}
-                </p>
-                <p className="truncate text-xs text-muted-foreground/60">
-                  {fixed
-                    ? 'Fixed wording — place it, but it reads the same every time'
-                    : `Section ${index + 1}`}
-                </p>
-              </div>
-
-              <Switch checked={enabled} onCheckedChange={() => onToggle(index)} />
-
-              <button
-                onClick={() => onDuplicate(index)}
-                className="p-1.5 text-muted-foreground/50 transition hover:bg-accent/10 hover:text-accent"
-                title="Duplicate section"
-              >
-                <Copy className="h-4 w-4" />
-              </button>
-
-              <button
-                onClick={() => onRemove(index)}
-                disabled={!removable}
-                className="p-1.5 text-muted-foreground/50 transition hover:bg-red-50 hover:text-red-500 disabled:opacity-25 disabled:hover:bg-transparent disabled:hover:text-muted-foreground/50"
-                title={
-                  removable
-                    ? 'Remove section'
-                    : `At least one ${meta?.label ?? section.type} is required`
-                }
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
+            <li key={section.uid || section._id || index} className={cn('flex min-w-0 items-center gap-3 py-3', enabled ? 'bg-white' : 'bg-canvas')}>
+                <div role='group' aria-label={`Position of ${label}`} className='flex shrink-0 flex-col'>
+                  <button type='button' onClick={() => onMove(index, -1)} disabled={index === 0} className={cn(SECTION_ACTION_CLASS, 'size-6')} title='Move up' aria-label={`Move ${label} up`}>
+                    <ChevronUp aria-hidden='true' className='size-4' />
+                  </button>
+                  <button type='button' onClick={() => onMove(index, 1)} disabled={index === sections.length - 1} className={cn(SECTION_ACTION_CLASS, 'size-6')} title='Move down' aria-label={`Move ${label} down`}>
+                    <ChevronDown aria-hidden='true' className='size-4' />
+                  </button>
+                </div>
+                <div className='min-w-0 flex-1'>
+                  <p className='m-0 break-words text-sm leading-[1.5] font-medium text-midnight'>
+                    {label}
+                    {fixed && <span title='Fixed wording. You can change its position and visibility.' className='ml-1.5 inline-flex align-middle'><Landmark aria-hidden='true' className='size-3.5 text-ink/60' /><span className='sr-only'>Fixed wording. You can change its position and visibility.</span></span>}
+                  </p>
+                  {!enabled && <p className='mt-1 mb-0 text-xs text-ink'>Hidden</p>}
+                </div>
+                <div role='group' aria-label={`Actions for ${label}`} className='flex shrink-0 items-center'>
+                  <label title={enabled ? 'Hide section' : 'Show section'} className='flex h-8 w-12 shrink-0 cursor-pointer items-center justify-center'>
+                    <Switch checked={enabled} onCheckedChange={() => onToggle(index)} aria-label={`Show ${label}`} className='shadow-none after:inset-0 focus-visible:ring-0 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-gilt' />
+                  </label>
+                  <button type='button' onClick={() => onDuplicate(index)} className={SECTION_ACTION_CLASS} title='Duplicate section' aria-label={`Duplicate ${label}`}>
+                    <Copy aria-hidden='true' className='size-4' />
+                  </button>
+                  <button
+                    type='button'
+                    onClick={() => onRemove(index)}
+                    disabled={!removable}
+                    className={cn(SECTION_ACTION_CLASS, 'text-red-700 hover:bg-red-50 hover:text-red-800')}
+                    title={removable ? 'Remove section' : `At least one ${meta?.label ?? section.type} is required`}
+                    aria-label={`Remove ${label}`}
+                  >
+                    <Trash2 aria-hidden='true' className='size-4' />
+                  </button>
+                </div>
             </li>
           );
         })}
       </ul>
 
-      <div className="border-t border-border pt-5">
-        <h4 className="mb-3 text-sm font-semibold text-foreground">Add a section</h4>
+      <section aria-labelledby='add-section-title' className='flex min-w-0 flex-col gap-3'>
+        <h3 id='add-section-title' className='m-0 text-base font-semibold text-midnight'>Add a section</h3>
         {addable.length === 0 ? (
-          <p className="text-xs text-muted-foreground/60">
-            All available sections have been added.
-          </p>
+          <p className='m-0 text-sm leading-[1.75] text-ink'>All available sections have been added.</p>
         ) : (
-          <div className="space-y-2">
+          <ul className='m-0 flex list-none flex-col divide-y divide-advisory-rule border-y border-advisory-rule p-0'>
             {addable.map((meta) => {
               const Icon = ICONS[meta.type] ?? LayoutList;
               return (
-                <button
-                  key={meta.type}
-                  onClick={() => onAdd(meta.type)}
-                  className="flex w-full items-center gap-3 border border-dashed border-border p-3 text-left transition hover:border-accent hover:bg-accent/5"
-                >
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center bg-muted text-muted-foreground">
-                    <Icon className="h-4 w-4" />
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-secondary">{meta.label}</p>
-                    <p className="truncate text-xs text-muted-foreground/60">
-                      {meta.description}
-                    </p>
-                  </div>
-                  <Plus className="h-4 w-4 shrink-0 text-accent" />
-                </button>
+                <li key={meta.type}>
+                  <button type='button' onClick={() => onAdd(meta.type)} className='flex min-h-12 w-full cursor-pointer items-start gap-3 bg-white px-1 py-3 text-left text-midnight transition-colors duration-150 hover:bg-canvas focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-gilt motion-reduce:transition-none'>
+                    <Icon className='mt-0.5 size-4 shrink-0' />
+                    <span className='min-w-0 flex-1'>
+                      <span className='block text-sm leading-[1.65] font-semibold'>{meta.label}</span>
+                      <span className='mt-1 block text-xs leading-[1.75] text-ink'>{meta.description}</span>
+                    </span>
+                    <Plus aria-hidden='true' className='mt-0.5 size-4 shrink-0' />
+                  </button>
+                </li>
               );
             })}
-          </div>
+          </ul>
         )}
-      </div>
+      </section>
     </div>
   );
 }

@@ -19,7 +19,7 @@ export default function ViewerLayout({
       <style>{`@media print {
         .im-viewer-content { display: none !important; }
       }`}</style>
-      <div className='im-viewer-content min-h-screen bg-white sm:bg-gray-100/70'>
+      <div className='im-viewer-content min-h-dvh bg-canvas'>
         {children}
       </div>
     </>

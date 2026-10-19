@@ -1,16 +1,19 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
-import Link from 'next/link';
 import { format } from 'date-fns';
 import { AlertCircle, ArrowLeft, Ban, CloudUpload, Eye, Loader2, Send } from 'lucide-react';
 import { apiClient } from '@/lib/api';
-import { Button } from '@/components/ui/button';
+import { AdminPageLayout } from '@/components/admin/page-layout';
+import { LandingButton, LandingButtonLink } from '@/components/landing/presentation';
+import { landingFontVariables } from '@/components/landing/fonts';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useSidebar } from '@/components/ui/sidebar';
+import { STATUS_STYLE } from './_components/presentation';
 import { cn } from '@/lib/utils';
 import {
   EDITABLE_STATUSES,
-  STATUS_CLASSES,
   STATUS_LABELS,
   WAITING_LABELS,
   computeAmounts,
@@ -53,6 +56,7 @@ const toForm = (sheet: OfferTermSheet): BrokerFormValues => ({
 export default function OfferTermSheetEditorPage() {
   const params = useParams();
   const id = params?.id as string;
+  const { state: sidebarState } = useSidebar();
 
   const [sheet, setSheet] = useState<OfferTermSheet | null>(null);
   const [meta, setMeta] = useState<SheetMeta | null>(null);
@@ -69,6 +73,8 @@ export default function OfferTermSheetEditorPage() {
   const [historyOpen, setHistoryOpen] = useState(false);
   const [views, setViews] = useState<OfferTermSheetViewLog[]>([]);
   const [viewsLoading, setViewsLoading] = useState(false);
+  const [viewsError, setViewsError] = useState(false);
+  const historyRequest = useRef(0);
 
   const applyResponse = useCallback(
     (data: { sheet: OfferTermSheet; meta: SheetMeta }) => {
@@ -83,6 +89,8 @@ export default function OfferTermSheetEditorPage() {
 
   useEffect(() => {
     let active = true;
+    setLoading(true);
+    setLoadError('');
     apiClient
       .get(`${BASE}/${id}`)
       .then(({ data }) => active && applyResponse(data))
@@ -102,6 +110,7 @@ export default function OfferTermSheetEditorPage() {
 
   const editable = !!sheet && EDITABLE_STATUSES.includes(sheet.status);
   const dirty = !!form && JSON.stringify(form) !== baseline;
+  const busy = saving || Boolean(busyAction);
 
   const changesNote = useMemo(() => {
     if (sheet?.status !== 'changes_requested') return '';
@@ -135,7 +144,7 @@ export default function OfferTermSheetEditorPage() {
   };
 
   const save = async () => {
-    if (!form) return false;
+    if (!form || busy) return false;
 
     // Caught here so a figure that cannot go on the letter never round-trips.
     if (depositExceedsPrice(form.purchasePrice, form.depositAmount)) {
@@ -169,12 +178,14 @@ export default function OfferTermSheetEditorPage() {
   };
 
   const runAction = async (action: string, body: object = {}) => {
+    if (busy) return false;
     setBusyAction(action);
     setError('');
     setMissing([]);
     try {
       const { data } = await apiClient.post(`${BASE}/${id}/${action}`, body);
       applyResponse(data);
+      return true;
     } catch (e: unknown) {
       const response = (e as { response?: { data?: { message?: string; missing?: string[] } } })
         .response;
@@ -182,26 +193,30 @@ export default function OfferTermSheetEditorPage() {
       setMissing(gaps);
       if (gaps.length) revealField(gaps[0]);
       else setError(messageFrom(e, 'That action could not be completed.'));
+      return false;
     } finally {
       setBusyAction(null);
     }
   };
 
   const openHistory = async () => {
+    const request = ++historyRequest.current;
     setHistoryOpen(true);
+    setViews([]);
+    setViewsError(false);
     setViewsLoading(true);
     try {
       const { data } = await apiClient.get(`${BASE}/${id}/views`);
-      setViews(data.views ?? []);
+      if (request === historyRequest.current) setViews(data.views ?? []);
     } catch {
-      setViews([]);
+      if (request === historyRequest.current) setViewsError(true);
     } finally {
-      setViewsLoading(false);
+      if (request === historyRequest.current) setViewsLoading(false);
     }
   };
 
   const submit = async () => {
-    if (!form) return;
+    if (!form || busy) return;
 
     // Checked here first so nothing round-trips just to be told a box is empty.
     const gaps = missingRequiredFields('broker', form).map((f) => f.key);
@@ -222,26 +237,31 @@ export default function OfferTermSheetEditorPage() {
     await runAction('submit');
   };
 
+
   if (loading) {
     return (
-      <div className='flex min-h-[60vh] flex-col items-center justify-center gap-3'>
-        <Loader2 className='h-8 w-8 animate-spin text-accent' />
-        <p className='text-muted-foreground'>Loading term sheet...</p>
-      </div>
+      <AdminPageLayout title='Offer term sheet' description='Review business details, offer terms and signatures.' action={<div aria-hidden='true' className='h-10 w-36 animate-pulse bg-advisory-rule/60 motion-reduce:animate-none' />}>
+        <p role='status' className='sr-only'>Loading term sheet.</p>
+        <div aria-hidden='true' className='flex flex-col gap-8 pb-28'>
+          <div className='h-5 w-32 animate-pulse bg-advisory-rule/60 motion-reduce:animate-none' />
+          <div className='h-16 border border-advisory-rule bg-white' />
+          <div className='border border-advisory-rule bg-white'>
+            <div className='border-b border-advisory-rule p-5 min-[681px]:p-8'><div className='h-7 w-2/3 animate-pulse bg-canvas motion-reduce:animate-none' /></div>
+            {[0, 1, 2].map((index) => <div key={index} className='flex flex-col gap-5 border-b border-advisory-rule p-5 min-[681px]:p-8'><div className='h-6 w-40 animate-pulse bg-canvas motion-reduce:animate-none' /><div className='grid gap-5 min-[681px]:grid-cols-2'>{[0, 1].map((field) => <div key={field} className='flex flex-col gap-2'><div className='h-4 w-28 animate-pulse bg-canvas motion-reduce:animate-none' /><div className='h-10 animate-pulse bg-canvas motion-reduce:animate-none' /></div>)}</div></div>)}
+          </div>
+        </div>
+      </AdminPageLayout>
     );
   }
 
   if (loadError || !sheet || !form || !meta) {
     return (
-      <div className='flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center'>
-        <div className='flex items-center gap-2 rounded-none border border-red-100 bg-red-50 px-5 py-4 text-red-600'>
-          <AlertCircle className='h-5 w-5' />
-          <span className='text-sm font-medium'>{loadError}</span>
-        </div>
-        <Link href='/admin/offer-term-sheets'>
-          <Button variant='outline'>Back to term sheets</Button>
-        </Link>
-      </div>
+      <AdminPageLayout title='Offer term sheet' description='Your term sheet could not be opened.'>
+        <section role='alert' className='border border-advisory-rule bg-white p-6 min-[681px]:p-8'>
+          <p className='mt-0 mb-5 text-sm leading-[1.75] text-ink'>{loadError || 'This term sheet could not be found.'}</p>
+          <LandingButtonLink href='/admin/offer-term-sheets' variant='outline' size='compact'>Back to term sheets</LandingButtonLink>
+        </section>
+      </AdminPageLayout>
     );
   }
 
@@ -250,158 +270,58 @@ export default function OfferTermSheetEditorPage() {
   const canApprove = meta.availableActions.includes('approve');
 
   return (
-    <div className='space-y-6 pb-24'>
-      <div className='flex flex-wrap items-start justify-between gap-4'>
+    <AdminPageLayout
+      title='Offer term sheet'
+      description='Review business details, offer terms and signatures.'
+      action={<LandingButton variant='outline' size='compact' onClick={() => void openHistory()}><Eye aria-hidden='true' className='size-4' /> View history</LandingButton>}
+    >
+      <div className='flex min-w-0 flex-col gap-8 pb-[calc(10rem+env(safe-area-inset-bottom))] min-[681px]:pb-28'>
         <div>
-          <Link
-            href='/admin/offer-term-sheets'
-            className='mb-1 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-accent'
-          >
-            <ArrowLeft className='h-4 w-4' /> All term sheets
-          </Link>
-          <h1 className='text-2xl font-bold text-foreground'>
-            {sheet.businessName || 'Untitled term sheet'}
-          </h1>
-          <p className='mt-0.5 text-sm text-foreground/50'>
-            Created {format(new Date(sheet.createdAt), 'dd MMM yyyy')}
-          </p>
+          <LandingButtonLink href='/admin/offer-term-sheets' variant='outline' size='compact'><ArrowLeft aria-hidden='true' className='size-4' /> All term sheets</LandingButtonLink>
         </div>
 
-        <div className='flex flex-wrap items-center gap-2'>
-          <Button
-            variant='outline'
-            size='sm'
-            onClick={openHistory}
-            className='gap-1.5 border-border text-muted-foreground'
-          >
-            <Eye className='h-4 w-4' /> View history
-          </Button>
-          <span
-            className={cn(
-              'inline-flex rounded-none px-3 py-1 text-xs font-medium',
-              STATUS_CLASSES[sheet.status],
-            )}
-          >
-            {STATUS_LABELS[sheet.status]}
-          </span>
-          {meta.waitingOn && (
-            <span className='text-xs text-muted-foreground/70'>
-              Waiting on {WAITING_LABELS[meta.waitingOn].toLowerCase()}
-            </span>
-          )}
-        </div>
-      </div>
-
-      {changesNote && (
-        <div className='rounded-none border border-amber-200 bg-amber-50 px-5 py-4'>
-          <p className='text-sm font-semibold text-amber-800'>
-            Changes requested
-          </p>
-          <p className='mt-1 text-sm text-amber-700'>{changesNote}</p>
-        </div>
-      )}
-
-      {canApprove && (
-        <ApprovalPanel
-          sheet={sheet}
-          busyAction={busyAction}
-          onApprove={(note) => runAction('approve', { note })}
-          onRequestChanges={(note) => runAction('request_changes', { note })}
-        />
-      )}
-
-      {!editable && !canApprove && (
-        <div className='rounded-none border border-border bg-muted px-5 py-4 text-sm text-muted-foreground'>
-          {statusExplainer(sheet.status)}
-        </div>
-      )}
-
-      {error && (
-        <div className='flex items-center gap-2 rounded-none border border-red-100 bg-red-50 px-5 py-3.5 text-sm text-red-600'>
-          <AlertCircle className='h-4 w-4 shrink-0' />
-          {error}
-        </div>
-      )}
-
-      <div className='overflow-hidden rounded-none border border-border bg-card shadow-sm'>
-        <div className='px-6 py-5 sm:px-8'>
-          <p className='text-center text-sm font-bold text-foreground'>
-            Letter of Intent (Non-Binding Offer Letter)
-          </p>
+        <div className='flex flex-wrap items-center gap-x-5 gap-y-3 border border-advisory-rule bg-white px-5 py-4 min-[681px]:px-8'>
+          <span className={cn('inline-flex px-2.5 py-1 text-xs leading-[1.5] font-medium', STATUS_STYLE[sheet.status])}>{STATUS_LABELS[sheet.status]}</span>
+          {meta.waitingOn && <span className='text-sm text-ink'>Waiting on <span className='font-medium text-midnight'>{WAITING_LABELS[meta.waitingOn].toLowerCase()}</span></span>}
+          <span className='text-xs leading-[1.75] text-ink min-[681px]:ml-auto'>Created {displayDate(sheet.createdAt)}</span>
         </div>
 
-        <BrokerForm
-          values={form}
-          readOnly={!editable}
-          invalid={new Set(missing)}
-          errors={fieldErrors}
-          onChange={patch}
-        />
-        <PartySummary
-          sheet={sheet}
-          subjectTo={form.subjectTo}
-          readOnly={!editable}
-          errors={{
-            ...Object.fromEntries(
-              missing.map((field) => [field, 'This field is required.']),
-            ),
-            ...fieldErrors,
-          }}
-          onSubjectToChange={(subjectTo) => patch({ subjectTo })}
-        />
+        {changesNote && (
+          <div className='bg-amber-50 p-5 min-[681px]:p-6'>
+            <h2 className='m-0 text-sm font-semibold text-amber-900'>Changes requested</h2>
+            <p className='mt-2 mb-0 whitespace-pre-wrap text-sm leading-[1.75] text-amber-900'>{changesNote}</p>
+          </div>
+        )}
+
+        {canApprove && <ApprovalPanel sheet={sheet} busyAction={busyAction} error={error} onApprove={(note) => runAction('approve', { note })} onRequestChanges={(note) => runAction('request_changes', { note })} />}
+
+        {!editable && !canApprove && <p className='m-0 border border-advisory-rule bg-white px-5 py-4 text-sm leading-[1.75] text-ink min-[681px]:px-8'>{statusExplainer(sheet.status)}</p>}
+
+        {error && !confirmCancel && <p role='alert' className='m-0 flex items-start gap-3 border border-red-200 bg-red-50 px-5 py-4 text-sm leading-[1.75] text-red-800'><AlertCircle aria-hidden='true' className='mt-1 size-4 shrink-0' />{error}</p>}
+
+        <div className='min-w-0 border border-advisory-rule bg-white'>
+          <header className='flex flex-col gap-2 px-5 py-6 min-[681px]:px-8 min-[681px]:py-8'>
+            <h2 className='m-0 break-words font-advisory-heading text-[23px] leading-[1.4] font-bold tracking-normal text-midnight'>{sheet.businessName || 'Untitled term sheet'}</h2>
+            <p className='m-0 text-sm leading-[1.75] text-ink'>Letter of Intent (Non-Binding Offer Letter)</p>
+          </header>
+          <fieldset disabled={busy} className='m-0 min-w-0 border-0 p-0'>
+            <legend className='sr-only'>Term sheet details</legend>
+            <BrokerForm values={form} readOnly={!editable} invalid={new Set(missing)} errors={fieldErrors} onChange={patch} />
+            <PartySummary sheet={sheet} subjectTo={form.subjectTo} readOnly={!editable} errors={{ ...Object.fromEntries(missing.map((field) => [field, 'This field is required.'])), ...fieldErrors }} onSubjectToChange={(subjectTo) => patch({ subjectTo })} />
+          </fieldset>
+        </div>
       </div>
 
       {(editable || canCancel) && (
-        <div className='fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 px-4 py-3 backdrop-blur md:left-(--sidebar-width,0px)'>
-          <div className='mx-auto flex max-w-5xl items-center justify-between gap-3'>
-            <span className='flex items-center gap-2 text-sm text-muted-foreground'>
-              {saving ? (
-                <>
-                  <Loader2 className='h-4 w-4 animate-spin' /> Saving...
-                </>
-              ) : dirty ? (
-                <>
-                  <CloudUpload className='h-4 w-4 text-amber-500' /> Unsaved
-                  changes
-                </>
-              ) : (
-                'All changes saved'
-              )}
-            </span>
-
-            <div className='flex items-center gap-2'>
-              {canCancel && (
-                <Button
-                  variant='outline'
-                  onClick={() => setConfirmCancel(true)}
-                  className='gap-2 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700'
-                >
-                  <Ban className='h-4 w-4' /> Cancel
-                </Button>
-              )}
-              {editable && (
-                <Button
-                  variant='outline'
-                  onClick={save}
-                  disabled={!dirty || saving}
-                >
-                  Save draft
-                </Button>
-              )}
-              {canSubmit && (
-                <Button
-                  onClick={submit}
-                  disabled={saving || busyAction === 'submit'}
-                  className='gap-2 rounded-none bg-accent font-semibold text-primary hover:bg-accent-light'
-                >
-                  {busyAction === 'submit' ? (
-                    <Loader2 className='h-4 w-4 animate-spin' />
-                  ) : (
-                    <Send className='h-4 w-4' />
-                  )}
-                  Send for approval
-                </Button>
-              )}
+        <div className={cn('fixed inset-x-0 bottom-0 z-40 border-t border-advisory-rule bg-white px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]', sidebarState === 'expanded' ? 'md:left-[var(--sidebar-width)]' : 'md:left-[var(--sidebar-width-icon)]')}>
+          <div className='mx-auto flex max-w-advisory flex-wrap items-center justify-between gap-3'>
+            <p role='status' aria-live='polite' className='m-0 flex items-center gap-2 text-sm text-ink'>
+              {saving ? <><Loader2 aria-hidden='true' className='size-4 animate-spin motion-reduce:animate-none' /> Saving…</> : dirty ? <><CloudUpload aria-hidden='true' className='size-4 text-amber-800' /> Unsaved changes</> : 'All changes saved'}
+            </p>
+            <div className='flex flex-wrap items-center gap-2'>
+              {canCancel && <LandingButton variant='outline' size='compact' disabled={busy} onClick={() => { setError(''); setConfirmCancel(true); }} className='border-red-700 text-red-800 hover:bg-red-50 hover:text-red-900'><Ban aria-hidden='true' className='size-4' /> Cancel</LandingButton>}
+              {editable && <LandingButton variant='outline' size='compact' onClick={() => void save()} disabled={!dirty || busy}>Save draft</LandingButton>}
+              {canSubmit && <LandingButton size='compact' onClick={() => void submit()} disabled={busy}>{busyAction === 'submit' ? <Loader2 aria-hidden='true' className='size-4 animate-spin motion-reduce:animate-none' /> : <Send aria-hidden='true' className='size-4' />}{busyAction === 'submit' ? 'Submitting…' : 'Send for approval'}</LandingButton>}
             </div>
           </div>
         </div>
@@ -409,46 +329,33 @@ export default function OfferTermSheetEditorPage() {
 
       <OfferTermSheetHistoryDialog
         open={historyOpen}
-        onOpenChange={setHistoryOpen}
-        logs={views}
-        loading={viewsLoading}
-        businessName={sheet.businessName}
+        onOpenChange={(open) => { setHistoryOpen(open); if (!open) historyRequest.current += 1; }}
+        logs={views} loading={viewsLoading} error={viewsError} onRetry={() => void openHistory()} businessName={sheet.businessName}
       />
 
-      {confirmCancel && (
-        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm'>
-          <div className='w-full max-w-sm rounded-none bg-card p-6 shadow-xl'>
-            <h3 className='mb-2 text-lg font-bold text-foreground'>
-              Cancel this term sheet?
-            </h3>
-            <p className='mb-6 text-sm text-muted-foreground'>
-              It stops here permanently. Any link already sent to the buyer or
-              vendor stops working.
-            </p>
-            <div className='flex justify-end gap-3'>
-              <Button variant='outline' onClick={() => setConfirmCancel(false)}>
-                Keep it
-              </Button>
-              <Button
-                onClick={async () => {
-                  setConfirmCancel(false);
-                  await runAction('cancel');
-                }}
-                disabled={busyAction === 'cancel'}
-                className='bg-red-600 text-white hover:bg-red-700'
-              >
-                {busyAction === 'cancel' ? (
-                  <Loader2 className='h-4 w-4 animate-spin' />
-                ) : (
-                  'Cancel term sheet'
-                )}
-              </Button>
-            </div>
+      <Dialog open={confirmCancel} onOpenChange={(open) => { if (!busy) { setConfirmCancel(open); setError(''); } }}>
+        <DialogContent showCloseButton={false} className={cn(landingFontVariables, 'max-h-[85dvh] overflow-y-auto rounded-none border border-advisory-rule bg-white p-6 font-advisory-body text-midnight ring-0 sm:max-w-[460px] min-[681px]:p-8')}>
+          <DialogHeader>
+            <DialogTitle className='m-0 font-advisory-heading text-[23px] leading-[1.35] font-bold tracking-normal text-midnight'>Cancel this term sheet?</DialogTitle>
+            <DialogDescription className='mt-3 text-sm leading-[1.8] text-ink'>It stops here permanently. Any link already sent to the buyer or vendor stops working.</DialogDescription>
+          </DialogHeader>
+          {error && <p role='alert' className='m-0 text-sm leading-[1.75] text-red-800'>{error}</p>}
+          <div className='flex flex-wrap justify-end gap-3'>
+            <LandingButton variant='outline' size='compact' disabled={busy} onClick={() => { setConfirmCancel(false); setError(''); }}>Keep it</LandingButton>
+            <LandingButton size='compact' disabled={busy} onClick={async () => { if (await runAction('cancel')) setConfirmCancel(false); }} className='border-red-700 bg-red-700 text-white hover:bg-red-800'>
+              {busyAction === 'cancel' && <Loader2 aria-hidden='true' className='size-4 animate-spin motion-reduce:animate-none' />}
+              {busyAction === 'cancel' ? 'Cancelling…' : 'Cancel term sheet'}
+            </LandingButton>
           </div>
-        </div>
-      )}
-    </div>
+        </DialogContent>
+      </Dialog>
+    </AdminPageLayout>
   );
+}
+
+function displayDate(value: string) {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? '—' : format(date, 'dd MMM yyyy');
 }
 
 function messageFrom(e: unknown, fallback: string) {

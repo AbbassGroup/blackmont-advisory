@@ -1,510 +1,278 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import {
-  ArrowLeft,
-  Loader2,
-  ChevronDown,
-  Eye,
-  Bell,
-  BellOff,
-  UserCog,
-  StickyNote,
-  Copy,
-  Check,
-} from 'lucide-react';
-import { apiClient } from '@/lib/api';
-import { useAdminAuth } from '@/context/admin-auth-context';
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import DashboardLayout from '@/components/global/dashboard-layout';
-import { ImHistoryDialog } from '@/components/admin/im-history-dialog';
-import { VendorAccessDialog } from '@/components/admin/vendor-access-dialog';
-import {
-  ProspectNotesDialog,
-  type ProspectNote,
-} from '@/components/admin/prospect-notes-dialog';
-import { ImViewLog } from '../_components/deals';
+import { useEffect, useRef, useState } from 'react';
+import { useParams } from 'next/navigation';
+import { ArrowLeft, Loader2, Eye, Bell, BellOff, UserCog, StickyNote, Copy, Check, Search } from 'lucide-react';
 import { toast } from 'sonner';
+import { apiClient } from '@/lib/api';
+import { cn } from '@/lib/utils';
+import { useAdminAuth } from '@/context/admin-auth-context';
+import { AdminPageLayout } from '@/components/admin/page-layout';
+import { LandingButton, LandingButtonLink } from '@/components/landing/presentation';
+import { ImHistoryDialog, type ImViewLog } from '@/components/admin/im-history-dialog';
+import { VendorAccessDialog } from '@/components/admin/vendor-access-dialog';
+import { ProspectNotesDialog, type ProspectNote } from '@/components/admin/prospect-notes-dialog';
 
 const CATEGORIES = [
-  {
-    label: 'Hot',
-    color: 'bg-red-500 text-white',
-    hover: 'hover:bg-red-600',
-    dot: 'bg-red-500',
-  },
-  {
-    label: 'Warm',
-    color: 'bg-orange-500 text-white',
-    hover: 'hover:bg-orange-600',
-    dot: 'bg-orange-500',
-  },
-  {
-    label: 'Cold',
-    color: 'bg-blue-500 text-white',
-    hover: 'hover:bg-blue-600',
-    dot: 'bg-blue-500',
-  },
+  { label: 'Hot', color: 'border-red-200 bg-red-50 text-red-800' },
+  { label: 'Warm', color: 'border-amber-200 bg-amber-50 text-amber-900' },
+  { label: 'Cold', color: 'border-sky-200 bg-sky-50 text-sky-900' },
 ];
 
-type Prospect = {
-  _id: string;
-  firstName: string;
-  lastName: string;
-  phone?: string;
-  email?: string;
-};
+type Prospect = { _id: string; firstName: string; lastName: string; phone?: string; email?: string };
+const prospectName = (prospect: Prospect) => `${prospect.firstName || ''} ${prospect.lastName || ''}`.trim() || 'Unnamed prospect';
 
 export default function ProspectsPage() {
   const params = useParams();
-  const router = useRouter();
-  const dealId = params?.id as string; // or listingId
-
-  // IM History State
+  const dealId = params?.id as string;
+  const { user } = useAdminAuth();
+  const [prospects, setProspects] = useState<Prospect[]>([]);
+  const [categories, setCategories] = useState<Record<string, string>>({});
+  const [categoryBusy, setCategoryBusy] = useState<Set<string>>(new Set());
+  const [dealTitle, setDealTitle] = useState('Deal');
+  const [loading, setLoading] = useState(true);
+  const [listError, setListError] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+  const [actionError, setActionError] = useState('');
+  const [search, setSearch] = useState('');
   const [imDialogOpen, setImDialogOpen] = useState(false);
   const [imLogs, setImLogs] = useState<ImViewLog[]>([]);
   const [imLoading, setImLoading] = useState(false);
-  // IM Notification State
+  const [imError, setImError] = useState(false);
   const [notifEnabled, setNotifEnabled] = useState(false);
+  const [notifLoading, setNotifLoading] = useState(true);
+  const [notifError, setNotifError] = useState(false);
+  const [notifAttempt, setNotifAttempt] = useState(0);
   const [notifToggling, setNotifToggling] = useState(false);
-  // Copy public URL
   const [copied, setCopied] = useState(false);
-
-  const handleCopyUrl = async () => {
-    const url = `https://blackmontadvisory.com/listings/${dealId}`;
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      toast.success('Public listing URL copied');
-      setTimeout(() => setCopied(false), 2000);
-    } catch (error) {
-      console.error('Failed to copy URL', error);
-      toast.error('Failed to copy URL');
-    }
-  };
-
-  const { user } = useAdminAuth();
-
-  const [prospects, setProspects] = useState<Prospect[]>([]);
-  const [categories, setCategories] = useState<Record<string, string>>({});
-  const [dealTitle, setDealTitle] = useState('Deal');
-  const [loading, setLoading] = useState(true);
-
-  // Vendor access management
   const [vendorDialogOpen, setVendorDialogOpen] = useState(false);
-
-  // Prospect notes
   const [notesMap, setNotesMap] = useState<Record<string, ProspectNote[]>>({});
+  const [notesLoading, setNotesLoading] = useState(true);
+  const [notesError, setNotesError] = useState(false);
+  const [notesAttempt, setNotesAttempt] = useState(0);
   const [notesOpen, setNotesOpen] = useState(false);
   const [activeProspect, setActiveProspect] = useState<Prospect | null>(null);
   const [notesSaving, setNotesSaving] = useState(false);
+  const historyRequest = useRef(0);
+  const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => () => {
+    historyRequest.current += 1;
+    if (copyTimer.current) clearTimeout(copyTimer.current);
+  }, []);
 
   useEffect(() => {
-    const fetchDealData = async () => {
-      if (!user?.token || !dealId) return;
-      setLoading(true);
-      try {
-        // Via our backend, which filters out unapproved NDAs. Don't call
-        // Nexar directly from the browser — that bypasses the filter.
-        const [dealRes, categoriesRes] = await Promise.all([
-          apiClient.get(`/api/deals/${dealId}/prospects`, {
-            headers: { Authorization: `Bearer ${user.token}` },
-          }),
-          apiClient.get(`/api/deals/${dealId}/categories`, {
-            headers: { Authorization: `Bearer ${user.token}` },
-          }),
-        ]);
+    if (!user?.token || !dealId) return;
+    let active = true;
+    setLoading(true);
+    setListError(false);
+    // The backend filters unapproved NDAs before returning prospects.
+    Promise.all([
+      apiClient.get(`/api/deals/${dealId}/prospects`, { headers: { Authorization: `Bearer ${user.token}` } }),
+      apiClient.get(`/api/deals/${dealId}/categories`, { headers: { Authorization: `Bearer ${user.token}` } }),
+    ]).then(([dealResponse, categoryResponse]) => {
+      if (!active) return;
+      setProspects(dealResponse.data?.prospects || []);
+      setCategories(categoryResponse.data || {});
+      setDealTitle(dealResponse.data?.businessName || 'Deal');
+    }).catch(() => { if (active) setListError(true); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [dealId, user?.token, attempt]);
 
-        setProspects(dealRes.data?.prospects || []);
-        setCategories(categoriesRes.data || {});
-        if (dealRes.data?.businessName) setDealTitle(dealRes.data.businessName);
-      } catch (error) {
-        console.error('Failed to fetch prospects data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDealData();
-  }, [dealId, user?.token]);
-
-  // Fetch notification preference for this deal
   useEffect(() => {
-    const fetchNotifPref = async () => {
-      if (!user?.token || !dealId) return;
-      try {
-        const res = await apiClient.get(
-          `/api/deals/${dealId}/im-notifications`,
-          { headers: { Authorization: `Bearer ${user.token}` } },
-        );
-        setNotifEnabled(res.data?.enabled || false);
-      } catch (error) {
-        console.error('Failed to fetch notification pref:', error);
-      }
-    };
-    fetchNotifPref();
-  }, [dealId, user?.token]);
+    if (!user?.token || !dealId) return;
+    let active = true;
+    setNotifLoading(true);
+    setNotifError(false);
+    apiClient.get(`/api/deals/${dealId}/im-notifications`, { headers: { Authorization: `Bearer ${user.token}` } })
+      .then(({ data }) => { if (active) setNotifEnabled(data?.enabled || false); })
+      .catch(() => { if (active) setNotifError(true); })
+      .finally(() => { if (active) setNotifLoading(false); });
+    return () => { active = false; };
+  }, [dealId, user?.token, notifAttempt]);
+
+  useEffect(() => {
+    if (!user?.token || !dealId) return;
+    let active = true;
+    setNotesLoading(true);
+    setNotesError(false);
+    apiClient.get(`/api/deals/${dealId}/notes`, { headers: { Authorization: `Bearer ${user.token}` } })
+      .then(({ data }) => { if (active) setNotesMap(data || {}); })
+      .catch(() => { if (active) setNotesError(true); })
+      .finally(() => { if (active) setNotesLoading(false); });
+    return () => { active = false; };
+  }, [dealId, user?.token, notesAttempt]);
+
+  const handleCopyUrl = async () => {
+    try {
+      await navigator.clipboard.writeText(`https://blackmontadvisory.com/listings/${dealId}`);
+      if (copyTimer.current) clearTimeout(copyTimer.current);
+      setCopied(true);
+      copyTimer.current = setTimeout(() => setCopied(false), 2000);
+      toast.success('Public listing URL copied');
+    } catch { toast.error('Failed to copy URL'); }
+  };
 
   const toggleNotification = async () => {
-    if (!user?.token) return;
-    const newEnabled = !notifEnabled;
-    setNotifEnabled(newEnabled);
+    if (!user?.token || notifLoading || notifError || notifToggling) return;
+    const previous = notifEnabled;
+    const enabled = !previous;
+    setNotifEnabled(enabled);
     setNotifToggling(true);
     try {
-      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      await apiClient.put(
-        `/api/deals/${dealId}/im-notifications`,
-        { enabled: newEnabled, timezone: tz },
-        { headers: { Authorization: `Bearer ${user.token}` } },
-      );
-      toast.success(
-        newEnabled
-          ? 'IM view email notifications enabled'
-          : 'IM view email notifications disabled',
-      );
-    } catch (error) {
-      console.error('Failed to toggle notification:', error);
-      setNotifEnabled(!newEnabled);
+      await apiClient.put(`/api/deals/${dealId}/im-notifications`, { enabled, timezone: Intl.DateTimeFormat().resolvedOptions().timeZone }, { headers: { Authorization: `Bearer ${user.token}` } });
+      toast.success(enabled ? 'IM view email notifications enabled' : 'IM view email notifications disabled');
+    } catch {
+      setNotifEnabled(previous);
       toast.error('Failed to update notification preference');
-    } finally {
-      setNotifToggling(false);
-    }
-  };
-
-  // Fetch prospect notes for this deal
-  useEffect(() => {
-    const fetchNotes = async () => {
-      if (!user?.token || !dealId) return;
-      try {
-        const res = await apiClient.get(`/api/deals/${dealId}/notes`, {
-          headers: { Authorization: `Bearer ${user.token}` },
-        });
-        setNotesMap(res.data || {});
-      } catch (error) {
-        console.error('Failed to fetch notes:', error);
-      }
-    };
-    fetchNotes();
-  }, [dealId, user?.token]);
-
-  const handleCreateNote = async (body: string) => {
-    if (!user?.token || !activeProspect) return;
-    setNotesSaving(true);
-    try {
-      const res = await apiClient.post(
-        `/api/deals/${dealId}/notes/${activeProspect._id}`,
-        { body },
-        { headers: { Authorization: `Bearer ${user.token}` } },
-      );
-      setNotesMap((prev) => ({
-        ...prev,
-        [activeProspect._id]: [res.data, ...(prev[activeProspect._id] || [])],
-      }));
-    } catch {
-      toast.error('Failed to add note');
-    } finally {
-      setNotesSaving(false);
-    }
-  };
-
-  const handleUpdateNote = async (noteId: string, body: string) => {
-    if (!user?.token || !activeProspect) return;
-    setNotesSaving(true);
-    try {
-      const res = await apiClient.put(
-        `/api/deals/${dealId}/notes/${noteId}`,
-        { body },
-        { headers: { Authorization: `Bearer ${user.token}` } },
-      );
-      setNotesMap((prev) => ({
-        ...prev,
-        [activeProspect._id]: (prev[activeProspect._id] || []).map((n) =>
-          n._id === noteId ? res.data : n,
-        ),
-      }));
-    } catch {
-      toast.error('Failed to update note');
-    } finally {
-      setNotesSaving(false);
-    }
-  };
-
-  const handleDeleteNote = async (noteId: string) => {
-    if (!user?.token || !activeProspect) return;
-    setNotesSaving(true);
-    try {
-      await apiClient.delete(`/api/deals/${dealId}/notes/${noteId}`, {
-        headers: { Authorization: `Bearer ${user.token}` },
-      });
-      setNotesMap((prev) => ({
-        ...prev,
-        [activeProspect._id]: (prev[activeProspect._id] || []).filter(
-          (n) => n._id !== noteId,
-        ),
-      }));
-    } catch {
-      toast.error('Failed to delete note');
-    } finally {
-      setNotesSaving(false);
-    }
+    } finally { setNotifToggling(false); }
   };
 
   const handleCategorySelect = async (prospectId: string, label: string) => {
-    if (!user?.token) return;
-
-    // Optimistic update
-    setCategories((prev) => ({ ...prev, [prospectId]: label }));
-
+    if (!user?.token || categoryBusy.has(prospectId)) return;
+    const previous = categories[prospectId];
+    setActionError('');
+    setCategoryBusy((current) => new Set(current).add(prospectId));
+    setCategories((current) => ({ ...current, [prospectId]: label }));
     try {
-      await apiClient.put(
-        `/api/deals/${dealId}/categories/${prospectId}`,
-        { category: label },
-        { headers: { Authorization: `Bearer ${user.token}` } },
-      );
-    } catch (error) {
-      console.error('Failed to save category:', error);
+      await apiClient.put(`/api/deals/${dealId}/categories/${prospectId}`, { category: label }, { headers: { Authorization: `Bearer ${user.token}` } });
+    } catch {
+      setCategories((current) => { const next = { ...current }; if (previous) next[prospectId] = previous; else delete next[prospectId]; return next; });
+      setActionError('The prospect category could not be saved. Please try again.');
+    } finally {
+      setCategoryBusy((current) => { const next = new Set(current); next.delete(prospectId); return next; });
     }
   };
 
-  const getCategoryMeta = (prospectId: string) => {
-    const label = categories[prospectId];
-    if (!label) return null;
-    return CATEGORIES.find((c) => c.label === label) || null;
+  const handleCreateNote = async (body: string) => {
+    if (!user?.token || !activeProspect || notesSaving || notesLoading || notesError) return false;
+    const prospectId = activeProspect._id;
+    setNotesSaving(true);
+    try {
+      const { data } = await apiClient.post(`/api/deals/${dealId}/notes/${prospectId}`, { body }, { headers: { Authorization: `Bearer ${user.token}` } });
+      setNotesMap((current) => ({ ...current, [prospectId]: [data, ...(current[prospectId] || [])] }));
+      return true;
+    } catch { toast.error('Failed to add note'); return false; }
+    finally { setNotesSaving(false); }
   };
 
-  const sortedProspects = prospects?.length
-    ? [...prospects].sort((a, b) => {
-        const priority: Record<string, number> = { Hot: 0, Warm: 1, Cold: 2 };
-        const pa = priority[categories[a._id]] ?? 3;
-        const pb = priority[categories[b._id]] ?? 3;
-        return pa - pb;
-      })
-    : [];
+  const handleUpdateNote = async (noteId: string, body: string) => {
+    if (!user?.token || !activeProspect || notesSaving) return false;
+    const prospectId = activeProspect._id;
+    setNotesSaving(true);
+    try {
+      const { data } = await apiClient.put(`/api/deals/${dealId}/notes/${noteId}`, { body }, { headers: { Authorization: `Bearer ${user.token}` } });
+      setNotesMap((current) => ({ ...current, [prospectId]: (current[prospectId] || []).map((note) => note._id === noteId ? data : note) }));
+      return true;
+    } catch { toast.error('Failed to update note'); return false; }
+    finally { setNotesSaving(false); }
+  };
+
+  const handleDeleteNote = async (noteId: string) => {
+    if (!user?.token || !activeProspect || notesSaving) return false;
+    const prospectId = activeProspect._id;
+    setNotesSaving(true);
+    try {
+      await apiClient.delete(`/api/deals/${dealId}/notes/${noteId}`, { headers: { Authorization: `Bearer ${user.token}` } });
+      setNotesMap((current) => ({ ...current, [prospectId]: (current[prospectId] || []).filter((note) => note._id !== noteId) }));
+      return true;
+    } catch { toast.error('Failed to delete note'); return false; }
+    finally { setNotesSaving(false); }
+  };
 
   const openImHistory = async () => {
     if (!user?.token) return;
+    const request = ++historyRequest.current;
     setImDialogOpen(true);
+    setImLogs([]);
+    setImError(false);
     setImLoading(true);
     try {
-      const res = await apiClient.get(
-        `/api/listings/im-views/all?listingId=${dealId}`,
-        {
-          headers: { Authorization: `Bearer ${user.token}` },
-        },
-      );
-      setImLogs(res.data || []);
-    } catch (error) {
-      console.error('Failed to fetch IM View History', error);
-      setImLogs([]);
-    } finally {
-      setImLoading(false);
-    }
+      const { data } = await apiClient.get(`/api/listings/im-views/all?listingId=${dealId}`, { headers: { Authorization: `Bearer ${user.token}` } });
+      if (request === historyRequest.current) setImLogs(data || []);
+    } catch { if (request === historyRequest.current) setImError(true); }
+    finally { if (request === historyRequest.current) setImLoading(false); }
   };
 
+  const query = search.trim().toLowerCase();
+  const priority: Record<string, number> = { Hot: 0, Warm: 1, Cold: 2 };
+  const sortedProspects = [...prospects]
+    .filter((prospect) => `${prospectName(prospect)} ${prospect.email || ''} ${prospect.phone || ''}`.toLowerCase().includes(query))
+    .sort((first, second) => (priority[categories[first._id]] ?? 3) - (priority[categories[second._id]] ?? 3));
+
   return (
-    <DashboardLayout
-      title={`${dealTitle} Registered Buyers`}
-      description=''
-      button={
-        <div className='flex gap-3'>
-          <Button
-            variant='outline'
-            onClick={() => router.push('/admin/deals')}
-            className='gap-2 rounded-none'
-          >
-            <ArrowLeft className='w-4 h-4' /> Back to Deals
-          </Button>
-          <Button
-            variant='outline'
-            onClick={handleCopyUrl}
-            className='gap-2 rounded-none'
-          >
-            {copied ? (
-              <Check className='w-4 h-4 text-green-600' />
-            ) : (
-              <Copy className='w-4 h-4' />
-            )}
-            Copy Listing URL
-          </Button>
-          <Button
-            variant='outline'
-            onClick={openImHistory}
-            className='gap-2 rounded-none text-accent border-accent/30 hover:bg-accent/5 hover:text-accent'
-          >
-            <Eye className='w-4 h-4' /> View IM History
-          </Button>
-          <Button
-            variant='outline'
-            onClick={() => setVendorDialogOpen(true)}
-            className='gap-2 rounded-none'
-          >
-            <UserCog className='w-4 h-4' /> Vendor Access
-          </Button>
-          <Button
-            variant='outline'
-            onClick={toggleNotification}
-            disabled={notifToggling}
-            className={`gap-2 rounded-none ${
-              notifEnabled
-                ? 'text-accent border-accent/30 bg-accent/5 hover:bg-accent/10'
-                : 'text-muted-foreground border-border hover:bg-muted'
-            }`}
-          >
-            {notifToggling ? (
-              <Loader2 className='w-4 h-4 animate-spin' />
-            ) : notifEnabled ? (
-              <Bell className='w-4 h-4' />
-            ) : (
-              <BellOff className='w-4 h-4' />
-            )}
-            {notifEnabled ? 'Notifications On' : 'Notifications Off'}
-          </Button>
+    <AdminPageLayout title='Registered buyers' description='Manage buyer interest, prospect notes and IM access.' action={<LandingButtonLink href='/admin/deals' variant='outline' size='compact'><ArrowLeft aria-hidden='true' className='size-4' /> All deals</LandingButtonLink>}>
+      <section aria-label='Deal actions' className='flex min-w-0 flex-col gap-5 border border-advisory-rule bg-white p-5 min-[681px]:p-6'>
+        {loading ? <div aria-hidden='true' className='h-8 w-2/3 animate-pulse bg-canvas motion-reduce:animate-none' /> : <h2 className='m-0 break-words font-advisory-heading text-[23px] leading-[1.4] font-bold tracking-normal text-midnight'>{listError ? 'Deal details unavailable' : dealTitle}</h2>}
+        <div className='flex flex-wrap gap-2'>
+          <LandingButton variant='outline' size='compact' disabled={!user?.token} onClick={() => void handleCopyUrl()}>{copied ? <Check aria-hidden='true' className='size-4 text-emerald-800' /> : <Copy aria-hidden='true' className='size-4' />}{copied ? 'URL copied' : 'Copy listing URL'}</LandingButton>
+          <LandingButton variant='outline' size='compact' disabled={loading || listError} onClick={() => void openImHistory()}><Eye aria-hidden='true' className='size-4' /> IM history</LandingButton>
+          <LandingButton variant='outline' size='compact' disabled={loading || listError} onClick={() => setVendorDialogOpen(true)}><UserCog aria-hidden='true' className='size-4' /> Vendor access</LandingButton>
+          <LandingButton variant='outline' size='compact' disabled={notifLoading || notifError || notifToggling} aria-pressed={notifEnabled} onClick={() => void toggleNotification()} className={notifEnabled ? 'border-advisory-rule bg-gilt/15 text-midnight hover:bg-gilt/25 hover:text-midnight' : undefined}>
+            {notifToggling || notifLoading ? <Loader2 aria-hidden='true' className='size-4 animate-spin motion-reduce:animate-none' /> : notifEnabled ? <Bell aria-hidden='true' className='size-4' /> : <BellOff aria-hidden='true' className='size-4' />}
+            {notifLoading ? 'Loading notifications…' : notifError ? 'Notifications unavailable' : notifEnabled ? 'Notifications on' : 'Notifications off'}
+          </LandingButton>
         </div>
-      }
-    >
-      <div className='overflow-hidden border border-border bg-card'>
-        <div className='overflow-x-auto'>
-          <table className='w-full text-sm text-left'>
-            <thead>
-              <tr className='bg-muted/60 border-b border-border text-xs uppercase tracking-wider text-muted-foreground'>
-                <th className='px-6 py-4 font-semibold'>Name</th>
-                <th className='px-6 py-4 font-semibold'>Phone</th>
-                <th className='px-6 py-4 font-semibold'>Email</th>
-                <th className='px-6 py-4 font-semibold'>Category</th>
-                <th className='px-6 py-4 font-semibold'>Notes</th>
-              </tr>
-            </thead>
-            <tbody className='divide-y divide-border'>
-              {loading ? (
-                <tr>
-                  <td colSpan={5} className='text-center py-12'>
-                    <Loader2 className='w-6 h-6 animate-spin text-accent mx-auto mb-2' />
-                    <p className='text-muted-foreground'>
-                      Loading prospects...
-                    </p>
-                  </td>
-                </tr>
-              ) : sortedProspects.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={5}
-                    className='text-center py-12 text-muted-foreground'
-                  >
-                    No prospects found for this deal.
-                  </td>
-                </tr>
-              ) : (
-                sortedProspects.map((prospect) => {
-                  const meta = getCategoryMeta(prospect._id);
+        {notifError && <div role='alert' className='flex flex-wrap items-center gap-3'><p className='m-0 text-sm text-ink'>Email notification settings couldn&apos;t be loaded.</p><LandingButton variant='outline' size='compact' onClick={() => setNotifAttempt((value) => value + 1)}>Try again</LandingButton></div>}
+      </section>
+
+      {actionError && <p role='alert' className='m-0 border border-red-200 bg-red-50 px-5 py-4 text-sm leading-[1.75] text-red-800'>{actionError}</p>}
+
+      <section aria-label='Prospects' aria-busy={loading} className='min-w-0 border border-advisory-rule bg-white'>
+        <div className='flex flex-col gap-4 border-b border-advisory-rule p-5 min-[681px]:flex-row min-[681px]:items-center min-[681px]:justify-between min-[681px]:p-6'>
+          <div className='relative w-full min-w-0 min-[681px]:max-w-md'>
+            <label htmlFor='prospect-search' className='sr-only'>Search prospects by name, email or phone</label>
+            <Search aria-hidden='true' className='pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-ink/60' />
+            <input id='prospect-search' type='search' value={search} onChange={(event) => setSearch(event.target.value)} placeholder='Search by name, email or phone…' className='h-10 w-full min-w-0 rounded-none border border-advisory-input bg-white py-2 pr-3 pl-10 font-advisory-body text-base text-midnight outline-none transition-colors duration-150 placeholder:text-ink/65 focus:border-gilt motion-reduce:transition-none min-[681px]:text-sm' />
+          </div>
+          <p className='m-0 shrink-0 text-sm leading-[1.6] text-ink' aria-live='polite'>{loading ? 'Loading prospects…' : listError ? 'List unavailable' : query ? `${sortedProspects.length} of ${prospects.length} prospects` : `${prospects.length} ${prospects.length === 1 ? 'prospect' : 'prospects'}`}</p>
+        </div>
+
+        {loading ? (
+          <div className='px-5 min-[681px]:px-6'><p role='status' className='sr-only'>Loading prospects.</p><div aria-hidden='true' className='divide-y divide-advisory-rule'>{[0, 1, 2, 3, 4].map((index) => <div key={index} className='flex items-center justify-between gap-8 py-6'><div className='h-4 w-1/3 animate-pulse bg-canvas motion-reduce:animate-none' /><div className='h-4 w-1/4 animate-pulse bg-canvas motion-reduce:animate-none' /><div className='h-8 w-24 shrink-0 animate-pulse bg-canvas motion-reduce:animate-none' /></div>)}</div></div>
+        ) : listError ? (
+          <div role='alert' className='p-6 min-[681px]:p-8'><h2 className='m-0 text-base font-semibold text-midnight'>We couldn&apos;t load the prospects.</h2><p className='mt-2 mb-5 text-sm leading-[1.75] text-ink'>Please try again to refresh this deal.</p><LandingButton variant='outline' size='compact' onClick={() => setAttempt((value) => value + 1)}>Try again</LandingButton></div>
+        ) : sortedProspects.length === 0 ? (
+          <div className='p-6 min-[681px]:p-8'><h2 className='m-0 text-base font-semibold text-midnight'>{query ? 'No matching prospects' : 'No prospects found for this deal'}</h2><p className='mt-2 mb-0 text-sm leading-[1.75] text-ink'>{query ? 'Try another name, email address or phone number.' : 'Prospects appear here once their NDA has been approved.'}</p>{query && <LandingButton variant='outline' size='compact' className='mt-5' onClick={() => setSearch('')}>Clear search</LandingButton>}</div>
+        ) : (
+          <div role='region' aria-label='Registered buyer table' tabIndex={0} className='min-w-0 overflow-x-auto focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-gilt'>
+            <table className='w-full min-w-[900px] text-left text-sm leading-[1.65]'>
+              <caption className='sr-only'>Approved prospects, contact details, interest categories and notes.</caption>
+              <thead className='border-b border-advisory-rule bg-canvas text-midnight'><tr>{['Name', 'Phone', 'Email', 'Category', 'Notes'].map((heading) => <th key={heading} scope='col' className='px-5 py-4 font-semibold'>{heading}</th>)}</tr></thead>
+              <tbody className='divide-y divide-advisory-rule'>
+                {sortedProspects.map((prospect) => {
+                  const name = prospectName(prospect);
+                  const category = CATEGORIES.find((item) => item.label === categories[prospect._id]);
+                  const noteCount = notesMap[prospect._id]?.length || 0;
                   return (
-                    <tr
-                      key={prospect._id}
-                      className='hover:bg-muted/50 transition-colors'
-                    >
-                      <td className='px-6 py-4 font-medium text-secondary'>
-                        {prospect.firstName} {prospect.lastName}
+                    <tr key={prospect._id} className='transition-colors duration-150 hover:bg-canvas/50 motion-reduce:transition-none'>
+                      <td className='min-w-44 px-5 py-5 align-top font-semibold text-midnight'>{name}</td>
+                      <td className='px-5 py-5 align-top whitespace-nowrap text-ink'>{prospect.phone || '—'}</td>
+                      <td className='break-all px-5 py-5 align-top text-ink'>{prospect.email || '—'}</td>
+                      <td className='px-5 py-3 align-top'>
+                        <label htmlFor={`category-${prospect._id}`} className='sr-only'>Interest category for {name}</label>
+                        <select id={`category-${prospect._id}`} value={categories[prospect._id] || ''} disabled={categoryBusy.has(prospect._id)} onChange={(event) => void handleCategorySelect(prospect._id, event.target.value)} className={cn('h-10 w-36 cursor-pointer rounded-none border border-advisory-input bg-white px-3 py-2 font-advisory-body text-sm text-midnight outline-none focus:border-gilt disabled:cursor-wait disabled:opacity-60', category?.color)}>
+                          <option value='' disabled>Set category</option>{CATEGORIES.map((item) => <option key={item.label} value={item.label}>{item.label}</option>)}
+                        </select>
                       </td>
-                      <td className='px-6 py-4 text-muted-foreground'>
-                        {prospect.phone || '—'}
-                      </td>
-                      <td className='px-6 py-4 text-muted-foreground'>
-                        {prospect.email || '—'}
-                      </td>
-                      <td className='px-6 py-4'>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <button
-                              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-colors focus:outline-none ${
-                                meta
-                                  ? meta.color
-                                  : 'bg-muted text-muted-foreground hover:bg-muted/80'
-                              }`}
-                            >
-                              {meta ? meta.label : 'Set Category'}
-                              <ChevronDown
-                                className={`w-3 h-3 ${meta ? 'opacity-80' : 'opacity-50'}`}
-                              />
-                            </button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align='start' className='w-32'>
-                            {CATEGORIES.map((cat) => (
-                              <DropdownMenuItem
-                                key={cat.label}
-                                onClick={() =>
-                                  handleCategorySelect(prospect._id, cat.label)
-                                }
-                                className='gap-2 cursor-pointer'
-                              >
-                                <span
-                                  className={`w-2 h-2 rounded-full ${cat.dot}`}
-                                />
-                                {cat.label}
-                              </DropdownMenuItem>
-                            ))}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </td>
-                      <td className='px-6 py-4'>
-                        <button
-                          onClick={() => {
-                            setActiveProspect(prospect);
-                            setNotesOpen(true);
-                          }}
-                          className='inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-accent transition-colors'
-                        >
-                          <StickyNote className='w-4 h-4' />
-                          {notesMap[prospect._id]?.length
-                            ? `${notesMap[prospect._id].length} note${
-                                notesMap[prospect._id].length > 1 ? 's' : ''
-                              }`
-                            : 'Add note'}
+                      <td className='px-5 py-3 align-top'>
+                        <button type='button' onClick={() => { setActiveProspect(prospect); setNotesOpen(true); }} className='inline-flex min-h-10 cursor-pointer items-center gap-2 px-2 text-sm font-medium text-midnight transition-colors duration-150 hover:bg-canvas hover:text-gilt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gilt motion-reduce:transition-none' aria-label={`Open notes for ${name}`}>
+                          <StickyNote aria-hidden='true' className='size-4 shrink-0' />{notesLoading ? 'Loading notes…' : notesError ? 'View notes' : noteCount ? `${noteCount} ${noteCount === 1 ? 'note' : 'notes'}` : 'Add note'}
                         </button>
                       </td>
                     </tr>
                   );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <ImHistoryDialog
-        open={imDialogOpen}
-        onOpenChange={setImDialogOpen}
-        logs={imLogs}
-        loading={imLoading}
-        // dealId={dealId}
-        token={user?.token || ''}
-      />
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
 
-      <VendorAccessDialog
-        open={vendorDialogOpen}
-        onOpenChange={setVendorDialogOpen}
-        listingId={dealId}
-        token={user?.token || ''}
-      />
-
-      <ProspectNotesDialog
-        open={notesOpen}
-        onOpenChange={setNotesOpen}
-        prospectName={
-          activeProspect
-            ? `${activeProspect.firstName} ${activeProspect.lastName}`.trim()
-            : ''
-        }
-        notes={activeProspect ? notesMap[activeProspect._id] || [] : []}
-        saving={notesSaving}
-        onCreate={handleCreateNote}
-        onUpdate={handleUpdateNote}
-        onDelete={handleDeleteNote}
-      />
-    </DashboardLayout>
+      {imDialogOpen && <ImHistoryDialog open onOpenChange={(open) => { if (!open) { historyRequest.current += 1; setImDialogOpen(false); } }} logs={imLogs} loading={imLoading} error={imError} onRetry={() => void openImHistory()} businessName={dealTitle} token={user?.token || ''} />}
+      {vendorDialogOpen && <VendorAccessDialog open onOpenChange={setVendorDialogOpen} listingId={dealId} token={user?.token || ''} />}
+      {notesOpen && activeProspect && <ProspectNotesDialog key={activeProspect._id} open onOpenChange={setNotesOpen} prospectName={prospectName(activeProspect)} notes={notesMap[activeProspect._id] || []} loading={notesLoading} error={notesError} onRetry={() => setNotesAttempt((value) => value + 1)} saving={notesSaving} onCreate={handleCreateNote} onUpdate={handleUpdateNote} onDelete={handleDeleteNote} />}
+    </AdminPageLayout>
   );
 }

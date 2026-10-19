@@ -2,11 +2,11 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { AlertCircle, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { useAdminAuth } from '@/context/admin-auth-context';
-import { Button } from '@/components/ui/button';
+import { AdminPageLayout } from '@/components/admin/page-layout';
+import { LandingButtonLink } from '@/components/landing/presentation';
 import { BROKERS } from '@/lib/data/brokers-list';
 import { ProposalEditor } from '@/components/proposal/proposal-editor';
 import {
@@ -47,26 +47,20 @@ function NewProposalRedirect() {
       .catch(() => setError('Could not create a new proposal. Please try again.'));
   }, [router, user]);
 
-  if (error) {
-    return (
-      <div className='mx-auto flex min-h-[60vh] max-w-md flex-col items-center justify-center gap-4 text-center'>
-        <div className='flex items-center gap-2 border border-red-100 bg-red-50 px-5 py-4 text-red-600'>
-          <AlertCircle className='h-5 w-5' />
-          <span className='text-sm font-medium'>{error}</span>
-        </div>
-        <Link href={PROPOSAL_BASE_PATH}>
-          <Button variant='outline' className='rounded-none'>
-            Back to list
-          </Button>
-        </Link>
-      </div>
-    );
-  }
-
   return (
-    <div className='flex min-h-[60vh] items-center justify-center'>
-      <Loader2 className='h-6 w-6 animate-spin text-accent' />
-    </div>
+    <AdminPageLayout title='New proposal' description='Prepare a new client proposal.'>
+      {error ? (
+        <section role='alert' className='border border-advisory-rule bg-white p-6 min-[681px]:p-8'>
+          <p className='mt-0 mb-5 text-sm leading-[1.75] text-ink'>{error}</p>
+          <LandingButtonLink href={PROPOSAL_BASE_PATH} variant='outline' size='compact'>Back to list</LandingButtonLink>
+        </section>
+      ) : (
+        <div role='status' className='flex items-center gap-3 border border-advisory-rule bg-white p-6 text-sm text-midnight min-[681px]:p-8'>
+          <Loader2 aria-hidden='true' className='size-4 shrink-0 animate-spin motion-reduce:animate-none' />
+          Creating your proposal…
+        </div>
+      )}
+    </AdminPageLayout>
   );
 }
 

@@ -3,55 +3,21 @@
 import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
-import { AlertCircle, Loader2 } from 'lucide-react';
+import { DocumentState, PdfLoading } from '@/components/documents/document-state';
+import { LandingTheme } from '@/components/landing/landing-theme';
 
-// react-pdf is browser-only; render its canvas pages (no native PDF toolbar, so
-// no download/print) to keep documents view-only — like the legacy IM viewer.
-const PdfPages = dynamic(() => import('@/components/im/pdf-pages').then((m) => m.PdfPages), {
-  ssr: false,
-  loading: () => (
-    <div className="flex items-center justify-center gap-2 py-16 text-gray-400">
-      <Loader2 className="h-5 w-5 animate-spin" /> Loading PDF...
-    </div>
-  ),
-});
+const PdfPages = dynamic(() => import('@/components/im/pdf-pages').then((module) => module.PdfPages), { ssr: false, loading: () => <PdfLoading /> });
+
+function PdfFrame({ children }: { children: React.ReactNode }) {
+  return <LandingTheme className='min-h-dvh select-none bg-canvas px-4 py-6 text-sm min-[681px]:px-6 min-[681px]:py-8 min-[681px]:text-sm' onContextMenu={(event) => event.preventDefault()}><main className='mx-auto w-full max-w-4xl'>{children}</main></LandingTheme>;
+}
 
 function ImPdfViewer() {
   const src = useSearchParams().get('src') || '';
-
-  if (!src) {
-    return (
-      <div className="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center gap-3 px-6 text-center">
-        <div className="flex items-center gap-2 rounded-xl border border-red-100 bg-red-50 px-5 py-4 text-red-600">
-          <AlertCircle className="h-5 w-5" />
-          <span className="text-sm font-medium">No document specified.</span>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div
-      className="min-h-screen select-none bg-white"
-      onContextMenu={(e) => e.preventDefault()}
-    >
-      <div className="mx-auto max-w-4xl">
-        <PdfPages url={src} />
-      </div>
-    </div>
-  );
+  if (!src) return <DocumentState title='No document specified' description='This link does not include a document to display. Please contact your broker for the correct link.' />;
+  return <PdfFrame><PdfPages url={src} /></PdfFrame>;
 }
 
 export default function ImPdfViewerPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="flex min-h-screen items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-accent" />
-        </div>
-      }
-    >
-      <ImPdfViewer />
-    </Suspense>
-  );
+  return <Suspense fallback={<PdfFrame><PdfLoading /></PdfFrame>}><ImPdfViewer /></Suspense>;
 }

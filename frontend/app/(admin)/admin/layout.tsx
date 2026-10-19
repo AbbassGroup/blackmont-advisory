@@ -1,59 +1,34 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import {
-  SidebarProvider,
-  SidebarInset,
-  SidebarTrigger,
-} from '@/components/ui/sidebar';
+import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import { AdminSidebar } from '../_components/admin-sidebar';
-import { Separator } from '@/components/ui/separator';
 import { AuthGuard } from '../_components/auth-guard';
 import { PageAccessGuard } from '../_components/page-access-guard';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { useAdminAuth } from '@/context/admin-auth-context';
+import { landingFontVariables } from '@/components/landing/fonts';
+import { matchAdminPage } from '@/lib/admin-pages';
+import { cn } from '@/lib/utils';
 
-// Auth routes that should NOT show the sidebar shell
-const AUTH_PATHS = [
-  '/admin/login',
-  '/admin/forgot-password',
-  '/admin/reset-password',
-];
+const AUTH_PATHS = ['/admin/login', '/admin/forgot-password', '/admin/reset-password'];
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { user } = useAdminAuth();
   const pathname = usePathname();
-  const isAuthPage = AUTH_PATHS.some((p) => pathname?.startsWith(p));
+  if (AUTH_PATHS.some((path) => pathname?.startsWith(path))) return <>{children}</>;
 
-  // Auth pages: render children directly with no sidebar
-  if (isAuthPage) {
-    return <>{children}</>;
-  }
-
-  // Dashboard pages: full sidebar layout with auth guard
   return (
     <AuthGuard>
       <TooltipProvider delayDuration={0}>
-        <SidebarProvider>
+        <SidebarProvider className={cn(landingFontVariables, 'bg-canvas font-advisory-body text-sm text-ink')}>
           <AdminSidebar />
-          <SidebarInset>
-            <header className='sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-border bg-card px-4 shrink-0'>
-              <SidebarTrigger className='-ml-1' />
-              <Separator orientation='vertical' className='h-5' />
-              <p className='text-sm text-muted-foreground'>
-                Welcome{' '}
-                <span className='font-semibold text-secondary'>
-                  {user?.user?.username}
-                </span>
-              </p>
+          <SidebarInset className='min-w-0 bg-canvas'>
+            <header className='sticky top-0 z-30 flex min-h-16 shrink-0 items-center justify-between gap-4 border-b border-advisory-rule bg-white px-4 min-[681px]:px-6'>
+              <div className='flex min-w-0 items-center gap-3'><SidebarTrigger className='size-10 shrink-0 rounded-none text-midnight hover:bg-canvas focus-visible:ring-gilt' /><span aria-hidden='true' className='h-5 w-px shrink-0 bg-advisory-rule' /><p className='m-0 truncate text-sm font-medium text-midnight'>{matchAdminPage(pathname)?.label || 'Admin'}</p></div>
+              <p className='m-0 hidden min-w-0 truncate text-sm text-ink min-[481px]:block'>Welcome <span className='font-semibold text-midnight'>{user?.user?.username}</span></p>
             </header>
-            <div className='flex-1 overflow-auto p-6 bg-background'>
-              <PageAccessGuard>{children}</PageAccessGuard>
-            </div>
+            <div className='min-w-0 flex-1 overflow-auto bg-canvas p-6'><PageAccessGuard>{children}</PageAccessGuard></div>
           </SidebarInset>
         </SidebarProvider>
       </TooltipProvider>

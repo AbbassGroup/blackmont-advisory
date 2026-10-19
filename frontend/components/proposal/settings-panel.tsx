@@ -1,64 +1,48 @@
 'use client';
 
+import { useId, type ReactNode } from 'react';
 import { CheckCircle2, Clock, FileEdit, Loader2, Trash2 } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
+import { LandingButton } from '@/components/landing/presentation';
 import { BROKERS } from '@/lib/data/brokers-list';
 import type { SettingsRenderProps } from '@/components/documents/types';
-import {
-  getProposalStage,
-  type DigitalProposalDoc,
-  type ProposalTemplate,
-} from './types';
+import { getProposalStage, type DigitalProposalDoc, type ProposalTemplate } from './types';
 
 const TERMS = ['30', '60', '90', '120', '150', '180', '270', '360'];
-
-const inputCls =
-  'h-10 rounded-none border-secondary/15 bg-background shadow-none focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-accent/15';
-const selectCls =
-  'h-10 w-full rounded-none border border-secondary/15 bg-background px-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/15';
+const INPUT_CLASS =
+  'block h-10 w-full min-w-0 rounded-none border border-advisory-input bg-white px-3 py-2 font-advisory-body text-base text-midnight outline-none transition-colors duration-150 placeholder:text-ink/65 focus:border-gilt motion-reduce:transition-none min-[681px]:text-sm';
 
 const STAGE_META = {
   draft: {
     icon: FileEdit,
     label: 'Draft',
-    tone: 'border-border bg-muted text-muted-foreground',
+    tone: 'border-advisory-rule bg-canvas text-midnight',
     hint: 'Not sent for approval yet. The customer cannot see it.',
   },
   pending: {
     icon: Clock,
     label: 'Pending approval',
-    tone: 'border-amber-200 bg-amber-50 text-amber-700',
+    tone: 'border-amber-200 bg-amber-50 text-amber-900',
     hint: 'Waiting on the owner. The customer still cannot see it.',
   },
   approved: {
     icon: CheckCircle2,
     label: 'Approved',
-    tone: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+    tone: 'border-emerald-200 bg-emerald-50 text-emerald-900',
     hint: 'Live at the customer link, and valid for 30 days from approval.',
   },
 } as const;
 
-function Field({
-  label,
-  hint,
-  children,
-}: {
-  label: string;
-  hint?: string;
-  children: React.ReactNode;
-}) {
+function Field({ id, label, hint, children }: { id: string; label: string; hint?: string; children: ReactNode }) {
   return (
-    <div className='space-y-1.5'>
-      <Label className='text-sm font-medium text-foreground'>{label}</Label>
+    <div className='min-w-0'>
+      <label htmlFor={id} className='mb-2 block text-sm leading-[1.6] font-medium text-midnight'>{label}</label>
       {children}
-      {hint && <p className='text-xs text-muted-foreground/60'>{hint}</p>}
+      {hint && <p id={`${id}-hint`} className='mt-2 mb-0 text-xs leading-[1.75] text-ink'>{hint}</p>}
     </div>
   );
 }
 
-/** The Settings drawer for a Digital Proposal. */
+/** Proposal details and approval controls. */
 export function ProposalSettingsPanel({
   doc,
   isSuperAdmin,
@@ -67,172 +51,106 @@ export function ProposalSettingsPanel({
   busy,
   onStatusAction,
 }: SettingsRenderProps<DigitalProposalDoc>) {
+  const prefix = useId();
+  const fieldId = (field: string) => `${prefix}-${field}`;
   const stage = getProposalStage(doc);
   const meta = STAGE_META[stage];
   const StageIcon = meta.icon;
-
-  const set = <K extends keyof DigitalProposalDoc>(
-    key: K,
-    value: DigitalProposalDoc[K],
-  ) => onPatch((prev) => ({ ...prev, [key]: value }));
+  const set = <K extends keyof DigitalProposalDoc>(key: K, value: DigitalProposalDoc[K]) =>
+    onPatch((prev) => ({ ...prev, [key]: value }));
 
   return (
-    <div className='space-y-6'>
-      {/* Status */}
-      <div className={`border p-4 ${meta.tone}`}>
+    <div className='flex flex-col gap-8'>
+      <section aria-label='Proposal approval' className={`border p-5 ${meta.tone}`}>
         <div className='flex items-center gap-2'>
-          <StageIcon className='h-4 w-4' />
-          <p className='text-sm font-semibold'>{meta.label}</p>
+          <StageIcon aria-hidden='true' className='size-4 shrink-0' />
+          <p className='m-0 text-sm font-semibold'>{meta.label}</p>
         </div>
-        <p className='mt-1 text-xs opacity-80'>{meta.hint}</p>
-        <Button
+        <p className='mt-2 mb-4 text-xs leading-[1.75]'>{meta.hint}</p>
+        <LandingButton
           variant='outline'
+          size='compact'
           onClick={onStatusAction}
           disabled={busy || (stage === 'pending' && !isSuperAdmin)}
-          className='mt-3 w-full gap-2 rounded-none bg-card'
+          className='w-full bg-white'
         >
-          {busy && <Loader2 className='h-4 w-4 animate-spin' />}
+          {busy && <Loader2 aria-hidden='true' className='size-4 shrink-0 animate-spin motion-reduce:animate-none' />}
           {stage === 'approved'
             ? 'Revoke approval'
             : stage === 'pending'
-              ? isSuperAdmin
-                ? 'Approve and send to customer'
-                : 'Awaiting owner approval'
+              ? isSuperAdmin ? 'Approve and send to customer' : 'Awaiting owner approval'
               : 'Submit for approval'}
-        </Button>
-      </div>
+        </LandingButton>
+      </section>
 
-      {/* Template */}
-      <Field label='Template type'>
-        <select
-          value={doc.template}
-          onChange={(e) => set('template', e.target.value as ProposalTemplate)}
-          className={selectCls}
-        >
-          <option value='business_appraisal'>Business Appraisal</option>
-          <option value='franchise_proposal'>Franchise Proposal</option>
-        </select>
-      </Field>
-
-      {/* Broker */}
-      <Field
-        label='Prepared by (broker)'
-        hint='Shown in the Business Appraisal section and emailed on acceptance.'
-      >
-        <select
-          value={doc.brokerName || ''}
-          onChange={(e) => {
-            const broker = BROKERS.find((b) => b.name === e.target.value);
-            onPatch((prev) => ({
-              ...prev,
-              brokerName: e.target.value,
-              brokerEmail: broker?.email ?? '',
-            }));
-          }}
-          className={selectCls}
-        >
-          <option value=''>Select broker</option>
-          {BROKERS.map((b) => (
-            <option key={b.email} value={b.name}>
-              {b.name}
-            </option>
-          ))}
-        </select>
-      </Field>
-
-      {/* Customer */}
-      <div className='space-y-4 border border-border p-4'>
-        <p className='text-sm font-semibold text-secondary'>Customer</p>
-        <Field label='Customer name'>
-          <Input
-            value={doc.customerName || ''}
-            onChange={(e) => set('customerName', e.target.value)}
-            placeholder='Enter customer name'
-            className={inputCls}
-          />
-        </Field>
-        <Field
-          label='Customer email'
-          hint='The approval email goes here, and the link only opens for this address.'
-        >
-          <Input
-            type='email'
-            value={doc.customerEmail || ''}
-            onChange={(e) => set('customerEmail', e.target.value)}
-            placeholder='customer@example.com'
-            className={inputCls}
-          />
-        </Field>
-      </div>
-
-      {/* Agreement */}
-      <div className='space-y-4 border border-border p-4'>
-        <p className='text-sm font-semibold text-secondary'>Agreement</p>
-        <Field label='Agreement term'>
-          <select
-            value={doc.agreementTerm || '90'}
-            onChange={(e) => set('agreementTerm', e.target.value)}
-            className={selectCls}
-          >
-            {TERMS.map((t) => (
-              <option key={t} value={t}>
-                {t} days
-              </option>
-            ))}
+      <div className='space-y-5'>
+        <Field id={fieldId('template')} label='Template type'>
+          <select id={fieldId('template')} value={doc.template} onChange={(event) => set('template', event.target.value as ProposalTemplate)} className={INPUT_CLASS}>
+            <option value='business_appraisal'>Business Appraisal</option>
+            <option value='franchise_proposal'>Franchise Proposal</option>
           </select>
         </Field>
-        <Field label='Business address'>
-          <Input
-            value={doc.businessAddress || ''}
-            onChange={(e) => set('businessAddress', e.target.value)}
-            placeholder='Enter business address'
-            className={inputCls}
-          />
-        </Field>
-        <Field label='Listing price'>
-          <Input
-            type='number'
-            value={doc.listingPrice || ''}
-            onChange={(e) => set('listingPrice', e.target.value)}
-            placeholder='e.g. 2500000'
-            className={inputCls}
-          />
-        </Field>
-        <Field label='Sale price'>
-          <Input
-            type='number'
-            value={doc.salePrice || ''}
-            onChange={(e) => set('salePrice', e.target.value)}
-            placeholder='e.g. 2300000'
-            className={inputCls}
-          />
-        </Field>
-        <Field label='Performance bonus (%)'>
-          <Input
-            type='number'
-            value={doc.performanceBonus || ''}
-            onChange={(e) => set('performanceBonus', e.target.value)}
-            placeholder='e.g. 2'
-            className={inputCls}
-          />
+        <Field id={fieldId('broker')} label='Prepared by (broker)' hint='Shown in the Business Appraisal section and emailed on acceptance.'>
+          <select
+            id={fieldId('broker')}
+            aria-describedby={`${fieldId('broker')}-hint`}
+            value={doc.brokerName || ''}
+            onChange={(event) => {
+              const broker = BROKERS.find((item) => item.name === event.target.value);
+              onPatch((prev) => ({ ...prev, brokerName: event.target.value, brokerEmail: broker?.email ?? '' }));
+            }}
+            className={INPUT_CLASS}
+          >
+            <option value=''>Select broker</option>
+            {BROKERS.map((broker) => <option key={broker.email} value={broker.name}>{broker.name}</option>)}
+          </select>
         </Field>
       </div>
 
-      {/* Danger zone */}
-      <div className='border border-red-100 bg-red-50/50 p-4'>
-        <p className='text-sm font-semibold text-red-600'>Delete proposal</p>
-        <p className='mb-3 text-xs text-red-400'>
-          Archives the proposal. It stops serving to the customer but stays in
-          the database.
+      <fieldset className='m-0 min-w-0 border-0 p-0'>
+        <legend className='mb-5 p-0 text-base font-semibold text-midnight'>Customer</legend>
+        <div className='space-y-5'>
+          <Field id={fieldId('customer-name')} label='Customer name'>
+            <input id={fieldId('customer-name')} value={doc.customerName || ''} onChange={(event) => set('customerName', event.target.value)} placeholder='Enter customer name' className={INPUT_CLASS} />
+          </Field>
+          <Field id={fieldId('customer-email')} label='Customer email' hint='The approval email goes here, and the link only opens for this address.'>
+            <input id={fieldId('customer-email')} aria-describedby={`${fieldId('customer-email')}-hint`} type='email' value={doc.customerEmail || ''} onChange={(event) => set('customerEmail', event.target.value)} placeholder='customer@example.com' className={INPUT_CLASS} />
+          </Field>
+        </div>
+      </fieldset>
+
+      <fieldset className='m-0 min-w-0 border-0 p-0'>
+        <legend className='mb-5 p-0 text-base font-semibold text-midnight'>Agreement</legend>
+        <div className='space-y-5'>
+          <Field id={fieldId('term')} label='Agreement term'>
+            <select id={fieldId('term')} value={doc.agreementTerm || '90'} onChange={(event) => set('agreementTerm', event.target.value)} className={INPUT_CLASS}>
+              {TERMS.map((term) => <option key={term} value={term}>{term} days</option>)}
+            </select>
+          </Field>
+          <Field id={fieldId('address')} label='Business address'>
+            <input id={fieldId('address')} value={doc.businessAddress || ''} onChange={(event) => set('businessAddress', event.target.value)} placeholder='Enter business address' className={INPUT_CLASS} />
+          </Field>
+          <Field id={fieldId('listing-price')} label='Listing price'>
+            <input id={fieldId('listing-price')} type='number' value={doc.listingPrice || ''} onChange={(event) => set('listingPrice', event.target.value)} placeholder='e.g. 2500000' className={INPUT_CLASS} />
+          </Field>
+          <Field id={fieldId('sale-price')} label='Sale price'>
+            <input id={fieldId('sale-price')} type='number' value={doc.salePrice || ''} onChange={(event) => set('salePrice', event.target.value)} placeholder='e.g. 2300000' className={INPUT_CLASS} />
+          </Field>
+          <Field id={fieldId('bonus')} label='Performance bonus (%)'>
+            <input id={fieldId('bonus')} type='number' value={doc.performanceBonus || ''} onChange={(event) => set('performanceBonus', event.target.value)} placeholder='e.g. 2' className={INPUT_CLASS} />
+          </Field>
+        </div>
+      </fieldset>
+
+      <section aria-labelledby='delete-proposal-heading' className='border-t border-advisory-rule pt-6'>
+        <h3 id='delete-proposal-heading' className='m-0 text-base font-semibold text-midnight'>Delete proposal</h3>
+        <p className='mt-2 mb-4 text-xs leading-[1.75] text-ink'>
+          Archives the proposal. It stops serving to the customer but stays in the database.
         </p>
-        <Button
-          variant='outline'
-          onClick={onDelete}
-          className='gap-2 rounded-none border-red-200 text-red-600 hover:bg-red-100 hover:text-red-700'
-        >
-          <Trash2 className='h-4 w-4' /> Delete
-        </Button>
-      </div>
+        <LandingButton variant='outline' size='compact' onClick={onDelete} disabled={busy} className='border-red-700 text-red-800 hover:bg-red-50 hover:text-red-900'>
+          <Trash2 aria-hidden='true' className='size-4' /> Delete proposal
+        </LandingButton>
+      </section>
     </div>
   );
 }

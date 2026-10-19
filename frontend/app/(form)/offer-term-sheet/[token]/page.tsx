@@ -1,13 +1,14 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
-import Image from 'next/image';
 import { CheckCircle2, Clock, Loader2, PenLine, X } from 'lucide-react';
 import { apiClient } from '@/lib/api';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Textarea } from '@/components/ui/textarea';
+import { LandingButton } from '@/components/landing/presentation';
+import { landingFontVariables } from '@/components/landing/fonts';
+import { DocumentState } from '@/components/documents/document-state';
+import { cn } from '@/lib/utils';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import {
   computeAmounts,
   isDefaultDeposit,
@@ -17,7 +18,6 @@ import {
   type PartyRefusalCode,
   type PublicOfferTermSheet,
 } from '@/components/offer-term-sheet';
-import { BRAND } from '@/components/offer-term-sheet/brand';
 import { Letter } from './_components/letter';
 
 const BASE = '/api/offer-term-sheets/public';
@@ -37,16 +37,13 @@ const REFUSAL_TONE: Record<PartyRefusalCode, 'done' | 'gone'> = {
 function revealField(key: string) {
   const target = document.querySelector<HTMLElement>(`[data-field="${key}"]`);
   if (!target) return;
-  target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  target.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' });
   target
     .querySelector<HTMLElement>('input, select, textarea, canvas')
     ?.focus({ preventScroll: true });
 }
 
-export default function PartyFormPage() {
-  const params = useParams();
-  const token = params?.token as string;
-
+function PartyForm({ token }: { token: string }) {
   const [sheet, setSheet] = useState<PublicOfferTermSheet | null>(null);
   const [values, setValues] = useState<PublicOfferTermSheet | null>(null);
   const [loading, setLoading] = useState(true);
@@ -62,6 +59,9 @@ export default function PartyFormPage() {
   const [outcome, setOutcome] = useState<'signed' | 'declined' | null>(null);
   const [declineOpen, setDeclineOpen] = useState(false);
   const [declineReason, setDeclineReason] = useState('');
+  const [actionError, setActionError] = useState('');
+  const actionBar = useRef<HTMLDivElement>(null);
+  const [barHeight, setBarHeight] = useState(240);
 
   useEffect(() => {
     let active = true;
@@ -85,6 +85,16 @@ export default function PartyFormPage() {
       active = false;
     };
   }, [token]);
+
+  useEffect(() => {
+    const element = actionBar.current;
+    if (!element) return;
+    const update = () => setBarHeight(Math.ceil(element.getBoundingClientRect().height));
+    const observer = new ResizeObserver(update);
+    observer.observe(element);
+    update();
+    return () => observer.disconnect();
+  }, [loading, outcome, refusal, sheet]);
 
   const editableSet = useMemo(
     () => new Set(sheet?.editableFields ?? []),
@@ -119,7 +129,8 @@ export default function PartyFormPage() {
   };
 
   const sign = async () => {
-    if (!values || !sheet) return;
+    if (!values || !sheet || submitting) return;
+    setActionError('');
 
     // Blanks and out-of-range values are caught against the same bounds the
     // server enforces, so nothing round-trips to be told a number is too big.
@@ -131,7 +142,7 @@ export default function PartyFormPage() {
       revealField(issues[0].key);
       return;
     }
-    if (!consent) return;
+    if (!consent) { document.getElementById('offer-consent')?.focus(); return; }
 
     setSubmitting(true);
     try {
@@ -142,42 +153,38 @@ export default function PartyFormPage() {
       setOutcome('signed');
     } catch (e: unknown) {
       const body = (
-        e as { response?: { data?: { fields?: Record<string, string> } } }
+        e as { response?: { data?: { fields?: Record<string, string>; message?: string } } }
       )?.response?.data;
       const fields = body?.fields ?? {};
       setErrors(fields);
       const first = Object.keys(fields)[0];
       if (first) revealField(first);
+      setActionError(body?.message || 'We could not submit your signed letter. Please try again.');
+    } finally {
       setSubmitting(false);
     }
   };
 
   const decline = async () => {
+    if (submitting) return;
     setSubmitting(true);
+    setActionError('');
     try {
-      await apiClient.post(`${BASE}/${token}/decline`, {
-        reason: declineReason.trim(),
-      });
+      await apiClient.post(`${BASE}/${token}/decline`, { reason: declineReason.trim() });
       setOutcome('declined');
-    } finally {
-      setSubmitting(false);
       setDeclineOpen(false);
-    }
+    } catch (cause: unknown) {
+      const body = (cause as { response?: { data?: { message?: string } } })?.response?.data;
+      setActionError(body?.message || 'We could not decline this letter. Please try again.');
+    } finally { setSubmitting(false); }
   };
 
-  if (loading) {
-    return (
-      <div className='flex min-h-screen flex-col items-center justify-center gap-3'>
-        <Loader2 className='h-8 w-8 animate-spin text-accent' />
-        <p className='text-gray-500'>Loading your letter…</p>
-      </div>
-    );
-  }
+  if (loading) return <LetterSkeleton />;
 
   if (outcome === 'signed') {
     return (
       <Outcome
-        icon={<CheckCircle2 className='h-10 w-10 text-white' />}
+        icon={<CheckCircle2 className='size-8' />}
         title='Thank you, your letter is signed'
         body={
           sheet?.role === 'vendor'
@@ -192,7 +199,7 @@ export default function PartyFormPage() {
     return (
       <Outcome
         tone='neutral'
-        icon={<X className='h-10 w-10 text-white' />}
+        icon={<X className='size-8' />}
         title='Letter declined'
         body='Thank you for letting us know. Your broker has been notified and will be in touch.'
       />
@@ -206,9 +213,9 @@ export default function PartyFormPage() {
         tone={tone === 'done' ? 'brand' : 'neutral'}
         icon={
           tone === 'done' ? (
-            <CheckCircle2 className='h-10 w-10 text-white' />
+            <CheckCircle2 className='size-8' />
           ) : (
-            <Clock className='h-10 w-10 text-white' />
+            <Clock className='size-8' />
           )
         }
         title={tone === 'done' ? 'Already signed' : 'This link is not active'}
@@ -221,146 +228,83 @@ export default function PartyFormPage() {
   const consentMissing = consentTouched && !consent;
 
   return (
-    <div className='mx-auto max-w-3xl px-4 pb-44 pt-8 sm:px-6 sm:pt-14'>
-      <Letter
-        values={values}
-        editable={(key) => editableSet.has(key)}
-        errors={errors}
-        onChange={patch}
-      />
+    <main className='mx-auto flex w-full max-w-4xl flex-col gap-6 px-4 pt-6 min-[681px]:px-6 min-[681px]:pt-8' style={{ paddingBottom: barHeight + 32 }}>
+      {Object.keys(errors).length > 0 && (
+        <section role='alert' aria-label='Fields to review' className='flex flex-col gap-3 border border-red-200 bg-red-50 p-5 text-sm leading-[1.75] text-red-800'>
+          <p className='m-0 font-semibold'>Please review the highlighted fields.</p>
+          <ul className='m-0 flex list-disc flex-col gap-1 pl-5'>{Object.entries(errors).map(([key, message]) => <li key={key}><button type='button' onClick={() => revealField(key)} className='text-left underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-gilt'>{message}</button></li>)}</ul>
+        </section>
+      )}
+      <fieldset disabled={submitting} inert={submitting} className='m-0 min-w-0 border-0 p-0'>
+        <legend className='sr-only'>Letter of Intent details and signatures</legend>
+        <Letter values={values} editable={(key) => editableSet.has(key)} errors={errors} onChange={patch} />
+      </fieldset>
 
-      <div className='fixed inset-x-0 bottom-0 border-t border-gray-200 bg-white/95 backdrop-blur'>
-        <div className='mx-auto max-w-3xl px-4 py-5 sm:px-6'>
-          <div className='flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between'>
-            <label
-              className={`flex max-w-xl cursor-pointer items-start gap-3 rounded-md p-1 text-[13px] leading-relaxed transition-colors ${
-                consentMissing ? 'text-red-600' : 'text-gray-600'
-              }`}
-            >
-              <Checkbox
-                checked={consent}
-                onCheckedChange={(v) => {
-                  setConsent(v === true);
-                  setConsentTouched(true);
-                }}
-                className={`mt-0.5 ${consentMissing ? 'border-red-400' : ''}`}
-              />
-              <span>
-                I agree that signing here is valid electronic acceptance under
-                the <em>Electronic Transactions (Victoria) Act 2000</em>, and is
-                binding without a handwritten signature.
-              </span>
-            </label>
-
-            <div className='flex shrink-0 items-center gap-3'>
-              <Button
-                variant='outline'
-                size='lg'
-                onClick={() => setDeclineOpen(true)}
-                disabled={submitting}
-                className='border-gray-200 text-gray-600 hover:bg-gray-50'
-              >
-                Decline
-              </Button>
-              <Button
-                size='lg'
-                onClick={sign}
-                disabled={submitting}
-                className='gap-2 rounded-none bg-accent px-8 font-semibold text-primary hover:bg-accent-light'
-              >
-                {submitting ? (
-                  <Loader2 className='h-4 w-4 animate-spin' />
-                ) : (
-                  <PenLine className='h-4 w-4' />
-                )}
-                {isVendor ? 'Accept & sign' : 'Submit & sign'}
-              </Button>
+      <div ref={actionBar} className='fixed inset-x-0 bottom-0 z-30 border-t border-advisory-rule bg-white pb-[env(safe-area-inset-bottom)]'>
+        <div className='mx-auto flex w-full max-w-4xl flex-col gap-4 px-4 py-4 min-[681px]:px-6'>
+          {actionError && !declineOpen && <p role='alert' className='m-0 text-sm leading-[1.75] text-red-800'>{actionError}</p>}
+          <div className='flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between lg:gap-6'>
+            <div className='flex min-w-0 flex-1 flex-col gap-2'>
+              <label className={cn('flex cursor-pointer items-start gap-3 text-xs leading-[1.75]', consentMissing ? 'text-red-800' : 'text-ink')}>
+                <input id='offer-consent' type='checkbox' checked={consent} disabled={submitting} aria-invalid={consentMissing} aria-describedby={consentMissing ? 'offer-consent-error' : undefined}
+                  onChange={(event) => { setConsent(event.target.checked); setConsentTouched(true); }}
+                  className='mt-1 size-4 shrink-0 accent-midnight focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-gilt disabled:opacity-50' />
+                <span>I agree that signing here is valid electronic acceptance under the <em>Electronic Transactions (Victoria) Act 2000</em>, and is binding without a handwritten signature.</span>
+              </label>
+              {consentMissing && <p id='offer-consent-error' role='alert' className='m-0 text-xs leading-[1.75] text-red-800'>Please confirm your electronic acceptance before signing.</p>}
+            </div>
+            <div className='grid shrink-0 grid-cols-2 gap-3 lg:flex'>
+              <LandingButton variant='outline' size='compact' disabled={submitting} onClick={() => { setActionError(''); setDeclineOpen(true); }} className='px-3 text-xs min-[681px]:px-5 min-[681px]:text-sm'>Decline</LandingButton>
+              <LandingButton size='compact' disabled={submitting} onClick={() => void sign()} className='px-3 text-xs min-[681px]:px-5 min-[681px]:text-sm'>
+                {submitting ? <Loader2 aria-hidden='true' className='size-4 animate-spin motion-reduce:animate-none' /> : <PenLine aria-hidden='true' className='size-4' />}
+                {submitting ? 'Submitting…' : isVendor ? 'Accept & sign' : 'Submit & sign'}
+              </LandingButton>
             </div>
           </div>
+          {submitting && <span role='status' className='sr-only'>Submitting your response.</span>}
         </div>
       </div>
 
-      {declineOpen && (
-        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm'>
-          <div className='w-full max-w-md rounded-none border border-border bg-card p-6'>
-            <h3 className='mb-2 text-lg font-bold text-foreground'>
-              Decline this letter?
-            </h3>
-            <p className='mb-4 text-sm text-gray-500'>
-              Your broker will be notified. You can add a reason if you would
-              like to.
-            </p>
-            <Textarea
-              value={declineReason}
-              onChange={(e) => setDeclineReason(e.target.value)}
-              placeholder='Reason (optional)'
-              rows={3}
-            />
-            <div className='mt-5 flex justify-end gap-3'>
-              <Button variant='outline' onClick={() => setDeclineOpen(false)}>
-                Go back
-              </Button>
-              <Button
-                onClick={decline}
-                disabled={submitting}
-                className='bg-red-600 text-white hover:bg-red-700'
-              >
-                {submitting ? (
-                  <Loader2 className='h-4 w-4 animate-spin' />
-                ) : (
-                  'Decline'
-                )}
-              </Button>
+      <Dialog open={declineOpen} onOpenChange={(open) => { if (!submitting) { setDeclineOpen(open); setActionError(''); } }}>
+        <DialogContent showCloseButton={false} className={cn(landingFontVariables, 'max-h-[85dvh] overflow-y-auto rounded-none border border-advisory-rule bg-white p-6 font-advisory-body text-sm leading-[1.75] text-ink ring-0 sm:max-w-[500px] min-[681px]:p-8')}
+          onEscapeKeyDown={(event) => { if (submitting) event.preventDefault(); }} onInteractOutside={(event) => { if (submitting) event.preventDefault(); }}>
+          <button type='button' aria-label='Close decline confirmation' disabled={submitting} onClick={() => { setDeclineOpen(false); setActionError(''); }} className='absolute top-4 right-4 flex size-10 items-center justify-center text-midnight hover:bg-canvas focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-gilt disabled:opacity-50'><X aria-hidden='true' className='size-4' /></button>
+          <DialogHeader className='pr-10'><DialogTitle className='font-advisory-heading text-[23px] leading-[1.4] font-bold text-midnight'>Decline this letter?</DialogTitle><DialogDescription className='text-sm leading-[1.75] text-ink'>Your broker will be notified. You can add a reason if you would like to.</DialogDescription></DialogHeader>
+          <form onSubmit={(event) => { event.preventDefault(); void decline(); }} className='flex flex-col gap-5'>
+            <div className='flex flex-col gap-2'><label htmlFor='decline-reason' className='text-sm font-medium text-midnight'>Reason (optional)</label><textarea id='decline-reason' rows={3} disabled={submitting} value={declineReason} onChange={(event) => setDeclineReason(event.target.value)} className='min-h-24 w-full resize-y rounded-none border border-advisory-input bg-white px-3 py-3 text-base text-midnight outline-none focus:border-gilt disabled:opacity-50 min-[681px]:text-sm' /></div>
+            {actionError && <p role='alert' className='m-0 text-sm leading-[1.75] text-red-800'>{actionError}</p>}
+            <div className='flex flex-wrap justify-end gap-3'>
+              <LandingButton variant='outline' size='compact' disabled={submitting} onClick={() => { setDeclineOpen(false); setActionError(''); }}>Go back</LandingButton>
+              <LandingButton type='submit' size='compact' disabled={submitting} className='border-red-800 bg-red-800 hover:bg-red-900'>{submitting && <Loader2 aria-hidden='true' className='size-4 animate-spin motion-reduce:animate-none' />}{submitting ? 'Declining…' : 'Decline letter'}</LandingButton>
             </div>
-          </div>
-        </div>
-      )}
-    </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </main>
   );
 }
 
-function Outcome({
-  icon,
-  title,
-  body,
-  tone = 'brand',
-}: {
-  icon: React.ReactNode;
-  title: string;
-  body: string;
-  tone?: 'brand' | 'neutral';
-}) {
+function Outcome({ icon, title, body, tone = 'brand' }: { icon: React.ReactNode; title: string; body: string; tone?: 'brand' | 'neutral' }) {
+  return <DocumentState title={title} description={body}><span aria-hidden='true' className={cn('order-first', tone === 'brand' ? 'text-emerald-800' : 'text-midnight')}>{icon}</span></DocumentState>;
+}
+
+function LetterSkeleton() {
   return (
-    <div className='flex min-h-screen items-center justify-center p-6'>
-      <div className='w-full max-w-md overflow-hidden rounded-none border border-border bg-card text-center'>
-        <div
-          className={`px-8 py-12 ${
-            tone === 'brand'
-              ? 'bg-linear-to-br from-primary to-secondary'
-              : 'bg-linear-to-br from-gray-500 to-gray-600'
-          }`}
-        >
-          <div className='mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-white/20'>
-            {icon}
-          </div>
-          <h2 className='text-2xl font-bold text-white'>{title}</h2>
-        </div>
-        <div className='p-8'>
-          <p className='text-sm leading-relaxed text-gray-600'>{body}</p>
-          <div className='mt-6 border-t border-gray-100 pt-6'>
-            <Image
-              src={BRAND.logo}
-              alt={BRAND.tradingName}
-              width={BRAND.logoWidth}
-              height={BRAND.logoHeight}
-              className='mx-auto h-9 w-auto'
-            />
-            <p className='mt-3 text-xs text-gray-400'>
-              {BRAND.email}
-            </p>
-          </div>
+    <main aria-busy='true' className='mx-auto w-full max-w-4xl px-4 pt-6 pb-64 min-[681px]:px-6 min-[681px]:pt-8'>
+      <p role='status' className='sr-only'>Loading your letter.</p>
+      <div aria-hidden='true' className='border border-advisory-rule bg-white'>
+        <div className='flex flex-wrap items-center justify-between gap-5 border-b border-advisory-rule px-5 py-6 min-[681px]:px-10'><div className='h-10 w-[220px] animate-pulse bg-canvas motion-reduce:animate-none' /><div className='h-16 w-48 bg-canvas' /></div>
+        <div className='flex flex-col gap-8 px-5 py-8 min-[681px]:px-10 min-[681px]:py-10'>
+          <h1 className='m-0 text-center font-advisory-heading text-[26px] leading-[1.4] font-bold text-midnight min-[681px]:text-[30px]'>Letter of Intent (Non-Binding Offer Letter)</h1>
+          {['The Business', 'Purchaser Details', 'Vendor Details'].map((title) => <section key={title} className='flex flex-col gap-5'><h2 className='m-0 font-advisory-heading text-[21px] leading-[1.5] font-bold text-midnight'>{title}</h2>{[0, 1].map((index) => <div key={index} className='flex flex-col gap-2'><div className='h-5 w-28 bg-canvas' /><div className='h-10 w-full animate-pulse bg-canvas/60 motion-reduce:animate-none' /></div>)}</section>)}
         </div>
       </div>
-    </div>
+      <div aria-hidden='true' className='fixed inset-x-0 bottom-0 border-t border-advisory-rule bg-white pb-[env(safe-area-inset-bottom)]'><div className='mx-auto flex w-full max-w-4xl flex-col gap-4 px-4 py-4 min-[681px]:px-6 lg:flex-row lg:items-center lg:justify-between'><div className='flex flex-1 flex-col gap-2'><div className='h-4 w-full max-w-md bg-canvas' /><div className='h-4 w-3/4 max-w-sm bg-canvas' /></div><div className='grid grid-cols-2 gap-3 lg:flex'><div className='h-10 bg-canvas lg:w-28' /><div className='h-10 bg-canvas lg:w-36' /></div></div></div>
+    </main>
   );
+}
+
+export default function PartyFormPage() {
+  const params = useParams<{ token: string }>();
+  return <PartyForm key={params.token} token={params.token} />;
 }

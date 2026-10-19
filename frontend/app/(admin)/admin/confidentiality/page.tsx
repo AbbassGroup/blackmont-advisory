@@ -1,22 +1,12 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
-import { Loader2, Download, Search } from 'lucide-react';
-
+import { useEffect, useMemo, useState } from 'react';
+import { Download, Loader2, Search } from 'lucide-react';
 import { apiClient } from '@/lib/api';
+import { cn } from '@/lib/utils';
 import { useAdminAuth } from '@/context/admin-auth-context';
-import DashboardLayout from '@/components/global/dashboard-layout';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { AdminPageLayout } from '@/components/admin/page-layout';
+import { LandingButton } from '@/components/landing/presentation';
 
 interface ConfidentialityPDF {
   filename: string;
@@ -30,200 +20,141 @@ interface ConfidentialityPDF {
   hasEnquiryData?: boolean;
 }
 
+const agreementName = (pdf: ConfidentialityPDF) => `${pdf.firstName || ''} ${pdf.lastName || ''}`.trim() || 'Unknown';
+
+function agreementDate(value?: string) {
+  if (!value) return '—';
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? '—' : date.toLocaleDateString('en-AU', { year: 'numeric', month: 'short', day: '2-digit' });
+}
+
 export default function AdminConfidentialityPage() {
   const { user } = useAdminAuth();
   const [pdfs, setPdfs] = useState<ConfidentialityPDF[]>([]);
-
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [loadError, setLoadError] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+  const [search, setSearch] = useState('');
+  const [downloading, setDownloading] = useState<Set<string>>(new Set());
+  const [downloadError, setDownloadError] = useState('');
+  const [downloadStatus, setDownloadStatus] = useState('');
 
   useEffect(() => {
-    fetchPdfs();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.token]);
-
-  const fetchPdfs = async () => {
     if (!user?.token) return;
-    try {
-      const res = await apiClient.get('/api/confidentiality/list', {
-        headers: { Authorization: `Bearer ${user.token}` },
-      });
-      setPdfs(res.data);
-    } catch (err) {
-      console.error('Failed to load confidentiality agreements', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    let active = true;
+    setLoading(true);
+    setLoadError(false);
+    apiClient.get<ConfidentialityPDF[]>('/api/confidentiality/list', {
+      headers: { Authorization: `Bearer ${user.token}` },
+    })
+      .then(({ data }) => { if (active) setPdfs(Array.isArray(data) ? data : []); })
+      .catch(() => { if (active) setLoadError(true); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [user?.token, attempt]);
 
   const handleDownload = async (pdf: ConfidentialityPDF) => {
+    if (!user?.token || downloading.has(pdf.filename)) return;
+    setDownloadError('');
+    setDownloadStatus('');
+    setDownloading((previous) => new Set(previous).add(pdf.filename));
     try {
-      const urlPath = `/api/confidentiality/download/${encodeURIComponent(
-        pdf.filename,
-      )}`;
-      const res = await apiClient.get(urlPath, {
-        responseType: 'blob', // Crucial for file downloads
-        headers: { Authorization: `Bearer ${user?.token}` },
+      const { data } = await apiClient.get<Blob>(`/api/confidentiality/download/${encodeURIComponent(pdf.filename)}`, {
+        responseType: 'blob',
+        headers: { Authorization: `Bearer ${user.token}` },
       });
-      const url = window.URL.createObjectURL(new Blob([res.data]));
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = pdf.filename || 'Confidentiality_Agreement.pdf';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (e) {
-      console.error('Download failed:', e);
-      alert('Failed to download the PDF.');
+      const url = URL.createObjectURL(data);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = pdf.filename || 'Confidentiality_Agreement.pdf';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      setDownloadStatus(`Download started for ${pdf.filename}.`);
+    } catch {
+      setDownloadError(`We couldn't download ${pdf.filename}. Please try the Download button again.`);
+    } finally {
+      setDownloading((previous) => { const next = new Set(previous); next.delete(pdf.filename); return next; });
     }
   };
 
-  const filteredPdfs = useMemo(() => {
-    if (!searchTerm) return pdfs;
-    const lower = searchTerm.toLowerCase();
-    return pdfs.filter((pdf) => {
-      return (
-        pdf.filename?.toLowerCase().includes(lower) ||
-        pdf.firstName?.toLowerCase().includes(lower) ||
-        pdf.lastName?.toLowerCase().includes(lower) ||
-        pdf.email?.toLowerCase().includes(lower) ||
-        pdf.phone?.toLowerCase().includes(lower) ||
-        pdf.businessTitle?.toLowerCase().includes(lower)
-      );
-    });
-  }, [pdfs, searchTerm]);
+  const query = search.trim().toLowerCase();
+  const filteredPdfs = useMemo(() => pdfs.filter((pdf) =>
+    [pdf.filename, agreementName(pdf), pdf.email, pdf.phone, pdf.businessTitle].some((value) => (value || '').toLowerCase().includes(query)),
+  ), [pdfs, query]);
 
   return (
-    <DashboardLayout
-      title='Confidentiality Agreements'
-      description='Manage and download signed NDAs and compliance agreements.'
-    >
-      <div className='bg-card border border-border p-4 mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between'>
-        <div className='relative max-w-lg w-full'>
-          <Search className='absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60' />
-          <Input
-            placeholder='Search agreements...'
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className='pl-9 rounded-none border-secondary/15 bg-background shadow-none focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-accent/15'
-          />
+    <AdminPageLayout title='Confidentiality Agreements' description='Manage and download signed NDAs and compliance agreements.'>
+      {downloadError && <p role='alert' className='m-0 border border-red-200 bg-red-50 px-5 py-4 text-sm leading-[1.75] text-red-800'>{downloadError}</p>}
+      <span role='status' className='sr-only'>{downloadStatus}</span>
+      <section aria-label='Signed confidentiality agreements' aria-busy={loading} className='min-w-0 border border-advisory-rule bg-white'>
+        <div className='flex flex-col gap-4 border-b border-advisory-rule p-5 min-[681px]:flex-row min-[681px]:items-center min-[681px]:justify-between min-[681px]:p-6'>
+          <div className='relative w-full min-w-0 min-[681px]:max-w-md'>
+            <label htmlFor='agreement-search' className='sr-only'>Search agreements by name, file, email, phone or business</label>
+            <Search aria-hidden='true' className='pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-ink/60' />
+            <input id='agreement-search' type='search' value={search} onChange={(event) => setSearch(event.target.value)} placeholder='Search agreements…' className='h-10 w-full min-w-0 rounded-none border border-advisory-input bg-white py-2 pr-3 pl-10 text-base text-midnight outline-none placeholder:text-ink/65 focus:border-gilt min-[681px]:text-sm' />
+          </div>
+          <p aria-live='polite' className='m-0 shrink-0 text-sm leading-[1.6] text-ink'>{loading ? 'Loading agreements…' : loadError ? 'List unavailable' : query ? `${filteredPdfs.length} of ${pdfs.length} agreements` : `${pdfs.length} ${pdfs.length === 1 ? 'agreement' : 'agreements'}`}</p>
         </div>
-        <p className='text-sm text-muted-foreground shrink-0'>
-          Showing{' '}
-          <span className='font-semibold text-secondary'>
-            {filteredPdfs.length}
-          </span>{' '}
-          of {pdfs.length}
-        </p>
-      </div>
 
-      <div className='bg-card border border-border overflow-hidden'>
-        {loading ? (
-          <div className='flex items-center justify-center p-24'>
-            <Loader2 className='w-8 h-8 animate-spin text-accent' />
+        {loadError && !loading ? (
+          <div role='alert' className='p-6 min-[681px]:p-8'>
+            <h2 className='m-0 text-base font-semibold text-midnight'>We couldn&apos;t load your agreements.</h2>
+            <p className='mt-2 mb-5 text-sm leading-[1.75] text-ink'>Please try again to refresh the list.</p>
+            <LandingButton variant='outline' size='compact' onClick={() => setAttempt((value) => value + 1)}>Try again</LandingButton>
+          </div>
+        ) : !loading && filteredPdfs.length === 0 ? (
+          <div className='p-6 min-[681px]:p-8'>
+            <h2 className='m-0 text-base font-semibold text-midnight'>{query ? 'No matching agreements' : 'No signed agreements yet'}</h2>
+            <p className='mt-2 mb-0 text-sm leading-[1.75] text-ink'>{query ? 'Try another name, filename, email address, phone number or business.' : 'Signed confidentiality agreements will appear here, ready to download.'}</p>
+            {query && <LandingButton variant='outline' size='compact' className='mt-5' onClick={() => setSearch('')}>Clear search</LandingButton>}
           </div>
         ) : (
-          <Table>
-            <TableHeader className='bg-muted/60'>
-              <TableRow>
-                <TableHead className='font-semibold'>Name & File</TableHead>
-                <TableHead className='font-semibold'>Email</TableHead>
-                <TableHead className='font-semibold'>Phone</TableHead>
-                <TableHead className='font-semibold'>Business</TableHead>
-                <TableHead className='font-semibold'>Created</TableHead>
-                <TableHead className='font-semibold'>Size</TableHead>
-                <TableHead className='font-semibold text-right'>
-                  Action
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredPdfs.length === 0 ? (
-                <TableRow>
-                  <TableCell
-                    colSpan={7}
-                    className='text-center py-12 text-muted-foreground'
-                  >
-                    {searchTerm
-                      ? 'No confidentiality agreements found matching your search.'
-                      : 'No confidentiality agreements found.'}
-                  </TableCell>
-                </TableRow>
-              ) : (
-                filteredPdfs.map((pdf) => {
-                  const name =
-                    pdf.firstName || pdf.lastName
-                      ? `${pdf.firstName || ''} ${pdf.lastName || ''}`.trim()
-                      : 'Unknown';
-
+          <div role='region' aria-label='Confidentiality agreements table' tabIndex={0} className='min-w-0 overflow-x-auto focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-gilt'>
+            <table className='w-full min-w-[1180px] text-left text-sm leading-[1.65]'>
+              <caption className='sr-only'>Signed agreement contact information, business, filename, creation date, file size and download action.</caption>
+              <AgreementsHead />
+              <tbody className='divide-y divide-advisory-rule'>
+                {loading ? [0, 1, 2, 3, 4].map((row) => <tr key={row} aria-hidden='true'>
+                  <td className='px-5 py-4'><div className='h-4 w-32 animate-pulse bg-canvas motion-reduce:animate-none' /><div className='mt-2 h-4 w-44 animate-pulse bg-canvas motion-reduce:animate-none' /></td>
+                  {[0, 1, 2, 3, 4].map((column) => <td key={column} className='px-5 py-4'><div className='h-4 w-20 animate-pulse bg-canvas motion-reduce:animate-none' /></td>)}
+                  <td className='px-5 py-4'><div className='ml-auto h-10 w-32 animate-pulse bg-canvas motion-reduce:animate-none' /></td>
+                </tr>) : filteredPdfs.map((pdf) => {
+                  const name = agreementName(pdf);
+                  const busy = downloading.has(pdf.filename);
                   return (
-                    <TableRow
-                      key={pdf.filename}
-                      className='hover:bg-muted/50 transition-colors'
-                    >
-                      <TableCell>
-                        <div>
-                          <p className='font-medium text-secondary flex items-center gap-2'>
-                            {name}
-                            {!pdf.hasEnquiryData && (
-                              <Badge
-                                variant='outline'
-                                className='text-[10px] h-5 bg-orange-50 text-orange-600 border-orange-200'
-                              >
-                                Legacy
-                              </Badge>
-                            )}
-                          </p>
-                          <p
-                            className='text-xs text-muted-foreground/60 mt-1 max-w-[200px] truncate'
-                            title={pdf.filename}
-                          >
-                            {pdf.filename}
-                          </p>
+                    <tr key={pdf.filename} className='hover:bg-canvas/50'>
+                      <td className='w-64 px-5 py-4 align-top'>
+                        <div className='flex flex-wrap items-center gap-2'>
+                          <span className='font-semibold text-midnight'>{name}</span>
+                          {!pdf.hasEnquiryData && <span className='bg-canvas px-2 py-0.5 text-xs font-medium text-ink'>Legacy</span>}
                         </div>
-                      </TableCell>
-                      <TableCell className='text-muted-foreground'>
-                        {pdf.email || '—'}
-                      </TableCell>
-                      <TableCell className='text-muted-foreground'>
-                        {pdf.phone || '—'}
-                      </TableCell>
-                      <TableCell className='text-muted-foreground font-medium max-w-[200px] truncate'>
-                        {pdf.businessTitle || '—'}
-                      </TableCell>
-                      <TableCell className='text-muted-foreground text-sm'>
-                        {pdf.createdAt
-                          ? new Date(pdf.createdAt).toLocaleString(undefined, {
-                              year: 'numeric',
-                              month: 'short',
-                              day: 'numeric',
-                            })
-                          : '—'}
-                      </TableCell>
-                      <TableCell className='text-muted-foreground text-sm whitespace-nowrap'>
-                        {typeof pdf.size === 'number'
-                          ? `${(pdf.size / 1024).toFixed(2)} KB`
-                          : '—'}
-                      </TableCell>
-                      <TableCell className='text-right'>
-                        <Button
-                          variant='outline'
-                          size='sm'
-                          className='gap-2 rounded-none border-accent/30 text-accent transition-colors hover:bg-accent hover:text-primary'
-                          onClick={() => handleDownload(pdf)}
-                        >
-                          <Download className='w-4 h-4' /> Download
-                        </Button>
-                      </TableCell>
-                    </TableRow>
+                        <p className='mt-1 mb-0 break-all text-xs leading-[1.7] text-ink'>{pdf.filename}</p>
+                      </td>
+                      <td className='break-all px-5 py-4 align-top text-ink'>{pdf.email || '—'}</td>
+                      <td className='px-5 py-4 align-top whitespace-nowrap text-ink'>{pdf.phone || '—'}</td>
+                      <td className='min-w-36 px-5 py-4 align-top text-ink'>{pdf.businessTitle || '—'}</td>
+                      <td className='px-5 py-4 align-top whitespace-nowrap text-ink'>{agreementDate(pdf.createdAt)}</td>
+                      <td className='px-5 py-4 align-top whitespace-nowrap tabular-nums text-ink'>{typeof pdf.size === 'number' ? `${(pdf.size / 1024).toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} KB` : '—'}</td>
+                      <td className='px-5 py-4 align-top text-right'>
+                        <LandingButton size='compact' variant='outline' disabled={busy} aria-label={`Download ${pdf.filename}`} className={cn('min-w-32 whitespace-nowrap', busy && 'cursor-wait')} onClick={() => void handleDownload(pdf)}>
+                          {busy ? <Loader2 aria-hidden='true' className='size-4 animate-spin motion-reduce:animate-none' /> : <Download aria-hidden='true' className='size-4' />}
+                          {busy ? 'Downloading…' : 'Download'}
+                        </LandingButton>
+                      </td>
+                    </tr>
                   );
-                })
-              )}
-            </TableBody>
-          </Table>
+                })}
+              </tbody>
+            </table>
+          </div>
         )}
-      </div>
-    </DashboardLayout>
+      </section>
+    </AdminPageLayout>
   );
+}
+
+function AgreementsHead() {
+  return <thead className='border-b border-advisory-rule bg-canvas text-midnight'><tr>{['Name & file', 'Email', 'Phone', 'Business', 'Created', 'Size', 'Action'].map((column) => <th key={column} scope='col' className={cn('px-5 py-4 font-semibold', column === 'Action' && 'text-right')}>{column}</th>)}</tr></thead>;
 }

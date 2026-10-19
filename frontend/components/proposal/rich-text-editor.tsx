@@ -52,25 +52,27 @@ export function RichTextEditor({
 
   return (
     <div>
-      <div className='flex items-center gap-0.5 border border-border border-b-0 rounded-t-lg bg-muted px-1 py-1'>
+      <div role='group' aria-label='Text formatting' className='flex flex-wrap items-center gap-1 border border-advisory-rule border-b-0 bg-canvas p-1 font-advisory-body'>
         {tools.map((tool) => (
           <button
             key={tool.title}
             type='button'
             onClick={tool.action}
             title={tool.title}
-            className={`p-1.5 rounded transition-colors ${
+            aria-label={tool.title}
+            aria-pressed={tool.active}
+            className={`inline-flex size-10 cursor-pointer items-center justify-center border border-transparent transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gilt motion-reduce:transition-none ${
               tool.active
-                ? 'bg-accent/15 text-accent'
-                : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                ? 'bg-midnight text-white'
+                : 'text-midnight hover:border-advisory-rule hover:bg-white'
             }`}
           >
-            <tool.icon className='w-4 h-4' />
+            <tool.icon aria-hidden='true' className='size-4' />
           </button>
         ))}
       </div>
       <div
-        className='border border-border rounded-b-lg bg-card min-h-[120px] p-3 focus-within:ring-2 focus-within:ring-accent/15 focus-within:border-accent transition-colors [&_.ProseMirror]:outline-none [&_.ProseMirror]:min-h-[96px]'
+        className='min-h-[120px] border border-advisory-rule bg-white p-3 transition-colors duration-150 focus-within:border-gilt motion-reduce:transition-none [&_.ProseMirror]:min-h-[96px] [&_.ProseMirror]:outline-none'
         style={{
           // placeholder styling
           // @ts-expect-error CSS custom property

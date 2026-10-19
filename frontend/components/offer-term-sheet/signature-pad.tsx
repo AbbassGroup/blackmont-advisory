@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react';
 import SignatureCanvas from 'react-signature-canvas';
 import { Eraser, PenLine, Type } from 'lucide-react';
-import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 
 const PAD_HEIGHT = 180;
@@ -14,9 +13,15 @@ const TYPED_FONT = "56px 'Brush Script MT', 'Segoe Script', 'Apple Chancery', cu
 export function SignaturePad({
   onChange,
   invalid = false,
+  id,
+  labelledBy,
+  describedBy,
 }: {
   onChange: (dataUrl: string) => void;
   invalid?: boolean;
+  id?: string;
+  labelledBy?: string;
+  describedBy?: string;
 }) {
   const padRef = useRef<SignatureCanvas | null>(null);
   const [mode, setMode] = useState<'draw' | 'type'>('draw');
@@ -70,9 +75,9 @@ export function SignaturePad({
   };
 
   return (
-    <div className='space-y-2.5'>
+    <div className='flex min-w-0 flex-col gap-3'>
       <div className='flex flex-wrap items-center justify-between gap-2'>
-        <div className='flex gap-1 rounded-md border border-gray-200 bg-gray-50 p-1'>
+        <div role='group' aria-label='Signature method' className='flex gap-0.5 border border-advisory-rule bg-canvas p-0.5'>
           <ModeButton active={mode === 'draw'} onClick={() => switchMode('draw')}>
             <PenLine className='h-3.5 w-3.5' /> Draw
           </ModeButton>
@@ -84,28 +89,25 @@ export function SignaturePad({
           type='button'
           onClick={clear}
           disabled={empty}
-          className='flex items-center gap-1.5 text-sm text-gray-500 transition-colors hover:text-gray-800 disabled:opacity-40'
+          className='flex min-h-8 items-center gap-2 px-2 text-xs font-medium text-midnight hover:bg-canvas focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-gilt disabled:cursor-not-allowed disabled:opacity-40'
         >
           <Eraser className='h-3.5 w-3.5' /> Clear
         </button>
       </div>
 
       {mode === 'type' && (
-        <Input
-          value={typed}
-          placeholder='Type your full name'
-          onChange={(e) => {
-            setTyped(e.target.value);
-            paintTyped(e.target.value);
-          }}
-          className='border-gray-200'
-        />
+        <div className='flex flex-col gap-2'>
+          <label htmlFor={(id || 'signature') + '-typed'} className='text-sm font-medium text-midnight'>Type your full name</label>
+          <input id={(id || 'signature') + '-typed'} value={typed} placeholder='Type your full name'
+            onChange={(event) => { setTyped(event.target.value); paintTyped(event.target.value); }}
+            className='h-10 w-full min-w-0 rounded-none border border-advisory-input bg-white px-3 text-base text-midnight outline-none placeholder:text-ink/65 focus:border-gilt min-[681px]:text-sm' />
+        </div>
       )}
 
       <div
         className={cn(
-          'relative rounded-md border bg-white transition-colors',
-          invalid ? 'border-red-400' : 'border-gray-200',
+          'relative border bg-white transition-colors duration-150 focus-within:border-gilt motion-reduce:transition-none',
+          invalid ? 'border-red-800' : 'border-advisory-input',
         )}
       >
         <SignatureCanvas
@@ -116,16 +118,22 @@ export function SignaturePad({
           velocityFilterWeight={0.7}
           onEnd={handleEnd}
           canvasProps={{
+            id,
+            tabIndex: 0,
+            'aria-label': labelledBy ? undefined : 'Signature',
+            'aria-labelledby': labelledBy,
+            'aria-describedby': describedBy,
+            'aria-invalid': invalid,
             className: cn(
-              'w-full rounded-md',
+              'w-full outline-none',
               mode === 'draw' ? 'cursor-crosshair' : 'pointer-events-none',
             ),
             style: { height: PAD_HEIGHT, touchAction: 'none' },
           }}
         />
-        <span className='pointer-events-none absolute inset-x-8 bottom-8 border-b border-dashed border-gray-300' />
+        <span className='pointer-events-none absolute inset-x-8 bottom-8 border-b border-dashed border-advisory-input' />
         {empty && (
-          <span className='pointer-events-none absolute inset-x-0 bottom-3 text-center text-xs text-gray-400'>
+          <span className='pointer-events-none absolute inset-x-0 bottom-3 px-3 text-center text-xs text-ink/70'>
             {mode === 'draw'
               ? 'Sign above with your mouse or finger'
               : 'Your typed name appears here'}
@@ -149,11 +157,12 @@ function ModeButton({
     <button
       type='button'
       onClick={onClick}
+      aria-pressed={active}
       className={cn(
-        'flex items-center gap-1.5 rounded-md px-3 py-1 text-sm font-medium transition-colors',
+        'flex min-h-8 items-center gap-2 px-3 py-1 text-xs font-semibold transition-colors duration-150 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-gilt motion-reduce:transition-none',
         active
-          ? 'bg-white text-accent'
-          : 'text-gray-500 hover:text-gray-800',
+          ? 'bg-midnight text-white'
+          : 'text-ink hover:bg-white hover:text-midnight',
       )}
     >
       {children}

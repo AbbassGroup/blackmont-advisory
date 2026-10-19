@@ -2,99 +2,71 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { FileText, Loader2 } from 'lucide-react';
+import Image from 'next/image';
+import { ArrowUpRight, FileText } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { useAcquirerAuth } from '@/context/acquirer-auth-context';
 import { DEFAULT_BANNER_IMAGE } from '@/components/im';
-import Image from 'next/image';
+import { AdminPageLayout } from '@/components/admin/page-layout';
+import { LandingButton } from '@/components/landing/presentation';
 
-type ReportCard = {
-  _id: string;
-  businessName: string;
-  bannerImage: string | null;
-  updatedAt: string;
-};
+type ReportCard = { _id: string; businessName: string; bannerImage: string | null; updatedAt: string };
+
+function reportDate(value: string) {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? '' : date.toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' });
+}
 
 export default function AcquisitionDashboardPage() {
   const { token } = useAcquirerAuth();
   const [reports, setReports] = useState<ReportCard[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     if (!token) return;
     let active = true;
-    const load = async () => {
-      setLoading(true);
-      try {
-        const { data } = await apiClient.get('/api/acquisition/reports');
-        if (active) setReports(Array.isArray(data) ? data : []);
-      } catch (error) {
-        console.error('Failed to load acquisition reports:', error);
-        if (active) setReports([]);
-      } finally {
-        if (active) setLoading(false);
-      }
-    };
-    load();
-    return () => {
-      active = false;
-    };
-  }, [token]);
+    setLoading(true);
+    setLoadError(false);
+    apiClient.get('/api/acquisition/reports')
+      .then(({ data }) => { if (active) setReports(Array.isArray(data) ? data : []); })
+      .catch(() => { if (active) setLoadError(true); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [token, attempt]);
 
   return (
-    <div className='mx-auto max-w-6xl space-y-6'>
-      <div>
-        <h1 className='text-2xl font-bold text-secondary'>
-          Your Acquisition Reports
-        </h1>
-        <p className='mt-0.5 text-sm text-muted-foreground'>
-          Select a report to view it.
-        </p>
-      </div>
-
-      {loading ? (
-        <div className='flex items-center justify-center border border-border bg-card p-16'>
-          <Loader2 className='h-8 w-8 animate-spin text-accent' />
-        </div>
-      ) : reports.length === 0 ? (
-        <div className='flex flex-col items-center justify-center border border-border bg-card p-16 text-center'>
-          <FileText className='mb-4 h-12 w-12 text-border' />
-          <h3 className='text-lg font-semibold text-secondary'>
-            No reports yet
-          </h3>
-          <p className='mt-1 text-muted-foreground'>
-            Your acquisition reports will appear here once they are available.
-          </p>
-        </div>
+    <AdminPageLayout title='Your acquisition reports' description='Select a report to view it.'>
+      {loadError && !loading ? (
+        <section role='alert' className='border border-advisory-rule bg-white p-6 min-[681px]:p-8'><h2 className='m-0 text-base font-semibold text-midnight'>We couldn&apos;t load your reports.</h2><p className='mt-2 mb-5 text-sm leading-[1.75]'>Please try again to refresh the list.</p><LandingButton variant='outline' size='compact' onClick={() => setAttempt((value) => value + 1)}>Try again</LandingButton></section>
+      ) : !loading && reports.length === 0 ? (
+        <section className='flex flex-col gap-3 border border-advisory-rule bg-white p-6 min-[681px]:p-8'><FileText aria-hidden='true' className='size-6 text-ink' /><h2 className='m-0 font-advisory-heading text-[23px] leading-[1.4] font-bold text-midnight'>No reports yet</h2><p className='m-0 text-sm leading-[1.75]'>Your acquisition reports will appear here once they are available.</p></section>
       ) : (
-        <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
-          {reports.map((report) => (
-            <Link
-              key={report._id}
-              href={`/acquisition-report/${report._id}`}
-              className='group flex flex-col overflow-hidden border border-border bg-card transition-all duration-300 hover:border-accent/40 hover:shadow-md'
-            >
-              <div className='relative aspect-16/10 w-full overflow-hidden bg-muted'>
-                <Image
-                  src={report.bannerImage || DEFAULT_BANNER_IMAGE}
-                  alt={report.businessName}
-                  width={600}
-                  height={400}
-                  loading='lazy'
-                  decoding='async'
-                  className='h-full w-full object-cover transition-transform duration-500 group-hover:scale-105'
-                />
+        <section aria-label='Acquisition reports' aria-busy={loading} className='flex min-w-0 flex-col gap-5'>
+          <p role='status' className='m-0 text-sm'>{loading ? 'Loading reports…' : `${reports.length} ${reports.length === 1 ? 'report' : 'reports'} available`}</p>
+          <div className='grid min-w-0 grid-cols-1 gap-6 min-[681px]:grid-cols-2 min-[1121px]:grid-cols-3'>
+            {loading ? [0, 1, 2].map((index) => (
+              <div key={index} aria-hidden='true' className='flex min-w-0 flex-col border border-advisory-rule bg-white'>
+                <div className='aspect-[16/10] w-full animate-pulse bg-canvas motion-reduce:animate-none' />
+                <div className='flex flex-1 flex-col gap-3 p-5'><div className='h-6 w-3/4 bg-canvas' /><div className='h-4 w-36 bg-canvas' /></div>
+                <div className='border-t border-advisory-rule px-5 py-4'><div className='h-5 w-28 bg-canvas' /></div>
               </div>
-              <div className='flex flex-1 items-start justify-between gap-2 p-4'>
-                <h3 className='font-semibold leading-snug text-secondary transition-colors group-hover:text-accent'>
-                  {report.businessName}
-                </h3>
-                <FileText className='mt-0.5 h-5 w-5 shrink-0 text-accent' />
-              </div>
-            </Link>
-          ))}
-        </div>
+            )) : reports.map((report) => (
+              <Link key={report._id} href={`/acquisition-report/${report._id}`} className='group flex min-w-0 flex-col border border-advisory-rule bg-white text-midnight transition-colors duration-150 hover:border-gilt focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none'>
+                <ReportCover report={report} />
+                <div className='flex flex-1 flex-col gap-3 p-5'><h2 className='m-0 font-advisory-heading text-[21px] leading-[1.5] font-bold'>{report.businessName || 'Acquisition report'}</h2>{reportDate(report.updatedAt) && <p className='m-0 text-xs leading-[1.75] text-ink'>Updated {reportDate(report.updatedAt)}</p>}</div>
+                <div className='flex items-center justify-between gap-3 border-t border-advisory-rule px-5 py-4 text-sm font-semibold'><span>View report</span><ArrowUpRight aria-hidden='true' className='size-4' /></div>
+              </Link>
+            ))}
+          </div>
+        </section>
       )}
-    </div>
+    </AdminPageLayout>
   );
+}
+
+function ReportCover({ report }: { report: ReportCard }) {
+  const [failed, setFailed] = useState(false);
+  return <div className='relative flex aspect-[16/10] w-full items-center justify-center overflow-hidden bg-canvas'>{failed ? <FileText aria-hidden='true' className='size-8 text-ink/60' /> : <Image unoptimized src={report.bannerImage || DEFAULT_BANNER_IMAGE} alt={report.businessName || 'Acquisition report'} fill sizes='(min-width:1121px) 33vw, (min-width:681px) 50vw, 100vw' onError={() => setFailed(true)} className='object-cover' />}</div>;
 }

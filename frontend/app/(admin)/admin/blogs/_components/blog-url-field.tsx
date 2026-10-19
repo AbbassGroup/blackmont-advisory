@@ -87,45 +87,27 @@ export default function BlogUrlField({
     };
   }, [trimmed, currentId, onAvailabilityChange, onCheckingChange]);
 
+  const message = !isValid ? 'Use lowercase letters, numbers and single hyphens only.'
+    : status === 'taken' ? 'This URL is already used by another blog.'
+    : status === 'available' ? 'This URL is available.'
+    : status === 'checking' ? 'Checking URL availability…'
+    : status === 'error' ? 'Availability could not be checked. You can still try saving.'
+    : 'Leave blank to generate a URL from the title.';
+
   return (
-    <div className='space-y-1.5'>
-      <div className='flex items-center border border-border bg-background focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/15'>
-        <span className='shrink-0 border-r border-border px-3 py-2.5 text-xs text-muted-foreground'>
-          /resources/
-        </span>
-        <input
-          type='text'
-          value={url}
-          disabled={disabled}
-          onChange={(e) => setUrl(e.target.value)}
-          placeholder='how-to-sell-a-business'
-          className='h-11 w-full bg-transparent px-3 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-60'
-        />
-        <span className='flex w-9 shrink-0 items-center justify-center'>
-          {status === 'checking' && (
-            <Loader2 className='h-4 w-4 animate-spin text-muted-foreground' />
-          )}
-          {status === 'available' && <Check className='h-4 w-4 text-emerald-600' />}
-          {status === 'taken' && <TriangleAlert className='h-4 w-4 text-red-500' />}
+    <div className='flex min-w-0 flex-col gap-2'>
+      <div className='flex h-10 min-w-0 items-center border border-advisory-input bg-white focus-within:border-gilt'>
+        <span aria-hidden='true' className='flex h-full shrink-0 items-center border-r border-advisory-rule bg-canvas px-3 text-xs text-ink'>/resources/</span>
+        <input id='blog-url' type='text' value={url} disabled={disabled} onChange={(event) => setUrl(event.target.value)}
+          aria-describedby='blog-url-status' aria-invalid={!isValid || status === 'taken'} autoCapitalize='none' spellCheck={false}
+          placeholder='how-to-sell-a-business' className='h-full w-full min-w-0 bg-transparent px-3 text-base text-midnight outline-none placeholder:text-ink/65 disabled:cursor-not-allowed disabled:opacity-50 min-[681px]:text-sm' />
+        <span aria-hidden='true' className='flex w-9 shrink-0 items-center justify-center'>
+          {status === 'checking' && <Loader2 className='size-4 animate-spin text-ink motion-reduce:animate-none' />}
+          {status === 'available' && <Check className='size-4 text-emerald-800' />}
+          {(status === 'taken' || !isValid) && <TriangleAlert className='size-4 text-red-800' />}
         </span>
       </div>
-
-      {!isValid && (
-        <p className='text-xs text-red-500'>
-          Use lowercase letters, numbers and single hyphens only.
-        </p>
-      )}
-      {isValid && status === 'taken' && (
-        <p className='text-xs text-red-500'>This URL is already used by another blog.</p>
-      )}
-      {isValid && status === 'available' && (
-        <p className='text-xs text-emerald-600'>This URL is available.</p>
-      )}
-      {isValid && status === 'idle' && !trimmed && (
-        <p className='text-xs text-muted-foreground'>
-          Leave blank to generate one from the title.
-        </p>
-      )}
+      <p id='blog-url-status' aria-live='polite' className={`m-0 min-h-5 text-xs leading-[1.75] ${!isValid || status === 'taken' ? 'text-red-800' : status === 'available' ? 'text-emerald-800' : 'text-ink'}`}>{message}</p>
     </div>
   );
 }

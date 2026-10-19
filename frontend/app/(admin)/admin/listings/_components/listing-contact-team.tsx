@@ -1,90 +1,26 @@
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { MultiSelectCombobox } from './multi-select-combobox';
 import { BROKERS } from '@/lib/data/brokers-list';
+import { ListingSection, ListingField, ListingInput } from './form-presentation';
 
 interface ContactTeamProps {
-  contactName: string;
-  setContactName: (v: string) => void;
-  contactPhone: string;
-  setContactPhone: (v: string) => void;
-  contactEmail: string;
-  setContactEmail: (v: string) => void;
-  selectedBrokers: string[];
-  setSelectedBrokers: (v: string[]) => void;
+  contactName: string; setContactName: (value: string) => void;
+  contactPhone: string; setContactPhone: (value: string) => void;
+  contactEmail: string; setContactEmail: (value: string) => void;
+  selectedBrokers: string[]; setSelectedBrokers: (value: string[]) => void;
   errors?: Record<string, string>;
 }
 
-export function ListingContactTeam({
-  contactName,
-  setContactName,
-  contactPhone,
-  setContactPhone,
-  contactEmail,
-  setContactEmail,
-  selectedBrokers,
-  setSelectedBrokers,
-  errors = {},
-}: ContactTeamProps) {
+export function ListingContactTeam({ contactName, setContactName, contactPhone, setContactPhone, contactEmail, setContactEmail, selectedBrokers, setSelectedBrokers, errors = {} }: ContactTeamProps) {
   return (
-    <div className='border border-border bg-card p-6 space-y-6'>
-      <div className='flex items-center gap-2 border-b border-border pb-4 mb-4'>
-        <h2 className='text-lg font-semibold text-secondary'>Contact & Team</h2>
+    <ListingSection id='contact-team' title='Contact & team'>
+      <div className='grid gap-6 min-[681px]:grid-cols-2 min-[1121px]:grid-cols-3'>
+        <ListingField id='contactName' label='Contact name'><ListingInput id='contactName' name='contactName' value={contactName} onChange={(event) => setContactName(event.target.value)} placeholder='John Doe' /></ListingField>
+        <ListingField id='contactPhone' label='Contact phone'><ListingInput id='contactPhone' name='contactPhone' type='tel' value={contactPhone} onChange={(event) => setContactPhone(event.target.value)} placeholder='0400 000 000' /></ListingField>
+        <ListingField id='contactEmail' label='Contact email'><ListingInput id='contactEmail' name='contactEmail' type='email' value={contactEmail} onChange={(event) => setContactEmail(event.target.value)} placeholder='john@example.com' /></ListingField>
       </div>
-
-      <div className='grid grid-cols-1 md:grid-cols-3 gap-6 mb-8'>
-        <div className='space-y-2'>
-          <Label htmlFor='contactName'>Contact Name</Label>
-          <Input
-            id='contactName'
-            name='contactName'
-            value={contactName}
-            onChange={(e) => setContactName(e.target.value)}
-            placeholder='John Doe'
-          />
-        </div>
-        <div className='space-y-2'>
-          <Label htmlFor='contactPhone'>Contact Phone</Label>
-          <Input
-            id='contactPhone'
-            name='contactPhone'
-            value={contactPhone}
-            onChange={(e) => setContactPhone(e.target.value)}
-            placeholder='0400 000 000'
-          />
-        </div>
-        <div className='space-y-2'>
-          <Label htmlFor='contactEmail'>Contact Email</Label>
-          <Input
-            id='contactEmail'
-            name='contactEmail'
-            value={contactEmail}
-            onChange={(e) => setContactEmail(e.target.value)}
-            placeholder='john@example.com'
-          />
-        </div>
-      </div>
-
-      <div className='space-y-4 max-w-2xl'>
-        <Label className={errors.brokers ? 'text-red-500' : ''}>
-          Assigned Brokers <span className='text-red-500'>*</span>
-        </Label>
-        <MultiSelectCombobox
-          options={BROKERS.map((b) => ({
-            label: b.name,
-            value: b.email,
-            description: b.email,
-          }))}
-          selectedValues={selectedBrokers}
-          onChange={setSelectedBrokers}
-          hasError={!!errors.brokers}
-          placeholder='Select brokers...'
-          emptyText='No brokers found.'
-        />
-        {errors.brokers && (
-          <p className='text-sm text-red-500'>{errors.brokers}</p>
-        )}
-      </div>
-    </div>
+      <ListingField id='brokers' label='Assigned brokers' required error={errors.brokers}>
+        <MultiSelectCombobox id='brokers' options={BROKERS.map((broker) => ({ label: broker.name, value: broker.email, description: broker.email }))} selectedValues={selectedBrokers} onChange={setSelectedBrokers} hasError={Boolean(errors.brokers)} placeholder='Select brokers…' emptyText='No brokers found.' />
+      </ListingField>
+    </ListingSection>
   );
 }

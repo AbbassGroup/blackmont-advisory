@@ -1,22 +1,13 @@
 'use client';
 
-import {
-  Check,
-  CloudUpload,
-  Loader2,
-  AlertTriangle,
-  RotateCw,
-} from 'lucide-react';
+import { Check, CloudUpload, Loader2, AlertTriangle, RotateCw } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import type { SaveState } from '@/hooks/use-autosave';
+import { LandingButton } from '@/components/landing/presentation';
 
 export type { SaveState };
 
-/**
- * Shows where the document stands, not how the last request went. "Saved" only
- * shows when nothing is outstanding, and a failure sticks around until it's
- * dealt with instead of being covered up by the next success.
- */
+/** Reports outstanding edits and keeps save failures visible until resolved. */
 export function SavedIndicator({
   state,
   lastSavedAt,
@@ -30,17 +21,13 @@ export function SavedIndicator({
 }) {
   if (state === 'error') {
     return (
-      <div className='flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-3.5 py-1.5 text-sm font-medium text-red-600 shadow-sm'>
-        <AlertTriangle className='h-4 w-4' />
+      <div role='alert' className='flex flex-wrap items-center gap-x-3 gap-y-2 border border-red-200 bg-red-50 px-3 py-2 text-sm leading-[1.6] text-red-800'>
+        <AlertTriangle aria-hidden='true' className='size-4 shrink-0' />
         <span>Not saved — your changes are still here</span>
         {onRetry && (
-          <button
-            type='button'
-            onClick={onRetry}
-            className='ml-1 inline-flex items-center gap-1 rounded-full bg-red-600 px-2.5 py-0.5 text-xs font-semibold text-white transition hover:bg-red-700'
-          >
-            <RotateCw className='h-3 w-3' /> Retry
-          </button>
+          <LandingButton variant='outline' size='compact' onClick={onRetry} className='border-red-700 bg-white text-red-800 hover:bg-red-100 hover:text-red-900'>
+            <RotateCw aria-hidden='true' className='size-4' /> Retry
+          </LandingButton>
         )}
       </div>
     );
@@ -49,34 +36,31 @@ export function SavedIndicator({
   const { icon, text, cls } =
     state === 'saving'
       ? {
-          icon: <Loader2 className='h-4 w-4 animate-spin' />,
-          text: 'Saving...',
-          cls: 'border-border bg-card text-muted-foreground',
+          icon: <Loader2 aria-hidden='true' className='size-4 animate-spin motion-reduce:animate-none' />,
+          text: 'Saving…',
+          cls: 'text-ink',
         }
       : isDirty
         ? {
-            icon: <CloudUpload className='h-4 w-4' />,
+            icon: <CloudUpload aria-hidden='true' className='size-4' />,
             text: 'Unsaved changes',
-            cls: 'border-amber-200 bg-amber-50 text-amber-700',
+            cls: 'text-amber-800',
           }
         : lastSavedAt
           ? {
-              icon: <Check className='h-4 w-4' />,
+              icon: <Check aria-hidden='true' className='size-4' />,
               text: `Saved ${formatDistanceToNow(lastSavedAt, { addSuffix: true })}`,
-              cls: 'border-green-200 bg-green-50 text-green-600',
+              cls: 'text-emerald-800',
             }
           : {
-              icon: <CloudUpload className='h-4 w-4' />,
+              icon: <Check aria-hidden='true' className='size-4' />,
               text: 'All changes saved',
-              cls: 'border-border bg-card text-muted-foreground',
+              cls: 'text-ink',
             };
 
   return (
-    <div
-      className={`pointer-events-none flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm font-medium shadow-sm transition-colors ${cls}`}
-    >
-      {icon}
-      <span>{text}</span>
+    <div role='status' aria-live='polite' aria-atomic='true' className={`flex items-center gap-2 text-sm leading-[1.6] ${cls}`}>
+      {icon}<span>{text}</span>
     </div>
   );
 }

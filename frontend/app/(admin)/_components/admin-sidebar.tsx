@@ -1,129 +1,52 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { LogOut } from 'lucide-react';
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from '@/components/ui/sidebar';
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
 import { useAdminAuth } from '@/context/admin-auth-context';
 import { getAllowedPagesForUser } from '@/lib/admin-pages';
-import Image from 'next/image';
+import { landingFontVariables } from '@/components/landing/fonts';
+import { cn } from '@/lib/utils';
+
+const MENU_CLASS = 'min-h-10 h-auto gap-3 rounded-none px-3 py-2.5 font-advisory-body text-[13px] leading-[1.5] font-medium text-white/80 hover:bg-deep-navy hover:text-white active:bg-deep-navy active:text-white data-active:bg-gilt/15 data-active:font-semibold data-active:text-gilt focus-visible:ring-gilt group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:overflow-visible [&>span:last-child]:text-clip [&>span:last-child]:whitespace-normal';
 
 export function AdminSidebar() {
   const pathname = usePathname();
   const { user, logout } = useAdminAuth();
-
-  const visibleItems = getAllowedPagesForUser(
-    user?.user?.role,
-    user?.user?.allowedPages,
-  );
+  const { isMobile, setOpenMobile } = useSidebar();
+  const visibleItems = getAllowedPagesForUser(user?.user?.role, user?.user?.allowedPages);
+  const fontClass = cn(landingFontVariables, 'bg-midnight font-advisory-body text-sm text-white');
 
   return (
-    <Sidebar collapsible='icon'>
-      {/* Logo / Brand */}
-      <SidebarHeader className='border-b border-sidebar-border px-4 py-4 group-data-[collapsible=icon]:px-0'>
-        <Link
-          href='/'
-          className='flex items-center gap-2.5 group-data-[collapsible=icon]:justify-center'
-          aria-label='Blackmont Advisory home'
-        >
-          <Image
-            loading='eager'
-            unoptimized
-            src='/assets/blackmont-light.png'
-            alt='Blackmont Advisory'
-            width={150}
-            height={36}
-            className='h-9 w-auto group-data-[collapsible=icon]:hidden'
-          />
-          <Image
-            loading='eager'
-            unoptimized
-            src='/assets/logo.png'
-            alt='Blackmont Advisory'
-            width={32}
-            height={32}
-            className='hidden h-7 w-7 shrink-0 group-data-[collapsible=icon]:block'
-          />
+    <Sidebar collapsible='icon' className={cn(fontClass, '[&_[data-slot=sidebar-inner]]:bg-midnight')}>
+      <SidebarHeader className={cn(fontClass, 'flex min-h-16 justify-center border-b border-white/15 px-4 py-3 group-data-[collapsible=icon]:px-0')}>
+        <Link href='/' aria-label='Blackmont Advisory home' className='flex min-h-10 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gilt group-data-[collapsible=icon]:justify-center'>
+          <Image loading='eager' unoptimized src='/assets/blackmont-light.png' alt='Blackmont Advisory' width={215} height={36} className='h-auto w-full max-w-[215px] group-data-[collapsible=icon]:hidden' />
+          <Image loading='eager' unoptimized src='/assets/logo.png' alt='' width={28} height={28} className='hidden size-7 shrink-0 group-data-[collapsible=icon]:block' />
         </Link>
       </SidebarHeader>
-
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+      <SidebarContent className={cn(fontClass, 'gap-0 py-4')}>
+        <SidebarGroup className='px-2 py-0'>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className='gap-1'>
               {visibleItems.map((item) => {
-                const isActive =
-                  item.href === '/admin'
-                    ? pathname === '/admin'
-                    : pathname.startsWith(item.href);
-                return (
-                  <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={isActive}
-                      tooltip={item.label}
-                      className={
-                        isActive
-                          ? 'border-l-2 border-accent rounded-l-none'
-                          : undefined
-                      }
-                    >
-                      <Link href={item.href}>
-                        <item.icon />
-                        <span>{item.label}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
+                const active = item.href === '/admin' ? pathname === '/admin' : pathname === item.href || pathname.startsWith(item.href + '/');
+                return <SidebarMenuItem key={item.href}><SidebarMenuButton asChild isActive={active} tooltip={item.label} className={MENU_CLASS}>
+                  <Link href={item.href} aria-current={active ? 'page' : undefined} onClick={() => { if (isMobile) setOpenMobile(false); }}><item.icon aria-hidden='true' /><span className='group-data-[collapsible=icon]:hidden'>{item.label}</span></Link>
+                </SidebarMenuButton></SidebarMenuItem>;
               })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-
-      {/* Footer: User + Logout */}
-      <SidebarFooter className='border-t border-sidebar-border p-2'>
-        {/* User info */}
-        <div className='flex items-center gap-2.5 px-2 py-2 group-data-[collapsible=icon]:justify-center'>
-          <div className='w-8 h-8 rounded-full bg-accent/15 border border-accent/30 flex items-center justify-center shrink-0'>
-            <span className='text-xs font-bold text-accent uppercase'>
-              {user?.user?.username?.[0] ?? 'A'}
-            </span>
-          </div>
-          <div className='group-data-[collapsible=icon]:hidden overflow-hidden'>
-            <p className='text-sm font-semibold text-sidebar-foreground truncate'>
-              {user?.user?.username}
-            </p>
-            <p className='text-xs text-sidebar-foreground/60 truncate'>
-              {user?.user?.role}
-            </p>
-          </div>
+      <SidebarFooter className={cn(fontClass, 'gap-3 border-t border-white/15 p-2')}>
+        <div className='flex min-w-0 items-center gap-3 px-2 py-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0'>
+          <span aria-hidden='true' className='inline-flex size-8 shrink-0 items-center justify-center bg-deep-navy text-xs font-semibold uppercase text-gilt'>{user?.user?.username?.[0] ?? 'A'}</span>
+          <div className='flex min-w-0 flex-col gap-1 group-data-[collapsible=icon]:hidden'><p className='m-0 truncate text-sm font-semibold text-white'>{user?.user?.username}</p><p className='m-0 text-xs text-white/70'>{user?.user?.role === 'superadmin' ? 'Super admin' : 'Admin'}</p></div>
         </div>
-        {/* Logout */}
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              onClick={logout}
-              tooltip='Sign Out'
-              className='text-red-300 hover:text-red-200'
-            >
-              <LogOut />
-              <span>Sign Out</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <SidebarMenu><SidebarMenuItem><SidebarMenuButton onClick={logout} tooltip='Sign out' className={MENU_CLASS}><LogOut aria-hidden='true' /><span className='group-data-[collapsible=icon]:hidden'>Sign out</span></SidebarMenuButton></SidebarMenuItem></SidebarMenu>
       </SidebarFooter>
     </Sidebar>
   );

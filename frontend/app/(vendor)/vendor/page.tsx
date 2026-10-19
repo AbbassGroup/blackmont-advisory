@@ -1,243 +1,115 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Loader2, Eye, FileText, StickyNote } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Eye, FileText, Search, StickyNote } from 'lucide-react';
 import { apiClient } from '@/lib/api';
+import { cn } from '@/lib/utils';
 import { useVendorAuth } from '@/context/vendor-auth-context';
-import { Button } from '@/components/ui/button';
-import { ImHistoryDialog } from '@/components/admin/im-history-dialog';
-import {
-  ProspectNotesDialog,
-  type ProspectNote,
-} from '@/components/admin/prospect-notes-dialog';
+import { AdminPageLayout } from '@/components/admin/page-layout';
+import { LandingButton, LandingButtonLink } from '@/components/landing/presentation';
+import { ImHistoryDialog, type ImViewLog } from '@/components/admin/im-history-dialog';
+import { ProspectNotesDialog, type ProspectNote } from '@/components/admin/prospect-notes-dialog';
 
-const CATEGORY_STYLES: Record<string, string> = {
-  Hot: 'bg-red-500 text-white',
-  Warm: 'bg-orange-500 text-white',
-  Cold: 'bg-blue-500 text-white',
-};
-
-type Prospect = {
-  _id: string;
-  firstName: string;
-  lastName: string;
-  category: string | null;
-};
-
-type ImLog = {
-  _id: string;
-  name?: string;
-  email: string;
-  enquiryId?: string;
-  imRevoked?: boolean;
-  imSharedAt?: string;
-  autoExpired?: boolean;
-  createdAt: string;
-  type?: string;
-};
+const CATEGORY_STYLES: Record<string, string> = { Hot: 'bg-red-50 text-red-800', Warm: 'bg-amber-50 text-amber-800', Cold: 'bg-blue-50 text-blue-800' };
+type Prospect = { _id: string; firstName: string; lastName: string; category: string | null };
+const prospectName = (prospect: Prospect) => `${prospect.firstName || ''} ${prospect.lastName || ''}`.trim() || 'Unnamed prospect';
 
 export default function VendorDashboardPage() {
   const { token } = useVendorAuth();
-
-  const [businessName, setBusinessName] = useState('Your Deal');
+  const [businessName, setBusinessName] = useState('Your deal');
   const [imTemplateId, setImTemplateId] = useState<string | null>(null);
   const [prospects, setProspects] = useState<Prospect[]>([]);
   const [notesMap, setNotesMap] = useState<Record<string, ProspectNote[]>>({});
   const [loading, setLoading] = useState(true);
-
-  // IM history
+  const [loadError, setLoadError] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+  const [search, setSearch] = useState('');
   const [imOpen, setImOpen] = useState(false);
-  const [imLogs, setImLogs] = useState<ImLog[]>([]);
+  const [imLogs, setImLogs] = useState<ImViewLog[]>([]);
   const [imLoading, setImLoading] = useState(false);
-
-  // Notes (read-only)
+  const [imError, setImError] = useState('');
+  const historyRequest = useRef(0);
   const [notesOpen, setNotesOpen] = useState(false);
   const [activeProspect, setActiveProspect] = useState<Prospect | null>(null);
 
   useEffect(() => {
     if (!token) return;
-    const load = async () => {
-      setLoading(true);
-      try {
-        const [dealRes, prospectsRes, notesRes] = await Promise.all([
-          apiClient.get('/api/vendor/deal'),
-          apiClient.get('/api/vendor/deal/prospects'),
-          apiClient.get('/api/vendor/deal/notes'),
-        ]);
-        setBusinessName(dealRes.data?.businessName || 'Your Deal');
-        setImTemplateId(dealRes.data?.imTemplateId || null);
-        setProspects(prospectsRes.data || []);
-        setNotesMap(notesRes.data || {});
-      } catch (error) {
-        console.error('Failed to load vendor deal:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, [token]);
+    let active = true;
+    setLoading(true);
+    setLoadError(false);
+    Promise.all([
+      apiClient.get('/api/vendor/deal'),
+      apiClient.get('/api/vendor/deal/prospects'),
+      apiClient.get('/api/vendor/deal/notes'),
+    ]).then(([deal, buyers, notes]) => {
+      if (!active) return;
+      setBusinessName(deal.data?.businessName || 'Your deal');
+      setImTemplateId(deal.data?.imTemplateId || null);
+      setProspects(Array.isArray(buyers.data) ? buyers.data : []);
+      setNotesMap(notes.data || {});
+    }).catch(() => { if (active) setLoadError(true); }).finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [token, attempt]);
 
-  const sortedProspects = [...prospects].sort((a, b) => {
-    const priority: Record<string, number> = { Hot: 0, Warm: 1, Cold: 2 };
-    const pa = priority[a.category ?? ''] ?? 3;
-    const pb = priority[b.category ?? ''] ?? 3;
-    return pa - pb;
-  });
+  useEffect(() => () => { historyRequest.current += 1; }, []);
+
+  const query = search.trim().toLowerCase();
+  const priority: Record<string, number> = { Hot: 0, Warm: 1, Cold: 2 };
+  const filtered = prospects.filter((prospect) => [prospectName(prospect), prospect.category].some((value) => (value || '').toLowerCase().includes(query)))
+    .sort((a, b) => (priority[a.category ?? ''] ?? 3) - (priority[b.category ?? ''] ?? 3));
 
   const openImHistory = async () => {
+    const request = ++historyRequest.current;
     setImOpen(true);
     setImLoading(true);
+    setImError('');
     try {
-      const res = await apiClient.get('/api/vendor/deal/im-views');
-      setImLogs(res.data || []);
-    } catch (error) {
-      console.error('Failed to load IM history:', error);
-      setImLogs([]);
-    } finally {
-      setImLoading(false);
-    }
-  };
-
-  const openNotes = (p: Prospect) => {
-    setActiveProspect(p);
-    setNotesOpen(true);
+      const { data } = await apiClient.get('/api/vendor/deal/im-views');
+      if (request === historyRequest.current) setImLogs(Array.isArray(data) ? data : []);
+    } catch {
+      if (request === historyRequest.current) { setImLogs([]); setImError('We could not load the IM history. Please try again.'); }
+    } finally { if (request === historyRequest.current) setImLoading(false); }
   };
 
   return (
-    <div className='space-y-6 max-w-6xl mx-auto'>
-      <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-3'>
-        <div>
-          <h1 className='text-2xl font-bold text-secondary'>{businessName}</h1>
-          <p className='text-sm text-muted-foreground mt-0.5'>
-            Prospects and Information Memorandum activity for your deal
-          </p>
-        </div>
+    <AdminPageLayout title='Your deal' description='Prospects and Information Memorandum activity for your deal.'>
+      <section aria-label='Deal documents' className='flex flex-col gap-5 border border-advisory-rule bg-white p-5 min-[681px]:p-6 min-[1121px]:flex-row min-[1121px]:items-center min-[1121px]:justify-between'>
+        <div className='min-w-0'>{loading ? <div role='status' className='h-8 w-56 max-w-full animate-pulse bg-canvas motion-reduce:animate-none'><span className='sr-only'>Loading deal details.</span></div> : <h2 className='m-0 font-advisory-heading text-[23px] leading-[1.4] font-bold text-midnight'>{loadError ? 'Deal unavailable' : businessName}</h2>}</div>
         <div className='flex flex-wrap gap-3'>
-          <Button
-            variant='outline'
-            onClick={openImHistory}
-            className='gap-2 rounded-none text-accent border-accent/30 hover:bg-accent/5 hover:text-accent'
-          >
-            <Eye className='w-4 h-4' /> View IM History
-          </Button>
-          {imTemplateId ? (
-            <Button
-              asChild
-              className='gap-2 rounded-none bg-accent text-primary hover:bg-accent-light'
-            >
-              <a
-                href={`/information-memorandum/${imTemplateId}`}
-                target='_blank'
-                rel='noopener noreferrer'
-              >
-                <FileText className='w-4 h-4' /> Information Memorandum
-              </a>
-            </Button>
-          ) : (
-            <Button disabled className='gap-2 rounded-none'>
-              <FileText className='w-4 h-4' /> Information Memorandum
-            </Button>
-          )}
+          <LandingButton variant='outline' size='compact' disabled={loading || loadError || imLoading} onClick={() => void openImHistory()}><Eye aria-hidden='true' className='size-4' />View IM history</LandingButton>
+          {!loading && !loadError && imTemplateId ? <LandingButtonLink href={`/information-memorandum/${imTemplateId}`} target='_blank' rel='noopener noreferrer' size='compact'><FileText aria-hidden='true' className='size-4' />Information Memorandum</LandingButtonLink> : <LandingButton disabled size='compact'><FileText aria-hidden='true' className='size-4' />Information Memorandum</LandingButton>}
         </div>
-      </div>
+      </section>
 
-      <div className='overflow-hidden border border-border bg-card'>
-        <div className='overflow-x-auto'>
-          <table className='w-full text-sm text-left'>
-            <thead>
-              <tr className='bg-muted/60 border-b border-border text-xs uppercase tracking-wider text-muted-foreground'>
-                <th className='px-6 py-4 font-semibold'>Name</th>
-                <th className='px-6 py-4 font-semibold'>Category</th>
-                <th className='px-6 py-4 font-semibold'>Notes</th>
-              </tr>
-            </thead>
-            <tbody className='divide-y divide-border'>
-              {loading ? (
-                <tr>
-                  <td colSpan={3} className='text-center py-12'>
-                    <Loader2 className='w-6 h-6 animate-spin text-accent mx-auto mb-2' />
-                    <p className='text-muted-foreground'>
-                      Loading prospects...
-                    </p>
-                  </td>
-                </tr>
-              ) : sortedProspects.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={3}
-                    className='text-center py-12 text-muted-foreground'
-                  >
-                    No prospects found for this deal.
-                  </td>
-                </tr>
-              ) : (
-                sortedProspects.map((p) => {
-                  const noteCount = notesMap[p._id]?.length || 0;
-                  return (
-                    <tr
-                      key={p._id}
-                      className='hover:bg-muted/50 transition-colors'
-                    >
-                      <td className='px-6 py-4 font-medium text-secondary'>
-                        {p.firstName} {p.lastName}
-                      </td>
-                      <td className='px-6 py-4'>
-                        {p.category ? (
-                          <span
-                            className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
-                              CATEGORY_STYLES[p.category] ||
-                              'bg-muted text-muted-foreground'
-                            }`}
-                          >
-                            {p.category}
-                          </span>
-                        ) : (
-                          <span className='text-muted-foreground/50 text-xs'>
-                            —
-                          </span>
-                        )}
-                      </td>
-                      <td className='px-6 py-4'>
-                        <button
-                          onClick={() => openNotes(p)}
-                          className='inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-accent transition-colors'
-                        >
-                          <StickyNote className='w-4 h-4' />
-                          {noteCount > 0
-                            ? `${noteCount} note${noteCount > 1 ? 's' : ''}`
-                            : 'View'}
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
+      <section aria-label='Registered prospects' aria-busy={loading} className='min-w-0 border border-advisory-rule bg-white'>
+        <div className='flex flex-col gap-4 border-b border-advisory-rule p-5 min-[681px]:flex-row min-[681px]:items-center min-[681px]:justify-between min-[681px]:p-6'>
+          <div className='relative w-full min-[681px]:max-w-md'><label htmlFor='vendor-prospect-search' className='sr-only'>Search prospects by name or category</label><Search aria-hidden='true' className='pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-ink/60' /><input id='vendor-prospect-search' type='search' value={search} onChange={(event) => setSearch(event.target.value)} placeholder='Search prospects…' className='h-10 w-full rounded-none border border-advisory-input bg-white py-2 pr-3 pl-10 text-base text-midnight outline-none placeholder:text-ink/65 focus:border-gilt min-[681px]:text-sm' /></div>
+          <p aria-live='polite' className='m-0 shrink-0 text-sm'>{loading ? 'Loading prospects…' : loadError ? 'List unavailable' : query ? `${filtered.length} of ${prospects.length} prospects` : `${prospects.length} ${prospects.length === 1 ? 'prospect' : 'prospects'}`}</p>
         </div>
-      </div>
+        {loadError && !loading ? (
+          <div role='alert' className='p-6 min-[681px]:p-8'><h2 className='m-0 text-base font-semibold text-midnight'>We couldn&apos;t load your deal activity.</h2><p className='mt-2 mb-5 text-sm leading-[1.75]'>Please try again to refresh the deal, prospects and notes.</p><LandingButton variant='outline' size='compact' onClick={() => setAttempt((value) => value + 1)}>Try again</LandingButton></div>
+        ) : (
+          <div role='region' aria-label='Prospect table' tabIndex={0} className='min-w-0 overflow-x-auto focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-gilt'>
+            <table className='w-full min-w-[640px] text-left text-sm leading-[1.65]'>
+              <caption className='sr-only'>Prospect names, categories and read-only notes.</caption>
+              <thead className='border-b border-advisory-rule bg-canvas text-midnight'><tr>{['Name', 'Category', 'Notes'].map((label) => <th key={label} scope='col' className='px-5 py-4 font-semibold'>{label}</th>)}</tr></thead>
+              <tbody className='divide-y divide-advisory-rule'>
+                {loading ? [0, 1, 2, 3, 4].map((row) => <tr key={row} aria-hidden='true'>{[0, 1].map((column) => <td key={column} className='px-5 py-5'><div className='h-5 w-28 animate-pulse bg-canvas motion-reduce:animate-none' /></td>)}<td className='px-5 py-3'><div className='h-10 w-24 animate-pulse bg-canvas motion-reduce:animate-none' /></td></tr>) : filtered.length ? filtered.map((prospect) => {
+                  const count = notesMap[prospect._id]?.length || 0;
+                  return <tr key={prospect._id} className='hover:bg-canvas/50'>
+                    <td className='px-5 py-5 font-semibold text-midnight'>{prospectName(prospect)}</td>
+                    <td className='px-5 py-5'>{prospect.category ? <span className={cn('inline-flex px-2.5 py-1 text-xs leading-[1.5] font-medium', CATEGORY_STYLES[prospect.category] || 'bg-canvas text-ink')}>{prospect.category}</span> : '—'}</td>
+                    <td className='px-5 py-3'><button type='button' onClick={() => { setActiveProspect(prospect); setNotesOpen(true); }} aria-label={`View notes for ${prospectName(prospect)}`} className='inline-flex min-h-10 items-center gap-2 px-3 text-sm font-medium text-midnight hover:bg-canvas focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-gilt'><StickyNote aria-hidden='true' className='size-4' />{count ? `${count} ${count === 1 ? 'note' : 'notes'}` : 'View notes'}</button></td>
+                  </tr>;
+                }) : <tr><td colSpan={3} className='px-5 py-8'><p className='m-0 font-semibold text-midnight'>{query ? 'No matching prospects' : 'No prospects yet'}</p><p className='mt-2 mb-0'>{query ? 'Try another name or category.' : 'Registered prospects will appear here as they become available.'}</p>{query && <LandingButton variant='outline' size='compact' className='mt-5' onClick={() => setSearch('')}>Clear search</LandingButton>}</td></tr>}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
 
-      <ImHistoryDialog
-        open={imOpen}
-        onOpenChange={setImOpen}
-        logs={imLogs}
-        loading={imLoading}
-        token={token || ''}
-        hideEmail
-        revokePath={(enquiryId) => `/api/vendor/deal/im-revoke/${enquiryId}`}
-      />
-
-      <ProspectNotesDialog
-        open={notesOpen}
-        onOpenChange={setNotesOpen}
-        readOnly
-        prospectName={
-          activeProspect
-            ? `${activeProspect.firstName} ${activeProspect.lastName}`.trim()
-            : ''
-        }
-        notes={activeProspect ? notesMap[activeProspect._id] || [] : []}
-      />
-    </div>
+      <ImHistoryDialog open={imOpen} onOpenChange={setImOpen} logs={imLogs} loading={imLoading} token={token || ''} hideEmail error={Boolean(imError)} onRetry={() => void openImHistory()} revokePath={(enquiryId) => `/api/vendor/deal/im-revoke/${enquiryId}`} />
+      <ProspectNotesDialog open={notesOpen} onOpenChange={setNotesOpen} readOnly prospectName={activeProspect ? prospectName(activeProspect) : ''} notes={activeProspect ? notesMap[activeProspect._id] || [] : []} />
+    </AdminPageLayout>
   );
 }

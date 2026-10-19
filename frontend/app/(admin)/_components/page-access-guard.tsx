@@ -31,12 +31,12 @@ export function PageAccessGuard({ children }: { children: React.ReactNode }) {
 
   if (user && !allowed) {
     return (
-      <div className='flex min-h-[60vh] flex-col items-center justify-center gap-3 text-center'>
-        <ShieldAlert className='h-8 w-8 text-accent' />
-        <p className='text-lg font-semibold text-secondary'>
+      <div role='status' className='mx-auto flex w-full max-w-advisory flex-col items-start gap-3 border border-advisory-rule bg-white p-6 min-[681px]:p-8'>
+        <ShieldAlert aria-hidden='true' className='size-6 text-midnight' />
+        <p className='m-0 font-advisory-heading text-[23px] leading-[1.4] font-bold text-midnight'>
           You don&apos;t have access to this page
         </p>
-        <p className='max-w-sm text-sm text-muted-foreground'>
+        <p className='m-0 max-w-lg text-sm leading-[1.75] text-ink'>
           Contact a super admin if you believe you should have access.
         </p>
       </div>

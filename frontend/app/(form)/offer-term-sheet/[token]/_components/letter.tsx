@@ -2,8 +2,6 @@
 
 import Image from 'next/image';
 import { format } from 'date-fns';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import {
   SignaturePad,
@@ -34,11 +32,11 @@ export function Letter(props: FieldProps) {
   const amounts = resolveAmounts(values.purchasePrice, values.depositAmount);
 
   return (
-    <article className='border border-gray-200 bg-white'>
+    <article className='min-w-0 border border-advisory-rule bg-white text-ink'>
       <Letterhead />
 
-      <div className='px-7 pb-14 sm:px-14'>
-        <h1 className='py-9 text-center text-[15px] font-bold tracking-wide text-foreground'>
+      <div className='flex min-w-0 flex-col gap-8 px-5 py-8 min-[681px]:px-10 min-[681px]:py-10'>
+        <h1 className='m-0 text-center font-advisory-heading text-[26px] leading-[1.4] font-bold text-midnight min-[681px]:text-[30px]'>
           Letter of Intent (Non-Binding Offer Letter)
         </h1>
 
@@ -58,17 +56,17 @@ export function Letter(props: FieldProps) {
         </Section>
 
         <Section title="Vendor's Agent">
-          <div className='space-y-1.5 text-[15px] leading-relaxed text-gray-700'>
+          <div className='flex flex-col gap-2 text-[15px] leading-[1.8] text-ink [&>p]:m-0'>
             <p>
-              <span className='font-semibold text-foreground'>Agent:</span>{' '}
+              <span className='font-semibold text-midnight'>Agent:</span>{' '}
               {BRAND.legalEntity}
             </p>
             <p>
-              <span className='font-semibold text-foreground'>Address:</span>{' '}
+              <span className='font-semibold text-midnight'>Address:</span>{' '}
               {BRAND.address}
             </p>
             <p>
-              <span className='font-semibold text-foreground'>Email:</span>{' '}
+              <span className='font-semibold text-midnight'>Email:</span>{' '}
               {BRAND.email}
             </p>
           </div>
@@ -83,11 +81,14 @@ export function Letter(props: FieldProps) {
             >
               {editable('purchasePrice') ? (
                 <div className='relative'>
-                  <span className='pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400'>
+                  <span className='pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink/70'>
                     $
                   </span>
-                  <Input
+                  <input
                     inputMode='numeric'
+                    id='offer-purchasePrice'
+                    aria-invalid={Boolean(errors.purchasePrice)}
+                    aria-describedby={errors.purchasePrice ? 'offer-error-purchasePrice' : undefined}
                     placeholder='0'
                     value={values.purchasePrice ?? ''}
                     onChange={(e) =>
@@ -115,12 +116,10 @@ export function Letter(props: FieldProps) {
                 <select
                   value={values.stockTreatment}
                   onChange={(e) => onChange('stockTreatment', e.target.value)}
-                  className={cn(
-                    'h-11 w-full rounded-md border bg-white px-3 text-[15px] outline-none transition-colors focus:border-accent focus:ring-2 focus:ring-accent/25',
-                    !!errors['stockTreatment']
-                      ? 'border-red-400'
-                      : 'border-gray-200',
-                  )}
+                  id='offer-stockTreatment'
+                  aria-invalid={Boolean(errors.stockTreatment)}
+                  aria-describedby={errors.stockTreatment ? 'offer-error-stockTreatment' : undefined}
+                  className={inputClass(Boolean(errors.stockTreatment))}
                 >
                   <option value=''>Select…</option>
                   {STOCK_TREATMENT_OPTIONS.map((o) => (
@@ -141,11 +140,14 @@ export function Letter(props: FieldProps) {
             <FieldShell label='Deposit' keyName='depositAmount' errors={errors}>
               {editable('depositAmount') ? (
                 <div className='relative'>
-                  <span className='pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400'>
+                  <span className='pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink/70'>
                     $
                   </span>
-                  <Input
+                  <input
                     inputMode='numeric'
+                    id='offer-depositAmount'
+                    aria-invalid={Boolean(errors.depositAmount)}
+                    aria-describedby={errors.depositAmount ? 'offer-error-depositAmount' : undefined}
                     // Blank means the 10% default, so show it as the placeholder.
                     placeholder={
                       amounts.depositAmount === null
@@ -170,17 +172,17 @@ export function Letter(props: FieldProps) {
             </FieldShell>
           </div>
 
-          <div className='mt-7 space-y-3 border-l-2 border-accent/30 pl-5 text-[15px] leading-relaxed text-gray-700'>
+          <div className='flex flex-col gap-3 bg-canvas p-5 text-[15px] leading-[1.8] text-ink [&>p]:m-0'>
             <p>
               A deposit of{' '}
-              <strong className='text-foreground'>
+              <strong className='text-midnight'>
                 {formatMoney(amounts.depositAmount)}
               </strong>{' '}
               to be paid into {TRUST_ACCOUNT}.
             </p>
             <p>
               Balance of purchase price:{' '}
-              <strong className='text-foreground'>
+              <strong className='text-midnight'>
                 {formatMoney(amounts.balanceAmount)}
               </strong>
             </p>
@@ -191,7 +193,7 @@ export function Letter(props: FieldProps) {
           {editable('settlementMode') ? (
             <div
               data-field='settlementMode'
-              className='scroll-mt-28 space-y-3'
+              className='flex scroll-mt-20 flex-col gap-3'
             >
               <Choice
                 checked={values.settlementMode === 'date'}
@@ -200,8 +202,10 @@ export function Letter(props: FieldProps) {
                 invalid={!!errors['settlementMode']}
               >
                 <div data-field='settlementDate' className='scroll-mt-28'>
-                  <Input
+                  <input
                     type='date'
+                    aria-label='Settlement date'
+                    aria-invalid={Boolean(errors.settlementDate)}
                     value={toDateInput(values.settlementDate)}
                     onChange={(e) => onChange('settlementDate', e.target.value)}
                     className={inputClass(
@@ -222,8 +226,10 @@ export function Letter(props: FieldProps) {
                   data-field='settlementWeeks'
                   className='flex scroll-mt-28 items-center gap-2.5'
                 >
-                  <Input
+                  <input
                     inputMode='numeric'
+                    aria-label='Settlement weeks'
+                    aria-invalid={Boolean(errors.settlementWeeks)}
                     value={values.settlementWeeks ?? ''}
                     onChange={(e) =>
                       onChange(
@@ -238,12 +244,12 @@ export function Letter(props: FieldProps) {
                       'max-w-24',
                     )}
                   />
-                  <span className='text-[15px] text-gray-600'>weeks</span>
+                  <span className='text-[15px] text-ink'>weeks</span>
                 </div>
               </Choice>
 
               {errors['settlementMode'] && (
-                <p className='text-xs font-medium text-red-500'>
+                <p className='text-xs font-medium text-red-800'>
                   {errors['settlementMode']}
                 </p>
               )}
@@ -254,7 +260,7 @@ export function Letter(props: FieldProps) {
         </Section>
 
         <Section title='Deposit to be paid by purchaser'>
-          <p className='text-[15px] leading-relaxed text-gray-700'>
+          <p className='m-0 text-[15px] leading-[1.8] text-ink'>
             Once this offer has been accepted by both parties, the purchaser will
             be sent an Acceptance Email. Payment must be made by the purchaser
             within 24 hours of this letter being sent.
@@ -270,7 +276,7 @@ export function Letter(props: FieldProps) {
 
         <Section title='Subject To'>
           {editable('subjectTo.leaseTransfer') ? (
-            <div className='space-y-4'>
+            <div className='flex flex-col gap-4'>
               <Condition
                 checked={values.subjectTo.dueDiligenceEnabled}
                 onToggle={(v) => onChange('subjectTo.dueDiligenceEnabled', v)}
@@ -280,8 +286,10 @@ export function Letter(props: FieldProps) {
                   data-field='subjectTo.dueDiligenceDays'
                   className='flex scroll-mt-28 items-center gap-2.5'
                 >
-                  <Input
+                  <input
                     inputMode='numeric'
+                    aria-label='Due diligence days'
+                    aria-invalid={Boolean(errors['subjectTo.dueDiligenceDays'])}
                     value={values.subjectTo.dueDiligenceDays ?? ''}
                     onChange={(e) =>
                       onChange(
@@ -296,7 +304,7 @@ export function Letter(props: FieldProps) {
                       'max-w-24',
                     )}
                   />
-                  <span className='text-[15px] text-gray-600'>
+                  <span className='text-[15px] text-ink'>
                     days from contract date
                   </span>
                 </div>
@@ -322,8 +330,10 @@ export function Letter(props: FieldProps) {
                   data-field='subjectTo.transitionWeeks'
                   className='flex scroll-mt-28 items-center gap-2.5'
                 >
-                  <Input
+                  <input
                     inputMode='numeric'
+                    aria-label='Transition and handover weeks'
+                    aria-invalid={Boolean(errors['subjectTo.transitionWeeks'])}
                     value={values.subjectTo.transitionWeeks ?? ''}
                     onChange={(e) =>
                       onChange(
@@ -338,7 +348,7 @@ export function Letter(props: FieldProps) {
                       'max-w-24',
                     )}
                   />
-                  <span className='text-[15px] text-gray-600'>weeks</span>
+                  <span className='text-[15px] text-ink'>weeks</span>
                 </div>
               </Condition>
 
@@ -348,7 +358,9 @@ export function Letter(props: FieldProps) {
                 label='Other'
               >
                 <div data-field='subjectTo.otherText' className='scroll-mt-28'>
-                  <Input
+                  <input
+                    aria-label='Other condition'
+                    aria-invalid={Boolean(errors['subjectTo.otherText'])}
                     value={values.subjectTo.otherText}
                     placeholder='Describe the condition'
                     onChange={(e) =>
@@ -374,7 +386,7 @@ export function Letter(props: FieldProps) {
         </Section>
 
         <Section title='Declaration'>
-          <p className='text-[15px] leading-relaxed text-gray-700'>
+          <p className='m-0 text-[15px] leading-[1.8] text-ink'>
             The buyer has sufficient financial capacity to complete this
             transaction (or is in the process of obtaining finance) and has
             reviewed all available information about the business, and submits
@@ -394,17 +406,17 @@ export function Letter(props: FieldProps) {
           {...props}
         />
 
-        <div className='mt-12 border-t border-gray-200 pt-6'>
-          <h2 className='mb-3 text-[11px] font-bold uppercase tracking-[0.12em] text-gray-500'>
+        <div className='flex flex-col gap-3 border-t border-advisory-rule pt-6'>
+          <h2 className='m-0 font-advisory-heading text-[21px] leading-[1.5] font-bold text-midnight'>
             Disclaimer
           </h2>
-          <p className='text-[13px] leading-relaxed text-gray-400'>
+          <p className='m-0 text-sm leading-[1.8] text-ink'>
             {DISCLAIMER}
           </p>
         </div>
       </div>
 
-      <footer className='flex flex-wrap items-center justify-between gap-2 border-t border-gray-200 bg-gray-50/70 px-7 py-4 text-[11px] text-gray-400 sm:px-14'>
+      <footer className='flex flex-wrap items-center justify-between gap-2 border-t border-advisory-rule bg-canvas px-5 py-5 text-xs leading-[1.75] text-ink min-[681px]:px-10'>
         <span>{BRAND.tradingName}</span>
         <span>{FOOTER_RIGHT}</span>
       </footer>
@@ -414,16 +426,17 @@ export function Letter(props: FieldProps) {
 
 function Letterhead() {
   return (
-    <div className='flex flex-wrap items-center justify-between gap-6 border-b-2 border-accent px-7 py-7 sm:px-14'>
+    <div className='flex flex-wrap items-center justify-between gap-5 border-b border-advisory-rule px-5 py-6 min-[681px]:px-10'>
       <Image
+        unoptimized
         src={BRAND.logo}
         alt={BRAND.tradingName}
         width={BRAND.logoWidth}
         height={BRAND.logoHeight}
-        className='h-11 w-auto'
+        className='h-auto w-[220px] max-w-full'
         priority
       />
-      <div className='text-right text-[13px] leading-relaxed text-gray-500'>
+      <div className='flex flex-col gap-1 text-xs leading-[1.75] text-ink min-[681px]:text-right [&>p]:m-0'>
         <p>{BRAND.address}</p>
         <p>{BRAND.email}</p>
         <p>{BRAND.website}</p>
@@ -458,7 +471,7 @@ function ExecutionSection({
 
   return (
     <Section title={title}>
-      <div className='space-y-7'>
+      <div className='flex flex-col gap-6'>
         <div className='grid gap-6 sm:grid-cols-2'>
           <Field label='Full Name' keyName={`${prefix}.fullName`} {...props} />
           <Field
@@ -479,8 +492,11 @@ function ExecutionSection({
             errors={errors}
           >
             {isEditable ? (
-              <Input
+              <input
                 type='date'
+                id={'offer-' + prefix + '.date'}
+                aria-invalid={Boolean(errors[prefix + '.date'])}
+                aria-describedby={errors[prefix + '.date'] ? 'offer-error-' + prefix + '.date' : undefined}
                 value={toDateInput(block?.date)}
                 onChange={(e) => onChange(`${prefix}.date`, e.target.value)}
                 className={inputClass(!!errors[`${prefix}.date`])}
@@ -500,6 +516,9 @@ function ExecutionSection({
         >
           {isEditable ? (
             <SignaturePad
+              id={'offer-' + prefix + '.signatureImage'}
+              labelledBy={'offer-label-' + prefix + '.signatureImage'}
+              describedBy={errors[prefix + '.signatureImage'] ? 'offer-error-' + prefix + '.signatureImage' : undefined}
               onChange={(dataUrl) =>
                 onChange(`${prefix}.signatureImage`, dataUrl)
               }
@@ -511,10 +530,10 @@ function ExecutionSection({
               <img
                 src={block.signatureImage}
                 alt='Signature'
-                className='h-20 rounded-md border border-gray-200 bg-white p-2'
+                className='h-20 border border-advisory-rule bg-white p-2'
               />
               {block.signedAt && (
-                <p className='mt-2 text-xs text-gray-400'>
+                <p className='mt-2 text-xs text-ink/70'>
                   Signed{' '}
                   {format(new Date(block.signedAt), 'dd MMM yyyy, h:mma')}
                 </p>
@@ -537,11 +556,11 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section className='mb-11'>
-      <h2 className='mb-5 text-[11px] font-bold uppercase tracking-[0.12em] text-foreground'>
+    <section className='flex min-w-0 flex-col gap-5'>
+      <h2 className='m-0 font-advisory-heading text-[21px] leading-[1.5] font-bold text-midnight'>
         {title}
       </h2>
-      <div className='space-y-6'>{children}</div>
+      <div className='flex min-w-0 flex-col gap-5'>{children}</div>
     </section>
   );
 }
@@ -558,13 +577,13 @@ function FieldShell({
   children: React.ReactNode;
 }) {
   return (
-    <div data-field={keyName} className='scroll-mt-28 space-y-2'>
-      <label className='block text-[13px] font-semibold text-foreground'>
+    <div data-field={keyName} className='flex min-w-0 scroll-mt-20 flex-col gap-2'>
+      <label id={'offer-label-' + keyName} htmlFor={'offer-' + keyName} className='text-sm font-medium text-midnight'>
         {label}
       </label>
       {children}
       {errors[keyName] && (
-        <p className='text-xs font-medium text-red-500'>{errors[keyName]}</p>
+        <p id={'offer-error-' + keyName} role='alert' className='m-0 text-xs leading-[1.75] text-red-800'>{errors[keyName]}</p>
       )}
     </div>
   );
@@ -585,7 +604,10 @@ function Field({
   return (
     <FieldShell label={label} keyName={keyName} errors={errors}>
       {editable(keyName) ? (
-        <Input
+        <input
+          id={'offer-' + keyName}
+          aria-invalid={Boolean(errors[keyName])}
+          aria-describedby={errors[keyName] ? 'offer-error-' + keyName : undefined}
           type={type}
           value={value}
           onChange={(e) => onChange(keyName, e.target.value)}
@@ -599,7 +621,7 @@ function Field({
 }
 
 function Static({ children }: { children: React.ReactNode }) {
-  return <p className='text-[15px] text-gray-800'>{children}</p>;
+  return <p className='m-0 break-words text-[15px] leading-[1.8] text-ink'>{children}</p>;
 }
 
 function Bullets({ items, empty }: { items: string[]; empty?: string }) {
@@ -607,10 +629,9 @@ function Bullets({ items, empty }: { items: string[]; empty?: string }) {
     return <Static>{empty}</Static>;
   }
   return (
-    <ul className='space-y-2.5 text-[15px] leading-relaxed text-gray-700'>
+    <ul className='m-0 flex list-disc flex-col gap-2 pl-5 text-[15px] leading-[1.8] text-ink'>
       {items.map((item) => (
-        <li key={item} className='flex gap-3'>
-          <span className='mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent' />
+        <li key={item}>
           {item}
         </li>
       ))}
@@ -634,20 +655,22 @@ function Choice({
   return (
     <div
       className={cn(
-        'rounded-none border p-5 transition-colors',
+        'rounded-none border p-4 transition-colors duration-150 motion-reduce:transition-none',
         checked
-          ? 'border-accent bg-accent/5'
+          ? 'border-midnight bg-canvas'
           : invalid
-            ? 'border-red-400'
-            : 'border-gray-200 hover:border-gray-300',
+            ? 'border-red-800'
+            : 'border-advisory-rule hover:border-advisory-input',
       )}
     >
-      <label className='flex cursor-pointer items-start gap-3 text-[15px] text-gray-700'>
+      <label className='flex min-h-8 cursor-pointer items-start gap-3 text-sm leading-[1.75] text-ink'>
         <input
           type='radio'
+          name='offer-settlement-mode'
+          aria-invalid={invalid}
           checked={checked}
           onChange={onSelect}
-          className='mt-1 accent-accent'
+          className='mt-1 size-4 shrink-0 accent-midnight focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-gilt'
         />
         {label}
       </label>
@@ -669,11 +692,8 @@ function Condition({
 }) {
   return (
     <div>
-      <label className='flex cursor-pointer items-center gap-3 text-[15px] text-gray-700'>
-        <Checkbox
-          checked={checked}
-          onCheckedChange={(v) => onToggle(v === true)}
-        />
+      <label className='flex min-h-10 cursor-pointer items-start gap-3 text-sm leading-[1.75] text-ink'>
+        <input type='checkbox' checked={checked} onChange={(event) => onToggle(event.target.checked)} className='mt-1 size-4 shrink-0 accent-midnight focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-gilt' />
         {label}
       </label>
       {checked && children && <div className='mt-3 pl-7'>{children}</div>}
@@ -683,10 +703,10 @@ function Condition({
 
 function inputClass(invalid: boolean, extra = '') {
   return cn(
-    'h-11 rounded-md text-[15px] transition-colors focus-visible:ring-accent/25',
+    'h-10 w-full min-w-0 rounded-none border bg-white px-3 font-advisory-body text-base text-midnight outline-none transition-colors duration-150 placeholder:text-ink/65 motion-reduce:transition-none min-[681px]:text-sm',
     invalid
-      ? 'border-red-400 focus-visible:border-red-400'
-      : 'border-gray-200 focus-visible:border-accent',
+      ? 'border-red-800 focus:border-red-800'
+      : 'border-advisory-input focus:border-gilt',
     extra,
   );
 }

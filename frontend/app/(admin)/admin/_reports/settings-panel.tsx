@@ -1,9 +1,9 @@
 'use client';
 
+import { useId } from 'react';
 import { Loader2, Trash2, UserCog } from 'lucide-react';
-import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Button } from '@/components/ui/button';
+import { LandingButton } from '@/components/landing/presentation';
 import { BROKERS } from '@/lib/data/brokers';
 import type { ImTemplate } from '@/components/im';
 import { DealSelect } from './deal-select';
@@ -33,104 +33,77 @@ export function SettingsPanel({
   onChangeDeal?: (dealId: string, personName: string, businessName: string) => void;
   onManageAccess?: () => void;
 }) {
+  const prefix = useId();
+  const brokerId = `${prefix}-broker`;
+  const dealId = `${prefix}-deal`;
+  const publishId = `${prefix}-published`;
+
   return (
-    <div className='space-y-6'>
-      {/* Broker */}
-      <div className='space-y-1.5'>
-        <Label className='text-sm font-medium text-foreground'>Broker</Label>
+    <div className='flex flex-col gap-8'>
+      <div className='min-w-0'>
+        <label htmlFor={brokerId} className='mb-2 block text-sm leading-[1.6] font-medium text-midnight'>Broker</label>
         <select
+          id={brokerId}
+          aria-describedby={!isSuperAdmin ? `${brokerId}-hint` : undefined}
           value={template.brokerEmail || ''}
-          onChange={(e) => onChangeBroker(e.target.value)}
+          onChange={(event) => onChangeBroker(event.target.value)}
           disabled={!isSuperAdmin}
-          className='h-10 w-full rounded-none border border-secondary/15 bg-background px-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/15 disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground'
+          className='block h-10 w-full min-w-0 rounded-none border border-advisory-input bg-white px-3 py-2 font-advisory-body text-base text-midnight outline-none transition-colors duration-150 focus:border-gilt disabled:cursor-not-allowed disabled:bg-canvas disabled:text-ink motion-reduce:transition-none min-[681px]:text-sm'
         >
-          {!BROKERS.some((b) => b.email === template.brokerEmail) && (
-            <option value={template.brokerEmail || ''}>
-              {template.brokerEmail || 'Unknown'}
-            </option>
+          {!BROKERS.some((broker) => broker.email === template.brokerEmail) && (
+            <option value={template.brokerEmail || ''}>{template.brokerEmail || 'Unknown'}</option>
           )}
-          {BROKERS.map((b) => (
-            <option key={b.email} value={b.email}>
-              {b.name} ({b.email})
-            </option>
-          ))}
+          {BROKERS.map((broker) => <option key={broker.email} value={broker.email}>{broker.name} ({broker.email})</option>)}
         </select>
-        {!isSuperAdmin && (
-          <p className='text-xs text-muted-foreground/60'>
-            Only a superadmin can reassign the broker.
-          </p>
-        )}
+        {!isSuperAdmin && <p id={`${brokerId}-hint`} className='mt-2 mb-0 text-xs leading-[1.75] text-ink'>Only a superadmin can reassign the broker.</p>}
       </div>
 
-      {/* Linked deal (Acquisition Reports only) */}
       {linkDeals && dealBusinessUnit && onChangeDeal && (
-        <div className='space-y-1.5'>
-          <Label className='text-sm font-medium text-foreground'>
-            Linked Deal
-          </Label>
-          <DealSelect
-            businessUnit={dealBusinessUnit}
-            value={template.deal}
-            valueName={template.businessName}
-            onChange={onChangeDeal}
-          />
-
+        <div className='min-w-0'>
+          <label htmlFor={dealId} className='mb-2 block text-sm leading-[1.6] font-medium text-midnight'>Linked deal</label>
+          <DealSelect id={dealId} businessUnit={dealBusinessUnit} value={template.deal} valueName={template.businessName} onChange={onChangeDeal} />
           {onManageAccess && (
-            <div className='pt-2'>
-              <Button
-                variant='outline'
-                onClick={onManageAccess}
-                disabled={!template.deal}
-                className='w-full gap-2 rounded-none'
-              >
-                <UserCog className='h-4 w-4' /> Acquirer Portal Access
-              </Button>
-              {!template.deal && (
-                <p className='mt-1.5 text-xs text-muted-foreground/60'>
-                  Link a deal above to grant the buyer portal access.
-                </p>
-              )}
+            <div className='mt-5'>
+              <LandingButton variant='outline' size='compact' onClick={onManageAccess} disabled={!template.deal} className='w-full'>
+                <UserCog aria-hidden='true' className='size-4 shrink-0' /> Acquirer portal access
+              </LandingButton>
+              {!template.deal && <p className='mt-2 mb-0 text-xs leading-[1.75] text-ink'>Link a deal above to grant the buyer portal access.</p>}
             </div>
           )}
         </div>
       )}
 
-      {/* Status */}
-      <div className='border border-border p-4'>
-        <div className='flex items-center justify-between'>
-          <div>
-            <p className='text-sm font-semibold text-foreground'>Published</p>
-            <p className='text-xs text-muted-foreground/60'>
-              {template.status === 'published'
-                ? 'Visible at its public link.'
-                : 'Draft. Not publicly visible.'}
+      <section aria-label='Publication status' aria-busy={publishing} className='border border-advisory-rule bg-canvas p-5'>
+        <div className='flex items-start justify-between gap-4'>
+          <div className='min-w-0'>
+            <label htmlFor={publishId} className='block text-sm leading-[1.6] font-semibold text-midnight'>Published</label>
+            <p id={`${publishId}-hint`} className='mt-2 mb-0 text-xs leading-[1.75] text-ink'>
+              {template.status === 'published' ? 'Visible at its public link.' : 'Draft. Not publicly visible.'}
             </p>
           </div>
-          {publishing ? (
-            <Loader2 className='h-5 w-5 animate-spin text-accent' />
-          ) : (
+          <div className='flex min-h-10 shrink-0 items-center gap-2'>
+            <span aria-hidden='true' className='inline-flex size-4 items-center justify-center'>
+              {publishing && <Loader2 className='size-4 animate-spin motion-reduce:animate-none' />}
+            </span>
             <Switch
+              id={publishId}
+              aria-describedby={`${publishId}-hint`}
               checked={template.status === 'published'}
               onCheckedChange={onTogglePublish}
+              disabled={publishing}
+              className='shadow-none focus-visible:ring-0 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-gilt'
             />
-          )}
+          </div>
         </div>
-      </div>
+      </section>
 
-      {/* Danger zone */}
-      <div className='border border-red-100 bg-red-50/50 p-4'>
-        <p className='text-sm font-semibold text-red-600'>Delete {noun}</p>
-        <p className='mb-3 text-xs text-red-400'>
-          This permanently removes the template.
-        </p>
-        <Button
-          variant='outline'
-          onClick={onDelete}
-          className='gap-2 rounded-none border-red-200 text-red-600 hover:bg-red-100 hover:text-red-700'
-        >
-          <Trash2 className='h-4 w-4' /> Delete
-        </Button>
-      </div>
+      <section aria-labelledby={`${prefix}-delete-heading`} className='border-t border-advisory-rule pt-6'>
+        <h3 id={`${prefix}-delete-heading`} className='m-0 text-base font-semibold text-midnight'>Delete {noun}</h3>
+        <p className='mt-2 mb-4 text-xs leading-[1.75] text-ink'>Moves this {noun} to Archived. You can restore it from the list.</p>
+        <LandingButton variant='outline' size='compact' onClick={onDelete} disabled={publishing} className='border-red-700 text-red-800 hover:bg-red-50 hover:text-red-900'>
+          <Trash2 aria-hidden='true' className='size-4' /> Delete {noun}
+        </LandingButton>
+      </section>
     </div>
   );
 }

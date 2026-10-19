@@ -60,12 +60,14 @@ interface BlogEditorProps {
   value: string;
   onChange: (html: string) => void;
   placeholder?: string;
+  disabled?: boolean;
 }
 
 export function BlogEditor({
   value,
   onChange,
   placeholder = 'Write your blog content here...',
+  disabled = false,
 }: BlogEditorProps) {
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -82,6 +84,9 @@ export function BlogEditor({
     // The editor is rendered inside a client page but Next still prerenders it;
     // rendering immediately would mismatch the server HTML.
     immediatelyRender: false,
+    shouldRerenderOnTransaction: true,
+    editable: !disabled,
+    editorProps: { attributes: { role: 'textbox', 'aria-multiline': 'true', 'aria-labelledby': 'blog-content-title', class: 'blog-article-editor' } },
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
   });
 
@@ -93,10 +98,14 @@ export function BlogEditor({
     }
   }, [value, editor]);
 
+  useEffect(() => { editor?.setEditable(!disabled); }, [editor, disabled]);
+
   if (!editor) {
     return (
-      <div className='flex min-h-[420px] items-center justify-center border border-border bg-card'>
-        <Loader2 className='h-5 w-5 animate-spin text-muted-foreground' />
+      <div role='status' className='border border-advisory-input bg-white'>
+        <span className='sr-only'>Loading article content editor.</span>
+        <div aria-hidden='true' className='flex h-[54px] gap-2 overflow-hidden border-b border-advisory-rule bg-canvas p-2'>{[0, 1, 2, 3, 4, 5, 6].map((index) => <span key={index} className='h-9 w-9 shrink-0 animate-pulse bg-white motion-reduce:animate-none' />)}</div>
+        <div aria-hidden='true' className='min-h-[420px] p-5'><div className='h-4 w-3/4 animate-pulse bg-canvas motion-reduce:animate-none' /></div>
       </div>
     );
   }
@@ -122,7 +131,7 @@ export function BlogEditor({
   };
 
   const handleImagePicked = async (file: File | null) => {
-    if (!file) return;
+    if (!file || disabled || uploading) return;
 
     setUploading(true);
     try {
@@ -151,8 +160,9 @@ export function BlogEditor({
   ];
 
   return (
-    <div className='border border-border bg-card'>
-      <div className='flex flex-wrap items-center gap-0.5 border-b border-border bg-muted px-1.5 py-1.5'>
+    <div className='min-w-0 border border-advisory-input bg-white focus-within:border-gilt'>
+      <div role='region' aria-label='Article formatting' tabIndex={0} className='max-w-full overflow-x-auto border-b border-advisory-rule bg-canvas focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-gilt'>
+      <fieldset disabled={disabled} aria-label='Article formatting controls' className='m-0 flex w-max min-w-full items-center gap-0.5 border-0 p-1.5'>
         {/* Paragraph / heading level */}
         <ToolbarButton
           title='Paragraph'
@@ -238,41 +248,18 @@ export function BlogEditor({
           type='file'
           accept='image/*'
           hidden
+          disabled={disabled || uploading}
           onChange={(e) => handleImagePicked(e.target.files?.[0] ?? null)}
         />
+      </fieldset>
       </div>
+      {uploading && <p role='status' className='m-0 border-b border-advisory-rule bg-canvas px-5 py-3 text-xs text-ink'>Uploading image…</p>}
 
       <div
-        className='min-h-[420px] bg-card p-4 [&_.ProseMirror]:min-h-[390px] [&_.ProseMirror]:outline-none'
-        onClick={() => editor.chain().focus().run()}
+        className='relative min-h-[420px] bg-white p-5 text-[15px] leading-[1.8] text-ink [&_.ProseMirror]:min-h-[378px] [&_.ProseMirror]:outline-none [&_.ProseMirror_h2]:mt-8 [&_.ProseMirror_h2]:mb-4 [&_.ProseMirror_h2]:font-advisory-heading [&_.ProseMirror_h2]:text-[25px] [&_.ProseMirror_h2]:leading-[1.4] [&_.ProseMirror_h2]:font-bold [&_.ProseMirror_h2]:text-midnight [&_.ProseMirror_h3]:mt-7 [&_.ProseMirror_h3]:mb-3 [&_.ProseMirror_h3]:font-advisory-heading [&_.ProseMirror_h3]:text-[21px] [&_.ProseMirror_h3]:leading-[1.45] [&_.ProseMirror_h3]:font-bold [&_.ProseMirror_h3]:text-midnight [&_.ProseMirror_h4]:mt-6 [&_.ProseMirror_h4]:mb-3 [&_.ProseMirror_h4]:text-lg [&_.ProseMirror_h4]:font-semibold [&_.ProseMirror_h4]:text-midnight [&_.ProseMirror_p]:my-4 [&_.ProseMirror_ul]:my-4 [&_.ProseMirror_ul]:list-disc [&_.ProseMirror_ul]:pl-6 [&_.ProseMirror_ol]:my-4 [&_.ProseMirror_ol]:list-decimal [&_.ProseMirror_ol]:pl-6 [&_.ProseMirror_li]:my-1 [&_.ProseMirror_li_p]:my-0 [&_.ProseMirror_blockquote]:my-5 [&_.ProseMirror_blockquote]:border-l [&_.ProseMirror_blockquote]:border-gilt [&_.ProseMirror_blockquote]:pl-5 [&_.ProseMirror_hr]:my-7 [&_.ProseMirror_hr]:border-advisory-rule [&_.ProseMirror_a]:text-midnight [&_.ProseMirror_a]:underline [&_.ProseMirror_a]:decoration-gilt [&_.ProseMirror_a]:underline-offset-4 [&_.ProseMirror_img]:my-5 [&_.ProseMirror_img]:h-auto [&_.ProseMirror_img]:max-w-full [&_.ProseMirror-selectednode]:outline-2 [&_.ProseMirror-selectednode]:outline-gilt [&_.ProseMirror>:first-child]:mt-0'
+        onClick={() => { if (!disabled) editor.chain().focus().run(); }}
       >
-        <style>{`
-          .ProseMirror p.is-editor-empty:first-child::before {
-            content: '${placeholder.replace(/'/g, "\\'")}';
-            float: left;
-            color: #adb5bd;
-            pointer-events: none;
-            height: 0;
-          }
-          .ProseMirror h2 { font-size: 1.5rem; font-weight: 700; margin: 1.2em 0 0.5em; }
-          .ProseMirror h3 { font-size: 1.25rem; font-weight: 700; margin: 1.1em 0 0.4em; }
-          .ProseMirror h4 { font-size: 1.1rem; font-weight: 600; margin: 1em 0 0.4em; }
-          .ProseMirror p { margin: 0.6em 0; line-height: 1.7; }
-          .ProseMirror ul { list-style-type: disc; padding-left: 1.5em; margin: 0.6em 0; }
-          .ProseMirror ol { list-style-type: decimal; padding-left: 1.5em; margin: 0.6em 0; }
-          .ProseMirror li { margin: 0.25em 0; }
-          .ProseMirror li p { margin: 0; }
-          .ProseMirror blockquote {
-            border-left: 3px solid var(--border);
-            padding-left: 1em;
-            margin: 0.8em 0;
-            color: #64748b;
-          }
-          .ProseMirror hr { border: none; border-top: 1px solid var(--border); margin: 1.4em 0; }
-          .ProseMirror a { color: #b08d57; text-decoration: underline; }
-          .ProseMirror img { max-width: 100%; height: auto; margin: 1em 0; }
-          .ProseMirror img.ProseMirror-selectednode { outline: 2px solid #b08d57; }
-        `}</style>
+        {editor.isEmpty && <p aria-hidden='true' className='pointer-events-none absolute top-5 right-5 left-5 m-0 text-ink/65'>{placeholder}</p>}
         <EditorContent editor={editor} />
       </div>
     </div>
@@ -280,7 +267,7 @@ export function BlogEditor({
 }
 
 function ToolbarDivider() {
-  return <span className='mx-1 h-5 w-px bg-border' />;
+  return <span className='mx-1 h-5 w-px bg-advisory-rule' />;
 }
 
 function ToolbarButton({
@@ -300,14 +287,16 @@ function ToolbarButton({
     <button
       type='button'
       title={title}
+      aria-label={title}
+      aria-pressed={active}
       disabled={disabled}
       onClick={onClick}
       className={cn(
-        'flex h-7 min-w-7 items-center justify-center px-1 transition-colors',
+        'flex size-10 shrink-0 items-center justify-center text-midnight transition-colors duration-150 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-gilt motion-reduce:transition-none',
         active
-          ? 'bg-accent/15 text-accent'
-          : 'text-muted-foreground hover:bg-background hover:text-foreground',
-        disabled && 'cursor-not-allowed opacity-40 hover:bg-transparent',
+          ? 'bg-midnight text-white'
+          : 'text-ink hover:bg-white hover:text-midnight',
+        disabled && 'cursor-not-allowed opacity-40',
       )}
     >
       {children}

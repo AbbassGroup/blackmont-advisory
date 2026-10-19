@@ -1,188 +1,31 @@
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Check, ChevronsUpDown } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { cn } from '@/lib/utils';
-import { useEffect, useState } from 'react';
-import { apiClient } from '@/lib/api';
+import { DealSelect } from '../../_reports/deal-select';
+import { ListingSection, ListingField, ListingInput } from './form-presentation';
 
-interface ContactTeamProps {
-  businessType: string;
-  setBusinessType: (v: string) => void;
-  priceRange: string;
-  setPriceRange: (v: string) => void;
-  selectedDeal: string;
-  setSelectedDeal: (v: string) => void;
-  referenceId: string;
-  setReferenceId: (v: string) => void;
+interface ExternalProps {
+  businessType: string; setBusinessType: (value: string) => void;
+  priceRange: string; setPriceRange: (value: string) => void;
+  selectedDeal: string; setSelectedDeal: (value: string) => void;
+  referenceId: string; setReferenceId: (value: string) => void;
   errors?: Record<string, string>;
 }
 
-export function External({
-  businessType,
-  setBusinessType,
-  priceRange,
-  setPriceRange,
-  selectedDeal,
-  setSelectedDeal,
-  referenceId,
-  setReferenceId,
-  errors = {},
-}: ContactTeamProps) {
-  const [open, setOpen] = useState(false);
-  const [deals, setDeals] = useState<any[]>([]);
-
-  useEffect(() => {
-    const fetchDeals = async () => {
-      try {
-        const businessUnit = 'Business Sellers';
-
-        const res = await apiClient.get(
-          `https://blackmont-api.nexartechnologies.com/api/v1/deals/get/all/names?businessUnit=${encodeURIComponent(businessUnit)}`,
-        );
-        if (res.data?.success) {
-          setDeals(res.data.data);
-        }
-      } catch (err) {
-        console.error('Error fetching deals:', err);
-      }
-    };
-    fetchDeals();
-  }, []);
-
+export function External({ businessType, setBusinessType, priceRange, setPriceRange, selectedDeal, setSelectedDeal, referenceId, setReferenceId, errors = {} }: ExternalProps) {
   return (
-    <div className='border border-border bg-card p-6 space-y-6'>
-      <div className='flex items-center gap-2 border-b border-border pb-4 mb-4'>
-        <h2 className='text-lg font-semibold text-secondary'>External</h2>
+    <ListingSection id='external' title='External' description='Business classification and linked deal details.'>
+      <div className='grid gap-6 min-[681px]:grid-cols-2'>
+        <ListingField id='businessType' label='Business type' required error={errors.businessType}>
+          <ListingInput id='businessType' name='businessType' value={businessType} onChange={(event) => setBusinessType(event.target.value)} aria-required='true' aria-invalid={Boolean(errors.businessType)} aria-describedby={errors.businessType ? 'businessType-hint' : undefined} />
+        </ListingField>
+        <ListingField id='priceRange' label='Price range' required error={errors.priceRange}>
+          <ListingInput id='priceRange' name='priceRange' type='number' value={priceRange} onChange={(event) => setPriceRange(event.target.value)} aria-required='true' aria-invalid={Boolean(errors.priceRange)} aria-describedby={errors.priceRange ? 'priceRange-hint' : undefined} />
+        </ListingField>
+        <ListingField id='deal' label='Deal' required error={errors.deal}>
+          <DealSelect id='deal' businessUnit='Business Sellers' value={selectedDeal} hasError={Boolean(errors.deal)} describedBy={errors.deal ? 'deal-hint' : undefined} onChange={(dealId) => setSelectedDeal(dealId)} />
+        </ListingField>
+        <ListingField id='referenceId' label='Reference ID' error={errors.referenceId}>
+          <ListingInput id='referenceId' name='referenceId' value={referenceId} onChange={(event) => setReferenceId(event.target.value)} placeholder='Generated when the listing is saved' disabled />
+        </ListingField>
       </div>
-
-      <div className='grid grid-cols-1 md:grid-cols-4 gap-6 mb-8'>
-        <div className='space-y-2'>
-          <Label htmlFor='businessType'>
-            Business Type <span className='text-red-500'>*</span>
-          </Label>
-          <Input
-            id='businessType'
-            name='businessType'
-            value={businessType}
-            onChange={(e) => setBusinessType(e.target.value)}
-            className={
-              errors.businessType
-                ? 'border-red-500 focus-visible:ring-red-500'
-                : ''
-            }
-          />
-          {errors.businessType && (
-            <p className='text-sm text-red-500'>{errors.businessType}</p>
-          )}
-        </div>
-        <div className='space-y-2'>
-          <Label htmlFor='priceRange'>
-            Price Range <span className='text-red-500'>*</span>
-          </Label>
-          <Input
-            id='priceRange'
-            name='priceRange'
-            type='number'
-            value={priceRange}
-            onChange={(e) => setPriceRange(e.target.value)}
-            className={
-              errors.priceRange
-                ? 'border-red-500 focus-visible:ring-red-500'
-                : ''
-            }
-          />
-          {errors.priceRange && (
-            <p className='text-sm text-red-500'>{errors.priceRange}</p>
-          )}
-        </div>
-        <div className='space-y-2'>
-          <Label htmlFor='deal' className={errors.deal ? 'text-red-500' : ''}>
-            Deal <span className='text-red-500'>*</span>
-          </Label>
-          <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
-              <Button
-                variant='outline'
-                role='combobox'
-                aria-expanded={open}
-                className={cn(
-                  'w-full justify-between font-normal',
-                  !selectedDeal && 'text-muted-foreground',
-                  errors.deal ? 'border-red-500 focus:ring-red-500' : '',
-                )}
-              >
-                {selectedDeal
-                  ? deals.find((d) => d._id === selectedDeal)?.name ||
-                    'Loading...'
-                  : 'Select deal...'}
-                <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className='w-[var(--radix-popover-trigger-width)] p-0'>
-              <Command>
-                <CommandInput placeholder='Search deal...' />
-                <CommandList>
-                  <CommandEmpty>No deal found.</CommandEmpty>
-                  <CommandGroup>
-                    {deals.map((deal) => (
-                      <CommandItem
-                        key={deal._id}
-                        value={deal.name}
-                        onSelect={() => {
-                          setSelectedDeal(
-                            deal._id === selectedDeal ? '' : deal._id,
-                          );
-                          setOpen(false);
-                        }}
-                      >
-                        <Check
-                          className={cn(
-                            'mr-2 h-4 w-4',
-                            selectedDeal === deal._id
-                              ? 'opacity-100'
-                              : 'opacity-0',
-                          )}
-                        />
-                        {deal.name}
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </CommandList>
-              </Command>
-            </PopoverContent>
-          </Popover>
-          {errors.deal && <p className='text-sm text-red-500'>{errors.deal}</p>}
-        </div>
-        <div className='space-y-2'>
-          <Label htmlFor='referenceId'>Reference ID</Label>
-          <Input
-            id='referenceId'
-            name='referenceId'
-            value={referenceId}
-            onChange={(e) => setReferenceId(e.target.value)}
-            disabled
-            className={
-              errors.referenceId
-                ? 'border-red-500 focus-visible:ring-red-500'
-                : ''
-            }
-          />
-        </div>
-      </div>
-    </div>
+    </ListingSection>
   );
 }
