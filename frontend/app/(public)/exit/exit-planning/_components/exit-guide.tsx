@@ -182,7 +182,6 @@ export function ExitGuide() {
 
       <div className='mt-8'>
         <ToolCta
-          appearance='advisory'
           resource='Exit Planning Guide'
           title='Not sure where to start?'
           subtitle='Our brokers will build a personalised exit roadmap for your business.'

@@ -4,7 +4,6 @@ import { Resources } from './_components/resources';
 import { Process } from './_components/process';
 import { Booking } from './_components/booking';
 import { WhyBlackmont } from './_components/why-blackmont';
-// import { Stats } from './_components/stats';
 import { ScheduleCallCta } from './_components/schedule-call-cta';
 import { AccessTracker } from './_components/access-tracker';
 import { JsonLd } from '@/components/seo/json-ld';
@@ -63,13 +62,7 @@ export default function SellPage() {
       <Process />
       <Booking />
       <WhyBlackmont />
-      {/* "Ready to discuss your exit?" sits above the stats band. */}
       <ScheduleCallCta />
-      {/* <Stats /> */}
-      {/* <ScheduleCallCta
-        title='Take the next step'
-        subtitle='Book a 30-minute confidential strategy call with our senior team. No obligation.'
-      /> */}
     </div>
   );
 }

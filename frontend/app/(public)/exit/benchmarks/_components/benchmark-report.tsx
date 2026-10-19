@@ -136,7 +136,6 @@ export function BenchmarkReport() {
 
       <div className='mt-6'>
         <ToolCta
-          appearance='advisory'
           resource='Industry Benchmark Report'
           title="What's your business worth?"
           subtitle='Get a free, confidential market appraisal from Blackmont Advisory.'

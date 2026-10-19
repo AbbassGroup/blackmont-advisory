@@ -1,5 +1,9 @@
 import type { Metadata } from 'next';
-import { Check } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
+import {
+  LandingButtonLink,
+  LandingContainer,
+} from '@/components/landing/presentation';
 
 export const metadata: Metadata = {
   title: 'Thank You | Blackmont Advisory',
@@ -8,25 +12,35 @@ export const metadata: Metadata = {
 
 export default function SuccessPage() {
   return (
-    <section className='relative min-h-[60vh] flex items-center justify-center px-5 py-10 min-[681px]:py-12 min-[1121px]:py-16 bg-background overflow-hidden'>
-      <div className='absolute -top-20 -left-20 h-64 w-64 rounded-full bg-accent/15 blur-3xl' />
-      <div className='absolute -bottom-24 -right-16 h-72 w-72 rounded-full bg-secondary/10 blur-3xl' />
-
-      <div className='relative w-full max-w-3xl'>
-        <div className='border border-border bg-card/90 backdrop-blur-sm p-6 min-[681px]:p-8 text-center'>
-          <div className='mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-accent text-primary shadow'>
-            <Check />
-          </div>
-
-          <h1 className='text-3xl md:text-4xl font-bold text-secondary mb-5 tracking-tight'>
-            Thank You! We&apos;ve received your details.
+    <section
+      aria-labelledby='success-title'
+      className='flex min-h-[60vh] items-center border-b border-advisory-rule bg-canvas py-14 text-midnight min-[681px]:py-16 min-[1121px]:py-20'
+    >
+      <LandingContainer>
+        <div className='mx-auto max-w-[780px] text-center'>
+          <CheckCircle2
+            aria-hidden='true'
+            strokeWidth={1.5}
+            className='mx-auto mb-6 size-10 text-gilt'
+          />
+          <h1
+            id='success-title'
+            className='m-0 font-advisory-heading text-[34px] leading-[1.3] font-bold tracking-normal text-balance min-[681px]:text-[44px]'
+          >
+            Thank you. We&apos;ve received your details.
           </h1>
-          <p className='text-base md:text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto'>
+          <p className='mx-auto mt-6 mb-0 max-w-[580px] text-base leading-[1.8] text-ink min-[681px]:text-[17px]'>
             Thank you for choosing Blackmont Advisory. A broker will be in touch
-            shortly to discuss your business goals
+            shortly to discuss your business goals.
           </p>
+          <div className='mt-8 flex flex-col items-stretch justify-center gap-3 min-[426px]:flex-row min-[426px]:flex-wrap min-[426px]:items-center'>
+            <LandingButtonLink href='/'>Back to home</LandingButtonLink>
+            <LandingButtonLink href='/resources' variant='outline'>
+              Explore resources
+            </LandingButtonLink>
+          </div>
         </div>
-      </div>
+      </LandingContainer>
     </section>
   );
 }

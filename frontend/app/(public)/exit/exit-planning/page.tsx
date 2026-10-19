@@ -36,7 +36,6 @@ export default function ExitPlanningPage() {
       <AccessTracker resource='Exit Planning Guide' />
       <ToolHeader
         crumbs={CRUMBS}
-        appearance='advisory'
         layout='stacked'
         title='Your exit planning roadmap'
         subtitle='A practical phase-by-phase checklist to prepare your business for a successful sale. Tick off tasks as you complete them, your progress is saved automatically.'
@@ -45,7 +44,6 @@ export default function ExitPlanningPage() {
       </ToolHeader>
 
       <ToolNotes
-        appearance='advisory'
         heading='How to use this checklist'
         paragraphs={[
           'Five phases, running from around two years before a sale through to being under offer. It is built to be worked through rather than read, so tick items off as you complete them and come back to it.',

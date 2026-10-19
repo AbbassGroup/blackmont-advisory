@@ -36,7 +36,6 @@ export default function ReadinessPage() {
       <AccessTracker resource='Sale Readiness Score' />
       <ToolHeader
         crumbs={CRUMBS}
-        appearance='advisory'
         layout='stacked'
         title='Is your business sale ready?'
         subtitle='Answer 10 questions to receive your personalised readiness score, category breakdown, and tailored recommendations.'
@@ -45,7 +44,6 @@ export default function ReadinessPage() {
       </ToolHeader>
 
       <ToolNotes
-        appearance='advisory'
         heading='How to read your score'
         paragraphs={[
           'Ten dimensions, each scored from zero to ten. The total gives you a band, but the total is the least useful part of the result. What matters is which two or three areas came back weakest, because those are the ones a buyer will find and price against.',

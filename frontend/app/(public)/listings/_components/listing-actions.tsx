@@ -17,7 +17,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import EOIForm from './eoi-form';
 
 interface Props {
   listingId: string;
@@ -96,7 +95,6 @@ function ShareDialog({
 }
 
 export default function ListingActions({ listingId, listingTitle }: Props) {
-  const [eoiOpen, setEoiOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
 
@@ -112,11 +110,6 @@ export default function ListingActions({ listingId, listingTitle }: Props) {
         </LandingButton>
       </nav>
 
-      <EOIForm
-        open={eoiOpen}
-        onClose={() => setEoiOpen(false)}
-        listingTitle={listingTitle}
-      />
       <ShareDialog
         open={shareOpen}
         onClose={() => setShareOpen(false)}

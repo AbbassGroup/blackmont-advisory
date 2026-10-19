@@ -36,7 +36,6 @@ export default function ValuationPage() {
       <AccessTracker resource='Valuation Tool' />
       <ToolHeader
         crumbs={CRUMBS}
-        appearance='advisory'
         title='Business valuation tool'
         subtitle='Answer 5 quick questions to get an indicative value range for your business, based on revenue, profit, industry, and management structure.'
       >
@@ -44,7 +43,6 @@ export default function ValuationPage() {
       </ToolHeader>
 
       <ToolNotes
-        appearance='advisory'
         heading='How to read your range'
         paragraphs={[
           'The tool applies a multiple to your EBITDA, adjusted for the size of the business, your industry and how the business is managed. What it returns is a range rather than a valuation, and the width of that range is deliberate.',

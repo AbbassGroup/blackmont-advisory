@@ -345,7 +345,6 @@ export function Scorecard() {
             </div>
 
             <ToolCta
-              appearance='advisory'
               resource='Sale Readiness Score'
               title='Ready to take the next step?'
               subtitle='Book a free, confidential 30-minute call with our team.'

@@ -36,7 +36,6 @@ export default function BenchmarksPage() {
       <AccessTracker resource='Industry Benchmark Report' />
       <ToolHeader
         crumbs={CRUMBS}
-        appearance='advisory'
         layout='wide'
         title='Industry benchmark report'
         subtitle='Current Australian SME market data. Select your industry to see typical EBITDA multiples, sale price ranges, and what buyers are really looking for.'
@@ -45,7 +44,6 @@ export default function BenchmarksPage() {
       </ToolHeader>
 
       <ToolNotes
-        appearance='advisory'
         heading='How to use these benchmarks'
         paragraphs={[
           'Select your sector to see the typical multiple, price range, time to sell and buyer demand, along with the five factors buyers weigh most heavily in that industry.',

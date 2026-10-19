@@ -13,7 +13,6 @@ import {
 import { ImDocument, getNavItems } from './im-document';
 import type { ImSection } from './types';
 import type { ReportKind } from './report-kind';
-import { Button } from '../ui/button';
 import Link from 'next/link';
 
 export function ImReader({
