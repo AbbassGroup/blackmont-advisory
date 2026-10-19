@@ -22,8 +22,7 @@ export function LandingFooter({ homePath = '' }: { homePath?: '' | '/' }) {
             className='mb-[20px]'
           />
           <p className='m-0 mb-3 max-w-[425px] text-[15px] leading-[1.75]'>
-            Helping business owners sell and buyers acquire established
-            businesses with careful, confidential advice.
+            Helping business owners sell and buyers acquire established.
           </p>
           <p className='m-0 mb-3 max-w-[425px] text-[15px] leading-[1.75]'>
             Melbourne, Australia
