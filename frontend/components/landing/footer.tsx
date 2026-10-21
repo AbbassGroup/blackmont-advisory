@@ -32,6 +32,13 @@ export function LandingFooter({ homePath = '' }: { homePath?: '' | '/' }) {
             <br />
             ABN 78 674 429 255
           </p>
+          <LandingTextLink
+            href={`${homePath}#contact`}
+            tone='white'
+            className='font-normal'
+          >
+            Begin a conversation
+          </LandingTextLink>
         </div>
         <div className='min-w-0'>
           <h3 className='m-0 mb-4 text-[15px] leading-[1.5] font-bold'>
@@ -62,6 +69,15 @@ export function LandingFooter({ homePath = '' }: { homePath?: '' | '/' }) {
             Get in touch
           </h3>
           <p className='m-0 mb-[12px] text-[15px] leading-[1.7]'>
+            <LandingTextLink
+              href='tel:1300369474'
+              tone='white'
+              className='font-normal'
+            >
+              1300 369 474
+            </LandingTextLink>
+          </p>
+          <p className='m-0 mb-[12px] text-[15px] leading-[1.7]'>
             1/459 Toorak Road, Toorak, VIC 3149
           </p>
           <p className='m-0 mb-[12px] text-[15px] leading-[1.7]'>
@@ -74,13 +90,6 @@ export function LandingFooter({ homePath = '' }: { homePath?: '' | '/' }) {
             </LandingTextLink>
           </p>
 
-          <LandingTextLink
-            href={`${homePath}#contact`}
-            tone='white'
-            className='font-normal'
-          >
-            Begin a conversation
-          </LandingTextLink>
           <div className='mt-6'>
             <FooterAssociationLogos />
           </div>

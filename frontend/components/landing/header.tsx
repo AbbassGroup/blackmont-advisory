@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from 'react';
 import { LandingLink } from './landing-link';
-import { Menu, X } from 'lucide-react';
+import { Menu, Phone, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { LandingBrand } from './brand';
 import { LandingContainer } from './presentation';
@@ -136,11 +136,13 @@ export function LandingHeader({ homePath = '' }: { homePath?: '' | '/' }) {
               </LandingLink>
             ))}
             <LandingLink
-              href={`${homePath}#contact`}
+              href='tel:1300369474'
               onClick={() => setOpen(false)}
-              className='mt-3 inline-flex min-h-[47px] items-center justify-center border border-gilt bg-gilt px-5 py-[12px] text-[15px] leading-[1.5] font-semibold whitespace-nowrap text-midnight transition-colors duration-200 ease-out hover:bg-midnight hover:text-gilt focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none min-[1280px]:mt-0 min-[1280px]:px-[16px] min-[1280px]:py-0 min-[1444px]:px-5 min-[1444px]:text-base'
+              aria-label='Call 1300 369 474'
+              className='mt-3 inline-flex min-h-[47px] items-center justify-center gap-2 border border-gilt bg-gilt px-5 py-[12px] text-[15px] leading-[1.5] font-semibold whitespace-nowrap text-midnight transition-colors duration-200 ease-out hover:bg-midnight hover:text-gilt focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none min-[1280px]:mt-0 min-[1280px]:px-[16px] min-[1280px]:py-0 min-[1444px]:px-5 min-[1444px]:text-base'
             >
-              Talk to an advisor
+              <Phone size={17} strokeWidth={2} aria-hidden='true' />
+              1300 369 474
             </LandingLink>
           </div>
         </LandingContainer>
