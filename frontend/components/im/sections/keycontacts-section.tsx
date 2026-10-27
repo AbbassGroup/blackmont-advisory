@@ -36,6 +36,13 @@ const CONTACTS = [
     phone: '0456 536 680',
     image: '/CGIS.png',
   },
+  {
+    role: 'Commercial Real Estate',
+    name: 'Chris Coster',
+    company: 'Tsimos Commercial Property',
+    phone: '0410 742 704',
+    image: '/chris-coster.jpg',
+  },
 ];
 
 export function KeyContactsSection({

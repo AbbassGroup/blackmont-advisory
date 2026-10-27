@@ -16,9 +16,10 @@ import { LandingButton } from './presentation';
 
 type EnquiryType = 'sell' | 'buy';
 
-const NEXAR_API_URL =
-  process.env.NEXT_PUBLIC_NEXAR_API_URL ||
-  'https://blackmont-api.nexartechnologies.com';
+const NEXAR_API_URL = 'http://localhost:5055/api/v1';
+// const NEXAR_API_URL =
+//   process.env.NEXT_PUBLIC_NEXAR_API_URL ||
+//   'https://blackmont-api.nexartechnologies.com/api/v1';
 
 const EMPTY_FORM = {
   name: '',
@@ -204,7 +205,8 @@ export function ContactForm() {
       setFeedback({ kind: 'success', message });
       toast.success(message);
       setForm(EMPTY_FORM);
-    } catch {
+    } catch (error) {
+      console.error('Error submitting contact form:', error);
       const message =
         'Your enquiry could not be sent. Please try again or email info@blackmontadvisory.com.';
       setFeedback({ kind: 'error', message });
