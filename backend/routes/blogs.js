@@ -64,6 +64,67 @@ function serializeBlog(blog) {
   return { ...doc, id: String(doc._id) };
 }
 
+// ─── SEO fields ───────────────────────────────────────────────────────────────
+const MAX_KEYWORDS = 10;
+const MAX_TAKEAWAYS = 8;
+const MAX_FAQS = 15;
+
+// Array fields arrive in a multipart body, so the client sends them as JSON
+// strings. Anything unparseable is treated as empty rather than failing the save.
+function parseJsonArray(value) {
+  if (Array.isArray(value)) return value;
+  if (typeof value !== 'string' || !value.trim()) return [];
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+const cleanText = (value) => String(value ?? '').replace(/\s+/g, ' ').trim();
+
+/**
+ * The SEO fields present in a request body, cleaned. Only keys the client sent
+ * are returned, so PUT keeps its "absent means unchanged" semantics.
+ */
+function readSeoFields(body) {
+  const fields = {};
+
+  if (body.seoTitle !== undefined) fields.seoTitle = cleanText(body.seoTitle);
+  if (body.focusKeyword !== undefined) fields.focusKeyword = cleanText(body.focusKeyword).toLowerCase();
+
+  if (body.keywords !== undefined) {
+    const keywords = parseJsonArray(body.keywords).map((k) => cleanText(k).toLowerCase()).filter(Boolean);
+    fields.keywords = [...new Set(keywords)].slice(0, MAX_KEYWORDS);
+  }
+  if (body.keyTakeaways !== undefined) {
+    fields.keyTakeaways = parseJsonArray(body.keyTakeaways).map(cleanText).filter(Boolean).slice(0, MAX_TAKEAWAYS);
+  }
+  if (body.faqs !== undefined) {
+    fields.faqs = parseJsonArray(body.faqs)
+      .map((faq) => ({ question: cleanText(faq?.question), answer: String(faq?.answer ?? '').trim() }))
+      .filter((faq) => faq.question && faq.answer)
+      .slice(0, MAX_FAQS);
+  }
+
+  return fields;
+}
+
+/**
+ * The `author` field if the request sent one: an ObjectId, or null to credit
+ * the firm. `undefined` means "not sent"; `false` means sent but malformed.
+ */
+function readAuthor(body) {
+  if (body.author === undefined) return undefined;
+  const value = String(body.author || '').trim();
+  if (!value) return null;
+  return OBJECT_ID_RE.test(value) ? value : false;
+}
+
+// Public author fields embedded in a single-article response.
+const AUTHOR_FIELDS = 'name slug role bio credentials photo linkedin';
+
 const IMAGE_EXT_BY_MIME = {
   'image/png': '.png',
   'image/jpeg': '.jpg',
@@ -122,18 +183,23 @@ function removeUploadedImage(imageUrl) {
 // GET / — paginated list, newest first. 12 per page unless overridden.
 router.get('/', async (req, res) => {
   try {
-    const { page = 1, limit = DEFAULT_PER_PAGE, category, search = '' } = req.query;
+    const { page = 1, limit = DEFAULT_PER_PAGE, category, search = '', author } = req.query;
 
     const pageNum = Math.max(1, parseInt(page, 10) || 1);
     const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || DEFAULT_PER_PAGE));
 
     const query = {};
     if (category) query.category = { $regex: new RegExp(`^${category}$`, 'i') };
+    if (author) {
+      if (!OBJECT_ID_RE.test(author)) return fail(res, 400, 'Invalid author ID format');
+      query.author = author;
+    }
     if (search) {
       query.$or = [
         { title: { $regex: search, $options: 'i' } },
         { category: { $regex: search, $options: 'i' } },
         { metaDescription: { $regex: search, $options: 'i' } },
+        { keywords: { $regex: search, $options: 'i' } },
       ];
     }
 
@@ -165,14 +231,64 @@ router.get('/', async (req, res) => {
   }
 });
 
+// GET /:id/related — other articles on the same topic, for the article sidebar.
+// Ranked by shared keywords, then same category, then recency; topped up with
+// the latest articles so the sidebar is never short just because tags are thin.
+router.get('/:id/related', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const limit = Math.min(10, Math.max(1, parseInt(req.query.limit, 10) || 3));
+
+    const blog = OBJECT_ID_RE.test(id)
+      ? await Blog.findById(id).select('keywords category').lean()
+      : await Blog.findOne({ url: id }).select('keywords category').lean();
+    if (!blog) return fail(res, 404, 'Blog not found');
+
+    // The sidebar only needs card fields — never ship article bodies here.
+    const CARD_FIELDS = 'title url image imageAlt category createdAt updatedAt keywords';
+    const others = { _id: { $ne: blog._id }, url: { $ne: null } };
+
+    const topical = [];
+    if (blog.keywords?.length) topical.push({ keywords: { $in: blog.keywords } });
+    if (blog.category) topical.push({ category: blog.category });
+
+    const candidates = topical.length
+      ? await Blog.find({ ...others, $or: topical }).select(CARD_FIELDS).lean()
+      : [];
+
+    const ownKeywords = new Set(blog.keywords || []);
+    const score = (b) =>
+      (b.keywords || []).filter((k) => ownKeywords.has(k)).length * 2 +
+      (blog.category && b.category === blog.category ? 1 : 0);
+
+    const related = candidates
+      .sort((a, b) => score(b) - score(a) || b.createdAt - a.createdAt)
+      .slice(0, limit);
+
+    if (related.length < limit) {
+      const latest = await Blog.find({ ...others, _id: { $nin: [blog._id, ...related.map((b) => b._id)] } })
+        .select(CARD_FIELDS)
+        .sort({ createdAt: -1 })
+        .limit(limit - related.length)
+        .lean();
+      related.push(...latest);
+    }
+
+    return ok(res, 200, 'Related blogs fetched successfully', { data: related.map(serializeBlog) });
+  } catch (error) {
+    console.error('Error fetching related blogs:', error);
+    return fail(res, 500, 'Failed to fetch related blogs', error.message);
+  }
+});
+
 // GET /:id — a single article. Accepts the ObjectId or, so the public
 // /resources/<slug> page can fetch directly, the article's `url` slug.
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const blog = OBJECT_ID_RE.test(id)
-      ? await Blog.findById(id).lean()
-      : await Blog.findOne({ url: id }).lean();
+      ? await Blog.findById(id).populate('author', AUTHOR_FIELDS).lean()
+      : await Blog.findOne({ url: id }).populate('author', AUTHOR_FIELDS).lean();
 
     if (!blog) return fail(res, 404, 'Blog not found');
 
@@ -189,7 +305,7 @@ router.use(authMiddleware);
 // POST / — create an article. Multipart, with an optional cover `image`.
 async function createBlog(req, res) {
   try {
-    const { title, content, url, category, metaDescription } = req.body;
+    const { title, content, url, category, metaDescription, imageAlt } = req.body;
 
     if (!title || !String(title).trim()) {
       return fail(res, 400, 'Title is required');
@@ -197,13 +313,18 @@ async function createBlog(req, res) {
     if (!content || !String(content).trim()) {
       return fail(res, 400, 'Content is required');
     }
+    const author = readAuthor(req.body);
+    if (author === false) return fail(res, 400, 'Invalid author');
 
     const blog = await Blog.create({
+      author: author ?? null,
       title: String(title).trim(),
       content: processBlogContentImages(content, publicBase(req)),
       url: url ? String(url).trim() : null,
       category: category || '',
       metaDescription: metaDescription || '',
+      imageAlt: imageAlt || '',
+      ...readSeoFields(req.body),
       image: req.file ? `${publicBase(req)}/uploads/blogs/${req.file.filename}` : null,
     });
 
@@ -246,13 +367,19 @@ router.put('/:id', upload.single('image'), multerErrorHandler, async (req, res) 
     const blog = await Blog.findById(req.params.id);
     if (!blog) return fail(res, 404, 'Blog not found');
 
-    const { title, content, url, category, metaDescription } = req.body;
+    const { title, content, url, category, metaDescription, imageAlt } = req.body;
 
     if (title !== undefined) blog.title = String(title).trim();
     if (content !== undefined) blog.content = processBlogContentImages(content, publicBase(req));
     if (url !== undefined) blog.url = url ? String(url).trim() : null;
     if (category !== undefined) blog.category = category;
     if (metaDescription !== undefined) blog.metaDescription = metaDescription;
+    if (imageAlt !== undefined) blog.imageAlt = imageAlt;
+    Object.assign(blog, readSeoFields(req.body));
+
+    const author = readAuthor(req.body);
+    if (author === false) return fail(res, 400, 'Invalid author');
+    if (author !== undefined) blog.author = author;
 
     if (req.file) {
       const previousImage = blog.image;

@@ -98,6 +98,9 @@ app.use('/api/offer-term-sheets', offerTermSheetRoutes);
 const blogsRoutes = require('./routes/blogs');
 app.use('/api/blogs', blogsRoutes);
 
+const authorsRoutes = require('./routes/authors');
+app.use('/api/authors', authorsRoutes);
+
 app.use('/uploads', express.static('uploads'));
 
 

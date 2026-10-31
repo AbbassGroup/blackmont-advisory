@@ -17,13 +17,21 @@ import {
   listBlogs,
   slugify,
   blogErrorMessage,
+  blogPageTitle,
   type Blog,
+  type BlogFaq,
 } from '@/lib/blogs';
 import BlogCategoryCombobox from './blog-category-field';
 import BlogPhotoUploader from './blog-photo-uploader';
 import BlogUrlField from './blog-url-field';
+import BlogKeywordsField from './blog-keywords-field';
+import BlogSearchPreview from './blog-search-preview';
+import BlogTakeawaysField from './blog-takeaways-field';
+import BlogFaqField from './blog-faq-field';
+import BlogAuthorField from './blog-author-field';
 import { BlogEditor } from './blog-editor';
 import { ImageField } from './image-field';
+import { HEADING_CLASS, HINT_CLASS, INPUT_CLASS, LABEL_CLASS, SECTION_CLASS, TEXTAREA_CLASS } from './form-styles';
 
 type BlogFormMode = 'create' | 'edit';
 
@@ -32,9 +40,17 @@ export interface BlogInitialData {
   title?: string;
   content?: string;
   imageUrl?: string;
+  imageAlt?: string;
   url?: string;
   category?: string;
   metaDescription?: string;
+  seoTitle?: string;
+  focusKeyword?: string;
+  keywords?: string[];
+  keyTakeaways?: string[];
+  faqs?: BlogFaq[];
+  /** Author id, or '' for none. */
+  author?: string;
 }
 
 interface BlogFormProps {
@@ -43,10 +59,6 @@ interface BlogFormProps {
   onCancel?: () => void;
   onSuccess?: (blog: Blog) => void;
 }
-
-const INPUT_CLASS = 'h-10 w-full min-w-0 rounded-none border border-advisory-input bg-white px-3 text-base text-midnight outline-none placeholder:text-ink/65 focus:border-gilt disabled:cursor-not-allowed disabled:opacity-50 min-[681px]:text-sm';
-const HEADING_CLASS = 'm-0 font-advisory-heading text-[23px] leading-[1.4] font-bold text-midnight';
-const SECTION_CLASS = 'flex min-w-0 flex-col gap-6 border border-advisory-rule bg-white p-5 min-[681px]:p-8';
 
 /** TipTap leaves an empty document as `<p></p>` — that isn't content. */
 function hasContent(html: string): boolean {
@@ -68,9 +80,18 @@ export default function BlogForm({
   const [category, setCategory] = useState('');
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState('');
+  const [imageAlt, setImageAlt] = useState('');
   const [removeImage, setRemoveImage] = useState(false);
   const [quickUploadUrl, setQuickUploadUrl] = useState('');
   const [categories, setCategories] = useState<string[]>([]);
+
+  const [seoTitle, setSeoTitle] = useState('');
+  const [focusKeyword, setFocusKeyword] = useState('');
+  const [keywords, setKeywords] = useState<string[]>([]);
+  const [keywordSuggestions, setKeywordSuggestions] = useState<string[]>([]);
+  const [keyTakeaways, setKeyTakeaways] = useState<string[]>([]);
+  const [faqs, setFaqs] = useState<BlogFaq[]>([]);
+  const [author, setAuthor] = useState('');
 
   const [isSlugManuallyEdited, setIsSlugManuallyEdited] = useState(false);
   const [isSlugAvailable, setIsSlugAvailable] = useState(true);
@@ -88,6 +109,13 @@ export default function BlogForm({
     setUrl(initialData?.url ?? '');
     setCategory(initialData?.category ?? '');
     setPreview(initialData?.imageUrl ?? '');
+    setImageAlt(initialData?.imageAlt ?? '');
+    setSeoTitle(initialData?.seoTitle ?? '');
+    setFocusKeyword(initialData?.focusKeyword ?? '');
+    setKeywords(initialData?.keywords ?? []);
+    setKeyTakeaways(initialData?.keyTakeaways ?? []);
+    setFaqs(initialData?.faqs ?? []);
+    setAuthor(initialData?.author ?? '');
     setImage(null);
     setRemoveImage(false);
     setIsSlugManuallyEdited(false);
@@ -96,16 +124,17 @@ export default function BlogForm({
     setIsSlugValid(true);
   }, [initialData]);
 
-  // Suggestions for the category field — whatever other articles already use.
+  // Suggestions for the category and keyword fields — whatever other articles
+  // already use, so the same topic isn't spelled three different ways.
   useEffect(() => {
     let cancelled = false;
     listBlogs({ limit: 100 })
       .then(({ blogs }) => {
         if (cancelled) return;
-        const unique = Array.from(
-          new Set(blogs.map((b) => (b.category || '').trim()).filter(Boolean)),
-        ).sort((a, b) => a.localeCompare(b));
-        setCategories(unique);
+        const unique = (values: string[]) =>
+          Array.from(new Set(values.map((v) => v.trim()).filter(Boolean))).sort((a, b) => a.localeCompare(b));
+        setCategories(unique(blogs.map((b) => b.category || '')));
+        setKeywordSuggestions(unique(blogs.flatMap((b) => b.keywords ?? [])));
       })
       .catch(() => {
         /* suggestions are optional */
@@ -175,6 +204,18 @@ export default function BlogForm({
     formData.append('content', trimmedContent);
     formData.append('url', resolvedUrl);
     formData.append('category', trimmedCategory);
+    // No cover, nothing to describe — don't keep alt text for an image that's gone.
+    formData.append('imageAlt', preview ? imageAlt.trim() : '');
+    formData.append('author', author);
+    formData.append('seoTitle', seoTitle.trim());
+    formData.append('focusKeyword', focusKeyword.trim());
+    // Multipart has no arrays — the API parses these JSON strings back out.
+    formData.append('keywords', JSON.stringify(keywords));
+    formData.append('keyTakeaways', JSON.stringify(keyTakeaways.map((t) => t.trim()).filter(Boolean)));
+    formData.append('faqs', JSON.stringify(
+      faqs.map((faq) => ({ question: faq.question.trim(), answer: faq.answer.trim() }))
+        .filter((faq) => faq.question && faq.answer),
+    ));
 
     if (image) {
       formData.append('image', image);
@@ -230,12 +271,38 @@ export default function BlogForm({
                 onCheckingChange={handleCheckingChange} onValidityChange={handleValidityChange} disabled={saving} />
             </div>
             <BlogCategoryCombobox value={category} onChange={setCategory} options={categories} disabled={saving} />
-            <div className='flex min-w-0 flex-col gap-2'>
-              <label htmlFor='blog-description' className='text-sm font-medium text-midnight'>Meta description <span className='font-normal text-ink'>(optional)</span></label>
-              <p id='blog-description-hint' className='m-0 text-xs leading-[1.75] text-ink'>Shown in search results. Around 150–160 characters works best.</p>
-              <textarea id='blog-description' aria-describedby='blog-description-hint' rows={3} value={metaDescription} onChange={(event) => setMetaDescription(event.target.value)}
-                placeholder='Enter meta description' className={cn(INPUT_CLASS, 'h-auto min-h-24 resize-y py-3 leading-[1.75]')} />
+            <BlogAuthorField value={author} onChange={setAuthor} disabled={saving} />
+          </section>
+
+          <section aria-labelledby='blog-seo-title' className={SECTION_CLASS}>
+            <div className='flex flex-col gap-2'>
+              <h2 id='blog-seo-title' className={HEADING_CLASS}>Search &amp; AI visibility</h2>
+              <p className='m-0 text-sm leading-[1.75] text-ink'>How the article appears in Google and what it targets. All optional, but each one helps.</p>
             </div>
+            <div className='flex min-w-0 flex-col gap-2'>
+              <label htmlFor='blog-seo-title-input' className={LABEL_CLASS}>SEO title <span className='font-normal text-ink'>(optional)</span></label>
+              <p id='blog-seo-title-hint' className={HINT_CLASS}>Replaces the blog title in Google results and browser tabs only. Leave blank to use the blog title.</p>
+              <input id='blog-seo-title-input' type='text' aria-describedby='blog-seo-title-hint' value={seoTitle} maxLength={120}
+                onChange={(event) => setSeoTitle(event.target.value)} placeholder={title.trim() || 'Shorter, search-friendly version of the title'} className={INPUT_CLASS} />
+            </div>
+            <div className='flex min-w-0 flex-col gap-2'>
+              <label htmlFor='blog-description' className={LABEL_CLASS}>Meta description <span className='font-normal text-ink'>(optional)</span></label>
+              <p id='blog-description-hint' className={HINT_CLASS}>
+                Shown in search results and as the article intro. Around 120–160 characters works best.{' '}
+                <span className={cn('font-medium', metaDescription.trim().length > 160 ? 'text-amber-800' : 'text-midnight')}>{metaDescription.trim().length}/160</span>
+              </p>
+              <textarea id='blog-description' aria-describedby='blog-description-hint' rows={3} value={metaDescription} onChange={(event) => setMetaDescription(event.target.value)}
+                placeholder='Enter meta description' className={TEXTAREA_CLASS} />
+            </div>
+            <div className='flex min-w-0 flex-col gap-2'>
+              <label htmlFor='blog-focus-keyword' className={LABEL_CLASS}>Focus keyword <span className='font-normal text-ink'>(optional)</span></label>
+              <p id='blog-focus-keyword-hint' className={HINT_CLASS}>The main phrase someone would search to find this article. Powers the checks below.</p>
+              <input id='blog-focus-keyword' type='text' aria-describedby='blog-focus-keyword-hint' value={focusKeyword} maxLength={80}
+                onChange={(event) => setFocusKeyword(event.target.value)} placeholder='e.g. sell a business confidentially' className={INPUT_CLASS} />
+            </div>
+            <BlogKeywordsField value={keywords} onChange={setKeywords} suggestions={keywordSuggestions} disabled={saving} />
+            <BlogSearchPreview pageTitle={blogPageTitle({ title: title || 'Blog title', seoTitle })} slug={url.trim() || slugify(title)}
+              metaDescription={metaDescription} focusKeyword={focusKeyword} content={content} />
           </section>
 
           <section aria-labelledby='blog-content-title' className={SECTION_CLASS}>
@@ -244,6 +311,15 @@ export default function BlogForm({
               <p className='m-0 text-sm leading-[1.75] text-ink'>Write and format your article, including links and images.</p>
             </div>
             <BlogEditor value={content} onChange={setContent} disabled={saving} />
+          </section>
+
+          <section aria-labelledby='blog-answers-title' className={SECTION_CLASS}>
+            <div className='flex flex-col gap-2'>
+              <h2 id='blog-answers-title' className={HEADING_CLASS}>Answer summary</h2>
+              <p className='m-0 text-sm leading-[1.75] text-ink'>Short, direct answers that Google and AI assistants can quote. Both are optional.</p>
+            </div>
+            <BlogTakeawaysField value={keyTakeaways} onChange={setKeyTakeaways} disabled={saving} />
+            <BlogFaqField value={faqs} onChange={setFaqs} disabled={saving} />
           </section>
         </div>
 
@@ -255,6 +331,14 @@ export default function BlogForm({
             </div>
             <ImageField preview={preview} onChange={handleImageChange} disabled={saving} />
             {isEdit && removeImage && <p role='status' className='m-0 text-xs leading-[1.75] text-amber-800'>The cover image will be removed when you save.</p>}
+            {preview && (
+              <div className='flex min-w-0 flex-col gap-2'>
+                <label htmlFor='blog-image-alt' className='text-sm font-medium text-midnight'>Image alt text <span className='font-normal text-ink'>(recommended)</span></label>
+                <p id='blog-image-alt-hint' className='m-0 text-xs leading-[1.75] text-ink'>Describe what the image shows, for screen readers and Google Images. Leave blank to use the blog title.</p>
+                <input id='blog-image-alt' type='text' maxLength={160} aria-describedby='blog-image-alt-hint' value={imageAlt}
+                  onChange={(event) => setImageAlt(event.target.value)} placeholder='e.g. Business owner signing a sale agreement' className={INPUT_CLASS} />
+              </div>
+            )}
           </section>
           <section aria-labelledby='blog-quick-upload-title' className={SECTION_CLASS}>
             <div className='flex flex-col gap-2'>
@@ -293,13 +377,21 @@ export function BlogFormSkeleton() {
         <div className='flex min-w-0 flex-col gap-6'>
           <section className={SECTION_CLASS}>
             <h2 className={HEADING_CLASS}>Article details</h2>
-            {['Blog title', 'Blog URL', 'Category', 'Meta description (optional)'].map((label, index) => (
+            {['Blog title', 'Blog URL', 'Category'].map((label, index) => (
               <div key={label} className='flex flex-col gap-2'>
                 <span className='text-sm font-medium text-midnight'>{label}</span>
                 {index === 2 && <p className='m-0 text-xs leading-[1.75] text-ink'>Pick an existing category or type a new one.</p>}
-                {index === 3 && <p className='m-0 text-xs leading-[1.75] text-ink'>Shown in search results. Around 150–160 characters works best.</p>}
-                <div className={index === 3 ? 'h-24 border border-advisory-rule bg-canvas/30' : 'h-10 border border-advisory-rule bg-canvas/30'} />
+                <div className='h-10 border border-advisory-rule bg-canvas/30' />
                 {index === 1 && <span className='h-[21px] w-48 animate-pulse bg-canvas motion-reduce:animate-none' />}
+              </div>
+            ))}
+          </section>
+          <section className={SECTION_CLASS}>
+            <h2 className={HEADING_CLASS}>Search &amp; AI visibility</h2>
+            {['SEO title (optional)', 'Meta description (optional)', 'Focus keyword (optional)'].map((label, index) => (
+              <div key={label} className='flex flex-col gap-2'>
+                <span className='text-sm font-medium text-midnight'>{label}</span>
+                <div className={index === 1 ? 'h-24 border border-advisory-rule bg-canvas/30' : 'h-10 border border-advisory-rule bg-canvas/30'} />
               </div>
             ))}
           </section>

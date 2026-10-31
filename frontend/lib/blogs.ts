@@ -1,4 +1,5 @@
 import { apiClient } from '@/lib/api';
+import type { Author } from '@/lib/authors';
 
 /**
  * Client for the blogs API (`backend/routes/blogs.js`).
@@ -19,12 +20,42 @@ export type Blog = {
   title: string;
   content: string;
   image: string | null;
+  /** Alt text for the cover image. Empty on older articles — fall back to the title. */
+  imageAlt?: string;
   url: string | null;
   category: string;
   metaDescription: string;
+  /** Overrides `title` in the <title> tag only. Empty means use `title`. */
+  seoTitle?: string;
+  focusKeyword?: string;
+  keywords?: string[];
+  keyTakeaways?: string[];
+  faqs?: BlogFaq[];
+  /**
+   * The full author on single-article reads (the API populates it); just the
+   * id in lists. Null credits the firm. Use `blogAuthor()` / `blogAuthorId()`.
+   */
+  author?: Author | string | null;
   createdAt: string;
   updatedAt: string;
 };
+
+/** The populated author, or null when the article credits the firm. */
+export const blogAuthor = (blog: Pick<Blog, 'author'>): Author | null =>
+  blog.author && typeof blog.author === 'object' ? blog.author : null;
+
+export const blogAuthorId = (blog: Pick<Blog, 'author'>): string =>
+  !blog.author ? '' : typeof blog.author === 'string' ? blog.author : blog.author._id;
+
+export type BlogFaq = { question: string; answer: string };
+
+/** Appended to every article's <title>, and shown in the admin search preview. */
+export const BLOG_TITLE_SUFFIX = ' | Blackmont Advisory';
+
+/** The <title> an article is published with. */
+export function blogPageTitle(blog: Pick<Blog, 'title' | 'seoTitle'>): string {
+  return `${blog.seoTitle?.trim() || blog.title.trim()}${BLOG_TITLE_SUFFIX}`;
+}
 
 export type BlogPagination = {
   total: number;
@@ -57,6 +88,20 @@ export function slugify(value: string): string {
     .replace(/['"]/g, '')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
+}
+
+/**
+ * Clamp every `<hN>` in article HTML into `min`–`max`.
+ *
+ * The article page owns the only `<h1>` (the title), so body headings must start
+ * at h2 — but imported and pasted content often carries its own h1. Demoting
+ * rather than stripping keeps the heading instead of flattening it to text.
+ */
+export function clampHeadings(html: string, min = 2, max = 6): string {
+  return html.replace(/<(\/?)h([1-6])(?=[\s>])/gi, (_, slash: string, level: string) => {
+    const clamped = Math.min(max, Math.max(min, Number(level)));
+    return `<${slash}h${clamped}`;
+  });
 }
 
 /** The message the API sent, falling back to something readable. */
@@ -97,6 +142,8 @@ export async function fetchPublicBlogs(params: {
   page?: number;
   limit?: number;
   category?: string;
+  /** Author ObjectId — articles by one author, for their profile page. */
+  author?: string;
   /** Seconds before the cached list is refetched. */
   revalidate?: number;
 }): Promise<BlogListResult> {
@@ -105,6 +152,7 @@ export async function fetchPublicBlogs(params: {
     limit: String(params.limit ?? BLOGS_PER_PAGE),
   });
   if (params.category) query.set('category', params.category);
+  if (params.author) query.set('author', params.author);
 
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5005';
   const response = await fetch(`${baseUrl}${BLOGS_API}?${query.toString()}`, {
@@ -145,6 +193,29 @@ export async function fetchPublicBlog(
 
   const body = await response.json();
   return body?.data ?? null;
+}
+
+/**
+ * Articles on the same topic as `slug`, for the article sidebar. The API ranks
+ * by shared keywords then category, and tops up with the latest articles.
+ * Card fields only — no `content`.
+ */
+export async function fetchPublicRelatedBlogs(
+  slug: string,
+  options: { limit?: number; revalidate?: number } = {},
+): Promise<Blog[]> {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5005';
+  const response = await fetch(
+    `${baseUrl}${BLOGS_API}/${encodeURIComponent(slug)}/related?limit=${options.limit ?? 3}`,
+    { next: { revalidate: options.revalidate ?? 300 } },
+  );
+
+  if (!response.ok) {
+    throw new Error(`Failed to load related blogs (${response.status})`);
+  }
+
+  const body = await response.json();
+  return body?.data ?? [];
 }
 
 /**

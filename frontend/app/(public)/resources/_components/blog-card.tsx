@@ -44,7 +44,7 @@ export function BlogCard({ blog }: { blog: Blog }) {
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={blog.image}
-              alt={blog.title}
+              alt={blog.imageAlt || blog.title}
               loading='lazy'
               decoding='async'
               className='h-full w-full object-cover transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-safe:group-hover/image:transform-[scale(1.04)] motion-reduce:transition-none'
@@ -52,7 +52,7 @@ export function BlogCard({ blog }: { blog: Blog }) {
           ) : (
             <LandingImage
               src={blog.image}
-              alt={blog.title}
+              alt={blog.imageAlt || blog.title}
               fill
               quality={85}
               loading='lazy'

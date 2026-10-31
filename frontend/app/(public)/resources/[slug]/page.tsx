@@ -4,13 +4,31 @@ import { ArrowLeft } from 'lucide-react';
 import {
   fetchPublicBlog,
   fetchPublicBlogs,
+  fetchPublicRelatedBlogs,
   fetchAllPublicBlogSlugs,
+  clampHeadings,
+  blogPageTitle,
+  blogAuthor,
   type Blog,
 } from '@/lib/blogs';
+import { authorPath } from '@/lib/authors';
+import { faqJsonLd } from '@/lib/seo';
 import { JsonLd } from '@/components/seo/json-ld';
+import { BlogFaqs, BlogKeyTakeaways } from '../_components/blog-answers';
+import { BlogAuthorBox } from '../_components/blog-author-box';
 import { landingFontVariables } from '@/components/landing/fonts';
 
 const SITE_URL = 'https://blackmontadvisory.com';
+
+const ORGANIZATION_REF = { '@type': 'Organization', '@id': `${SITE_URL}/#organization`, name: 'Blackmont Advisory' };
+
+/** "12 March 2026", in Melbourne time so the date doesn't shift with the server's zone. */
+function displayDate(value: string): string | null {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime())
+    ? null
+    : date.toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Australia/Melbourne' });
+}
 
 type BlogPostPageProps = {
   params: Promise<{ slug: string }>;
@@ -77,30 +95,53 @@ export async function generateMetadata({ params }: BlogPostPageProps) {
 
   if (!blog) return { title: 'Not Found' };
 
+  // Without an image of its own the article keeps the site-wide share image —
+  // omitting `images` here would leave share cards with no picture at all, since
+  // the root layout's openGraph/twitter are replaced, not merged.
+  const images = blog.image
+    ? [{ url: blog.image, width: 1200, height: 630, alt: blog.imageAlt || blog.title }]
+    : [{ url: '/assets/blackmont-og.png', width: 1200, height: 630, alt: 'Blackmont Advisory' }];
+
   return {
-    title: `${blog.title} | Blackmont Advisory`,
+    title: blogPageTitle(blog),
     description: blog.metaDescription,
     alternates: { canonical: `/resources/${blog.url}` },
     openGraph: {
       title: blog.title,
       description: blog.metaDescription,
+      url: `/resources/${blog.url}`,
+      siteName: 'Blackmont Advisory',
+      locale: 'en_AU',
       type: 'article',
       publishedTime: blog.createdAt,
       modifiedTime: blog.updatedAt,
-      ...(blog.image
-        ? { images: [{ url: blog.image, width: 1200, height: 630, alt: blog.title }] }
-        : {}),
+      section: blog.category || undefined,
+      images,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: blog.title,
+      description: blog.metaDescription,
+      images: images.map((image) => image.url),
     },
   };
 }
 
-/** Three other articles for the sidebar — ask for four in case one is this one. */
+/**
+ * Three articles on the same topic for the sidebar. Falls back to the latest
+ * articles if the related endpoint fails — e.g. a frontend deployed ahead of
+ * the API that serves it.
+ */
 async function fetchRelated(currentSlug: string): Promise<Blog[]> {
   try {
-    const { blogs } = await fetchPublicBlogs({ page: 1, limit: 4 });
-    return blogs.filter((b) => b.url !== currentSlug).slice(0, 3);
+    return await fetchPublicRelatedBlogs(currentSlug, { limit: 3 });
   } catch {
-    return [];
+    try {
+      const { blogs } = await fetchPublicBlogs({ page: 1, limit: 4 });
+      return blogs.filter((b) => b.url !== currentSlug).slice(0, 3);
+    } catch {
+      return [];
+    }
   }
 }
 
@@ -111,6 +152,15 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   if (!blog) notFound();
 
   const related = await fetchRelated(blog.url ?? slug);
+
+  const author = blogAuthor(blog);
+  const published = displayDate(blog.createdAt);
+  const updated = displayDate(blog.updatedAt);
+  const keyTakeaways = blog.keyTakeaways ?? [];
+  const faqs = blog.faqs ?? [];
+  const keywords = [
+    ...new Set([blog.focusKeyword, ...(blog.keywords ?? [])].filter(Boolean)),
+  ];
 
   const structuredData = [
     {
@@ -123,8 +173,21 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       mainEntityOfPage: `${SITE_URL}/resources/${blog.url}`,
       datePublished: blog.createdAt,
       dateModified: blog.updatedAt,
-      author: { '@type': 'Organization', name: 'Blackmont Advisory' },
-      publisher: { '@type': 'Organization', name: 'Blackmont Advisory' },
+      articleSection: blog.category || undefined,
+      keywords: keywords.length ? keywords.join(', ') : undefined,
+      // A named expert when one is set, else the firm. `@id`s tie these to the
+      // full entities emitted by the profile page and the public layout.
+      author: author
+        ? {
+            '@type': 'Person',
+            '@id': `${SITE_URL}${authorPath(author)}#person`,
+            name: author.name,
+            url: `${SITE_URL}${authorPath(author)}`,
+            jobTitle: author.role || undefined,
+            sameAs: author.linkedin ? [author.linkedin] : undefined,
+          }
+        : ORGANIZATION_REF,
+      publisher: ORGANIZATION_REF,
     },
     {
       '@context': 'https://schema.org',
@@ -145,6 +208,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         },
       ],
     },
+    // Only when the FAQ is actually rendered below — structured data must
+    // match visible content.
+    ...(faqs.length
+      ? [faqJsonLd(faqs.map(({ question, answer }) => ({ q: question, a: answer })))]
+      : []),
   ];
 
   return (
@@ -158,7 +226,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={blog.image}
-              alt={blog.title}
+              alt={blog.imageAlt || blog.title}
               className='h-full w-full object-cover'
             />
           )}
@@ -177,6 +245,30 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <h1 className='max-w-4xl font-advisory-heading text-[32px] leading-[1.25] font-bold tracking-normal text-parchment md:text-[42px] lg:text-[50px]'>
             {blog.title}
           </h1>
+          <p className='m-0 mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[15px] leading-[1.6] text-parchment/90'>
+            <span>
+              By{' '}
+              {author ? (
+                <Link href={authorPath(author)} className='font-semibold text-parchment underline decoration-accent underline-offset-4 hover:text-accent'>
+                  {author.name}
+                </Link>
+              ) : (
+                <span className='font-semibold text-parchment'>Blackmont Advisory</span>
+              )}
+            </span>
+            {published && (
+              <>
+                <span aria-hidden='true'>·</span>
+                <span>Published <time dateTime={blog.createdAt}>{published}</time></span>
+              </>
+            )}
+            {updated && updated !== published && (
+              <>
+                <span aria-hidden='true'>·</span>
+                <span>Updated <time dateTime={blog.updatedAt}>{updated}</time></span>
+              </>
+            )}
+          </p>
         </div>
       </div>
 
@@ -193,11 +285,18 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 </div>
               )}
 
-              {/* Article body, authored in the admin editor */}
+              {keyTakeaways.length > 0 && <BlogKeyTakeaways items={keyTakeaways} />}
+
+              {/* Article body, authored in the admin editor. Any h1 in it is
+                  demoted so the title above stays the page's only h1. */}
               <div
                 className={ARTICLE_CLASS}
-                dangerouslySetInnerHTML={{ __html: blog.content }}
+                dangerouslySetInnerHTML={{ __html: clampHeadings(blog.content) }}
               />
+
+              {faqs.length > 0 && <BlogFaqs items={faqs} />}
+
+              {author && <BlogAuthorBox author={author} />}
             </article>
           </div>
 
@@ -207,7 +306,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               <div className='sticky top-24'>
                 <div className='mb-6 flex items-center justify-between'>
                   <h2 className='font-advisory-heading text-[23px] leading-[1.4] font-bold tracking-normal text-midnight'>
-                    Recent Articles
+                    Related Articles
                   </h2>
                   <Link
                     href='/resources'

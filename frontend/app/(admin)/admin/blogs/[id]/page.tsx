@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { AdminPageLayout } from '@/components/admin/page-layout';
 import { LandingButton, LandingButtonLink } from '@/components/landing/presentation';
-import { getBlog, blogErrorMessage } from '@/lib/blogs';
+import { getBlog, blogErrorMessage, blogAuthorId } from '@/lib/blogs';
 import BlogForm, { BlogFormSkeleton, type BlogInitialData } from '../_components/blog-form';
 
 // Stable identity: BlogForm resets its fields when initialData changes.
@@ -33,7 +33,8 @@ export default function BlogFormPage() {
         if (!active) return;
         setLoaded({
           id: idParam,
-          data: { id: blog._id, title: blog.title ?? '', content: blog.content ?? '', imageUrl: blog.image ?? '', url: blog.url ?? '', category: blog.category ?? '', metaDescription: blog.metaDescription ?? '' },
+          data: { id: blog._id, title: blog.title ?? '', content: blog.content ?? '', imageUrl: blog.image ?? '', imageAlt: blog.imageAlt ?? '', url: blog.url ?? '', category: blog.category ?? '', metaDescription: blog.metaDescription ?? '',
+            seoTitle: blog.seoTitle ?? '', focusKeyword: blog.focusKeyword ?? '', keywords: blog.keywords ?? [], keyTakeaways: blog.keyTakeaways ?? [], faqs: blog.faqs ?? [], author: blogAuthorId(blog) },
         });
       })
       .catch((cause) => { if (active) setError({ id: idParam, message: blogErrorMessage(cause, 'Failed to load blog.') }); });

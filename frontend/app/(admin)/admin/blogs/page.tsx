@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { format } from 'date-fns';
-import { Plus, Search, Eye, Pencil, Trash2, Loader2, ImageOff } from 'lucide-react';
+import { Plus, Search, Eye, Pencil, Trash2, Loader2, ImageOff, UsersRound } from 'lucide-react';
 import { toast } from 'sonner';
 import { AdminPageLayout } from '@/components/admin/page-layout';
 import { LandingButton, LandingButtonLink } from '@/components/landing/presentation';
@@ -82,7 +82,7 @@ export default function BlogsPage() {
   };
 
   return (
-    <AdminPageLayout title='Blogs' description='Write and manage the articles published under Resources.' action={<LandingButtonLink href='/admin/blogs/new' size='compact'><Plus aria-hidden='true' className='size-4' /> New blog</LandingButtonLink>}>
+    <AdminPageLayout title='Blogs' description='Write and manage the articles published under Resources.' action={<div className='flex flex-wrap gap-3'><LandingButtonLink href='/admin/blogs/authors' variant='outline' size='compact'><UsersRound aria-hidden='true' className='size-4' /> Authors</LandingButtonLink><LandingButtonLink href='/admin/blogs/new' size='compact'><Plus aria-hidden='true' className='size-4' /> New blog</LandingButtonLink></div>}>
       <section aria-label='Blog articles' aria-busy={loading} className='min-w-0 border border-advisory-rule bg-white'>
         <div className='flex flex-col gap-4 border-b border-advisory-rule p-5 min-[681px]:flex-row min-[681px]:items-center min-[681px]:justify-between min-[681px]:p-6'>
           <div className='relative w-full min-w-0 min-[681px]:max-w-md'>

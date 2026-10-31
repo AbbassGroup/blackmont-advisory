@@ -22,7 +22,15 @@ import {
   Loader2,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { uploadBlogImage, blogErrorMessage } from '@/lib/blogs';
+import { uploadBlogImage, blogErrorMessage, clampHeadings } from '@/lib/blogs';
+
+/**
+ * Heading levels the toolbar offers. The article title is the page's h1, so the
+ * body starts at h2; anything outside this range is clamped into it on load and
+ * paste, since TipTap would otherwise drop it to a plain paragraph.
+ */
+const HEADING_LEVELS = [2, 3, 4] as const;
+const toEditorHeadings = (html: string) => clampHeadings(html, HEADING_LEVELS[0], HEADING_LEVELS[HEADING_LEVELS.length - 1]);
 import { cn } from '@/lib/utils';
 
 /**
@@ -75,18 +83,22 @@ export function BlogEditor({
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
+        heading: { levels: [...HEADING_LEVELS] },
         link: { openOnClick: false, autolink: true },
       }),
       Underline,
       BlogImage,
     ],
-    content: value,
+    content: toEditorHeadings(value),
     // The editor is rendered inside a client page but Next still prerenders it;
     // rendering immediately would mismatch the server HTML.
     immediatelyRender: false,
     shouldRerenderOnTransaction: true,
     editable: !disabled,
-    editorProps: { attributes: { role: 'textbox', 'aria-multiline': 'true', 'aria-labelledby': 'blog-content-title', class: 'blog-article-editor' } },
+    editorProps: {
+      attributes: { role: 'textbox', 'aria-multiline': 'true', 'aria-labelledby': 'blog-content-title', class: 'blog-article-editor' },
+      transformPastedHTML: toEditorHeadings,
+    },
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
   });
 
@@ -94,7 +106,7 @@ export function BlogEditor({
   // user's cursor while they type — hence the equality check.
   useEffect(() => {
     if (editor && value !== editor.getHTML()) {
-      editor.commands.setContent(value || '');
+      editor.commands.setContent(toEditorHeadings(value || ''));
     }
   }, [value, editor]);
 
@@ -171,7 +183,7 @@ export function BlogEditor({
         >
           <span className='px-0.5 text-xs font-semibold'>P</span>
         </ToolbarButton>
-        {([2, 3, 4] as const).map((level) => (
+        {HEADING_LEVELS.map((level) => (
           <ToolbarButton
             key={level}
             title={`Heading ${level}`}
