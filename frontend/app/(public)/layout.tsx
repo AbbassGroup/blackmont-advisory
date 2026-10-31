@@ -10,7 +10,12 @@ const SITE_URL = 'https://blackmontadvisory.com';
  * `sameAs` tells Google and AI answer engines these all describe one entity.
  * Only list profiles the firm actually controls.
  */
-const SOCIAL_PROFILES: string[] = [];
+const SOCIAL_PROFILES: string[] = [
+  // Google Business Profile. The share link minus `/review` — that suffix opens
+  // the review form rather than the profile.
+  'https://g.page/r/Cf9d4jAIBo5zEAI',
+  // TODO: add the company LinkedIn page once it exists.
+];
 
 // ProfessionalService is a LocalBusiness (so address/phone count for local
 // search) and still an Organization (so `logo` is honoured). Contact details
