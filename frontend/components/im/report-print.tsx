@@ -183,6 +183,7 @@ export function ReportPrint({ id, kind }: { id: string; kind: ReportKind }) {
             editable={false}
             kind={kind}
             brokerEmail={template.brokerEmail}
+            templateId={template._id || id}
           />
         </div>
       </div>

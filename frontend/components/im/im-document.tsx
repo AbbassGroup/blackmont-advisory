@@ -69,6 +69,8 @@ interface ImDocumentProps {
   onUploadFile?: (file: File) => Promise<string | null>;
   /** Persist immediately (used after a custom section's PDF upload/remove). */
   onCommit?: () => void;
+  /** The IM template's id (used for per-template content like Key Contacts). */
+  templateId?: string;
 }
 
 function ImDocumentImpl({
@@ -79,6 +81,7 @@ function ImDocumentImpl({
   brokerEmail,
   onUploadFile,
   onCommit,
+  templateId,
 }: ImDocumentProps) {
   const reportCfg = getReportConfig(kind);
   // Business name lives on the banner; the offer form emails it for context.
@@ -180,6 +183,7 @@ function ImDocumentImpl({
                   title={(section.data?.title as string) ?? 'Key Contacts'}
                   editable={editable}
                   onChange={onChange}
+                  templateId={templateId}
                 />
               );
             case 'socials':

@@ -44,7 +44,7 @@ function SecureImViewer({ listingId, token }: { listingId: string; token: string
     } finally { setSubmitting(false); }
   };
 
-  if (template) return <ImReader sections={template.sections} brokerEmail={template.brokerEmail} />;
+  if (template) return <ImReader sections={template.sections} brokerEmail={template.brokerEmail} templateId={template._id} />;
   if (error === 'expired') return <DocumentState title='This link has expired' description='This Information Memorandum is no longer available. If you believe this is an error, please contact the broker directly.' />;
 
   return (

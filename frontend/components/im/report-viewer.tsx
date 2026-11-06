@@ -29,5 +29,5 @@ export function ReportViewer({ id, kind }: { id: string; kind: ReportKind }) {
       <LandingButton variant='outline' size='compact' onClick={() => { setResult(null); setAttempt((value) => value + 1); }}>Try again</LandingButton>
     </DocumentState>
   );
-  return <ImReader sections={result.template.sections} brokerEmail={result.template.brokerEmail} kind={kind} />;
+  return <ImReader sections={result.template.sections} brokerEmail={result.template.brokerEmail} kind={kind} templateId={result.template._id || id} />;
 }

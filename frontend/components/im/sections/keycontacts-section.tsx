@@ -7,14 +7,28 @@ import { AppraisalDialog } from '../appraisal-dialog';
 
 const BUY_A_BUSINESS_URL = 'https://blackmontadvisory.com/buy-a-business';
 
-const CONTACTS = [
-  {
-    role: 'Commercial Lawyer',
-    name: 'Lei Praytil',
-    company: 'Petra Law',
-    phone: '0423 162 481',
-    image: '/petra-law.png',
-  },
+const COMMERCIAL_LAWYER = {
+  role: 'Commercial Lawyer',
+  name: 'Chloe Plavin',
+  company: 'JG Tax & Legal',
+  phone: '0409 411 232',
+  image: '/jptl.png',
+};
+
+/** Previous Commercial Lawyer — kept ONLY for the IM templates listed below. */
+const LEGACY_COMMERCIAL_LAWYER = {
+  role: 'Commercial Lawyer',
+  name: 'Lei Praytil',
+  company: 'Petra Law',
+  phone: '0423 162 481',
+  image: '/petra-law.png',
+};
+
+/** IM template ids that must keep showing the legacy Commercial Lawyer.
+ * (blackmontadvisory.com/information-memorandum/6a7d584ae17999e200c88af6) */
+const LEGACY_LAWYER_TEMPLATE_IDS = new Set(['6a7d584ae17999e200c88af6']);
+
+const OTHER_CONTACTS = [
   {
     role: 'Business Loans',
     name: 'Nazar Asani',
@@ -49,11 +63,19 @@ export function KeyContactsSection({
   title,
   editable,
   onChange,
+  templateId,
 }: {
   title: string;
   editable?: boolean;
   onChange?: (patch: { title: string }) => void;
+  /** The IM template being rendered — selects the Commercial Lawyer shown. */
+  templateId?: string;
 }) {
+  const lawyer =
+    templateId && LEGACY_LAWYER_TEMPLATE_IDS.has(templateId)
+      ? LEGACY_COMMERCIAL_LAWYER
+      : COMMERCIAL_LAWYER;
+  const contacts = [lawyer, ...OTHER_CONTACTS];
   return (
     <>
       {/* CTAs */}
@@ -121,7 +143,7 @@ export function KeyContactsSection({
         placeholder='Key Contacts'
       />
       <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-2'>
-        {CONTACTS.map((c) => (
+        {contacts.map((c) => (
           <div
             key={c.role}
             className='border border-border bg-card p-5 shadow-xs'

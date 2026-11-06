@@ -53,6 +53,7 @@ function buildImDocumentConfig(
       editable={editable}
       kind={config.kind}
       brokerEmail={doc.brokerEmail}
+      templateId={doc._id}
       onSectionChange={onSectionChange}
       onUploadFile={onUploadFile}
       onCommit={onCommit}

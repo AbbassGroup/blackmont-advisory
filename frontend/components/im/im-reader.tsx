@@ -23,10 +23,12 @@ export function ImReader({
   sections,
   brokerEmail,
   kind = 'im',
+  templateId,
 }: {
   sections: ImSection[];
   brokerEmail?: string;
   kind?: ReportKind;
+  templateId?: string;
 }) {
   const navItems = getNavItems(sections);
   const navKey = navItems.map((n) => n.id).join(',');
@@ -103,7 +105,7 @@ export function ImReader({
           </nav>
         )}
         <div className='min-w-0 flex-1 overflow-hidden bg-white font-sans text-base min-[681px]:border min-[681px]:border-advisory-rule'>
-          <ImDocument sections={sections} editable={false} kind={kind} brokerEmail={brokerEmail} />
+          <ImDocument sections={sections} editable={false} kind={kind} brokerEmail={brokerEmail} templateId={templateId} />
         </div>
       </div>
     </LandingTheme>
