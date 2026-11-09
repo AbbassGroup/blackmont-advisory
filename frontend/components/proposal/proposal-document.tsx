@@ -65,7 +65,7 @@ export interface ProposalDocumentContext {
   customerName: string;
   businessName: string;
   businessValue: string;
-  /** ISO timestamp shown on the cover — approval date, else creation date. */
+  /** ISO timestamp shown on the cover — last update, else creation date. */
   preparedOn?: string | null;
 }
 

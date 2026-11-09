@@ -173,11 +173,17 @@ function headerTemplate(logoDataUri, title) {
     </div>`;
 }
 
+// Contact line left, "Confidential" right, page number between them.
 function footerTemplate() {
   return `
-    <div style="width:100%;font-family:Helvetica,Arial,sans-serif;font-size:7px;color:#9aa1ac;
-                padding:0 14mm;margin-bottom:7mm;text-align:right;font-size:8px;">
-      <span class="pageNumber"></span>
+    <div style="width:100%;font-family:Helvetica,Arial,sans-serif;font-size:8px;color:#6b7280;
+                padding:0 14mm;margin-bottom:7mm;">
+      <div style="display:flex;align-items:center;justify-content:space-between;
+                  padding-top:4px;border-top:.6px solid #e5e7eb;">
+        <span style="flex:1;text-align:left;">Sadeq Abbass (Principal) | 0433 525 731</span>
+        <span style="flex:0 0 auto;color:#9aa1ac;" class="pageNumber"></span>
+        <span style="flex:1;text-align:right;text-transform:uppercase;letter-spacing:.12em;">Confidential</span>
+      </div>
     </div>`;
 }
 

@@ -43,8 +43,8 @@ function buildProposalConfig(): DocumentKindConfig<DigitalProposalDoc> {
         customerName: doc.customerName ?? '',
         businessName: doc.businessName ?? '',
         businessValue: doc.businessValue ?? '',
-        // The cover dates the appraisal: when it was approved, else when it was made.
-        preparedOn: doc.approvedAt ?? doc.createdAt,
+        // The cover dates the appraisal by its last update.
+        preparedOn: doc.updatedAt ?? doc.createdAt,
       }}
       editable={editable}
       onSectionChange={onSectionChange}

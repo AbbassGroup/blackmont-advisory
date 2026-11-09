@@ -26,12 +26,13 @@ const SECTION_TYPES = Object.freeze([
 
 const DEFAULT_FACTORS = [
   ['What are the barriers to entry?', '1 = Easy, 5 = Difficult. Would it be easy for a competitor to become established in this industry?'],
-  ['What is the risk profile of this business?', '1 = Risky, 5 = Not risky. e.g. relies on 1 or 2 clients, supplier contracts not in place, relies on the owner.'],
+  ['What is the risk profile of this business?', '1 = Risky, 5 = Not risky. Consider owner reliability, supplier & stakeholder contracts and transferability'],
   ['How established is the business?', '1 = Less than 1 year, 2 = 1 to 3 years, 3 = 3 to 10 years, 4 = 10 to 20 years, 5 = 20 years +'],
-  ['How unique is the business?', '1 = Not unique, 5 = Highly unique. Does the business have a well-defined niche?'],
+  ['How unique is the business?', '1 = Highly unique, 5 = Not unique. Does the business have a well-defined niche?'],
   ['What is the risk profile of the industry?', '1 = High risk, 5 = Low risk. Vulnerability of the industry as a whole.'],
   ['Where is the business located?', '1 = Remote, 2 = Rural, 3 = Provincial town, 4 = City, 5 = Major city'],
   ['What is the likely buyer demand?', '1 = Few buyers, 5 = Many buyers. Is this business likely to attract few or many buyers at the current time?'],
+  ['Stock Component', '1 = Heavy stock valuation. 5 = No stock business'],
 ];
 
 let uidCounter = 0;
@@ -45,8 +46,8 @@ const DEFAULT_PROCESS_STEPS = [
   ['STEP 2: Q&A', 'Ask us any questions you may have in regards to this appraisal or anything else related to the sale of your business'],
   ['STEP 3: AGREE ON TERMS', 'Agree on terms to proceed with on an exclusive or non exclusive agreement'],
   ['STEP 4: SIGN AGREEMENT', 'Provide business owners name(s) and address and proceed to sign agreement which will be sent for electronic signing'],
-  ['STEP 5: CONFIDENTIAL AD IS LAUNCHED', 'We launch your ad confidentially across all platforms as well as our website'],
-  ['STEP 6: INFORMATION MATERIAL PREPARED', 'Your investment grade information material is prepared for you to review and approve'],
+  ['STEP 5: INFORMATION MATERIAL PREPARED', 'Your investment grade information material is prepared for you to review and approve'],
+  ['STEP 6: CONFIDENTIAL AD IS LAUNCHED', 'We launch your confidential ad on business sale platform as well as our website'],
   ['STEP 7: CAMPAIGN LAUNCHED', 'The campaign starts by reaching out to our qualified database to gauge interest'],
 ];
 
@@ -85,7 +86,7 @@ function makeDefaultData(type, flat = {}) {
           id: makeUid('fac'),
           label,
           hint,
-          score: '',
+          score: 0,
         })),
       };
 
@@ -177,13 +178,78 @@ function makeDefaultSection(type, flat = {}) {
   };
 }
 
+// Pre-built custom sections seeded into new appraisals. Headings and labels
+// only — the figures are per business, so they start blank.
+const cell = (text = '', extra = {}) => ({ text, hidden: false, ...extra });
+const headerRow = (...labels) => ({ cells: labels.map((l) => cell(l)) });
+
+const COMPARABLE_LISTINGS_NOTE =
+  '<p><strong><em>Note:</em></strong></p>' +
+  '<ul>' +
+  '<li><p><em>Listing price is not necessarily an indication of the ultimate selling price, with the ultimate selling price often being far lower than initial listing price.</em></p></li>' +
+  '<li><p><em>Financials for comparable listings have not been verified</em></p></li>' +
+  '</ul>';
+
+function makeCustomSection(title, blocks) {
+  return {
+    uid: makeUid('custom'),
+    type: 'custom',
+    enabled: true,
+    data: { title, blocks: blocks.map((b) => ({ id: makeUid('blk'), ...b })) },
+  };
+}
+
+function makeAppraisalOutputSection() {
+  return makeCustomSection('Appraisal Output - Earnings Based', [
+    {
+      type: 'table',
+      rows: [
+        headerRow('Multiplier', 'Period', 'Normalised', 'Multiple', 'Appraisal $'),
+        {
+          cells: [
+            cell('SDE Multiple'),
+            cell('FY26 (50%)\nFY25 (40%)\nFY24 (10%)'),
+            cell('', { bold: true }),
+            cell(''),
+            cell('', { bold: true }),
+          ],
+        },
+      ],
+    },
+  ]);
+}
+
+function makeComparableListingsSection() {
+  const emptyRow = () => ({ cells: [cell(), cell(), cell()] });
+  return makeCustomSection('Comparable Listings', [
+    {
+      type: 'table',
+      rows: [
+        headerRow('Comparable Listing', 'Revenue (SDE)', 'Listing Price'),
+        emptyRow(),
+        emptyRow(),
+        emptyRow(),
+        emptyRow(),
+      ],
+    },
+    { type: 'text', html: COMPARABLE_LISTINGS_NOTE },
+  ]);
+}
+
+const PRESET_SECTIONS = {
+  appraisalOutput: makeAppraisalOutputSection,
+  comparableListings: makeComparableListingsSection,
+};
+
 function makeDefaultSections(flat = {}) {
   const isAppraisal = (flat.template || 'business_appraisal') === 'business_appraisal';
 
   const order = [
     'banner',
     'disclaimer',
-    ...(isAppraisal ? ['scorecard', 'financialOverview', 'appraisal'] : []),
+    ...(isAppraisal
+      ? ['scorecard', 'financialOverview', 'appraisalOutput', 'comparableListings', 'appraisal']
+      : []),
     'investment',
     'accept',
     'accreditations',
@@ -194,7 +260,9 @@ function makeDefaultSections(flat = {}) {
     'accept',
   ];
 
-  return order.map((type) => makeDefaultSection(type, flat));
+  return order.map((type) =>
+    PRESET_SECTIONS[type] ? PRESET_SECTIONS[type]() : makeDefaultSection(type, flat),
+  );
 }
 
 /**

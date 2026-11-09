@@ -314,8 +314,8 @@ const DEFAULT_PROCESS_STEPS: [string, string][] = [
   ['STEP 2: Q&A', 'Ask us any questions you may have in regards to this appraisal or anything else related to the sale of your business'],
   ['STEP 3: AGREE ON TERMS', 'Agree on terms to proceed with on an exclusive or non exclusive agreement'],
   ['STEP 4: SIGN AGREEMENT', 'Provide business owners name(s) and address and proceed to sign agreement which will be sent for electronic signing'],
-  ['STEP 5: CONFIDENTIAL AD IS LAUNCHED', 'We launch your ad confidentially across all platforms as well as our website'],
-  ['STEP 6: INFORMATION MATERIAL PREPARED', 'Your investment grade information material is prepared for you to review and approve'],
+  ['STEP 5: INFORMATION MATERIAL PREPARED', 'Your investment grade information material is prepared for you to review and approve'],
+  ['STEP 6: CONFIDENTIAL AD IS LAUNCHED', 'We launch your confidential ad on business sale platform as well as our website'],
   ['STEP 7: CAMPAIGN LAUNCHED', 'The campaign starts by reaching out to our qualified database to gauge interest'],
 ];
 
@@ -329,7 +329,7 @@ export const DEFAULT_ENGAGEMENT_BODY =
 export const DEFAULT_BANNER_IMAGE =
   'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1920&q=80';
 
-/** The seven factors from the standard appraisal worksheet — scored out of 35. */
+/** The eight factors from the standard appraisal worksheet — scored out of 40. */
 const DEFAULT_FACTORS: [string, string][] = [
   [
     'What are the barriers to entry?',
@@ -337,7 +337,7 @@ const DEFAULT_FACTORS: [string, string][] = [
   ],
   [
     'What is the risk profile of this business?',
-    '1 = Risky, 5 = Not risky. e.g. relies on 1 or 2 clients, supplier contracts not in place, relies on the owner.',
+    '1 = Risky, 5 = Not risky. Consider owner reliability, supplier & stakeholder contracts and transferability',
   ],
   [
     'How established is the business?',
@@ -345,7 +345,7 @@ const DEFAULT_FACTORS: [string, string][] = [
   ],
   [
     'How unique is the business?',
-    '1 = Not unique, 5 = Highly unique. Does the business have a well-defined niche?',
+    '1 = Highly unique, 5 = Not unique. Does the business have a well-defined niche?',
   ],
   [
     'What is the risk profile of the industry?',
@@ -359,10 +359,11 @@ const DEFAULT_FACTORS: [string, string][] = [
     'What is the likely buyer demand?',
     '1 = Few buyers, 5 = Many buyers. Is this business likely to attract few or many buyers at the current time?',
   ],
+  ['Stock Component', '1 = Heavy stock valuation. 5 = No stock business'],
 ];
 
 export function makeScorecardFactor(label = '', hint = ''): ScorecardFactor {
-  return { id: makeUid('fac'), label, hint, score: '' };
+  return { id: makeUid('fac'), label, hint, score: 0 };
 }
 
 /** Only labelled factors count — see `ScorecardFactor`. */

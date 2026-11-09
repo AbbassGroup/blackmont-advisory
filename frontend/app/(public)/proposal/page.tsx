@@ -243,8 +243,8 @@ function ProposalContent() {
           customerName: proposal.customerName ?? '',
           businessName: proposal.businessName ?? '',
           businessValue: proposal.businessValue ?? '',
-          // The cover dates the appraisal: when it was approved, else when it was made.
-          preparedOn: proposal.approvedAt ?? proposal.createdAt,
+          // The cover dates the appraisal by its last update.
+          preparedOn: proposal.updatedAt ?? proposal.createdAt,
         }}
         interaction={{
           selectedAdvertisement,
