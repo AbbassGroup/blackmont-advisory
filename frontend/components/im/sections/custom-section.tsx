@@ -174,7 +174,7 @@ const PdfPages = dynamic(() => import('../pdf-pages').then((m) => m.PdfPages), {
   ),
 });
 
-/** YouTube / Vimeo → embeddable iframe URL; null for direct video files. */
+/** YouTube / Vimeo / Google Drive → embeddable iframe URL; null for direct video files. */
 function getEmbedUrl(url: string): string | null {
   const yt = url.match(
     /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/)|youtu\.be\/)([\w-]{11})/i,
@@ -182,6 +182,13 @@ function getEmbedUrl(url: string): string | null {
   if (yt) return `https://www.youtube.com/embed/${yt[1]}`;
   const vm = url.match(/vimeo\.com\/(?:video\/)?(\d+)/i);
   if (vm) return `https://player.vimeo.com/video/${vm[1]}`;
+  // Drive share links (`/file/d/<id>/view`, `open?id=<id>`, `uc?id=<id>`) point
+  // at Drive's viewer page, not the file, so they need Drive's `/preview`
+  // player. The file must be shared as "Anyone with the link" to play.
+  const gd = url.match(
+    /drive\.google\.com\/(?:file\/d\/|(?:open|uc)\?(?:[^#]*&)?id=)([\w-]{20,})/i,
+  );
+  if (gd) return `https://drive.google.com/file/d/${gd[1]}/preview`;
   return null;
 }
 
@@ -1196,9 +1203,15 @@ function VideoBlockEditor({
         <Input
           value={block.url}
           onChange={(e) => update({ url: e.target.value })}
-          placeholder='YouTube, Vimeo or a direct .mp4 link'
+          placeholder='YouTube, Vimeo, Google Drive or a direct .mp4 link'
         />
-      ) : (
+      ) : null}
+      {block.kind === 'link' && /drive\.google\.com/i.test(block.url) ? (
+        <p className='text-xs text-muted-foreground'>
+          Google Drive: set sharing to &ldquo;Anyone with the link&rdquo; or buyers will be asked to sign in.
+        </p>
+      ) : null}
+      {block.kind === 'link' ? null : (
         <div className='flex flex-wrap items-center gap-2'>
           <Button
             variant='outline'

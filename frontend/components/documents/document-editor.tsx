@@ -3,7 +3,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Loader2, X } from 'lucide-react';
+import { toast } from 'sonner';
 import { apiClient } from '@/lib/api';
+
+// Mirrors MAX_UPLOAD_MB in backend/routes/imTemplates.js + acquisitionReports.js
+// (and nginx client_max_body_size on the API server).
+const MAX_UPLOAD_MB = 200;
 import { useAdminAuth } from '@/context/admin-auth-context';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAutosave } from '@/hooks/use-autosave';
@@ -365,9 +370,19 @@ export function DocumentEditor<T extends EditorDocument>({
     [patchCommit, config],
   );
 
-  // Generic upload (banner image, photo, PDF). Returns the URL.
+  // Generic upload (banner image, photo, PDF, video). Returns the URL, or null
+  // after telling the admin why it failed.
   const uploadFile = useCallback(
     async (file: File): Promise<string | null> => {
+      const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
+      // Checked up front: when the proxy rejects an oversized body its 413 has
+      // no CORS headers, so the browser hides the status from us entirely.
+      if (file.size > MAX_UPLOAD_MB * 1024 * 1024) {
+        toast.error('File too large', {
+          description: `"${file.name}" is ${sizeMb} MB. The maximum is ${MAX_UPLOAD_MB} MB — compress it or use a YouTube/Vimeo link instead.`,
+        });
+        return null;
+      }
       try {
         const fd = new FormData();
         fd.append('image', file);
@@ -375,7 +390,20 @@ export function DocumentEditor<T extends EditorDocument>({
           headers: { 'Content-Type': 'multipart/form-data' },
         });
         return data.url as string;
-      } catch {
+      } catch (err) {
+        const res = (err as { response?: { status?: number; data?: { message?: string } } })
+          .response;
+        let description: string;
+        if (res?.status === 413) {
+          description = `"${file.name}" (${sizeMb} MB) is too large for the server to accept.`;
+        } else if (res?.data?.message) {
+          description = res.data.message;
+        } else if (!res) {
+          description = `Could not reach the server while uploading "${file.name}" (${sizeMb} MB). The file may be too large for the server, or the connection dropped — please try again.`;
+        } else {
+          description = `The server returned an error (${res.status}). Please try again.`;
+        }
+        toast.error('Upload failed', { description });
         return null;
       }
     },
