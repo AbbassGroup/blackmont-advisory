@@ -98,19 +98,16 @@
     box-shadow: none;
   }
 
+  /* Full width, as in the editor and the PDF. */
   .document :global([data-proposal-section='disclaimer'] p),
   .document :global([data-proposal-section='financialOverview'] p),
   .document :global([data-proposal-section='appraisal'] p),
   .document :global([data-proposal-section='about'] p) {
-    max-width: 75ch;
+    max-width: none;
     color: var(--color-ink, #2e2c28);
     font-size: 1rem;
     line-height: 1.85;
     text-align: left;
-  }
-
-  .document :global([data-proposal-section='about'] p) {
-    max-width: none;
   }
 
   .document :global(.prose) {
@@ -141,10 +138,16 @@
     height: auto;
   }
 
-  .document :global([data-proposal-section] table) {
+  /* Only tables that size to their content (pasted into rich text) scroll
+     sideways. Block display would shrink the custom-section tables, which are
+     full-width and fixed-layout, to their content. */
+  .document :global([data-proposal-section] table:not(.w-full)) {
     display: block;
     max-width: 100%;
     overflow-x: auto;
+  }
+
+  .document :global([data-proposal-section] table) {
     font-size: 1rem;
   }
 
