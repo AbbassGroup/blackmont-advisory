@@ -113,6 +113,7 @@ router.get('/:id/pdf', async (req, res) => {
       id: String(proposal._id),
       token: mintRenderToken(proposal._id),
       frontendUrl,
+      timezone: req.query.tz,
       title:
         proposal.template === 'franchise_proposal' ? 'Franchise Proposal' : 'Business Appraisal',
     });

@@ -19,6 +19,8 @@ export function ProposalPrint({ id }: { id: string }) {
     () =>
       apiClient
         .get(`${PROPOSAL_API_BASE}/${id}/pdf`, {
+          // The cover date is shown in the exporting user's timezone.
+          params: { tz: Intl.DateTimeFormat().resolvedOptions().timeZone },
           responseType: 'blob',
           // Two Chrome render passes take longer than a normal request.
           timeout: 120000,

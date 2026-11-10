@@ -1,7 +1,6 @@
 'use client';
 
 import { memo, type ReactNode, type Ref } from 'react';
-import { format } from 'date-fns';
 import { ChartsSection } from '@/components/im/sections/charts-section';
 import { CustomSection } from '@/components/im/sections/custom-section';
 import type { ChartsData, CustomData } from '@/components/im';
@@ -31,11 +30,25 @@ import type {
   ScorecardData,
 } from './types';
 
+/**
+ * The viewer's own timezone. The PDF is rendered on the server, which runs its
+ * Chrome in the exporting user's timezone (see `utils/proposalPdf.js`).
+ */
+const COVER_DATE_FORMAT = new Intl.DateTimeFormat('en-AU', {
+  day: '2-digit',
+  month: 'long',
+  year: 'numeric',
+});
+
 /** Cover date, e.g. "06 August 2026". Blank when the document has no date yet. */
 function formatPreparedOn(iso?: string | null): string | undefined {
   if (!iso) return undefined;
   const date = new Date(iso);
-  return Number.isNaN(date.getTime()) ? undefined : format(date, 'dd MMMM yyyy');
+  if (Number.isNaN(date.getTime())) return undefined;
+  const p = Object.fromEntries(
+    COVER_DATE_FORMAT.formatToParts(date).map(({ type, value }) => [type, value]),
+  );
+  return `${p.day} ${p.month} ${p.year}`;
 }
 
 /** Stable DOM anchor id for a section. */

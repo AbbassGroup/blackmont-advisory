@@ -139,13 +139,18 @@ function buildProposalConfig(): DocumentKindConfig<DigitalProposalDoc> {
     runStatusAction: async (doc, { id, username, patchLocal }) => {
       const stage = getProposalStage(doc);
 
+      // Every status change is also an update, which the cover date shows.
+      const touched = (data: { updatedAt?: string } | undefined, prev: DigitalProposalDoc) =>
+        data?.updatedAt ?? prev.updatedAt;
+
       if (stage === 'approved') {
-        await apiClient.put(`${PROPOSAL_API_BASE}/${id}/revoke`);
+        const { data } = await apiClient.put(`${PROPOSAL_API_BASE}/${id}/revoke`);
         patchLocal((prev) => ({
           ...prev,
           isApproved: false,
           approvedBy: '',
           approvedAt: null,
+          updatedAt: touched(data, prev),
         }));
         return;
       }
@@ -160,6 +165,7 @@ function buildProposalConfig(): DocumentKindConfig<DigitalProposalDoc> {
           isApproved: true,
           approvedBy: data?.approvedBy ?? username,
           approvedAt: data?.approvedAt ?? new Date().toISOString(),
+          updatedAt: touched(data, prev),
         }));
         return;
       }
@@ -169,6 +175,7 @@ function buildProposalConfig(): DocumentKindConfig<DigitalProposalDoc> {
         ...prev,
         submittedForApprovalAt:
           data?.submittedForApprovalAt ?? new Date().toISOString(),
+        updatedAt: touched(data, prev),
       }));
     },
 

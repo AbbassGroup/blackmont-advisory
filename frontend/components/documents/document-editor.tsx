@@ -102,7 +102,17 @@ export function DocumentEditor<T extends EditorDocument>({
   // and quietly undo newer edits, even though every request came back OK.
   const saveDoc = useCallback(
     async (snapshot: T) => {
-      await apiClient.put(`${BASE}/${id}`, config.toSavePayload(snapshot, editorUser));
+      const { data } = await apiClient.put(
+        `${BASE}/${id}`,
+        config.toSavePayload(snapshot, editorUser),
+      );
+      // Take the server's new `updatedAt` (the proposal cover shows it) without
+      // touching anything else — newer edits may already be queued on top.
+      const updatedAt = (data as { updatedAt?: unknown } | undefined)?.updatedAt;
+      if (typeof updatedAt === 'string' && docRef.current) {
+        docRef.current = { ...docRef.current, updatedAt };
+        setDoc(docRef.current);
+      }
     },
     [id, BASE, config, editorUser],
   );

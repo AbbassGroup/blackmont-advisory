@@ -124,10 +124,28 @@ function getBrowser() {
   return browserPromise;
 }
 
-async function renderPart(url, { viewport = A4, ...pdfOptions } = {}) {
+// Used when the request doesn't say — where the firm and its customers are.
+const DEFAULT_TIMEZONE = 'Australia/Melbourne';
+
+// An IANA name like "Asia/Dhaka", or the default if it isn't one.
+function safeTimezone(tz) {
+  if (typeof tz !== 'string' || !tz) return DEFAULT_TIMEZONE;
+  try {
+    new Intl.DateTimeFormat('en', { timeZone: tz });
+    return tz;
+  } catch {
+    return DEFAULT_TIMEZONE;
+  }
+}
+
+async function renderPart(url, { viewport = A4, timezone, ...pdfOptions } = {}) {
   const browser = await getBrowser();
   const page = await browser.newPage();
   try {
+    // Dates on the page are formatted in this zone, not the server's.
+    await page.emulateTimezone(safeTimezone(timezone)).catch(() =>
+      page.emulateTimezone(DEFAULT_TIMEZONE),
+    );
     // Only affects raster assets; text stays vector.
     await page.setViewport({ ...viewport, deviceScaleFactor: 1.5 });
     await page.emulateMediaType('print');
@@ -201,16 +219,24 @@ function getLogo(frontendUrl) {
   return logoPromise;
 }
 
-async function renderProposalPdf({ id, token, frontendUrl, title = 'Business Appraisal' }) {
+async function renderProposalPdf({
+  id,
+  token,
+  frontendUrl,
+  timezone,
+  title = 'Business Appraisal',
+}) {
   const base = `${frontendUrl.replace(/\/$/, '')}/proposal-pdf/${id}?token=${encodeURIComponent(token)}`;
   const logo = await getLogo(frontendUrl.replace(/\/$/, ''));
 
   const [cover, body] = await Promise.all([
     renderPart(`${base}&part=cover`, {
+      timezone,
       margin: { top: '0', bottom: '0', left: '0', right: '0' },
       displayHeaderFooter: false,
     }),
     renderPart(`${base}&part=body`, {
+      timezone,
       viewport: BODY_VIEWPORT,
       margin: BODY_MARGIN,
       displayHeaderFooter: true,
