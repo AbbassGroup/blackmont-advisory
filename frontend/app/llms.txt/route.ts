@@ -23,7 +23,6 @@ const KEY_PAGES: [title: string, path: string, note: string][] = [
   ['Buy a business', '/buy-a-business', 'Businesses for sale and how to enquire under NDA'],
   ['Guides', '/guides', 'In-depth guides to selling a business in Australia'],
   ['Resources', '/resources', 'Articles on buying, selling and valuing businesses'],
-  ['Our advisers', '/team', 'The brokers and M&A advisers behind the advice'],
 ];
 
 const line = (title: string, path: string, note?: string) =>

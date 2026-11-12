@@ -47,7 +47,6 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
   const path = authorPath(author);
   const crumbs = [
     { name: 'Home', path: '' },
-    { name: 'Our Advisers', path: '/team' },
     { name: author.name, path },
   ];
 

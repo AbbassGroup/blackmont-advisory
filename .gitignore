@@ -8,6 +8,10 @@
 
 # Node
 **/node_modules/
+# No root package — a stray root lockfile makes Turbopack pick the wrong
+# project root and breaks the frontend build (next/font). Apps keep their own.
+/package-lock.json
+/package.json
 
 # Next.js build
 frontend/.next/

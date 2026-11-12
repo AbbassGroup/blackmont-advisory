@@ -48,7 +48,6 @@ const staticPages = [
   '/exit/readiness',
   '/exit/benchmarks',
   '/exit/exit-planning',
-  '/team',
   '/privacy',
   '/terms-and-conditions',
 ];
