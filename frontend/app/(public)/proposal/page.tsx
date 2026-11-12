@@ -72,14 +72,22 @@ function ProposalContent() {
 
         setProposal(approvedProposal);
 
-        // Record a view silently (fire-and-forget)
+        // Record a view silently (fire-and-forget). If a staff member is
+        // logged in, send their token so the backend skips counting the view.
         try {
+          let adminToken: string | null = null;
+          try {
+            adminToken = localStorage.getItem('adminToken');
+          } catch {
+            // Storage unavailable — treat as a customer view.
+          }
           await apiClient.post(
             `/api/digital-proposals/${approvedProposal._id}/view`,
             {
               customerEmail: approvedProposal.customerEmail,
               customerName: approvedProposal.customerName,
             },
+            adminToken ? { headers: { Authorization: `Bearer ${adminToken}` } } : undefined,
           );
         } catch {
           // Non-critical — don't surface view-tracking errors to the user

@@ -11,6 +11,7 @@ const {
   createProposalAcceptanceEmail,
 } = require('../utils/emailTemplates');
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 const { renderProposalPdf } = require('../utils/proposalPdf');
 const {
   makeDefaultSections,
@@ -407,6 +408,19 @@ router.post('/:id/view', async (req, res) => {
     const proposal = await DigitalProposal.findById(req.params.id);
     if (!proposal) {
       return res.status(404).json({ message: 'Digital proposal not found' });
+    }
+
+    // Staff previews (valid admin Bearer token) are not counted as views.
+    const auth = req.headers.authorization || '';
+    if (auth.startsWith('Bearer ')) {
+      try {
+        const decoded = jwt.verify(auth.slice(7), process.env.JWT_SECRET);
+        if (decoded.userId && (await User.exists({ _id: decoded.userId }))) {
+          return res.status(200).json({ message: 'Admin preview — view not recorded' });
+        }
+      } catch {
+        // Invalid/expired token — treat as a normal customer view.
+      }
     }
 
     const log = new ProposalViewLog({

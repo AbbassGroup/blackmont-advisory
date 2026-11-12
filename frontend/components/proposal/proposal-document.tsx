@@ -46,7 +46,10 @@ function formatPreparedOn(iso?: string | null): string | undefined {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return undefined;
   const p = Object.fromEntries(
-    COVER_DATE_FORMAT.formatToParts(date).map(({ type, value }) => [type, value]),
+    COVER_DATE_FORMAT.formatToParts(date).map(({ type, value }) => [
+      type,
+      value,
+    ]),
   );
   return `${p.day} ${p.month} ${p.year}`;
 }
@@ -134,7 +137,9 @@ function ProposalDocumentImpl({
       // Fixed content — rendered from `fixed-content.ts`, not from section data.
       case 'disclaimer':
         return (
-          <DisclaimerSection showTitle={context.template === 'business_appraisal'} />
+          <DisclaimerSection
+            showTitle={context.template === 'business_appraisal'}
+          />
         );
 
       case 'scorecard':
@@ -258,7 +263,10 @@ function ProposalDocumentImpl({
 
   // The cover is full-bleed; everything else shares one container so the
   // sections' vertical margins collapse the way they did before the engine.
-  const groups: { full: boolean; items: { section: DocSection; index: number }[] }[] = [];
+  const groups: {
+    full: boolean;
+    items: { section: DocSection; index: number }[];
+  }[] = [];
   // Counted across groups so the first rendered section doesn't open with a
   // page break and leave a blank sheet.
   let rendered = 0;
