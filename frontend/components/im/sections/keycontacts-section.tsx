@@ -28,20 +28,33 @@ const LEGACY_COMMERCIAL_LAWYER = {
  * (blackmontadvisory.com/information-memorandum/6a7d584ae17999e200c88af6) */
 const LEGACY_LAWYER_TEMPLATE_IDS = new Set(['6a7d584ae17999e200c88af6']);
 
-const OTHER_CONTACTS = [
+type Contact = {
+  role: string;
+  name: string;
+  company: string;
+  phone: string;
+  image: string;
+  /** Wide wordmark logos are shown whole (contained) instead of cropped. */
+  imageFit?: 'cover' | 'contain';
+};
+
+/** Listed first on every IM. */
+const ACCOUNTANT: Contact = {
+  role: 'Accountant',
+  name: 'Wilson Zhou',
+  company: 'Rubin Partners',
+  phone: '0404 377 066',
+  image: '/rubin.svg',
+  imageFit: 'contain',
+};
+
+const OTHER_CONTACTS: Contact[] = [
   {
     role: 'Business Loans',
     name: 'Nazar Asani',
     company: 'Fiducia Finance',
     phone: '0439 003 349',
     image: '/fiducia.jpg',
-  },
-  {
-    role: 'Accountant',
-    name: 'James Di Sebastiano',
-    company: 'Costanzo Harris',
-    phone: '0423 048 446',
-    image: '/costanzo-harris.png',
   },
   {
     role: 'Business Insurance',
@@ -75,7 +88,7 @@ export function KeyContactsSection({
     templateId && LEGACY_LAWYER_TEMPLATE_IDS.has(templateId)
       ? LEGACY_COMMERCIAL_LAWYER
       : COMMERCIAL_LAWYER;
-  const contacts = [lawyer, ...OTHER_CONTACTS];
+  const contacts: Contact[] = [ACCOUNTANT, lawyer, ...OTHER_CONTACTS];
   return (
     <>
       {/* CTAs */}
@@ -157,7 +170,11 @@ export function KeyContactsSection({
                     alt={c.role}
                     loading='lazy'
                     decoding='async'
-                    className='h-full w-full object-cover'
+                    className={
+                      c.imageFit === 'contain'
+                        ? 'h-full w-full bg-white object-contain p-1'
+                        : 'h-full w-full object-cover'
+                    }
                   />
                 ) : (
                   <User className='h-5 w-5 text-accent' />
