@@ -41,7 +41,7 @@ export function Valuation() {
       id='valuation'
       tone='canvas'
       heading='What is my business worth?'
-      intro='Most small and medium businesses in Australia are valued as a multiple of earnings. This is how the maths works, and how to set a price that actually sells.'
+      // intro='Most small and medium businesses in Australia are valued as a multiple of earnings. This is how the maths works, and how to set a price that actually sells.'
     >
       <ol className='m-0 grid list-none gap-6 p-0 min-[931px]:grid-cols-3'>
         {STEPS.map(({ title, text }, i) => (

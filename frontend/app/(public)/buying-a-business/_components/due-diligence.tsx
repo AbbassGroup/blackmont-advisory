@@ -8,7 +8,7 @@ import {
 
 const VALUE_STEPS = [
   {
-    title: 'Check the real earnings',
+    title: 'Check the financials',
     text: 'Rebuild the profit from the accounts, add back genuine one-off and personal expenses, and make sure it matches the tax returns and BAS.',
   },
   {

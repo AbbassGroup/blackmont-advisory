@@ -3,7 +3,7 @@ import { FormBanner } from '@/components/landing/tabbed-page/form-banner';
 import type { Crumb } from '@/components/seo/breadcrumbs';
 
 const POINTS = [
-  'A free, confidential first conversation',
+  'Confidential first conversation',
   'Valuation guidance grounded in real Australian sale data',
   'Buyers sign an NDA and are approved by you before seeing anything',
   'Licensed business agent, BLA 092153L',

@@ -336,7 +336,7 @@ export const MELBOURNE_B: SuburbEntry[] = [
         {
           q: 'How much is my St Kilda cafe worth?',
           a: 'Value is based on reliable profit after paying a manager or the owner a fair wage, along with the lease and how seasonal the trade is. Start with our free calculator, then we can review your accounts.',
-          link: { href: '/business-valuation', label: 'Use the free valuation calculator' },
+          link: { href: '/business-valuation', label: 'Use the valuation calculator' },
         },
         {
           q: 'Will buyers see my business name straight away?',

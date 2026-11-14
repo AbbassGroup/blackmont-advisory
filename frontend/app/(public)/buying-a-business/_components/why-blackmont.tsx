@@ -17,7 +17,7 @@ const REASONS: { icon: LucideIcon; title: string; text: string }[] = [
   {
     icon: ShieldCheck,
     title: 'On your side of the table',
-    text: 'The seller’s broker works for the seller. We work only for you, so our advice is about what is right for you, not about closing a sale.',
+    text: 'The seller’s broker works for the seller. We work only for you, so our advice is about what is right for you.',
   },
   {
     icon: Search,

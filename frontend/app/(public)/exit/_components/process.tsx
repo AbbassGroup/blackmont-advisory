@@ -37,7 +37,7 @@ export function Process() {
               headingClassName='max-w-[340px] text-[28px] min-[681px]:text-[34px]'
             />
             <LandingTextLink href='#resources' className='inline-flex min-h-11 items-center text-sm'>
-              Explore the free resources
+              Explore the resources
             </LandingTextLink>
           </div>
           <ol role='list' className='m-0 list-none border-b border-advisory-rule p-0'>

@@ -39,10 +39,10 @@ export function LandingFooter({ homePath = '' }: { homePath?: '' | '/' }) {
             href={`${homePath}#top`}
             className='mb-[20px]'
           />
-          <p className='m-0 mb-3 max-w-[425px] text-[15px] leading-[1.75]'>
+          {/* <p className='m-0 mb-3 max-w-[425px] text-[15px] leading-[1.75]'>
             Helping business owners sell and buyers acquire established
             businesses.
-          </p>
+          </p> */}
           <p className='m-0 mb-3 max-w-[425px] text-[15px] leading-[1.75]'>
             Melbourne, Australia
             <br />

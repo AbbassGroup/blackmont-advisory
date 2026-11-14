@@ -28,12 +28,12 @@ export function SellHero() {
               Thinking about selling your business?
             </h1>
             <p className='m-0 mb-[28px] max-w-[540px] text-[17px] leading-[1.7] text-ink min-[681px]:mb-[32px] min-[1121px]:text-lg'>
-              Access free valuation tools, exit-readiness checklists, and
+              Access valuation tools, exit-readiness checklists, and
               confidential advice from Blackmont Advisory.
             </p>
             <div className='flex flex-wrap items-start gap-3.5'>
               <LandingButtonLink href='#resources'>
-                Access free resources
+                Access resources
               </LandingButtonLink>
               <Suspense
                 fallback={

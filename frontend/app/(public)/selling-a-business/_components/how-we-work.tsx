@@ -5,7 +5,7 @@ import { SectionShell, bodyText } from '@/components/landing/tabbed-page/section
 const STEPS = [
   {
     title: 'A private conversation',
-    text: 'We talk about your business, your timing and what you want next, at no cost.',
+    text: 'We talk about your business, your timing and what you want next.',
   },
   {
     title: 'Valuation and sale readiness',
@@ -35,7 +35,7 @@ export function HowWeWork() {
       id='how-we-work'
       tone='canvas'
       heading='How to sell a business, step by step'
-      intro="The steps are the same for every sale, but the detail changes with each business. Once it's on the market, most businesses sell in 60 to 240 days, depending on the industry."
+      // intro="The steps are the same for every sale, but the detail changes with each business. Once it's on the market, most businesses sell in 60 to 240 days, depending on the industry."
     >
       <ol className='m-0 grid list-none gap-x-10 p-0 min-[931px]:grid-cols-2'>
         {STEPS.map(({ title, text }, i) => (

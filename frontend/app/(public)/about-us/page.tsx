@@ -49,7 +49,7 @@ const FAQS: Faq[] = [
   },
   {
     q: 'Where is Blackmont Advisory based?',
-    a: 'Our office is at 459 Toorak Road, Toorak, in Melbourne. We work with clients across Victoria and around Australia, by phone and video, and meet in person when a deal needs it.',
+    a: 'Our office is at TOK Corporate Centre (1/459 Toorak Road, Toorak VIC 3142), in Melbourne. We work with clients across Victoria and around Australia, by phone and video, and meet in person when a deal needs it.',
     link: { href: '/business-brokers/melbourne', label: 'Business brokers in Melbourne' },
   },
   {
@@ -77,7 +77,7 @@ export default function AboutPage() {
       <FaqSection
         faqs={FAQS}
         heading='About Blackmont Advisory: FAQs'
-        intro='Quick answers about who we are and how we work.'
+        // intro='Quick answers about who we are and how we work.'
       />
       <ClosingCta
         heading='Every transaction starts with a conversation.'

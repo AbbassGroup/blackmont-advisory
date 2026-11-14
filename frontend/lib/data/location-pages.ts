@@ -46,7 +46,7 @@ const SELL: LocationPageCopy[] = [
       'Thinking it is time to sell your business? We are a Melbourne business sale advisor based in Toorak. We value your business, prepare it and take it privately to qualified buyers, from local owners to private equity.',
     points: [
       'Office in Toorak, Melbourne',
-      'A free, confidential first conversation',
+      'Confidential first conversation',
       'Every buyer under NDA and approved by you',
       LICENCE,
     ],
@@ -284,7 +284,7 @@ const SELL: LocationPageCopy[] = [
       {
         q: 'How do I value my business before selling?',
         a: 'Most businesses are valued as a multiple of normalised earnings. Our free calculator gives you an indicative range in a few minutes.',
-        link: { href: '/business-valuation', label: 'Try the free valuation calculator' },
+        link: { href: '/business-valuation', label: 'Try the valuation calculator' },
       },
     ],
   },
@@ -557,7 +557,7 @@ export const buyLocationBySlug = (slug: string) => BUY_LOCATIONS.find((l) => l.s
 /* ── Process steps, shared by city and suburb pages ──────────── */
 
 export const SELL_STEPS: Tip[] = [
-  { title: 'A private conversation', text: 'We talk about your business, your timing and what you want next, at no cost.' },
+  { title: 'A private conversation', text: 'We talk about your business, your timing and what you want next.' },
   { title: 'Valuation and preparation', text: 'We give you a realistic price range and prepare an Information Memorandum and the documents buyers will ask for.' },
   { title: 'Confidential buyer outreach', text: 'We approach qualified buyers privately. Each signs an NDA and you approve them before they see any details.' },
   { title: 'Negotiation and due diligence', text: 'We weigh up offers on price and terms and manage due diligence with your accountant and lawyer.' },

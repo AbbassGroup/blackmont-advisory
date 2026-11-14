@@ -34,7 +34,7 @@ export function Tips() {
     <SectionShell
       id='tips'
       heading='Is your business ready to sell?'
-      intro='Good preparation does more for your sale price than almost anything else. These six steps make a business easier to sell and harder to knock down on price.'
+      // intro='Good preparation does more for your sale price than almost anything else. These six steps make a business easier to sell and harder to knock down on price.'
     >
       <ol className='m-0 grid list-none gap-x-10 gap-y-0 p-0 min-[931px]:grid-cols-2'>
         {TIPS.map(({ title, text }, i) => (

@@ -23,7 +23,7 @@ const REASONS: { icon: LucideIcon; title: string; text: string }[] = [
   {
     icon: ChartNoAxesColumn,
     title: 'Priced on evidence',
-    text: 'Pricing starts from your normalised earnings, industry multiples and comparable Australian sales, not from what an owner hopes to hear.',
+    text: 'Pricing starts from your normalised earnings, industry multiples and comparable Australian sales.',
   },
   {
     icon: Users,
@@ -47,7 +47,7 @@ export function WhyBlackmont() {
     <SectionShell
       id='why-blackmont'
       heading='Why choose Blackmont as business sale advisor'
-      intro="Most owners only sell a business once. We've done it many times, we keep it quiet, and we stay with you until the money is in your account."
+      // intro="Most owners only sell a business once. We've done it many times, we keep it quiet, and we stay with you until the money is in your account."
     >
       <ul className='m-0 grid list-none gap-4 p-0 min-[681px]:grid-cols-2 min-[681px]:gap-5 min-[1121px]:grid-cols-3 min-[1121px]:gap-6'>
         {REASONS.map(({ icon: Icon, title, text }, i) => (

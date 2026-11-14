@@ -65,8 +65,8 @@ export const PERTH: SuburbEntry[] = [
         },
         {
           q: 'How do you price a business to sell in the city?',
-          a: 'We start from normalised earnings, adjusting for owner wages and one-off costs, then consider how much of the profit depends on you, key clients and the lease. That gives a range buyers can test in due diligence. Our free calculator gives you a first indication.',
-          link: { href: '/business-valuation', label: 'Try the free valuation calculator' },
+          a: 'We start from normalised earnings, adjusting for owner wages and one-off costs, then consider how much of the profit depends on you, key clients and the lease. That gives a range buyers can test in due diligence. Our calculator gives you a first indication.',
+          link: { href: '/business-valuation', label: 'Try the valuation calculator' },
         },
         {
           q: 'Will you meet me in Perth?',
@@ -337,7 +337,7 @@ export const PERTH: SuburbEntry[] = [
         {
           q: 'How do you price a hospitality business to sell?',
           a: 'We look at normalised profit after a market wage for the owner, the lease terms and the condition of the fit-out. A venue with a long lease and steady trade across the week is usually worth more than one relying on a few busy nights.',
-          link: { href: '/business-valuation', label: 'Try the free valuation calculator' },
+          link: { href: '/business-valuation', label: 'Try the valuation calculator' },
         },
         {
           q: 'Can I sell without my regulars knowing?',
@@ -421,12 +421,12 @@ export const PERTH: SuburbEntry[] = [
       keyword: 'sell a business subiaco',
       title: 'Sell a Business Subiaco | Blackmont Advisory',
       description:
-        'Need to sell a business in Subiaco? Get a fair valuation and a confidential sale, with every buyer screened before they see your details. Book a free chat.',
+        'Need to sell a business in Subiaco? Get a fair valuation and a confidential sale, with every buyer screened before they see your details. Book a chat.',
       h1: 'Sell a Business in Subiaco',
       intro:
         'Whether you run a café on Rokeby Road, a boutique, a clinic near the hospital precinct or a professional practice, we help Subiaco owners sell privately, with a clear valuation and buyers who are ready to proceed.',
       points: [
-        'Free, confidential first conversation',
+        'Confidential first conversation',
         'Valuation explained in plain terms',
         'Every buyer under NDA',
         'Guidance from offer to settlement',
@@ -602,7 +602,7 @@ export const PERTH: SuburbEntry[] = [
         {
           q: 'How do buyers value event-day trade when I sell a business in East Perth?',
           a: 'Buyers usually value steady, everyday profit more highly than profit from events, because event schedules can change. Showing both clearly lets them price each part fairly, rather than discounting the whole business for uncertainty.',
-          link: { href: '/business-valuation', label: 'Try the free valuation calculator' },
+          link: { href: '/business-valuation', label: 'Try the valuation calculator' },
         },
         {
           q: 'What is an information memorandum?',

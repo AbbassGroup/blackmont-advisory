@@ -17,7 +17,7 @@ const DESCRIPTION =
 
 export const metadata: Metadata = buildMetadata({
   path: PAGE_PATH,
-  title: 'Free Business Valuation Calculator | Blackmont Advisory',
+  title: 'Business Valuation Calculator | Blackmont Advisory',
   description: DESCRIPTION,
 });
 
@@ -28,7 +28,7 @@ const CRUMBS = [
 
 const jsonLd = [
   webAppJsonLd({
-    name: 'Free Business Valuation Calculator',
+    name: 'Business Valuation Calculator',
     description: DESCRIPTION,
     path: PAGE_PATH,
   }),

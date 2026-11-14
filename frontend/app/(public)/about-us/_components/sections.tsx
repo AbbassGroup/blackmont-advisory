@@ -59,7 +59,7 @@ export function WhoWeAre() {
         </div>
         <div className='space-y-5 self-end text-[15px] leading-[1.8] text-ink min-[681px]:text-base'>
           <p className='m-0'>
-            Blackmont Advisory is a senior-led M&amp;A firm based in Toorak. We
+            Blackmont Advisory is a Business Brokerage firm based in Toorak. We
             help owners sell their businesses privately and at the right price,
             and we act as buyer advocates for people and companies looking to
             acquire.
@@ -82,7 +82,7 @@ const PRINCIPLES: { icon: LucideIcon; title: string; text: string }[] = [
   {
     icon: Scale,
     title: 'One side of the table',
-    text: 'We only ever represent one side of a transaction, so our advice is never conflicted.',
+    text: 'We only ever represent one side of a transaction.',
   },
   {
     icon: UserCheck,
@@ -92,7 +92,7 @@ const PRINCIPLES: { icon: LucideIcon; title: string; text: string }[] = [
   {
     icon: LockKeyhole,
     title: 'Confidential by default',
-    text: 'Sensitive information is shared only with people who need it, and only with your approval.',
+    text: 'Sensitive information is shared only with buyers who we have qualified.',
   },
   {
     icon: Compass,

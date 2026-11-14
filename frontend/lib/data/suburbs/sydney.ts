@@ -17,7 +17,7 @@ export const SYDNEY: SuburbEntry[] = [
       imageAlt: 'Sell a business Sydney CBD: commercial office buildings',
       title: 'Sell a Business Sydney CBD | Blackmont Advisory',
       description:
-        'Looking to sell a business in the Sydney CBD? Get a realistic valuation and a confidential sale run by one senior advisor. Book a free, private first call.',
+        'Looking to sell a business in the Sydney CBD? Get a realistic valuation and a confidential sale run by one senior advisor. Book a private first call.',
       h1: 'Sell a Business in the Sydney CBD',
       intro:
         'For owners of professional services firms, specialist practices and city hospitality venues who want to sell a business in the Sydney CBD quietly, at a price the numbers support, with one senior advisor running the process from start to finish.',
@@ -288,7 +288,7 @@ export const SYDNEY: SuburbEntry[] = [
       imageAlt: 'Sell a business Surry Hills: commercial office buildings',
       title: 'Sell a Business Surry Hills | Blackmont Advisory',
       description:
-        'Want to sell a business in Surry Hills? From agencies to cafés and restaurants, we value it fairly and find buyers privately. Book a free, confidential chat.',
+        'Want to sell a business in Surry Hills? From agencies to cafés and restaurants, we value it fairly and find buyers privately. Book a confidential chat.',
       h1: 'Sell a Business in Surry Hills',
       intro:
         'Surry Hills is full of creative agencies, studios, cafés and restaurants built around their owners. We help you sell a business in Surry Hills in a way that protects your reputation, your team and the price.',
@@ -422,7 +422,7 @@ export const SYDNEY: SuburbEntry[] = [
       imageAlt: 'Sell a business Pyrmont: commercial office buildings',
       title: 'Sell a Business Pyrmont | Blackmont Advisory',
       description:
-        'Ready to sell a business in Pyrmont? We prepare tech, media and hospitality businesses for sale and approach buyers in confidence. Arrange a free first call.',
+        'Ready to sell a business in Pyrmont? We prepare tech, media and hospitality businesses for sale and approach buyers in confidence. Arrange a first call.',
       h1: 'Sell a Business in Pyrmont',
       intro:
         'From tech and media firms to harbourside hospitality, Pyrmont businesses attract buyers from across Sydney and beyond. We help you sell a business in Pyrmont confidentially, with a realistic price and a well-prepared story for buyers.',

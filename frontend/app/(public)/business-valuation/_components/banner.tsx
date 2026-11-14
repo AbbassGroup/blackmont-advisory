@@ -23,21 +23,21 @@ export function ValuationBanner({ crumbs }: { crumbs: Crumb[] }) {
               id='valuation-page-title'
               className='m-0 mt-8 mb-6 max-w-[650px] font-advisory-heading text-[clamp(36px,9vw,52px)] leading-[1.14] font-bold tracking-normal text-midnight min-[681px]:text-[clamp(37px,5vw,50px)] min-[931px]:text-[clamp(42px,4.8vw,56px)] min-[1121px]:text-[clamp(46px,4.5vw,62px)]'
             >
-              Free Business Valuation Calculator
+              Business Valuation Calculator
             </h1>
             <p className='m-0 mb-6 max-w-[540px] text-[17px] leading-[1.7] text-ink min-[1121px]:text-lg'>
               What is my business worth? Answer five quick questions to value
               your business and get an indicative price range, based on your
               earnings, industry and how the business is run.
             </p>
-            <ul className='m-0 mb-8 flex list-none flex-wrap gap-x-6 gap-y-2 p-0'>
+            {/* <ul className='m-0 mb-8 flex list-none flex-wrap gap-x-6 gap-y-2 p-0'>
               {POINTS.map((point) => (
                 <li key={point} className='flex items-center gap-2 text-[15px] font-semibold text-midnight'>
                   <Check size={17} strokeWidth={2.5} aria-hidden='true' className='text-gilt' />
                   {point}
                 </li>
               ))}
-            </ul>
+            </ul> */}
             <nav aria-label='Valuation page sections' className='flex flex-wrap items-center gap-x-6 gap-y-3'>
               <LandingButtonLink href='#calculator'>Value your business</LandingButtonLink>
               <LandingTextLink href='#formula' className='inline-flex min-h-11 items-center'>

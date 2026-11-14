@@ -32,7 +32,7 @@ export function WhoWeHelp() {
     <SectionShell
       id='who-we-help'
       heading='Who we help buy a business'
-      intro='Whatever your background, we shape the search around your goals, your budget and how much risk you are comfortable with.'
+      // intro='Whatever your background, we shape the search around your goals, your budget and how much risk you are comfortable with.'
     >
       <ul className='m-0 grid list-none gap-px border border-advisory-rule bg-advisory-rule p-0 min-[681px]:grid-cols-2 min-[1121px]:grid-cols-3'>
         {BUYERS.map(({ title, text }) => (

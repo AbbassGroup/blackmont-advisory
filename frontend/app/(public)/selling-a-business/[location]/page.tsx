@@ -82,7 +82,7 @@ export default async function SellLocationPage({ params }: PageProps) {
         title={page.h1}
         intro={page.intro}
         points={page.points}
-        primary={{ href: '/business-valuation', label: 'Get a free business valuation' }}
+        primary={{ href: '/business-valuation', label: 'Get a business valuation' }}
         secondary={{ href: BASE, label: 'How we sell a business' }}
         form={<ContactForm lockedType='sell' headingAs='h2' />}
       />

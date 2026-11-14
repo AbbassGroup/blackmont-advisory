@@ -11,9 +11,9 @@ import { breadcrumbJsonLd, buildMetadata, itemListJsonLd } from '@/lib/seo';
 
 export const metadata: Metadata = buildMetadata({
   path: '/exit',
-  title: 'Sell Your Business | Free Exit Tools & Advisory | Blackmont Advisory',
+  title: 'Sell Your Business | Exit Tools & Advisory | Blackmont Advisory',
   description:
-    'Thinking about selling your business? Access free valuation tools, exit-readiness checklists, and confidential advice from Blackmont Advisory, a Melbourne boutique business brokerage.',
+    'Thinking about selling your business? Access valuation tools, exit-readiness checklists, and confidential advice from Blackmont Advisory, a Melbourne boutique business brokerage.',
   ogTitle: 'Sell Your Business | Blackmont Advisory',
   ogDescription:
     'Free tools and expert insights to maximise your business exit, guided by a Melbourne boutique advisory firm.',
@@ -24,7 +24,7 @@ const jsonLd = [
     { name: 'Home', path: '' },
     { name: 'Sell Your Business', path: '/exit' },
   ]),
-  itemListJsonLd('Free Business Exit Resources', [
+  itemListJsonLd('Business Exit Resources', [
     {
       name: 'Business Valuation Tool',
       description:

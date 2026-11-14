@@ -74,8 +74,8 @@ export const MELBOURNE_A: SuburbEntry[] = [
         },
         {
           q: 'What will a buyer pay for my city business?',
-          a: 'Price comes from your earnings, how dependable they are and how much the business relies on you. Lease security matters a lot in the city. Our free valuation calculator gives you a starting range, and we refine it once we have seen your accounts.',
-          link: { href: '/business-valuation', label: 'Try the free valuation calculator' },
+          a: 'Price comes from your earnings, how dependable they are and how much the business relies on you. Lease security matters a lot in the city. Our valuation calculator gives you a starting range, and we refine it once we have seen your accounts.',
+          link: { href: '/business-valuation', label: 'Try the valuation calculator' },
         },
       ],
     },
@@ -210,7 +210,7 @@ export const MELBOURNE_A: SuburbEntry[] = [
         {
           q: 'What does it cost to sell a business in Southbank?',
           a: 'Our fees depend on the size and complexity of the business, and we agree them in writing before we start. There is no charge for the first conversation, where we tell you honestly what we think your business could sell for.',
-          link: { href: '/business-valuation', label: 'Get a free business valuation' },
+          link: { href: '/business-valuation', label: 'Get a business valuation' },
         },
       ],
     },
@@ -481,7 +481,7 @@ export const MELBOURNE_A: SuburbEntry[] = [
         {
           q: 'What is my South Melbourne business worth?',
           a: 'It depends on your earnings, how steady they are, your lease and how much the business relies on you. Start with our free calculator, then we can give you a considered range after reviewing your accounts.',
-          link: { href: '/business-valuation', label: 'Use the free valuation calculator' },
+          link: { href: '/business-valuation', label: 'Use the valuation calculator' },
         },
       ],
     },
@@ -610,8 +610,8 @@ export const MELBOURNE_A: SuburbEntry[] = [
         },
         {
           q: 'Can you sell an industrial or trade business?',
-          a: 'Yes. We prepare the equipment and stock schedules buyers expect, explain the customer base and contracts, and approach operators and groups that understand the sector. Our free valuation calculator gives you an early guide to price.',
-          link: { href: '/business-valuation', label: 'Try the free valuation calculator' },
+          a: 'Yes. We prepare the equipment and stock schedules buyers expect, explain the customer base and contracts, and approach operators and groups that understand the sector. Our valuation calculator gives you an early guide to price.',
+          link: { href: '/business-valuation', label: 'Try the valuation calculator' },
         },
         {
           q: 'Should I plan my exit before I sell?',
