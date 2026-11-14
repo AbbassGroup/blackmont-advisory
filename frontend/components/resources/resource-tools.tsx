@@ -20,7 +20,7 @@ const resources: Resource[] = [
     summary:
       'Estimate the potential value of your business using industry-based insights.',
     image: '/valuation.webp',
-    href: '/exit/valuation',
+    href: '/business-valuation',
     cta: 'Access tool',
   },
   {
@@ -29,7 +29,7 @@ const resources: Resource[] = [
     summary:
       'Understand what buyers look for before taking your business to market.',
     image: '/sale.webp',
-    href: '/exit/readiness',
+    href: '/exit/sale-readiness',
     cta: 'Download checklist',
   },
   {
@@ -38,7 +38,7 @@ const resources: Resource[] = [
     summary:
       'Compare your business performance against broader industry standards.',
     image: '/benchmark.webp',
-    href: '/exit/benchmarks',
+    href: '/exit/industry-benchmarks',
     cta: 'View report',
   },
   {

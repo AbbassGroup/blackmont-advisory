@@ -5,7 +5,7 @@ import {
 
 const actions = [
   {
-    href: '/exit/valuation',
+    href: '/business-valuation',
     title: 'Find out what your business is worth',
     detail: 'Free valuation tool. Five questions, indicative range.',
     button: 'Use the valuation tool',

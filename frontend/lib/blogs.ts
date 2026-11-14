@@ -14,6 +14,24 @@ export const BLOGS_API = '/api/blogs';
 /** Matches the backend's default page size. */
 export const BLOGS_PER_PAGE = 12;
 
+/** Which Resources tab an article belongs to. Older articles without one are blogs. */
+export type ResourceType = 'blog' | 'guide' | 'case-study';
+
+export const RESOURCE_TYPES: {
+  value: ResourceType;
+  label: string;
+  plural: string;
+  /** The Resources tab that lists this type. */
+  tabPath: string;
+}[] = [
+  { value: 'blog', label: 'Blog', plural: 'Blogs', tabPath: '/resources/blogs' },
+  { value: 'guide', label: 'Guide', plural: 'Guides', tabPath: '/resources/guides' },
+  { value: 'case-study', label: 'Case study', plural: 'Case Studies', tabPath: '/resources/case-studies' },
+];
+
+export const resourceTypeInfo = (type: ResourceType | undefined | null) =>
+  RESOURCE_TYPES.find((t) => t.value === type) ?? RESOURCE_TYPES[0];
+
 export type Blog = {
   _id: string;
   id?: string;
@@ -23,6 +41,8 @@ export type Blog = {
   /** Alt text for the cover image. Empty on older articles — fall back to the title. */
   imageAlt?: string;
   url: string | null;
+  /** Resources tab: blog, guide or case study. The API fills in 'blog' for older articles. */
+  resourceType?: ResourceType;
   category: string;
   metaDescription: string;
   /** Overrides `title` in the <title> tag only. Empty means use `title`. */
@@ -114,6 +134,8 @@ export async function listBlogs(params: {
   limit?: number;
   search?: string;
   category?: string;
+  /** One Resources tab only. Omitted: every type. */
+  type?: ResourceType;
 }): Promise<BlogListResult> {
   const { data } = await apiClient.get(BLOGS_API, {
     params: {
@@ -121,6 +143,7 @@ export async function listBlogs(params: {
       limit: params.limit ?? BLOGS_PER_PAGE,
       ...(params.search ? { search: params.search } : {}),
       ...(params.category ? { category: params.category } : {}),
+      ...(params.type ? { type: params.type } : {}),
     },
   });
 
@@ -142,6 +165,8 @@ export async function fetchPublicBlogs(params: {
   page?: number;
   limit?: number;
   category?: string;
+  /** One Resources tab only: blogs, guides or case studies. Omitted: every type. */
+  type?: ResourceType;
   /** Author ObjectId — articles by one author, for their profile page. */
   author?: string;
   /** Seconds before the cached list is refetched. */
@@ -153,6 +178,7 @@ export async function fetchPublicBlogs(params: {
   });
   if (params.category) query.set('category', params.category);
   if (params.author) query.set('author', params.author);
+  if (params.type) query.set('type', params.type);
 
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5005';
   const response = await fetch(`${baseUrl}${BLOGS_API}?${query.toString()}`, {

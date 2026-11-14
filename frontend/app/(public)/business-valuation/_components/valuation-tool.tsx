@@ -18,9 +18,9 @@ import {
 import { industries } from '@/lib/data/industries';
 import { locations } from '@/lib/data/locations';
 import { bracketFor } from '@/lib/data/valuation-brackets';
-import { GetStarted } from '../../_components/get-started';
-import { PrintButton } from '../../_components/print-button';
-import { ValuationPdf } from '../../_components/pdf/valuation-pdf';
+import { GetStarted } from '@/app/(public)/exit/_components/get-started';
+import { PrintButton } from '@/app/(public)/exit/_components/print-button';
+import { ValuationPdf } from '@/app/(public)/exit/_components/pdf/valuation-pdf';
 
 const MANAGEMENT_TYPES = ['Fully Managed', 'Semi-Managed', 'Owner Operated'];
 

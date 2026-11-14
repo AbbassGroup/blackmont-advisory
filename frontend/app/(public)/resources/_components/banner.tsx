@@ -7,7 +7,11 @@ import {
   LandingTextLink,
 } from '@/components/landing/presentation';
 
-export function ResourcesBanner() {
+/**
+ * Shared banner for the Blogs / Guides / Case Studies tabs. Each tab passes its
+ * own H1 and intro so the three pages don't share one heading.
+ */
+export function ResourcesBanner({ title, intro }: { title: string; intro: string }) {
   return (
     <LandingTheme className='bg-canvas'>
       <section
@@ -20,18 +24,17 @@ export function ResourcesBanner() {
             id='resources-page-title'
             className='m-0 mb-6 max-w-[650px] font-advisory-heading text-[clamp(38px,9.5vw,54px)] leading-[1.14] font-bold tracking-normal text-midnight min-[681px]:mb-[32px] min-[681px]:text-[clamp(37px,5.15vw,52px)] min-[931px]:text-[clamp(42px,5.1vw,58px)] min-[1121px]:text-[clamp(46px,4.85vw,66px)]'
           >
-            Resources &amp; blogs
+            {title}
           </h1>
             <p className='m-0 mb-[28px] max-w-[540px] text-[17px] leading-[1.7] text-ink min-[681px]:mb-[32px] min-[1121px]:text-lg'>
-              Insights, guides, and tips for business owners, buyers, and sellers.
-              Stay informed with the latest from Blackmont Advisory.
+              {intro}
             </p>
             <nav aria-label='Resources page sections' className='flex flex-wrap items-center gap-x-6 gap-y-3'>
               <LandingButtonLink href='#resource-tools'>
                 Explore free tools
               </LandingButtonLink>
-              <LandingTextLink href='#articles' className='inline-flex min-h-11 items-center'>
-                Read the articles
+              <LandingTextLink href='#resources-tabs' className='inline-flex min-h-11 items-center'>
+                Browse blogs, guides and case studies
               </LandingTextLink>
             </nav>
           </div>

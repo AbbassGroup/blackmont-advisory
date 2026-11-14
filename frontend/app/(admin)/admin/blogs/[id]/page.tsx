@@ -33,7 +33,7 @@ export default function BlogFormPage() {
         if (!active) return;
         setLoaded({
           id: idParam,
-          data: { id: blog._id, title: blog.title ?? '', content: blog.content ?? '', imageUrl: blog.image ?? '', imageAlt: blog.imageAlt ?? '', url: blog.url ?? '', category: blog.category ?? '', metaDescription: blog.metaDescription ?? '',
+          data: { id: blog._id, title: blog.title ?? '', content: blog.content ?? '', imageUrl: blog.image ?? '', imageAlt: blog.imageAlt ?? '', url: blog.url ?? '', resourceType: blog.resourceType ?? 'blog', category: blog.category ?? '', metaDescription: blog.metaDescription ?? '',
             seoTitle: blog.seoTitle ?? '', focusKeyword: blog.focusKeyword ?? '', keywords: blog.keywords ?? [], keyTakeaways: blog.keyTakeaways ?? [], faqs: blog.faqs ?? [], author: blogAuthorId(blog) },
         });
       })

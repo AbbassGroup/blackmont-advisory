@@ -4,10 +4,13 @@ import { BenchmarkReport } from './_components/benchmark-report';
 import { AccessTracker } from '../_components/access-tracker';
 import { ToolNotes } from '../_components/tool-notes';
 import { JsonLd } from '@/components/seo/json-ld';
-import { breadcrumbJsonLd, buildMetadata, webAppJsonLd } from '@/lib/seo';
+import { FaqSection } from '@/components/landing/tabbed-page/faq-section';
+import { ClosingCta } from '@/components/landing/tabbed-page/closing-cta';
+import { breadcrumbJsonLd, buildMetadata, faqJsonLd, webAppJsonLd } from '@/lib/seo';
+import { BENCHMARK_FAQS } from '../_components/tool-content';
 
 export const metadata: Metadata = buildMetadata({
-  path: '/exit/benchmarks',
+  path: '/exit/industry-benchmarks',
   title: 'Industry Benchmark Report | Blackmont Advisory',
   description:
     'Current Australian SME market data. See typical EBITDA multiples, sale price ranges, time to sell, and what buyers look for in your industry.',
@@ -16,7 +19,7 @@ export const metadata: Metadata = buildMetadata({
 const CRUMBS = [
   { name: 'Home', path: '' },
   { name: 'Sell Your Business', path: '/exit' },
-  { name: 'Industry Benchmark Report', path: '/exit/benchmarks' },
+  { name: 'Industry Benchmark Report', path: '/exit/industry-benchmarks' },
 ];
 
 const jsonLd = [
@@ -24,9 +27,10 @@ const jsonLd = [
     name: 'Industry Benchmark Report',
     description:
       'Current Australian SME market data. See typical EBITDA multiples, sale price ranges, time to sell, and what buyers look for in your industry.',
-    path: '/exit/benchmarks',
+    path: '/exit/industry-benchmarks',
   }),
   breadcrumbJsonLd(CRUMBS),
+  faqJsonLd(BENCHMARK_FAQS),
 ];
 
 export default function BenchmarksPage() {
@@ -60,6 +64,16 @@ export default function BenchmarksPage() {
           label: 'the full table with size brackets',
           detail: 'For every sector side by side, plus how the multiple changes with the size of the business, see',
         }}
+      />
+      <FaqSection
+        faqs={BENCHMARK_FAQS}
+        heading='EBITDA multiples and EBIT: FAQs'
+        intro='How the numbers in this report work, and how to apply them to your own business.'
+      />
+      <ClosingCta
+        heading='Want to know where your business sits in the range?'
+        text='A benchmark is a starting point. We can give you a confidential view of what your business is worth.'
+        enquireHref='/#contact'
       />
     </div>
   );

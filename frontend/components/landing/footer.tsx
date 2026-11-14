@@ -2,20 +2,38 @@ import { LandingBrand } from './brand';
 import { FooterAssociationLogos } from '@/components/global/footer-association-logos';
 import { LandingContainer, LandingTextLink } from './presentation';
 
-const EXPLORE_LINKS = [
-  { label: 'Selling a Business', href: '#selling' },
-  { label: 'Buying a Business', href: '#buying' },
-  { label: 'Recent Acquisitions', href: '#acquisitions' },
-  { label: 'About Blackmont', href: '#about' },
-  { label: 'Exit Planning', href: '/exit' },
-  { label: 'Resources', href: '/resources' },
+type FooterLink = { label: string; href: string };
+
+const LINK_GROUPS: { heading: string; label: string; links: FooterLink[] }[] = [
+  {
+    heading: 'Services',
+    label: 'Footer services navigation',
+    links: [
+      { label: 'Selling a Business', href: '/selling-a-business' },
+      { label: 'Buying a Business', href: '/buying-a-business' },
+      { label: 'Valuation', href: '/business-valuation' },
+      { label: 'Business Brokers', href: '/business-brokers' },
+      { label: 'Exit Planning', href: '/exit' },
+    ],
+  },
+  {
+    heading: 'Company & Resources',
+    label: 'Footer company and resources navigation',
+    links: [
+      { label: 'About Blackmont', href: '/about-us' },
+      { label: 'Recent Acquisitions', href: '#acquisitions' },
+      { label: 'Blogs', href: '/resources/blogs#resources-tabs' },
+      { label: 'Guides', href: '/resources/guides#resources-tabs' },
+      { label: 'Case Studies', href: '/resources/case-studies#resources-tabs' },
+    ],
+  },
 ];
 
 export function LandingFooter({ homePath = '' }: { homePath?: '' | '/' }) {
   return (
     <footer className='bg-midnight text-white [&_a]:no-underline'>
-      <LandingContainer className='grid py-10 min-[681px]:py-12 min-[1121px]:py-16 gap-x-6 gap-y-8 min-[426px]:grid-cols-2 min-[681px]:grid-cols-[1.3fr_0.78fr_0.9fr] min-[681px]:gap-10 min-[1121px]:gap-16'>
-        <div className='min-w-0 min-[426px]:col-span-2 min-[681px]:col-span-1'>
+      <LandingContainer className='grid gap-x-6 gap-y-8 py-10 min-[426px]:grid-cols-2 min-[681px]:grid-cols-[0.85fr_1fr_1.2fr] min-[681px]:gap-x-10 min-[681px]:py-12 min-[1121px]:grid-cols-[1.35fr_0.8fr_0.95fr_1.15fr] min-[1121px]:gap-x-12 min-[1121px]:py-16'>
+        <div className='min-w-0 min-[426px]:col-span-2 min-[681px]:col-span-3 min-[1121px]:col-span-1'>
           <LandingBrand
             placement='footer'
             href={`${homePath}#top`}
@@ -40,31 +58,33 @@ export function LandingFooter({ homePath = '' }: { homePath?: '' | '/' }) {
             Begin a conversation
           </LandingTextLink>
         </div>
-        <div className='min-w-0'>
-          <h3 className='m-0 mb-4 text-[15px] leading-[1.5] font-bold'>
-            Explore
-          </h3>
-          <nav
-            aria-label='Footer navigation'
-            className='flex flex-col items-start gap-[12px]'
-          >
-            {EXPLORE_LINKS.map((link) => (
-              <LandingTextLink
-                key={link.href}
-                href={
-                  link.href.startsWith('#')
-                    ? `${homePath}${link.href}`
-                    : link.href
-                }
-                tone='white'
-                className='font-normal'
-              >
-                {link.label}
-              </LandingTextLink>
-            ))}
-          </nav>
-        </div>
-        <div className='min-w-0'>
+        {LINK_GROUPS.map((group) => (
+          <div key={group.heading} className='min-w-0'>
+            <h3 className='m-0 mb-4 text-[15px] leading-[1.5] font-bold'>
+              {group.heading}
+            </h3>
+            <nav
+              aria-label={group.label}
+              className='flex flex-col items-start gap-[12px]'
+            >
+              {group.links.map((link) => (
+                <LandingTextLink
+                  key={link.href}
+                  href={
+                    link.href.startsWith('#')
+                      ? `${homePath}${link.href}`
+                      : link.href
+                  }
+                  tone='white'
+                  className='font-normal'
+                >
+                  {link.label}
+                </LandingTextLink>
+              ))}
+            </nav>
+          </div>
+        ))}
+        <div className='min-w-0 min-[426px]:col-span-2 min-[681px]:col-span-1'>
           <h3 className='m-0 mb-4 text-[15px] leading-[1.5] font-bold'>
             Get in touch
           </h3>

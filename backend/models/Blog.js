@@ -22,6 +22,15 @@ const blogSchema = new mongoose.Schema(
     // not collide with each other under the unique index.
     url: { type: String, trim: true, default: null, unique: true, sparse: true },
 
+    // Which Resources tab the article belongs to: Blogs, Guides or Case Studies.
+    // Articles saved before this field existed have no value and count as blogs
+    // (see the `type` filter in routes/blogs.js).
+    resourceType: {
+      type: String,
+      enum: ['blog', 'guide', 'case-study'],
+      default: 'blog',
+    },
+
     category: { type: String, trim: true, default: '' },
     metaDescription: { type: String, trim: true, default: '' },
     // Who wrote it. Null credits the firm. Populated on single-article reads.
@@ -56,6 +65,7 @@ const blogSchema = new mongoose.Schema(
 );
 
 blogSchema.index({ createdAt: -1 });
+blogSchema.index({ resourceType: 1, createdAt: -1 });
 blogSchema.index({ category: 1, createdAt: -1 });
 blogSchema.index({ keywords: 1 });
 blogSchema.index({ author: 1, createdAt: -1 });

@@ -108,9 +108,16 @@ function ContactField({
   );
 }
 
-export function ContactForm() {
+type ContactFormProps = {
+  /** Show only one enquiry type and hide the sell/buy switch. */
+  lockedType?: EnquiryType;
+  /** Heading level for "Get in touch"; use h2 when the form sits under the page h1. */
+  headingAs?: 'h2' | 'h3';
+};
+
+export function ContactForm({ lockedType, headingAs: Heading = 'h3' }: ContactFormProps = {}) {
   const headingId = useId();
-  const [enquiryType, setEnquiryType] = useState<EnquiryType>('sell');
+  const [enquiryType, setEnquiryType] = useState<EnquiryType>(lockedType ?? 'sell');
   const [form, setForm] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState(false);
@@ -225,34 +232,36 @@ export function ContactForm() {
       aria-busy={loading}
       className='min-w-0 border border-white/15 bg-midnight/90 p-6 min-[681px]:p-8 text-white [color-scheme:dark]'
     >
-      <h3
+      <Heading
         id={headingId}
         className='m-0 mb-[8px] font-advisory-heading text-[23px] leading-[1.25] font-bold tracking-normal text-white'
       >
         Get in touch
-      </h3>
+      </Heading>
       <p className='m-0 mb-[20px] text-sm leading-[1.65] text-white/80'>
         Tell us a little about what you have in mind. A senior advisor will be
         in touch.
       </p>
-      <div
-        role='group'
-        aria-label='Type of enquiry'
-        className='mb-5 grid grid-cols-2 gap-2'
-      >
-        {(['sell', 'buy'] as const).map((type) => (
-          <button
-            key={type}
-            type='button'
-            aria-pressed={enquiryType === type}
-            disabled={loading}
-            onClick={() => switchEnquiryType(type)}
-            className='min-h-[42px] cursor-pointer border border-white/40 bg-transparent p-2.5 text-[13px] font-semibold text-white transition-colors duration-150 hover:border-gilt focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none disabled:cursor-not-allowed disabled:opacity-50 aria-pressed:border-gilt aria-pressed:bg-gilt/15 aria-pressed:text-gilt'
-          >
-            {type === 'sell' ? 'Sell a business' : 'Buy a business'}
-          </button>
-        ))}
-      </div>
+      {!lockedType && (
+        <div
+          role='group'
+          aria-label='Type of enquiry'
+          className='mb-5 grid grid-cols-2 gap-2'
+        >
+          {(['sell', 'buy'] as const).map((type) => (
+            <button
+              key={type}
+              type='button'
+              aria-pressed={enquiryType === type}
+              disabled={loading}
+              onClick={() => switchEnquiryType(type)}
+              className='min-h-[42px] cursor-pointer border border-white/40 bg-transparent p-2.5 text-[13px] font-semibold text-white transition-colors duration-150 hover:border-gilt focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none disabled:cursor-not-allowed disabled:opacity-50 aria-pressed:border-gilt aria-pressed:bg-gilt/15 aria-pressed:text-gilt'
+            >
+              {type === 'sell' ? 'Sell a business' : 'Buy a business'}
+            </button>
+          ))}
+        </div>
+      )}
       <div className='grid min-[426px]:grid-cols-2 min-[426px]:gap-x-6'>
         <ContactField
           {...fieldProps('name')}
@@ -285,51 +294,56 @@ export function ContactForm() {
           />
         )}
       </div>
-      {/* Both panels size the same grid row so switching does not resize the background. */}
+      {/* Both panels size the same grid row so switching does not resize the background.
+          A locked form renders only its own panel, so no empty space is reserved. */}
       <div className='grid'>
-        <fieldset
-          aria-label='Selling enquiry details'
-          aria-hidden={enquiryType !== 'sell'}
-          inert={enquiryType !== 'sell'}
-          disabled={loading || enquiryType !== 'sell'}
-          className={cn(
-            'col-start-1 row-start-1 m-0 min-w-0 border-0 p-0',
-            enquiryType !== 'sell' && 'invisible pointer-events-none',
-          )}
-        >
-          <div className='grid min-[931px]:grid-cols-2 min-[931px]:gap-x-6'>
+        {lockedType !== 'buy' && (
+          <fieldset
+            aria-label='Selling enquiry details'
+            aria-hidden={enquiryType !== 'sell'}
+            inert={enquiryType !== 'sell'}
+            disabled={loading || enquiryType !== 'sell'}
+            className={cn(
+              'col-start-1 row-start-1 m-0 min-w-0 border-0 p-0',
+              enquiryType !== 'sell' && 'invisible pointer-events-none',
+            )}
+          >
+            <div className='grid min-[931px]:grid-cols-2 min-[931px]:gap-x-6'>
+              <ContactField
+                {...fieldProps('location')}
+                label='Location'
+                required
+              />
+              <ContactField
+                {...fieldProps('turnover')}
+                label='Annual turnover'
+                required
+              />
+            </div>
             <ContactField
-              {...fieldProps('location')}
-              label='Location'
-              required
+              {...fieldProps('comments')}
+              label='Tell us about your business or enquiry'
+              multiline
             />
-            <ContactField
-              {...fieldProps('turnover')}
-              label='Annual turnover'
-              required
-            />
-          </div>
-          <ContactField
-            {...fieldProps('comments')}
-            label='Tell us about your business or enquiry'
-            multiline
-          />
-        </fieldset>
-        <fieldset
-          aria-label='Buying enquiry details'
-          aria-hidden={enquiryType !== 'buy'}
-          inert={enquiryType !== 'buy'}
-          disabled={loading || enquiryType !== 'buy'}
-          className={cn(
-            'col-start-1 row-start-1 m-0 min-w-0 border-0 p-0',
-            enquiryType !== 'buy' && 'invisible pointer-events-none',
-          )}
-        >
-          <div className='grid min-[931px]:grid-cols-2 min-[931px]:gap-x-6'>
-            <ContactField {...fieldProps('budget')} label='Budget' />
-            <ContactField {...fieldProps('timeline')} label='Timeline to buy' />
-          </div>
-        </fieldset>
+          </fieldset>
+        )}
+        {lockedType !== 'sell' && (
+          <fieldset
+            aria-label='Buying enquiry details'
+            aria-hidden={enquiryType !== 'buy'}
+            inert={enquiryType !== 'buy'}
+            disabled={loading || enquiryType !== 'buy'}
+            className={cn(
+              'col-start-1 row-start-1 m-0 min-w-0 border-0 p-0',
+              enquiryType !== 'buy' && 'invisible pointer-events-none',
+            )}
+          >
+            <div className='grid min-[931px]:grid-cols-2 min-[931px]:gap-x-6'>
+              <ContactField {...fieldProps('budget')} label='Budget' />
+              <ContactField {...fieldProps('timeline')} label='Timeline to buy' />
+            </div>
+          </fieldset>
+        )}
       </div>
       <LandingButton
         type='submit'

@@ -166,7 +166,7 @@ export default function ReadinessGuidePage() {
         <GuideActions
           items={[
             {
-              href: '/exit/readiness',
+              href: '/exit/sale-readiness',
               title: 'Score your business',
               detail: 'Answer the ten questions and get a readiness score with next steps.',
             },

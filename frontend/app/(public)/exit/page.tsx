@@ -29,19 +29,19 @@ const jsonLd = [
       name: 'Business Valuation Tool',
       description:
         'Estimate the potential value of your business using industry-based insights.',
-      path: '/exit/valuation',
+      path: '/business-valuation',
     },
     {
       name: 'Business Sale Checklist',
       description:
         'Understand what buyers look for before taking your business to market.',
-      path: '/exit/readiness',
+      path: '/exit/sale-readiness',
     },
     {
       name: 'Industry Benchmark Report',
       description:
         'Compare your business performance against broader industry standards.',
-      path: '/exit/benchmarks',
+      path: '/exit/industry-benchmarks',
     },
     {
       name: 'Exit Planning Guide',

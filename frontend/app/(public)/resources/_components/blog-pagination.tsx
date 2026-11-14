@@ -11,18 +11,23 @@ import { cn } from '@/lib/utils';
 export function BlogPagination({
   page,
   totalPages,
+  basePath = '/resources/blogs',
+  label = 'Blog pagination',
 }: {
   page: number;
   totalPages: number;
+  /** The tab being paged, e.g. /resources/guides. */
+  basePath?: string;
+  label?: string;
 }) {
   if (totalPages <= 1) return null;
 
   const href = (target: number) =>
-    target === 1 ? '/resources#articles' : `/resources?page=${target}#articles`;
+    target === 1 ? `${basePath}#articles` : `${basePath}?page=${target}#articles`;
 
   return (
     <nav
-      aria-label='Blog pagination'
+      aria-label={label}
       className='mt-10 flex flex-wrap items-center justify-center gap-2 border-t border-advisory-rule pt-6 min-[681px]:mt-12'
     >
       <PageLink
