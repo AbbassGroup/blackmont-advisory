@@ -9,7 +9,9 @@ import {
   clampHeadings,
   blogPageTitle,
   blogAuthor,
+  resourceTypeInfo,
   type Blog,
+  type ResourceType,
 } from '@/lib/blogs';
 import { authorPath } from '@/lib/authors';
 import { faqJsonLd } from '@/lib/seo';
@@ -132,12 +134,12 @@ export async function generateMetadata({ params }: BlogPostPageProps) {
  * articles if the related endpoint fails — e.g. a frontend deployed ahead of
  * the API that serves it.
  */
-async function fetchRelated(currentSlug: string): Promise<Blog[]> {
+async function fetchRelated(currentSlug: string, type: ResourceType): Promise<Blog[]> {
   try {
     return await fetchPublicRelatedBlogs(currentSlug, { limit: 3 });
   } catch {
     try {
-      const { blogs } = await fetchPublicBlogs({ page: 1, limit: 4 });
+      const { blogs } = await fetchPublicBlogs({ page: 1, limit: 4, type });
       return blogs.filter((b) => b.url !== currentSlug).slice(0, 3);
     } catch {
       return [];
@@ -151,7 +153,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const blog = await fetchPublicBlog(slug);
   if (!blog) notFound();
 
-  const related = await fetchRelated(blog.url ?? slug);
+  // Which Resources tab this article belongs to: drives the breadcrumb and "back" links.
+  const tab = resourceTypeInfo(blog.resourceType);
+  const related = await fetchRelated(blog.url ?? slug, tab.value);
 
   const author = blogAuthor(blog);
   const published = displayDate(blog.createdAt);
@@ -197,8 +201,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         {
           '@type': 'ListItem',
           position: 2,
-          name: 'Resources',
-          item: `${SITE_URL}/resources`,
+          name: tab.plural,
+          item: `${SITE_URL}${tab.tabPath}`,
         },
         {
           '@type': 'ListItem',
@@ -236,11 +240,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
         <div className='relative z-10 mx-auto w-[calc(100%_-_40px)] max-w-advisory min-[681px]:w-[calc(100%_-_72px)] min-[1121px]:w-[calc(100%_-_104px)]'>
           <Link
-            href='/resources'
+            href={tab.tabPath}
             className='group mb-6 inline-flex items-center text-[15px] font-semibold tracking-normal text-parchment transition-colors hover:text-accent'
           >
             <ArrowLeft className='mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1' />
-            Back to Resources
+            Back to {tab.plural}
           </Link>
           <h1 className='max-w-4xl font-advisory-heading text-[32px] leading-[1.25] font-bold tracking-normal text-parchment md:text-[42px] lg:text-[50px]'>
             {blog.title}
@@ -309,7 +313,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                     Related Articles
                   </h2>
                   <Link
-                    href='/resources'
+                    href={tab.tabPath}
                     className='text-sm font-bold tracking-normal text-midnight hover:text-gilt hover:underline'
                   >
                     View all

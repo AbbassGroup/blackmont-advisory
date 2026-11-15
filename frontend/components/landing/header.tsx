@@ -8,11 +8,11 @@ import { LandingBrand } from './brand';
 import { LandingContainer } from './presentation';
 
 const NAV_LINKS = [
-  { label: 'Selling a Business', href: '#selling' },
-  { label: 'Buying a Business', href: '#buying' },
-  { label: 'Recent Acquisitions', href: '#acquisitions' },
-  { label: 'About us', href: '#about' },
-  { label: 'Resources', href: '/resources' },
+  { label: 'Selling a Business', href: '/selling-a-business' },
+  { label: 'Buying a Business', href: '/buying-a-business' },
+  { label: 'Valuation', href: '/business-valuation' },
+  { label: 'About us', href: '/about-us' },
+  { label: 'Resources', href: '/resources/blogs' },
   { label: 'Exit Planning', href: '/exit' },
 ];
 

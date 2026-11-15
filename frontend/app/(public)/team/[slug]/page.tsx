@@ -117,7 +117,7 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
           </div>
         ) : (
           <p className='m-0 text-base leading-[1.75] text-ink'>
-            No articles yet. <LandingTextLink href='/resources'>Browse all resources</LandingTextLink>
+            No articles yet. <LandingTextLink href='/resources/blogs'>Browse all resources</LandingTextLink>
           </p>
         )}
       </LandingContainer>

@@ -10,7 +10,7 @@ import { LandingButton, LandingButtonLink } from '@/components/landing/presentat
 import { landingFontVariables } from '@/components/landing/fonts';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
-import { listBlogs, deleteBlog, blogErrorMessage, BLOGS_PER_PAGE, type Blog } from '@/lib/blogs';
+import { listBlogs, deleteBlog, blogErrorMessage, BLOGS_PER_PAGE, RESOURCE_TYPES, resourceTypeInfo, type Blog, type ResourceType } from '@/lib/blogs';
 import { BlogViewDialog } from './_components/blog-view-dialog';
 
 const ACTION_CLASS = 'inline-flex size-10 shrink-0 cursor-pointer items-center justify-center border border-transparent text-ink transition-colors duration-150 hover:border-advisory-rule hover:bg-canvas hover:text-midnight focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gilt disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none';
@@ -26,6 +26,8 @@ export default function BlogsPage() {
   const [loading, setLoading] = useState(true);
   const [listError, setListError] = useState('');
   const [search, setSearch] = useState('');
+  // '' = every type.
+  const [typeFilter, setTypeFilter] = useState<ResourceType | ''>('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
@@ -40,7 +42,7 @@ export default function BlogsPage() {
     setLoading(true);
     setListError('');
     try {
-      const result = await listBlogs({ page, limit: BLOGS_PER_PAGE, search });
+      const result = await listBlogs({ page, limit: BLOGS_PER_PAGE, search, ...(typeFilter ? { type: typeFilter } : {}) });
       if (request !== requestId.current) return;
       setBlogs(result.blogs);
       setTotalPages(Math.max(1, result.pagination.totalPages));
@@ -50,7 +52,7 @@ export default function BlogsPage() {
     } finally {
       if (request === requestId.current) setLoading(false);
     }
-  }, [page, search]);
+  }, [page, search, typeFilter]);
 
   useEffect(() => {
     setLoading(true);
@@ -85,26 +87,33 @@ export default function BlogsPage() {
     <AdminPageLayout title='Blogs' description='Write and manage the articles published under Resources.' action={<div className='flex flex-wrap gap-3'><LandingButtonLink href='/admin/blogs/authors' variant='outline' size='compact'><UsersRound aria-hidden='true' className='size-4' /> Authors</LandingButtonLink><LandingButtonLink href='/admin/blogs/new' size='compact'><Plus aria-hidden='true' className='size-4' /> New blog</LandingButtonLink></div>}>
       <section aria-label='Blog articles' aria-busy={loading} className='min-w-0 border border-advisory-rule bg-white'>
         <div className='flex flex-col gap-4 border-b border-advisory-rule p-5 min-[681px]:flex-row min-[681px]:items-center min-[681px]:justify-between min-[681px]:p-6'>
+          <div className='flex w-full min-w-0 flex-col gap-3 min-[681px]:flex-row min-[681px]:items-center'>
           <div className='relative w-full min-w-0 min-[681px]:max-w-md'>
             <label htmlFor='blog-search' className='sr-only'>Search blogs by title, category or description</label>
             <Search aria-hidden='true' className='pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-ink/60' />
             <input id='blog-search' type='search' value={search} disabled={deleting} onChange={(event) => { setSearch(event.target.value); setPage(1); }} placeholder='Search by title, category or description…' className='h-10 w-full min-w-0 rounded-none border border-advisory-input bg-white py-2 pr-3 pl-10 font-advisory-body text-base text-midnight outline-none transition-colors duration-150 placeholder:text-ink/65 focus:border-gilt disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none min-[681px]:text-sm' />
+          </div>
+          <label htmlFor='blog-type-filter' className='sr-only'>Filter by type</label>
+          <select id='blog-type-filter' value={typeFilter} disabled={deleting} onChange={(event) => { setTypeFilter(event.target.value as ResourceType | ''); setPage(1); }} className='h-10 w-full min-w-0 rounded-none border border-advisory-input bg-white px-3 font-advisory-body text-base text-midnight outline-none focus:border-gilt disabled:cursor-not-allowed disabled:opacity-60 min-[681px]:w-48 min-[681px]:text-sm'>
+            <option value=''>All types</option>
+            {RESOURCE_TYPES.map(({ value, plural }) => <option key={value} value={value}>{plural}</option>)}
+          </select>
           </div>
           <p className='m-0 shrink-0 text-sm leading-[1.6] text-ink' aria-live='polite'>{loading ? 'Loading blogs…' : listError ? 'List unavailable' : `${total} ${total === 1 ? 'blog' : 'blogs'}`}</p>
         </div>
 
         {loading ? (
           <div><p role='status' className='sr-only'>Loading blogs.</p><div aria-hidden='true' className='min-w-0 overflow-x-auto'>
-            <table className='w-full min-w-[1120px] text-left text-sm leading-[1.65]'><BlogsHead /><tbody className='divide-y divide-advisory-rule'>{[0, 1, 2, 3, 4].map((index) => <tr key={index}><td className='px-5 py-4'><div className='h-12 w-16 animate-pulse bg-canvas motion-reduce:animate-none' /></td><td className='w-[30%] min-w-60 px-5 py-4'><div className='flex flex-col gap-2'><div className='h-4 w-4/5 animate-pulse bg-canvas motion-reduce:animate-none' /><div className='h-3 w-3/5 animate-pulse bg-canvas motion-reduce:animate-none' /></div></td>{[0, 1, 2].map((column) => <td key={column} className='px-5 py-4'><div className='h-4 w-24 animate-pulse bg-canvas motion-reduce:animate-none' /></td>)}<td className='px-5 py-3'><div className='ml-auto h-10 w-32 animate-pulse bg-canvas motion-reduce:animate-none' /></td></tr>)}</tbody></table>
+            <table className='w-full min-w-[1120px] text-left text-sm leading-[1.65]'><BlogsHead /><tbody className='divide-y divide-advisory-rule'>{[0, 1, 2, 3, 4].map((index) => <tr key={index}><td className='px-5 py-4'><div className='h-12 w-16 animate-pulse bg-canvas motion-reduce:animate-none' /></td><td className='w-[30%] min-w-60 px-5 py-4'><div className='flex flex-col gap-2'><div className='h-4 w-4/5 animate-pulse bg-canvas motion-reduce:animate-none' /><div className='h-3 w-3/5 animate-pulse bg-canvas motion-reduce:animate-none' /></div></td>{[0, 1, 2, 3].map((column) => <td key={column} className='px-5 py-4'><div className='h-4 w-24 animate-pulse bg-canvas motion-reduce:animate-none' /></td>)}<td className='px-5 py-3'><div className='ml-auto h-10 w-32 animate-pulse bg-canvas motion-reduce:animate-none' /></td></tr>)}</tbody></table>
           </div></div>
         ) : listError ? (
           <div role='alert' className='p-6 min-[681px]:p-8'><h2 className='m-0 text-base font-semibold text-midnight'>We couldn&apos;t load your blogs.</h2><p className='mt-2 mb-5 text-sm leading-[1.75] text-ink'>{listError}</p><LandingButton variant='outline' size='compact' onClick={() => void fetchBlogs()}>Try again</LandingButton></div>
         ) : blogs.length === 0 ? (
-          <div className='p-6 min-[681px]:p-8'><h2 className='m-0 text-base font-semibold text-midnight'>{search ? 'No matching blogs' : 'No blogs yet'}</h2><p className='mt-2 mb-5 text-sm leading-[1.75] text-ink'>{search ? 'Try another title, category or description.' : 'Write your first article to publish it under Resources.'}</p>{search ? <LandingButton variant='outline' size='compact' onClick={() => { setSearch(''); setPage(1); }}>Clear search</LandingButton> : <LandingButtonLink href='/admin/blogs/new' size='compact'>New blog</LandingButtonLink>}</div>
+          <div className='p-6 min-[681px]:p-8'><h2 className='m-0 text-base font-semibold text-midnight'>{search ? 'No matching articles' : typeFilter ? `No ${resourceTypeInfo(typeFilter).plural.toLowerCase()} yet` : 'No blogs yet'}</h2><p className='mt-2 mb-5 text-sm leading-[1.75] text-ink'>{search ? 'Try another title, category or description.' : 'Write your first article to publish it under Resources.'}</p>{search || typeFilter ? <LandingButton variant='outline' size='compact' onClick={() => { setSearch(''); setTypeFilter(''); setPage(1); }}>Clear filters</LandingButton> : <LandingButtonLink href='/admin/blogs/new' size='compact'>New blog</LandingButtonLink>}</div>
         ) : (
           <div role='region' aria-label='Blog article table' tabIndex={0} className='min-w-0 overflow-x-auto focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-gilt'>
             <table className='w-full min-w-[1120px] text-left text-sm leading-[1.65]'>
-              <caption className='sr-only'>Articles, cover images, categories, public URLs and management actions.</caption>
+              <caption className='sr-only'>Articles, cover images, types, categories, public URLs and management actions.</caption>
               <BlogsHead />
               <tbody className='divide-y divide-advisory-rule'>
                 {blogs.map((blog) => {
@@ -113,6 +122,7 @@ export default function BlogsPage() {
                     <tr key={blog._id} className='transition-colors duration-150 hover:bg-canvas/50 motion-reduce:transition-none'>
                       <td className='px-5 py-4 align-top'><BlogCover key={blog.image || blog._id} src={blog.image} /></td>
                       <td className='w-[30%] min-w-60 px-5 py-4 align-top'><Link href={`/admin/blogs/${blog._id}`} className='break-words font-semibold text-midnight no-underline transition-colors duration-150 hover:text-gilt focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none'>{title}</Link>{blog.metaDescription && <p className='mt-1 mb-0 line-clamp-2 text-xs leading-[1.75] text-ink'>{blog.metaDescription}</p>}</td>
+                      <td className='px-5 py-4 align-top whitespace-nowrap'><span className='inline-flex border border-gilt/50 bg-gilt/10 px-2.5 py-1 text-xs leading-[1.5] font-semibold text-midnight'>{resourceTypeInfo(blog.resourceType).label}</span></td>
                       <td className='px-5 py-4 align-top'>{blog.category ? <span className='inline-flex bg-canvas px-2.5 py-1 text-xs leading-[1.5] font-medium text-midnight'>{blog.category}</span> : '—'}</td>
                       <td className='min-w-40 break-all px-5 py-4 align-top text-xs leading-[1.75] text-ink'>{blog.url ? `/resources/${blog.url}` : '—'}</td>
                       <td className='px-5 py-4 align-top whitespace-nowrap text-ink'>{updatedDate(blog.updatedAt)}</td>
@@ -148,7 +158,7 @@ export default function BlogsPage() {
 }
 
 function BlogsHead() {
-  return <thead className='border-b border-advisory-rule bg-canvas text-midnight'><tr>{['Cover', 'Title', 'Category', 'URL', 'Last updated', 'Actions'].map((label) => <th key={label} scope='col' className={cn('px-5 py-4 font-semibold', label === 'Actions' && 'text-right')}>{label}</th>)}</tr></thead>;
+  return <thead className='border-b border-advisory-rule bg-canvas text-midnight'><tr>{['Cover', 'Title', 'Type', 'Category', 'URL', 'Last updated', 'Actions'].map((label) => <th key={label} scope='col' className={cn('px-5 py-4 font-semibold', label === 'Actions' && 'text-right')}>{label}</th>)}</tr></thead>;
 }
 
 function BlogCover({ src }: { src: string | null }) {

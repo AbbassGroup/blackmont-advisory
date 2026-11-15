@@ -77,7 +77,7 @@ export function Selling() {
                 fill
                 loading='lazy'
                 sizes={PHOTO_SIZES}
-                className='object-cover object-center'
+                className='object-cover object-[center_35%]'
               />
             </figure>
           </div>

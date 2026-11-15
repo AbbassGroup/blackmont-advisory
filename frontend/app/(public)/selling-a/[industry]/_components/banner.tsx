@@ -47,7 +47,7 @@ export function IndustryBanner({
               aria-label='Industry guide actions'
               className='mt-7 flex flex-wrap items-center gap-x-6 gap-y-4'
             >
-              <LandingButtonLink href='/exit/valuation'>
+              <LandingButtonLink href='/business-valuation'>
                 Estimate your own range
               </LandingButtonLink>
               <LandingTextLink href='/#contact' className='inline-flex min-h-11 items-center'>

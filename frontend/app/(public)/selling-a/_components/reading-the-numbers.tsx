@@ -7,7 +7,7 @@ import { LastUpdated } from '@/components/seo/last-updated';
 
 const actions = [
   {
-    href: '/exit/valuation',
+    href: '/business-valuation',
     title: 'Estimate your own range',
     detail: 'Free valuation tool. Five questions, indicative range.',
   },

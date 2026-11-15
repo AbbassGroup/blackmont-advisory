@@ -4,19 +4,21 @@ import { Scorecard } from './_components/scorecard';
 import { AccessTracker } from '../_components/access-tracker';
 import { ToolNotes } from '../_components/tool-notes';
 import { JsonLd } from '@/components/seo/json-ld';
-import { breadcrumbJsonLd, buildMetadata, webAppJsonLd } from '@/lib/seo';
+import { FaqSection } from '@/components/landing/tabbed-page/faq-section';
+import { breadcrumbJsonLd, buildMetadata, faqJsonLd, webAppJsonLd } from '@/lib/seo';
+import { NotReadySigns, READINESS_FAQS } from '../_components/tool-content';
 
 export const metadata: Metadata = buildMetadata({
-  path: '/exit/readiness',
-  title: 'Sale Readiness Scorecard | Blackmont Advisory',
+  path: '/exit/sale-readiness',
+  title: 'Is Your Business Sale Ready? | Blackmont Advisory',
   description:
-    'Answer 10 quick questions to get your personalised business sale-readiness score, a category breakdown, and tailored next steps.',
+    'Is your business ready to sell? Answer 10 quick questions to get your free business sale readiness score, a category breakdown and tailored next steps.',
 });
 
 const CRUMBS = [
   { name: 'Home', path: '' },
   { name: 'Sell Your Business', path: '/exit' },
-  { name: 'Sale Readiness Scorecard', path: '/exit/readiness' },
+  { name: 'Sale Readiness Scorecard', path: '/exit/sale-readiness' },
 ];
 
 const jsonLd = [
@@ -24,9 +26,10 @@ const jsonLd = [
     name: 'Sale Readiness Scorecard',
     description:
       'Answer 10 quick questions to get your personalised business sale-readiness score, a category breakdown, and tailored next steps.',
-    path: '/exit/readiness',
+    path: '/exit/sale-readiness',
   }),
   breadcrumbJsonLd(CRUMBS),
+  faqJsonLd(READINESS_FAQS),
 ];
 
 export default function ReadinessPage() {
@@ -59,6 +62,13 @@ export default function ReadinessPage() {
           label: 'the ten things buyers check',
           detail: 'For what a strong answer looks like on each dimension, see',
         }}
+      />
+      <NotReadySigns />
+      <FaqSection
+        faqs={READINESS_FAQS}
+        heading='Sale readiness: FAQs'
+        intro='What owners ask before deciding whether their business is ready to sell.'
+        tone='white'
       />
     </div>
   );

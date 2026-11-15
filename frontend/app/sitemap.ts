@@ -7,6 +7,9 @@ import {
 import { indexableGuides } from '@/lib/data/guides';
 import { PINNED_ACQUISITION_LISTING_ID } from '@/data/pinned-listing';
 import { authorPath, fetchPublicAuthors } from '@/lib/authors';
+import { SUBURBS } from '@/lib/data/suburb-pages';
+import { BUY_LOCATIONS, SELL_LOCATIONS } from '@/lib/data/location-pages';
+import { BROKER_LOCATIONS } from '@/lib/data/broker-locations';
 
 const BASE_URL = 'https://blackmontadvisory.com';
 
@@ -38,15 +41,21 @@ async function fetchListingEntries(): Promise<MetadataRoute.Sitemap> {
 // No priority/changeFrequency: Google ignores both. lastModified only where real.
 const staticPages = [
   '',
+  '/selling-a-business',
+  '/buying-a-business',
   '/buy-a-business',
+  '/about-us',
+  '/business-brokers',
   '/partnership',
-  '/resources',
+  '/resources/blogs',
+  '/guides',
+  '/resources/guides',
+  '/resources/case-studies',
   '/exit',
   '/selling-a',
-  '/guides',
-  '/exit/valuation',
-  '/exit/readiness',
-  '/exit/benchmarks',
+  '/business-valuation',
+  '/exit/sale-readiness',
+  '/exit/industry-benchmarks',
   '/exit/exit-planning',
   '/privacy',
   '/terms-and-conditions',
@@ -98,8 +107,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date(CONTENT_UPDATED),
   }));
 
+  // City pages, built from the same data as their routes so new cities appear automatically.
+  const cityEntries: MetadataRoute.Sitemap = [
+    ...SELL_LOCATIONS.map(({ slug }) => `/selling-a-business/${slug}`),
+    ...BUY_LOCATIONS.map(({ slug }) => `/buying-a-business/${slug}`),
+    ...BROKER_LOCATIONS.map(({ slug }) => `/business-brokers/${slug}`),
+  ].map((route) => ({ url: `${BASE_URL}${route}` }));
+
+  // CBD and inner-city pages, both the selling and buying versions.
+  const suburbEntries: MetadataRoute.Sitemap = SUBURBS.flatMap(({ slug }) => [
+    { url: `${BASE_URL}/selling-a-business/${slug}` },
+    { url: `${BASE_URL}/buying-a-business/${slug}` },
+  ]);
+
   return [
     ...staticEntries,
+    ...cityEntries,
+    ...suburbEntries,
     ...industryEntries,
     ...guideEntries,
     ...listingEntries,

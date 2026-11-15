@@ -43,6 +43,22 @@ function multerErrorHandler(err, req, res, next) {
 const OBJECT_ID_RE = /^[0-9a-fA-F]{24}$/;
 const DEFAULT_PER_PAGE = 12;
 
+// The Resources tabs. An article's `resourceType` is one of these.
+const RESOURCE_TYPES = ['blog', 'guide', 'case-study'];
+
+// Mongo filter for one resource type. Blogs also match older articles saved
+// before `resourceType` existed (the field is missing, which `null` matches).
+function resourceTypeFilter(type) {
+  return type === 'blog' ? { $in: ['blog', null] } : type;
+}
+
+// Reads `resourceType` from a request body: a valid type, `undefined` when it
+// was not sent, or `false` when it was sent but is not one of RESOURCE_TYPES.
+function readResourceType(body) {
+  if (body.resourceType === undefined || body.resourceType === '') return undefined;
+  return RESOURCE_TYPES.includes(body.resourceType) ? body.resourceType : false;
+}
+
 function publicBase(req) {
   return process.env.BACKEND_URL || `${req.protocol}://${req.get('host')}`;
 }
@@ -61,7 +77,8 @@ function fail(res, statusCode, message, error) {
 // alias so clients written against the original blogs service keep working.
 function serializeBlog(blog) {
   const doc = typeof blog.toObject === 'function' ? blog.toObject() : blog;
-  return { ...doc, id: String(doc._id) };
+  // Older articles have no stored type; they are blogs.
+  return { ...doc, resourceType: doc.resourceType || 'blog', id: String(doc._id) };
 }
 
 // ─── SEO fields ───────────────────────────────────────────────────────────────
@@ -183,12 +200,17 @@ function removeUploadedImage(imageUrl) {
 // GET / — paginated list, newest first. 12 per page unless overridden.
 router.get('/', async (req, res) => {
   try {
-    const { page = 1, limit = DEFAULT_PER_PAGE, category, search = '', author } = req.query;
+    const { page = 1, limit = DEFAULT_PER_PAGE, category, search = '', author, type } = req.query;
 
     const pageNum = Math.max(1, parseInt(page, 10) || 1);
     const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || DEFAULT_PER_PAGE));
 
     const query = {};
+    // ?type=blog|guide|case-study — one Resources tab. Omitted: every type (admin list).
+    if (type) {
+      if (!RESOURCE_TYPES.includes(type)) return fail(res, 400, 'Invalid resource type');
+      query.resourceType = resourceTypeFilter(type);
+    }
     if (category) query.category = { $regex: new RegExp(`^${category}$`, 'i') };
     if (author) {
       if (!OBJECT_ID_RE.test(author)) return fail(res, 400, 'Invalid author ID format');
@@ -240,13 +262,18 @@ router.get('/:id/related', async (req, res) => {
     const limit = Math.min(10, Math.max(1, parseInt(req.query.limit, 10) || 3));
 
     const blog = OBJECT_ID_RE.test(id)
-      ? await Blog.findById(id).select('keywords category').lean()
-      : await Blog.findOne({ url: id }).select('keywords category').lean();
+      ? await Blog.findById(id).select('keywords category resourceType').lean()
+      : await Blog.findOne({ url: id }).select('keywords category resourceType').lean();
     if (!blog) return fail(res, 404, 'Blog not found');
 
     // The sidebar only needs card fields — never ship article bodies here.
-    const CARD_FIELDS = 'title url image imageAlt category createdAt updatedAt keywords';
-    const others = { _id: { $ne: blog._id }, url: { $ne: null } };
+    const CARD_FIELDS = 'title url image imageAlt category resourceType createdAt updatedAt keywords';
+    // Same Resources tab only: a guide suggests guides, a case study case studies.
+    const others = {
+      _id: { $ne: blog._id },
+      url: { $ne: null },
+      resourceType: resourceTypeFilter(blog.resourceType || 'blog'),
+    };
 
     const topical = [];
     if (blog.keywords?.length) topical.push({ keywords: { $in: blog.keywords } });
@@ -315,9 +342,12 @@ async function createBlog(req, res) {
     }
     const author = readAuthor(req.body);
     if (author === false) return fail(res, 400, 'Invalid author');
+    const resourceType = readResourceType(req.body);
+    if (resourceType === false) return fail(res, 400, 'Invalid resource type');
 
     const blog = await Blog.create({
       author: author ?? null,
+      resourceType: resourceType ?? 'blog',
       title: String(title).trim(),
       content: processBlogContentImages(content, publicBase(req)),
       url: url ? String(url).trim() : null,
@@ -376,6 +406,10 @@ router.put('/:id', upload.single('image'), multerErrorHandler, async (req, res) 
     if (metaDescription !== undefined) blog.metaDescription = metaDescription;
     if (imageAlt !== undefined) blog.imageAlt = imageAlt;
     Object.assign(blog, readSeoFields(req.body));
+
+    const resourceType = readResourceType(req.body);
+    if (resourceType === false) return fail(res, 400, 'Invalid resource type');
+    if (resourceType !== undefined) blog.resourceType = resourceType;
 
     const author = readAuthor(req.body);
     if (author === false) return fail(res, 400, 'Invalid author');

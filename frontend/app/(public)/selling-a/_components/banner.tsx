@@ -29,7 +29,7 @@ export function SellingBanner({ title, crumbs }: { title: string; crumbs: Crumb[
             </p>
             <nav aria-label='Selling overview actions' className='flex flex-wrap items-center gap-x-6 gap-y-4'>
               <LandingButtonLink href='#industry-multiples'>View industry multiples</LandingButtonLink>
-              <LandingTextLink href='/exit/valuation' className='inline-flex min-h-11 items-center'>
+              <LandingTextLink href='/business-valuation' className='inline-flex min-h-11 items-center'>
                 Estimate your own range
               </LandingTextLink>
             </nav>

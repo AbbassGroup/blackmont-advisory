@@ -1,6 +1,6 @@
 import businessMeeting from '@/public/buy-a-business.webp';
 import privateDiscussion from '@/public/business_consulting.webp';
-import businessDocuments from '@/public/landing/selling-advisory-work.png';
+import businessDocuments from '@/public/landing/buying-business-review.jpeg';
 import personalAdvice from '@/public/landing/two-business-partners-working-office.webp';
 import lookingToBuy from '@/public/landing/looking-to-buy-business.jpeg';
 import networkBuildings from '@/public/abbass.avif';
@@ -25,7 +25,7 @@ export const landingImages = {
   },
   sellingWork: {
     src: businessDocuments,
-    alt: 'Illustrative photograph of an advisor reviewing financial reports with two business owners in a bright office',
+    alt: 'Illustrative photograph of two business owners reviewing printed financial reports and growth charts',
   },
   alliedHealth: {
     src: alliedHealth,

@@ -14,7 +14,7 @@ interface ScheduleCallCtaProps {
 
 export function ScheduleCallCta({
   title = 'Ready to discuss your exit?',
-  subtitle = 'Speak confidentially with our senior advisory team about your business value, timing, and options. No obligation.',
+  subtitle = 'Speak confidentially with our senior advisory team about your business value, timing, and options.',
 }: ScheduleCallCtaProps) {
   return (
     <LandingTheme className='bg-canvas'>

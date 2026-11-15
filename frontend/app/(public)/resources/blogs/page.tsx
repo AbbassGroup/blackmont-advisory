@@ -2,8 +2,9 @@ import type { Metadata } from 'next';
 import { JsonLd } from '@/components/seo/json-ld';
 import { fetchPublicBlogs, BLOGS_PER_PAGE, type Blog } from '@/lib/blogs';
 import { ResourceTools } from '@/components/resources/resource-tools';
-import { ResourcesBanner } from './_components/banner';
-import { BlogSection } from './_components/blog-section';
+import { ResourcesBanner } from '../_components/banner';
+import { BlogSection } from '../_components/blog-section';
+import { ResourceTabs } from '../_components/resource-tabs';
 
 const SITE_URL = 'https://blackmontadvisory.com';
 
@@ -25,16 +26,16 @@ export async function generateMetadata({
 
   // Each paginated page needs its own canonical, or page 2+ reads to crawlers
   // as duplicate content pointing at page 1.
-  const canonical = page === 1 ? '/resources' : `/resources?page=${page}`;
+  const canonical = page === 1 ? '/resources/blogs' : `/resources/blogs?page=${page}`;
   const suffix = page === 1 ? '' : ` – Page ${page}`;
 
   return {
-    title: `Resources & Blog – Business Insights & Guides${suffix} | Blackmont Advisory`,
+    title: `Business Blogs for Owners & Buyers${suffix} | Blackmont Advisory`,
     description:
-      'Insights, guides, and tips for business owners, buyers, and sellers. Stay informed with the latest from Blackmont Advisory.',
+      'Business blogs for owners and buyers: practical insights on selling, buying and valuing a business in Australia, from the team at Blackmont Advisory.',
     alternates: { canonical },
     openGraph: {
-      title: `Resources & Blog${suffix} | Blackmont Advisory`,
+      title: `Business Blogs for Owners & Buyers${suffix} | Blackmont Advisory`,
       description:
         'Expert guides and insights for buying and selling businesses.',
     },
@@ -51,8 +52,8 @@ function buildStructuredData(blogs: Blog[], page: number) {
         {
           '@type': 'ListItem',
           position: 2,
-          name: 'Resources',
-          item: `${SITE_URL}/resources`,
+          name: 'Blogs',
+          item: `${SITE_URL}/resources/blogs`,
         },
       ],
     },
@@ -90,7 +91,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
   let failed = false;
 
   try {
-    const result = await fetchPublicBlogs({ page, limit: BLOGS_PER_PAGE });
+    const result = await fetchPublicBlogs({ page, limit: BLOGS_PER_PAGE, type: 'blog' });
     blogs = result.blogs;
     totalPages = result.pagination.totalPages;
   } catch (error) {
@@ -102,7 +103,14 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
     <>
       <JsonLd data={buildStructuredData(blogs, page)} />
 
-      <ResourcesBanner />
+      <ResourcesBanner
+        title='Business Blogs for Owners & Buyers'
+        intro='Practical articles on selling, buying and valuing a business in Australia: what buyers look for, how deals are priced, and what to do before you go to market.'
+      />
+      <ResourceTabs active='blogs' />
+
+      {/* ── Blog Grid ────────────────────────────────── */}
+      <BlogSection blogs={blogs} page={page} totalPages={totalPages} failed={failed} noun='blogs' />
 
       {/* ── Resource Tools ────────────────────────────── */}
       <ResourceTools
@@ -110,9 +118,6 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
         heading='Resource tools'
         headingId='resource-tools-title'
       />
-
-      {/* ── Blog Grid ────────────────────────────────── */}
-      <BlogSection blogs={blogs} page={page} totalPages={totalPages} failed={failed} />
     </>
   );
 }

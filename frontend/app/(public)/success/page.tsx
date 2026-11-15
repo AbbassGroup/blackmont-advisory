@@ -35,7 +35,7 @@ export default function SuccessPage() {
           </p>
           <div className='mt-8 flex flex-col items-stretch justify-center gap-3 min-[426px]:flex-row min-[426px]:flex-wrap min-[426px]:items-center'>
             <LandingButtonLink href='/'>Back to home</LandingButtonLink>
-            <LandingButtonLink href='/resources' variant='outline'>
+            <LandingButtonLink href='/resources/blogs' variant='outline'>
               Explore resources
             </LandingButtonLink>
           </div>

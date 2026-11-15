@@ -15,14 +15,22 @@ const SITE_URL = 'https://blackmontadvisory.com';
 export const revalidate = 3600;
 
 const KEY_PAGES: [title: string, path: string, note: string][] = [
-  ['Sell a business', '/exit', 'How Blackmont runs a confidential business sale, end to end'],
-  ['Business valuation', '/exit/valuation', 'How Australian businesses are valued and what drives the multiple'],
-  ['Sale readiness', '/exit/readiness', 'What buyers check before making an offer'],
-  ['Industry benchmarks', '/exit/benchmarks', 'Typical EBITDA multiples by industry'],
+  ['Selling a business', '/selling-a-business', 'How Blackmont values, prepares and confidentially sells a business, with FAQs'],
+  ['Free exit tools', '/exit', 'Free valuation, sale-readiness and exit-planning tools for business owners'],
+  ['Business valuation', '/business-valuation', 'How Australian businesses are valued and what drives the multiple'],
+  ['Sale readiness', '/exit/sale-readiness', 'What buyers check before making an offer'],
+  ['Industry benchmarks', '/exit/industry-benchmarks', 'Typical EBITDA multiples by industry'],
   ['Exit planning', '/exit/exit-planning', 'Preparing a business for sale over 1–3 years'],
+  ['Selling a business by city', '/selling-a-business/melbourne', 'City pages for Melbourne, Sydney, Brisbane and Perth, plus CBD and inner-city pages such as /selling-a-business/southbank'],
+  ['Buying a business by city', '/buying-a-business/melbourne', 'City pages for Melbourne, Sydney, Brisbane and Perth, plus CBD and inner-city pages such as /buying-a-business/richmond'],
+  ['Buying a business', '/buying-a-business', 'How Blackmont helps buyers find, value and negotiate a business, with FAQs'],
   ['Buy a business', '/buy-a-business', 'Businesses for sale and how to enquire under NDA'],
+  ['Business brokers', '/business-brokers', 'Business brokers in Melbourne, Sydney, Brisbane and Perth, broker fees and how to choose a broker'],
+  ['About us', '/about-us', 'Who Blackmont Advisory is, how we work and who we work with'],
   ['Guides', '/guides', 'In-depth guides to selling a business in Australia'],
-  ['Resources', '/resources', 'Articles on buying, selling and valuing businesses'],
+  ['Resource guides', '/resources/guides', 'Guides published in the Resources section'],
+  ['Blogs', '/resources/blogs', 'Articles on buying, selling and valuing businesses'],
+  ['Case studies', '/resources/case-studies', 'Recent business acquisitions completed for clients'],
 ];
 
 const line = (title: string, path: string, note?: string) =>

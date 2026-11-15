@@ -20,8 +20,10 @@ import {
   blogPageTitle,
   type Blog,
   type BlogFaq,
+  type ResourceType,
 } from '@/lib/blogs';
 import BlogCategoryCombobox from './blog-category-field';
+import ResourceTypeField from './resource-type-field';
 import BlogPhotoUploader from './blog-photo-uploader';
 import BlogUrlField from './blog-url-field';
 import BlogKeywordsField from './blog-keywords-field';
@@ -42,6 +44,7 @@ export interface BlogInitialData {
   imageUrl?: string;
   imageAlt?: string;
   url?: string;
+  resourceType?: ResourceType;
   category?: string;
   metaDescription?: string;
   seoTitle?: string;
@@ -78,6 +81,7 @@ export default function BlogForm({
   const [content, setContent] = useState('');
   const [url, setUrl] = useState('');
   const [category, setCategory] = useState('');
+  const [resourceType, setResourceType] = useState<ResourceType>('blog');
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState('');
   const [imageAlt, setImageAlt] = useState('');
@@ -108,6 +112,7 @@ export default function BlogForm({
     setContent(initialData?.content ?? '');
     setUrl(initialData?.url ?? '');
     setCategory(initialData?.category ?? '');
+    setResourceType(initialData?.resourceType ?? 'blog');
     setPreview(initialData?.imageUrl ?? '');
     setImageAlt(initialData?.imageAlt ?? '');
     setSeoTitle(initialData?.seoTitle ?? '');
@@ -204,6 +209,7 @@ export default function BlogForm({
     formData.append('content', trimmedContent);
     formData.append('url', resolvedUrl);
     formData.append('category', trimmedCategory);
+    formData.append('resourceType', resourceType);
     // No cover, nothing to describe — don't keep alt text for an image that's gone.
     formData.append('imageAlt', preview ? imageAlt.trim() : '');
     formData.append('author', author);
@@ -257,6 +263,7 @@ export default function BlogForm({
         <div className='flex min-w-0 flex-col gap-6'>
           <section aria-labelledby='blog-details-title' className={SECTION_CLASS}>
             <h2 id='blog-details-title' className={HEADING_CLASS}>Article details</h2>
+            <ResourceTypeField value={resourceType} onChange={setResourceType} disabled={saving} />
             <div className='flex min-w-0 flex-col gap-2'>
               <label htmlFor='blog-title' className='text-sm font-medium text-midnight'>Blog title <span aria-hidden='true'>*</span></label>
               <input id='blog-title' required value={title} onChange={(event) => {
