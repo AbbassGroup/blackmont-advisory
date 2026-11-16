@@ -5,7 +5,7 @@ import { SectionShell, bodyText, cardTitle } from '@/components/landing/tabbed-p
 const STEPS = [
   {
     title: 'Work out your true earnings',
-    text: 'Start with EBITDA, then add back the owner’s personal and one-off expenses and adjust the owner’s wage to a market rate. This “normalised” figure is what a buyer is really paying for.',
+    text: 'Start with EBITDA, then add back the owner’s personal and one-off expenses and adjust the owner’s wage to a market rate. This normalised figure is what a buyer is really paying for.',
   },
   {
     title: 'Apply an industry multiple',
@@ -20,7 +20,7 @@ const STEPS = [
 const TOOLS = [
   {
     href: '/business-valuation',
-    title: 'Free business valuation calculator',
+    title: 'Business valuation calculator',
     text: 'Value your business in a few minutes and get an indicative price range based on your industry and earnings.',
   },
   {

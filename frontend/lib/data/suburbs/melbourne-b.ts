@@ -71,7 +71,7 @@ export const MELBOURNE_B: SuburbEntry[] = [
         },
         {
           q: 'How much is my Richmond cafe or restaurant worth?',
-          a: 'It depends on profit after a fair wage for the owner, the lease, and how much of the trade relies on you personally. Our free calculator gives a starting range, and we can then look at your figures in detail.',
+          a: 'It depends on profit after a fair wage for the owner, the lease, and how much of the trade relies on you personally. Our calculator gives a starting range, and we can then look at your figures in detail.',
           link: { href: '/business-valuation', label: 'Try the business valuation calculator' },
         },
       ],
@@ -335,7 +335,7 @@ export const MELBOURNE_B: SuburbEntry[] = [
         },
         {
           q: 'How much is my St Kilda cafe worth?',
-          a: 'Value is based on reliable profit after paying a manager or the owner a fair wage, along with the lease and how seasonal the trade is. Start with our free calculator, then we can review your accounts.',
+          a: 'Value is based on reliable profit after paying a manager or the owner a fair wage, along with the lease and how seasonal the trade is. Start with our calculator, then we can review your accounts.',
           link: { href: '/business-valuation', label: 'Use the valuation calculator' },
         },
         {

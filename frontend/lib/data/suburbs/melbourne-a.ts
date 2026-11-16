@@ -480,7 +480,7 @@ export const MELBOURNE_A: SuburbEntry[] = [
         },
         {
           q: 'What is my South Melbourne business worth?',
-          a: 'It depends on your earnings, how steady they are, your lease and how much the business relies on you. Start with our free calculator, then we can give you a considered range after reviewing your accounts.',
+          a: 'It depends on your earnings, how steady they are, your lease and how much the business relies on you. Start with our calculator, then we can give you a considered range after reviewing your accounts.',
           link: { href: '/business-valuation', label: 'Use the valuation calculator' },
         },
       ],

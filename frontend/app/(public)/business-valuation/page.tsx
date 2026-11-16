@@ -13,7 +13,7 @@ import { Calculator, Formula, ValueDrivers } from './_components/sections';
 // Secondary: "what is my business worth", "value your business",
 // "business valuation formula", "how to value a small business", "EBIT formula".
 const DESCRIPTION =
-  'What is my business worth? Use our free business valuation calculator to value your business in minutes, with the valuation formula and multiples explained.';
+  'What is my business worth? Use our business valuation calculator to value your business in minutes, with the valuation formula and multiples explained.';
 
 export const metadata: Metadata = buildMetadata({
   path: PAGE_PATH,

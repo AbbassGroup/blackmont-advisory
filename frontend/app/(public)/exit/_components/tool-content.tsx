@@ -60,7 +60,7 @@ export const READINESS_FAQS: Faq[] = [
   {
     q: 'How do I prepare my business for sale?',
     a: 'Start with the weakest areas from your score. Tidy up your accounts, document how the business runs, hand key relationships to your team, and check your lease and contracts. Then get a realistic valuation so you know what the work is worth.',
-    link: { href: '/business-valuation', label: 'Get a free business valuation' },
+    link: { href: '/business-valuation', label: 'Request an Appraisal' },
   },
   {
     q: 'How long does it take to get a business ready to sell?',
