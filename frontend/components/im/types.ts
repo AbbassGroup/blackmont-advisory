@@ -562,7 +562,7 @@ export function makeRoiChart(): ChartItem {
   return {
     id: makeUid('chart'),
     type: 'roi',
-    title: 'Return on Investmentrr',
+    title: 'Return on Investment',
     unit: 'm',
     askingPrice: 0,
     sde: 0,
