@@ -54,7 +54,7 @@ export default async function CaseStudiesPage({ searchParams }: CaseStudiesPageP
       <JsonLd data={jsonLd} />
       <ResourcesBanner
         title='Business Sale Case Studies'
-        intro='Real business sales and acquisitions we have worked on: who the client was, what they wanted, and how the deal came together, with confidential details left out.'
+        intro='Business sales and acquisitions we have worked on: who the client was, what they wanted, and how the deal came together.'
       />
       <ResourceTabs active='case-studies' />
       <BlogSection
