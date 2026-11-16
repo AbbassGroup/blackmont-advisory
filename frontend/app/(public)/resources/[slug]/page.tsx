@@ -24,13 +24,14 @@ const SITE_URL = 'https://blackmontadvisory.com';
 
 const ORGANIZATION_REF = { '@type': 'Organization', '@id': `${SITE_URL}/#organization`, name: 'Blackmont Advisory' };
 
-/** "12 March 2026", in Melbourne time so the date doesn't shift with the server's zone. */
-function displayDate(value: string): string | null {
-  const date = new Date(value);
-  return Number.isNaN(date.getTime())
-    ? null
-    : date.toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Australia/Melbourne' });
-}
+// Unused while article dates are hidden — restore with the header dates below.
+// /** "12 March 2026", in Melbourne time so the date doesn't shift with the server's zone. */
+// function displayDate(value: string): string | null {
+//   const date = new Date(value);
+//   return Number.isNaN(date.getTime())
+//     ? null
+//     : date.toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Australia/Melbourne' });
+// }
 
 type BlogPostPageProps = {
   params: Promise<{ slug: string }>;
@@ -158,8 +159,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const related = await fetchRelated(blog.url ?? slug, tab.value);
 
   const author = blogAuthor(blog);
-  const published = displayDate(blog.createdAt);
-  const updated = displayDate(blog.updatedAt);
+  // Dates hidden on the article header (blogs, guides, case studies).
+  // const published = displayDate(blog.createdAt);
+  // const updated = displayDate(blog.updatedAt);
   const keyTakeaways = blog.keyTakeaways ?? [];
   const faqs = blog.faqs ?? [];
   const keywords = [
@@ -260,7 +262,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 <span className='font-semibold text-parchment'>Blackmont Advisory</span>
               )}
             </span>
-            {published && (
+            {/* {published && (
               <>
                 <span aria-hidden='true'>·</span>
                 <span>Published <time dateTime={blog.createdAt}>{published}</time></span>
@@ -271,7 +273,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 <span aria-hidden='true'>·</span>
                 <span>Updated <time dateTime={blog.updatedAt}>{updated}</time></span>
               </>
-            )}
+            )} */}
           </p>
         </div>
       </div>
