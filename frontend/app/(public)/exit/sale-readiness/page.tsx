@@ -12,7 +12,7 @@ export const metadata: Metadata = buildMetadata({
   path: '/exit/sale-readiness',
   title: 'Is Your Business Sale Ready? | Blackmont Advisory',
   description:
-    'Is your business ready to sell? Answer 10 quick questions to get your free business sale readiness score, a category breakdown and tailored next steps.',
+    'Is your business ready to sell? Answer 10 quick questions to get your business sale readiness score, a category breakdown and tailored next steps.',
 });
 
 const CRUMBS = [

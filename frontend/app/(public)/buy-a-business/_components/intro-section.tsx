@@ -20,7 +20,7 @@ export function IntroSection() {
               make a smart purchase with confidence and clarity.
             </p>
             <ContactFormModal>
-              <LandingButton variant='outline'>Book your free strategy call</LandingButton>
+              <LandingButton variant='outline'>Book your strategy call</LandingButton>
             </ContactFormModal>
           </div>
         </LandingContainer>

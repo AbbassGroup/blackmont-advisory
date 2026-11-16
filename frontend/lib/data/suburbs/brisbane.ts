@@ -17,7 +17,7 @@ export const BRISBANE: SuburbEntry[] = [
       imageAlt: 'Glass office towers, representing how to sell a business in the Brisbane CBD',
       title: 'Sell a Business Brisbane CBD | Blackmont Advisory',
       description:
-        'Looking to sell a business in the Brisbane CBD? We value, prepare and confidentially market your firm to screened buyers. Book a free, private first chat.',
+        'Looking to sell a business in the Brisbane CBD? We value, prepare and confidentially market your firm to screened buyers. Book a private first chat.',
       h1: 'Sell a Business in the Brisbane CBD',
       intro:
         'Own a professional services firm, a city café or a specialist retailer in the Brisbane CBD? We help you price it properly, prepare it for scrutiny and put it in front of qualified buyers without your staff, clients or competitors finding out.',
@@ -81,7 +81,7 @@ export const BRISBANE: SuburbEntry[] = [
       imageAlt: 'Glass office towers, representing the chance to buy a business in the Brisbane CBD',
       title: 'Buy a Business Brisbane CBD | Blackmont Advisory',
       description:
-        'Want to buy a business in the Brisbane CBD? We search on and off market, test the numbers and negotiate for you, working only for you. Start with a free chat.',
+        'Want to buy a business in the Brisbane CBD? We search on and off market, test the numbers and negotiate for you, working only for you. Start with a chat.',
       h1: 'Buy a Business in the Brisbane CBD',
       intro:
         'Thinking of buying an accounting practice, a city café or a niche retailer in the Brisbane CBD? We work only for you as buyer, finding opportunities, testing the earnings and negotiating a price and handover that suit you.',
@@ -216,7 +216,7 @@ export const BRISBANE: SuburbEntry[] = [
       imageAlt: 'Glass office buildings, representing the chance to buy a business in Fortitude Valley',
       title: 'Buy a Business Fortitude Valley | Blackmont Advisory',
       description:
-        'Want to buy a business in Fortitude Valley? We find venues, studios and shops, test the trading figures and negotiate for you. Book a free, private chat.',
+        'Want to buy a business in Fortitude Valley? We find venues, studios and shops, test the trading figures and negotiate for you. Book a private chat.',
       h1: 'Buy a Business in Fortitude Valley',
       intro:
         'Want to own a bar, restaurant, boutique or studio in Fortitude Valley? We help you find the right opportunity, check that the takings are real and negotiate a deal that accounts for the licence, the lease and the precinct.',
@@ -292,7 +292,7 @@ export const BRISBANE: SuburbEntry[] = [
       intro:
         'Run a restaurant near South Bank, a health practice close to the Mater or a services firm on Grey Street? We help South Brisbane owners prepare, price and sell their business to the right buyer, without going public.',
       points: [
-        'A free, confidential first discussion',
+        'A confidential first discussion',
         'A professional information memorandum',
         'Buyers approved by you before they see details',
         'Guidance on timing and handover',
@@ -621,7 +621,7 @@ export const BRISBANE: SuburbEntry[] = [
       imageAlt: 'Glass office towers, representing the chance to buy a business in West End, Brisbane',
       title: 'Buy a Business West End | Blackmont Advisory',
       description:
-        'Looking to buy a business in West End? We find independent cafés, bars and shops, verify the numbers and negotiate for you. Book a free chat today.',
+        'Looking to buy a business in West End? We find independent cafés, bars and shops, verify the numbers and negotiate for you. Book a chat today.',
       h1: 'Buy a Business in West End',
       intro:
         'Want a café, bar or independent shop in one of Brisbane’s most characterful suburbs? We help you find the right West End business, check what it really earns and buy it with a plan for keeping its regulars.',

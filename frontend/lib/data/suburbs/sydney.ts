@@ -25,7 +25,7 @@ export const SYDNEY: SuburbEntry[] = [
         'Confidential sale, buyers approved by you',
         'Valuation based on your real earnings',
         'Buyers from Sydney and across Australia',
-        'A free first conversation',
+        'A first confidential conversation',
       ],
       overviewHeading: 'How to sell a business in the Sydney CBD',
       overview: [

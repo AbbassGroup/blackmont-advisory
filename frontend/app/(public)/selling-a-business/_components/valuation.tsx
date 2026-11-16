@@ -129,7 +129,7 @@ export function Valuation() {
               <span className='mb-2 font-advisory-heading text-xl leading-[1.35] font-bold'>{title}</span>
               <span className='mb-4 text-[15px] leading-[1.65] text-white/80'>{text}</span>
               <span className='mt-auto inline-flex items-center gap-2 text-sm font-bold text-gilt'>
-                Open the free tool
+                Open the tool
                 <ArrowRight size={16} aria-hidden='true' className='transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none' />
               </span>
             </LandingLink>

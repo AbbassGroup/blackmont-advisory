@@ -16,7 +16,7 @@ export const metadata: Metadata = buildMetadata({
     'Thinking about selling your business? Access valuation tools, exit-readiness checklists, and confidential advice from Blackmont Advisory, a Melbourne boutique business brokerage.',
   ogTitle: 'Sell Your Business | Blackmont Advisory',
   ogDescription:
-    'Free tools and expert insights to maximise your business exit, guided by a Melbourne boutique advisory firm.',
+    'Our tools and expert insights to maximise your business exit, guided by a Melbourne boutique advisory firm.',
 });
 
 const jsonLd = [

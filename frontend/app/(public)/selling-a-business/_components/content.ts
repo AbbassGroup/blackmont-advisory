@@ -54,6 +54,6 @@ export const FAQS: Faq[] = [
   {
     q: 'How do I know if my business is ready to sell?',
     a: 'When a buyer can check your earnings and see the business will keep going without you. That means clean financials, a secure lease and no heavy reliance on one customer, or on you.',
-    link: { href: '/exit/sale-readiness', label: 'Take the free sale readiness check' },
+    link: { href: '/exit/sale-readiness', label: 'Take the sale readiness check' },
   },
 ];

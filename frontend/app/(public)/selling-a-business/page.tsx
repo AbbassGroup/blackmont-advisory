@@ -26,7 +26,7 @@ export const metadata: Metadata = buildMetadata({
   path: PAGE_PATH,
   title: 'Selling a Business | Blackmont Advisory',
   description:
-    'Selling a business? Blackmont Advisory, a Melbourne business broker, values and sells businesses confidentially. Free valuation and a private first chat.',
+    'Selling a business? Blackmont Advisory, a Melbourne business broker, values and sells businesses confidentially. Business valuation and a private first chat.',
   ogDescription:
     'Sell your business privately and at the right price, with a senior-led Melbourne business sale advisor.',
 });

@@ -39,7 +39,7 @@ export const FAQS: Faq[] = [
   },
   {
     q: 'How do I price a business to sell?',
-    a: 'Price at the top of what the evidence supports, not above it. An overpriced business sits on the market and buyers start to wonder what is wrong with it, which usually ends in a lower price than a realistic asking price would have achieved.',
+    a: 'Price at the top of what the evidence supports. An overpriced business sits on the market and buyers start to wonder what is wrong with it, which usually ends in a lower price than a realistic asking price would have achieved.',
     link: { href: '/selling-a-business', label: 'How we sell a business' },
   },
   {

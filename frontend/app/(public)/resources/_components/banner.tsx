@@ -31,7 +31,7 @@ export function ResourcesBanner({ title, intro }: { title: string; intro: string
             </p>
             <nav aria-label='Resources page sections' className='flex flex-wrap items-center gap-x-6 gap-y-3'>
               <LandingButtonLink href='#resource-tools'>
-                Explore free tools
+                Explore our tools
               </LandingButtonLink>
               <LandingTextLink href='#resources-tabs' className='inline-flex min-h-11 items-center'>
                 Browse blogs, guides and case studies
