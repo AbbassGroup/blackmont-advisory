@@ -88,7 +88,7 @@ export function Valuation() {
             How to price a business to sell
           </h3>
           <p className={`${bodyText} mt-2`}>
-            Price at the top of what the evidence supports, not above it. An
+            Price at the top of what the evidence supports. An
             overpriced business sits on the market, and buyers start to ask
             what is wrong with it.
           </p>
