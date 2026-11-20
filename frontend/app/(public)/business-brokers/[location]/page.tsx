@@ -84,7 +84,7 @@ export default async function BrokerLocationPage({ params }: LocationPageProps) 
         title={location.h1}
         intro={location.intro}
         primary={{ href: '#contact', label: `Talk to a ${location.city} broker` }}
-        secondary={{ href: '/business-valuation', label: 'Free business valuation' }}
+        secondary={{ href: '/business-valuation', label: 'Business valuation' }}
         image={location.image}
       />
       <CredentialsBar />

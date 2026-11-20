@@ -154,12 +154,12 @@ export const MELBOURNE_A: SuburbEntry[] = [
       keyword: 'sell a business southbank',
       title: 'Sell a Business Southbank | Blackmont Advisory',
       description:
-        'Looking to sell a business in Southbank? Blackmont Advisory prices it and sells it privately, with every buyer under NDA. Book a free first conversation.',
+        'Looking to sell a business in Southbank? Blackmont Advisory prices it and sells it privately, with every buyer under NDA. Book a first conversation.',
       h1: 'Sell a Business in Southbank',
       intro:
         'Southbank brings together residents, office workers, theatre crowds and visitors. Buyers like that mix, but they want proof of where your trade comes from. We prepare that proof and sell your business confidentially.',
       points: [
-        'Free, confidential first conversation',
+        'Confidential first conversation',
         'Every buyer screened, under NDA and approved by you',
         'Based at 459 Toorak Road, Toorak',
         LICENCE,
@@ -425,12 +425,12 @@ export const MELBOURNE_A: SuburbEntry[] = [
       keyword: 'sell my business south melbourne',
       title: 'Sell My Business South Melbourne | Blackmont Advisory',
       description:
-        'Asking “how do I sell my business in South Melbourne?” Blackmont Advisory runs the sale confidentially, from valuation to settlement. Book a free chat.',
+        'Asking “how do I sell my business in South Melbourne?” Blackmont Advisory runs the sale confidentially, from valuation to settlement. Book a chat.',
       h1: 'Sell My Business in South Melbourne',
       intro:
         'South Melbourne mixes market traders, design studios, showrooms and small offices within a few blocks. Whatever you run, we price it properly, prepare the paperwork and sell it quietly to buyers you approve.',
       points: [
-        'Free and confidential first conversation',
+        'Confidential first conversation',
         'Every buyer approved by you before they see details',
         'Advisor based nearby in Toorak',
         LICENCE,
@@ -480,7 +480,7 @@ export const MELBOURNE_A: SuburbEntry[] = [
         },
         {
           q: 'What is my South Melbourne business worth?',
-          a: 'It depends on your earnings, how steady they are, your lease and how much the business relies on you. Start with our free calculator, then we can give you a considered range after reviewing your accounts.',
+          a: 'It depends on your earnings, how steady they are, your lease and how much the business relies on you. Start with our calculator, then we can give you a considered range after reviewing your accounts.',
           link: { href: '/business-valuation', label: 'Use the valuation calculator' },
         },
       ],

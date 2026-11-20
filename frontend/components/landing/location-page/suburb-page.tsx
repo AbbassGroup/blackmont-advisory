@@ -114,7 +114,7 @@ export function SuburbLanding({ page, mode, siblings }: { page: SuburbPage; mode
         points={page.points}
         primary={
           sell
-            ? { href: '/business-valuation', label: 'Get a free business valuation' }
+            ? { href: '/business-valuation', label: 'Request an Appraisal' }
             : { href: '#enquire', label: `Start your ${suburb} search` }
         }
         secondary={{ href: cityPath, label: `${sell ? 'Selling' : 'Buying'} across ${city}` }}

@@ -16,7 +16,7 @@ export const revalidate = 3600;
 
 const KEY_PAGES: [title: string, path: string, note: string][] = [
   ['Selling a business', '/selling-a-business', 'How Blackmont values, prepares and confidentially sells a business, with FAQs'],
-  ['Free exit tools', '/exit', 'Free valuation, sale-readiness and exit-planning tools for business owners'],
+  ['Business exit tools', '/exit', 'Business valuation, sale-readiness and exit-planning tools for business owners'],
   ['Business valuation', '/business-valuation', 'How Australian businesses are valued and what drives the multiple'],
   ['Sale readiness', '/exit/sale-readiness', 'What buyers check before making an offer'],
   ['Industry benchmarks', '/exit/industry-benchmarks', 'Typical EBITDA multiples by industry'],

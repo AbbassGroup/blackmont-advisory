@@ -24,7 +24,7 @@ export const MELBOURNE_B: SuburbEntry[] = [
         'Ready to sell your Richmond business? We are a Melbourne business sale advisor ten minutes away in Toorak. We work out what it is worth, get it ready for buyers and sell it quietly, without the street finding out.',
       points: [
         'Office ten minutes away in Toorak',
-        'A free, confidential first meeting',
+        'A confidential first meeting',
         'Buyers sign an NDA before they see a name',
         LICENCE,
       ],
@@ -71,7 +71,7 @@ export const MELBOURNE_B: SuburbEntry[] = [
         },
         {
           q: 'How much is my Richmond cafe or restaurant worth?',
-          a: 'It depends on profit after a fair wage for the owner, the lease, and how much of the trade relies on you personally. Our free calculator gives a starting range, and we can then look at your figures in detail.',
+          a: 'It depends on profit after a fair wage for the owner, the lease, and how much of the trade relies on you personally. Our calculator gives a starting range, and we can then look at your figures in detail.',
           link: { href: '/business-valuation', label: 'Try the business valuation calculator' },
         },
       ],
@@ -292,7 +292,7 @@ export const MELBOURNE_B: SuburbEntry[] = [
         'Ready to sell your St Kilda business? We value it properly, prepare the figures buyers need and take it privately to serious buyers. Our Toorak office is a short drive away, and every sale is handled by one senior advisor.',
       points: [
         'Office a short drive away in Toorak',
-        'A free first conversation, kept private',
+        'A first conversation, kept private',
         'You approve every buyer before they see details',
         LICENCE,
       ],
@@ -335,7 +335,7 @@ export const MELBOURNE_B: SuburbEntry[] = [
         },
         {
           q: 'How much is my St Kilda cafe worth?',
-          a: 'Value is based on reliable profit after paying a manager or the owner a fair wage, along with the lease and how seasonal the trade is. Start with our free calculator, then we can review your accounts.',
+          a: 'Value is based on reliable profit after paying a manager or the owner a fair wage, along with the lease and how seasonal the trade is. Start with our calculator, then we can review your accounts.',
           link: { href: '/business-valuation', label: 'Use the valuation calculator' },
         },
         {
@@ -554,7 +554,7 @@ export const MELBOURNE_B: SuburbEntry[] = [
       keyword: 'sell my business brunswick',
       title: 'Sell My Business Brunswick | Blackmont Advisory',
       description:
-        'Asking “how do I sell my business in Brunswick?” Blackmont Advisory values and sells Brunswick shops, makers and venues privately. Book a free chat.',
+        'Asking “how do I sell my business in Brunswick?” Blackmont Advisory values and sells Brunswick shops, makers and venues privately. Book a chat.',
       h1: 'Sell My Business in Brunswick',
       intro:
         'Planning to sell your Brunswick business? We give you a realistic value, prepare it for buyers and take it to market privately. From Sydney Road shops to warehouse workshops, one senior advisor runs your sale from start to finish.',

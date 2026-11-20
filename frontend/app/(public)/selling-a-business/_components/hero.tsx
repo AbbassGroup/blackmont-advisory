@@ -17,7 +17,7 @@ export function SellingHero({ crumbs }: { crumbs: Crumb[] }) {
       title='Selling a Business in Melbourne and Across Australia'
       intro='Thinking it might be time to sell your business? We value it, prepare it and take it to qualified buyers privately, so you sell at the right price without anyone finding out.'
       points={POINTS}
-      primary={{ href: '/business-valuation', label: 'Get a free business valuation' }}
+      primary={{ href: '/business-valuation', label: 'Request an Appraisal' }}
       secondary={{ href: '/exit/sale-readiness', label: 'Is your business ready to sell?' }}
       form={<ContactForm lockedType='sell' headingAs='h2' />}
     />

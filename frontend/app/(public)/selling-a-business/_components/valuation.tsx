@@ -5,7 +5,7 @@ import { SectionShell, bodyText, cardTitle } from '@/components/landing/tabbed-p
 const STEPS = [
   {
     title: 'Work out your true earnings',
-    text: 'Start with EBITDA, then add back the owner’s personal and one-off expenses and adjust the owner’s wage to a market rate. This “normalised” figure is what a buyer is really paying for.',
+    text: 'Start with EBITDA, then add back the owner’s personal and one-off expenses and adjust the owner’s wage to a market rate. This normalised figure is what a buyer is really paying for.',
   },
   {
     title: 'Apply an industry multiple',
@@ -20,7 +20,7 @@ const STEPS = [
 const TOOLS = [
   {
     href: '/business-valuation',
-    title: 'Free business valuation calculator',
+    title: 'Business valuation calculator',
     text: 'Value your business in a few minutes and get an indicative price range based on your industry and earnings.',
   },
   {
@@ -88,7 +88,7 @@ export function Valuation() {
             How to price a business to sell
           </h3>
           <p className={`${bodyText} mt-2`}>
-            Price at the top of what the evidence supports, not above it. An
+            Price at the top of what the evidence supports. An
             overpriced business sits on the market, and buyers start to ask
             what is wrong with it.
           </p>
@@ -129,7 +129,7 @@ export function Valuation() {
               <span className='mb-2 font-advisory-heading text-xl leading-[1.35] font-bold'>{title}</span>
               <span className='mb-4 text-[15px] leading-[1.65] text-white/80'>{text}</span>
               <span className='mt-auto inline-flex items-center gap-2 text-sm font-bold text-gilt'>
-                Open the free tool
+                Open the tool
                 <ArrowRight size={16} aria-hidden='true' className='transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none' />
               </span>
             </LandingLink>

@@ -64,7 +64,7 @@ export function WhyBlackmont() {
               </ul>
               <div className='mt-6'>
                 <ContactFormModal>
-                  <LandingButton variant='outline'>Book a free consultation</LandingButton>
+                  <LandingButton variant='outline'>Book a consultation</LandingButton>
                 </ContactFormModal>
               </div>
             </div>

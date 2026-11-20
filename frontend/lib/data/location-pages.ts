@@ -283,7 +283,7 @@ const SELL: LocationPageCopy[] = [
       },
       {
         q: 'How do I value my business before selling?',
-        a: 'Most businesses are valued as a multiple of normalised earnings. Our free calculator gives you an indicative range in a few minutes.',
+        a: 'Most businesses are valued as a multiple of normalised earnings. Our calculator gives you an indicative range in a few minutes.',
         link: { href: '/business-valuation', label: 'Try the valuation calculator' },
       },
     ],
@@ -302,7 +302,7 @@ const BUY: LocationPageCopy[] = [
     intro:
       'Looking to buy a business in Melbourne? We act only for you: finding businesses on and off market, checking the numbers and negotiating the price and terms.',
     points: [
-      'Independent advice: we act for you, not the seller',
+      'Independent advice: we act for you.',
       'Off-market Melbourne businesses as well as listings',
       'Valuation and due diligence before you commit',
       LICENCE,
@@ -367,7 +367,7 @@ const BUY: LocationPageCopy[] = [
     intro:
       'Buying a business in Sydney or New South Wales? We work only for you, from finding the right business to negotiating the deal and getting you to settlement.',
     points: [
-      'Independent advice: we act for you, not the seller',
+      'Independent advice: we act for you.',
       'Businesses on and off market',
       'Valuation and due diligence before you commit',
       LICENCE,
@@ -428,7 +428,7 @@ const BUY: LocationPageCopy[] = [
     intro:
       'Buying a business in Brisbane or moving to Queensland to buy one? We find, check and negotiate the right business for you, working only on your side of the deal.',
     points: [
-      'Independent advice: we act for you, not the seller',
+      'Independent advice: we act for you.',
       'Help for buyers relocating from interstate',
       'Valuation and due diligence before you commit',
       LICENCE,
@@ -488,7 +488,7 @@ const BUY: LocationPageCopy[] = [
     intro:
       'Buying a business in Perth or across Western Australia? We act only for you, from finding the right business to negotiating the deal and the handover.',
     points: [
-      'Independent advice: we act for you, not the seller',
+      'Independent advice: we act for you.',
       'Businesses on and off market',
       'Valuation and due diligence before you commit',
       LICENCE,

@@ -25,13 +25,14 @@ export function BlogCard({ blog }: { blog: Blog }) {
   // next/image would reject unless that exact host is in remotePatterns — so
   // they go through a plain <img>. Relative paths stay optimised.
   const isExternal = blog.image?.startsWith('http');
-  const published = new Date(blog.createdAt);
-  const hasDate = !Number.isNaN(published.getTime());
-  const displayDate = hasDate
-    ? new Intl.DateTimeFormat('en-AU', {
-        day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Australia/Melbourne',
-      }).format(published)
-    : null;
+  // Dates hidden on resource cards (blogs, guides, case studies).
+  // const published = new Date(blog.createdAt);
+  // const hasDate = !Number.isNaN(published.getTime());
+  // const displayDate = hasDate
+  //   ? new Intl.DateTimeFormat('en-AU', {
+  //       day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Australia/Melbourne',
+  //     }).format(published)
+  //   : null;
 
   return (
     <Link
@@ -66,11 +67,11 @@ export function BlogCard({ blog }: { blog: Blog }) {
         <h3 className='m-0 mb-3 line-clamp-3 font-advisory-heading text-xl leading-[1.4] font-bold tracking-normal text-midnight'>
           {blog.title}
         </h3>
-        {(blog.category || displayDate) && (
+        {blog.category && (
           <div className='mb-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs leading-[1.6] text-ink'>
-            {blog.category && <span>{categoryLabel(blog.category)}</span>}
-            {blog.category && displayDate && <span aria-hidden='true'>·</span>}
-            {displayDate && <time dateTime={published.toISOString()}>{displayDate}</time>}
+            <span>{categoryLabel(blog.category)}</span>
+            {/* {blog.category && displayDate && <span aria-hidden='true'>·</span>} */}
+            {/* {displayDate && <time dateTime={published.toISOString()}>{displayDate}</time>} */}
           </div>
         )}
         <p className='m-0 mb-4 line-clamp-2 flex-1 text-[15px] leading-[1.65] text-ink'>

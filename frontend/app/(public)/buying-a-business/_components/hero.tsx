@@ -4,7 +4,7 @@ import type { Crumb } from '@/components/seo/breadcrumbs';
 import { PINNED_ACQUISITION_LISTING_ID } from '@/data/pinned-listing';
 
 const POINTS = [
-  'Independent advice: we act for you, not the seller',
+  'Independent advice: we act for you.',
   'Access to businesses that are not on the open market',
   'Valuation and due diligence before you commit',
   'Licensed business agent, BLA 092153L',

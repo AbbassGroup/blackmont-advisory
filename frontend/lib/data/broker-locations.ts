@@ -228,7 +228,7 @@ export const SHARED_LOCATION_FAQS: Faq[] = [
   },
   {
     q: 'What is my business worth?',
-    a: 'Most small and medium businesses are valued as a multiple of their normalised earnings. Our free calculator gives you an indicative range in a few minutes.',
+    a: 'Most small and medium businesses are valued as a multiple of their normalised earnings. Our calculator gives you an indicative range in a few minutes.',
     link: { href: '/business-valuation', label: 'Try the valuation calculator' },
   },
 ];

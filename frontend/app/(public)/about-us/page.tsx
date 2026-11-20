@@ -59,7 +59,7 @@ const FAQS: Faq[] = [
   },
   {
     q: 'How much does it cost to sell a business with Blackmont?',
-    a: 'It depends on the size and complexity of the sale. The first conversation is free and confidential, and our fees are agreed in writing before any work starts, so you know exactly what you will pay and when.',
+    a: 'It depends on the size and complexity of the sale. The first conversation is confidential, where we learn about your requirements further and can subsequently provide you pricing.',
     link: { href: '/business-brokers', label: 'How business broker fees work' },
   },
 ];

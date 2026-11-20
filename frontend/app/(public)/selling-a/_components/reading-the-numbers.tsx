@@ -9,7 +9,7 @@ const actions = [
   {
     href: '/business-valuation',
     title: 'Estimate your own range',
-    detail: 'Free valuation tool. Five questions, indicative range.',
+    detail: 'Business valuation tool. Five questions, indicative range.',
   },
   {
     href: '/#contact',

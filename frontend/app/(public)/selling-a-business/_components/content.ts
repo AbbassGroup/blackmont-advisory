@@ -29,7 +29,7 @@ export const FAQS: Faq[] = [
   {
     q: 'How do I calculate what my business is worth?',
     a: 'Most small and medium businesses in Australia are valued at a multiple of normalised earnings, usually EBITDA. Multiples run from about 0.8× for cafés to around 5× for childcare and allied health.',
-    link: { href: '/business-valuation', label: 'Try the free business valuation calculator' },
+    link: { href: '/business-valuation', label: 'Try the business valuation calculator' },
   },
   {
     q: 'How long does it take to sell a business?',
@@ -54,6 +54,6 @@ export const FAQS: Faq[] = [
   {
     q: 'How do I know if my business is ready to sell?',
     a: 'When a buyer can check your earnings and see the business will keep going without you. That means clean financials, a secure lease and no heavy reliance on one customer, or on you.',
-    link: { href: '/exit/sale-readiness', label: 'Take the free sale readiness check' },
+    link: { href: '/exit/sale-readiness', label: 'Take the sale readiness check' },
   },
 ];
