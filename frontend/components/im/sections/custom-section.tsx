@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  useEffect,
   useRef,
   useState,
   type ElementType,
@@ -192,24 +193,62 @@ function getEmbedUrl(url: string): string | null {
   return null;
 }
 
+/**
+ * Narrowest width an embed's iframe is laid out at. Google Drive's player
+ * mis-lays itself out in small frames (black bar on top, controls pushed below
+ * the bottom edge), so below this width the iframe is rendered at desktop size
+ * and CSS-scaled down to fit — clicks/taps still map correctly through a scale.
+ */
+const EMBED_LAYOUT_WIDTH = 720;
+
+function EmbedPlayer({ src }: { src: string }) {
+  const boxRef = useRef<HTMLDivElement>(null);
+  const [boxWidth, setBoxWidth] = useState(0);
+
+  useEffect(() => {
+    const box = boxRef.current;
+    if (!box) return;
+    const measure = () => setBoxWidth(box.clientWidth);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(box);
+    return () => observer.disconnect();
+  }, []);
+
+  // Before the first measure, fill the box; afterwards lay out at least
+  // EMBED_LAYOUT_WIDTH wide and scale to the real width.
+  const layoutWidth = boxWidth ? Math.max(boxWidth, EMBED_LAYOUT_WIDTH) : 0;
+  const scale = layoutWidth ? boxWidth / layoutWidth : 1;
+
+  return (
+    <div
+      ref={boxRef}
+      className='relative aspect-video w-full min-w-0 overflow-hidden rounded-xl border border-border bg-black shadow-xs'
+    >
+      <iframe
+        src={src}
+        title='Video'
+        className='absolute top-0 left-0 block border-0'
+        style={
+          layoutWidth
+            ? {
+                width: layoutWidth,
+                height: (layoutWidth * 9) / 16,
+                transform: scale < 1 ? `scale(${scale})` : undefined,
+                transformOrigin: 'top left',
+              }
+            : { width: '100%', height: '100%' }
+        }
+        allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen'
+        allowFullScreen
+      />
+    </div>
+  );
+}
+
 function VideoPlayer({ url }: { url: string }) {
   const embed = getEmbedUrl(url);
-  if (embed) {
-    return (
-      // The iframe is absolutely pinned to the 16:9 box: a percentage height on
-      // an in-flow iframe doesn't always resolve against `aspect-ratio`, which
-      // left the player taller than the box (play button clipped) on mobile.
-      <div className='relative aspect-video w-full min-w-0 overflow-hidden rounded-xl border border-border shadow-xs'>
-        <iframe
-          src={embed}
-          title='Video'
-          className='absolute inset-0 block h-full w-full border-0'
-          allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen'
-          allowFullScreen
-        />
-      </div>
-    );
-  }
+  if (embed) return <EmbedPlayer src={embed} />;
   return (
     <video
       src={url}
