@@ -1,6 +1,6 @@
 export default function AgreementContent() {
   return (
-    <div className='max-w-[75ch] text-[15px] leading-[1.85] text-ink min-[681px]:text-base [&_p]:mb-4 [&_ol]:pl-6 [&_li]:mb-3 [&_strong]:font-semibold [&_strong]:text-midnight [&_ol[type=A]]:list-[upper-alpha] [&_ol[type=I]]:list-[upper-roman] [&_ol[type=a]]:list-[lower-alpha]'>
+    <div className='text-[15px] leading-[1.85] text-ink min-[681px]:text-base [&_p]:mb-4 [&_ol]:pl-6 [&_li]:mb-3 [&_strong]:font-semibold [&_strong]:text-midnight [&_ol[type=A]]:list-[upper-alpha] [&_ol[type=I]]:list-[upper-roman] [&_ol[type=a]]:list-[lower-alpha]'>
       <p>
         You request further information concerning the business for the purpose
         of determining whether to pursue its acquisition.

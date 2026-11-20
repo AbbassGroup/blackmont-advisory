@@ -77,7 +77,7 @@ export default async function ListingNDAPage({
   return (
     <div className='bg-white'>
       <header className='border-b border-advisory-rule bg-canvas text-ink py-10 min-[681px]:py-12 min-[1121px]:py-16'>
-        <LandingContainer className='max-w-[1040px]'>
+        <LandingContainer>
           <Breadcrumbs
             tone='light'
             items={[
@@ -90,10 +90,10 @@ export default async function ListingNDAPage({
           <h1 className='mt-8 mb-0 font-advisory-heading text-[clamp(32px,7vw,42px)] leading-[1.25] font-bold tracking-normal text-midnight min-[681px]:text-[48px]'>
             Confidentiality agreement
           </h1>
-          <p className='mt-5 mb-0 max-w-[900px] text-[19px] leading-[1.65] font-medium text-midnight min-[681px]:text-[21px]'>
+          <p className='mt-5 mb-0 text-[19px] leading-[1.65] font-medium text-midnight min-[681px]:text-[21px]'>
             {listing.title}
           </p>
-          <p className='mt-5 mb-0 max-w-[850px] text-base leading-[1.8] min-[681px]:text-[17px]'>
+          <p className='mt-5 mb-0 text-base leading-[1.8] min-[681px]:text-[17px]'>
             To access detailed information about this business, please review
             the confidentiality agreement below and complete the form. We will
             be in touch shortly after your submission.
@@ -121,7 +121,7 @@ export default async function ListingNDAPage({
         </LandingContainer>
       </header>
 
-      <LandingContainer className='max-w-[1040px] py-10 min-[681px]:py-12 min-[1121px]:py-16'>
+      <LandingContainer className='py-10 min-[681px]:py-12 min-[1121px]:py-16'>
         <NDAFormInline listingTitle={listing.title} listingId={listing._id} />
       </LandingContainer>
     </div>

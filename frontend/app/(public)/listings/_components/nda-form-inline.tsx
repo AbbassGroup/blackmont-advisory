@@ -132,7 +132,7 @@ export default function NDAFormInline({ listingTitle, listingId }: Props) {
           role='region'
           aria-labelledby='nda-agreement-title'
           tabIndex={0}
-          className='max-h-[360px] overflow-y-auto overscroll-contain border border-advisory-rule bg-white p-5 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-gilt min-[681px]:max-h-[440px] min-[681px]:p-8'
+          className='max-h-[360px] overflow-y-auto border border-advisory-rule bg-white p-5 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-gilt min-[681px]:max-h-[440px] min-[681px]:p-8'
         >
           <AgreementContent />
         </div>
@@ -286,7 +286,7 @@ export default function NDAFormInline({ listingTitle, listingId }: Props) {
 
         <fieldset disabled={loading} className='m-0 min-w-0 border-0 p-0'>
           <legend className={groupHeading}>Deposit details</legend>
-          <p className='m-0 max-w-[700px] text-base leading-[1.8] font-medium text-midnight'>
+          <p className='m-0 text-base leading-[1.8] font-medium text-midnight'>
             {TRUST_ACCOUNT.bankName}
           </p>
           <dl className='mt-4 mb-6 grid gap-x-7 gap-y-4 min-[681px]:grid-cols-3'>
@@ -308,7 +308,7 @@ export default function NDAFormInline({ listingTitle, listingId }: Props) {
         <fieldset disabled={loading} className='m-0 min-w-0 border-0 p-0'>
           <legend className={groupHeading}>Purchaser refund details</legend>
           <p className='mt-0 mb-3 text-sm font-medium text-midnight'>In the event a refund is required</p>
-          <p className='mt-0 mb-6 max-w-[75ch] text-base leading-[1.8] text-ink'>
+          <p className='mt-0 mb-6 text-base leading-[1.8] text-ink'>
             In the event the business is no longer of interest and you have
             requested a refund of your holding deposit, we will refund your
             deposit as soon as it clears into the trust account. Please provide
@@ -358,7 +358,7 @@ export default function NDAFormInline({ listingTitle, listingId }: Props) {
 
         <LandingButton type='submit' disabled={loading} className='w-full min-[681px]:w-auto'>
           {loading && <Loader2 aria-hidden='true' className='size-4 animate-spin motion-reduce:animate-none' />}
-          {loading ? 'Submitting…' : 'Submit agreement'}
+          {loading ? 'Submitting…' : 'Submit'}
         </LandingButton>
       </form>
     </div>
