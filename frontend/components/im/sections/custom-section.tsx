@@ -196,11 +196,14 @@ function VideoPlayer({ url }: { url: string }) {
   const embed = getEmbedUrl(url);
   if (embed) {
     return (
-      <div className='aspect-video w-full overflow-hidden rounded-xl border border-border shadow-xs'>
+      // The iframe is absolutely pinned to the 16:9 box: a percentage height on
+      // an in-flow iframe doesn't always resolve against `aspect-ratio`, which
+      // left the player taller than the box (play button clipped) on mobile.
+      <div className='relative aspect-video w-full min-w-0 overflow-hidden rounded-xl border border-border shadow-xs'>
         <iframe
           src={embed}
           title='Video'
-          className='h-full w-full'
+          className='absolute inset-0 block h-full w-full border-0'
           allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen'
           allowFullScreen
         />
@@ -212,7 +215,8 @@ function VideoPlayer({ url }: { url: string }) {
       src={url}
       controls
       preload='metadata'
-      className='w-full rounded-xl border border-border shadow-xs'
+      playsInline
+      className='block h-auto max-h-[80vh] w-full rounded-xl border border-border bg-black shadow-xs'
     />
   );
 }
@@ -494,7 +498,7 @@ function BlockRead({ block }: { block: CustomBlock }) {
       return <PhotosView photos={block.photos} />;
     case 'video':
       return block.url ? (
-        <div className='max-w-3xl'>
+        <div className='w-full min-w-0 max-w-3xl'>
           <VideoPlayer url={block.url} />
         </div>
       ) : null;
