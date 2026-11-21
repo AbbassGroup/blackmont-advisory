@@ -57,13 +57,6 @@ const OTHER_CONTACTS: Contact[] = [
     image: '/fiducia.jpg',
   },
   {
-    role: 'Business Insurance',
-    name: 'Terry Lee',
-    company: 'CGIS Insurance',
-    phone: '0456 536 680',
-    image: '/CGIS.png',
-  },
-  {
     role: 'Commercial Real Estate',
     name: 'Chris Coster',
     company: 'Tsimos Commercial Property',
