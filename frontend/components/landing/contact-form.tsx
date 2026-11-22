@@ -16,10 +16,10 @@ import { LandingButton } from './presentation';
 
 type EnquiryType = 'sell' | 'buy';
 
-const NEXAR_API_URL = 'http://localhost:5055/api/v1';
-// const NEXAR_API_URL =
-//   process.env.NEXT_PUBLIC_NEXAR_API_URL ||
-//   'https://blackmont-api.nexartechnologies.com/api/v1';
+// const NEXAR_API_URL = 'http://localhost:5055/api/v1';
+const NEXAR_API_URL =
+  process.env.NEXT_PUBLIC_NEXAR_API_URL ||
+  'https://blackmont-api.nexartechnologies.com/api/v1';
 
 const EMPTY_FORM = {
   name: '',
