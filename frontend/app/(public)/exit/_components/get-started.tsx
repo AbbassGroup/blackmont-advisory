@@ -56,6 +56,7 @@ async function submitResourceLead({
 }) {
   await axios.put(`${NEXAR_API_URL}/deals/update/by-email`, {
     stage: 'Enquiry',
+    businessUnit: 'Business Sellers',
     email,
     phone,
     typeOfBusiness: industry,
