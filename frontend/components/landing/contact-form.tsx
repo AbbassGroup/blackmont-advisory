@@ -205,14 +205,32 @@ export function ContactForm({ lockedType, headingAs: Heading = 'h3' }: ContactFo
           name: form.name.trim(),
         });
       } else {
-        await apiClient.post('/api/partnership-contact-form', {
-          name: form.name,
-          contactNumber: form.contactNumber,
-          email: form.email,
-          industryInterest: form.industryInterest,
-          budget: form.budget,
-          timeline: form.timeline,
-        });
+        const noteContent = buildNexarNote([
+          ['Industry interest', form.industryInterest],
+          ['Budget', form.budget],
+          ['Timeline to buy', form.timeline],
+        ]);
+
+        await Promise.all([
+          // Broker notification email.
+          apiClient.post('/api/partnership-contact-form', {
+            name: form.name,
+            contactNumber: form.contactNumber,
+            email: form.email,
+            industryInterest: form.industryInterest,
+            budget: form.budget,
+            timeline: form.timeline,
+          }),
+          axios.put(`${NEXAR_API_URL}/deals/update/by-email`, {
+            stage: 'Enquiry',
+            email: form.email,
+            phone: form.contactNumber,
+            industry: form.industryInterest,
+            ...(noteContent ? { notes: [{ content: noteContent }] } : {}),
+            businessUnit: 'Business Buyers',
+            name: form.name.trim(),
+          }),
+        ]);
       }
 
       const message =
