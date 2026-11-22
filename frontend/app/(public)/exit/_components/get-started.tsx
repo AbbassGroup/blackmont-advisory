@@ -17,6 +17,7 @@ import { Label } from '@/components/ui/label';
 import { LandingButton } from '@/components/landing/presentation';
 import { landingFontVariables } from '@/components/landing/fonts';
 import { cn } from '@/lib/utils';
+import { buildNexarNote } from '@/lib/nexar-note';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { trackAccessEvent } from '@/lib/track';
 
@@ -200,15 +201,13 @@ export function GetStarted({
         comments: mergedComments,
         notes: [
           {
-            content: [
-              `Industry: ${form.industry.trim()}`,
-              `Location: ${form.location.trim()}`,
-              `Annual turnover: ${turnover}`,
-              userComment && `Comments: ${userComment}`,
-              selectedTime && `Preferred call time: ${selectedTime}`,
-            ]
-              .filter(Boolean)
-              .join('\n'),
+            content: buildNexarNote([
+              ['Industry', form.industry],
+              ['Location', form.location],
+              ['Annual turnover', turnover],
+              ['Comments', userComment],
+              ['Preferred call time', selectedTime],
+            ]),
           },
         ],
         resource: resourceTitle,

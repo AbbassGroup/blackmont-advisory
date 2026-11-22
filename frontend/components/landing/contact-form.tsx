@@ -12,6 +12,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { apiClient } from '@/lib/api';
 import { cn } from '@/lib/utils';
+import { buildNexarNote } from '@/lib/nexar-note';
 import { LandingButton } from './presentation';
 
 type EnquiryType = 'sell' | 'buy';
@@ -185,14 +186,12 @@ export function ContactForm({ lockedType, headingAs: Heading = 'h3' }: ContactFo
         const mergedComments = comments
           ? `${turnover} - ${comments}`
           : turnover;
-        const noteContent = [
-          `Industry: ${form.industry.trim()}`,
-          `Location: ${form.location.trim()}`,
-          `Annual turnover: ${turnover}`,
-          comments && `Comments: ${comments}`,
-        ]
-          .filter(Boolean)
-          .join('\n');
+        const noteContent = buildNexarNote([
+          ['Industry', form.industry],
+          ['Location', form.location],
+          ['Annual turnover', turnover],
+          ['Comments', comments],
+        ]);
 
         await axios.put(`${NEXAR_API_URL}/deals/update/by-email`, {
           stage: 'Enquiry',
