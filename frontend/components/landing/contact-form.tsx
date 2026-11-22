@@ -185,6 +185,14 @@ export function ContactForm({ lockedType, headingAs: Heading = 'h3' }: ContactFo
         const mergedComments = comments
           ? `${turnover} - ${comments}`
           : turnover;
+        const noteContent = [
+          `Industry: ${form.industry.trim()}`,
+          `Location: ${form.location.trim()}`,
+          `Annual turnover: ${turnover}`,
+          comments && `Comments: ${comments}`,
+        ]
+          .filter(Boolean)
+          .join('\n');
 
         await axios.put(`${NEXAR_API_URL}/deals/update/by-email`, {
           stage: 'Enquiry',
@@ -193,6 +201,7 @@ export function ContactForm({ lockedType, headingAs: Heading = 'h3' }: ContactFo
           industry: form.industry,
           location: form.location,
           comments: mergedComments,
+          notes: [{ content: noteContent }],
           businessUnit: 'Business Sellers',
           name: form.name.trim(),
         });

@@ -128,7 +128,16 @@ router.post('/', async (req, res) => {
     //   }
 
     // Post submission to Nexar contacts API (best-effort)
+    const noteContent = [
+      industryInterest && `Industry interest: ${industryInterest}`,
+      budget && `Budget: ${budget}`,
+      timeline && `Timeline to buy: ${timeline}`,
+    ]
+      .filter(Boolean)
+      .join('\n');
+
     const prospectData = {
+      ...(noteContent ? { notes: [{ content: noteContent }] } : {}),
       stage: 'Enquiry',
       name: name,
       phone: contactNumber,

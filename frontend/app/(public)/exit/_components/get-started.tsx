@@ -198,9 +198,19 @@ export function GetStarted({
         industry: form.industry,
         location: form.location,
         comments: mergedComments,
-        notes: selectedTime
-          ? [{ content: `Preferred call time: ${selectedTime}` }]
-          : undefined,
+        notes: [
+          {
+            content: [
+              `Industry: ${form.industry.trim()}`,
+              `Location: ${form.location.trim()}`,
+              `Annual turnover: ${turnover}`,
+              userComment && `Comments: ${userComment}`,
+              selectedTime && `Preferred call time: ${selectedTime}`,
+            ]
+              .filter(Boolean)
+              .join('\n'),
+          },
+        ],
         resource: resourceTitle,
       });
       trackAccessEvent('lead_submitted', {
