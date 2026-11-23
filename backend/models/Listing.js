@@ -40,6 +40,12 @@ const listingSchema = new mongoose.Schema({
     name: String,
     email: String,
   }],
+  // Public sale tag. Values must match frontend/lib/listing-status.ts.
+  saleStatus: {
+    type: String,
+    enum: ['for-sale', 'under-offer'],
+    default: 'for-sale',
+  },
   featured: { type: Boolean, default: false },
   partnerShared: { type: Boolean, default: false },
 }, { timestamps: true });

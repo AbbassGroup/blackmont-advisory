@@ -19,6 +19,9 @@ const fetchBusinessNames = require('../utils/fetchBusinessNames');
 const recordImView = require('../utils/recordImView');
 const generateReferenceId = require('../utils/generateReferenceId');
 
+// Allowed "For Sale" / "Under Offer" tag values (see models/Listing.js).
+const SALE_STATUSES = Listing.schema.path('saleStatus').enumValues;
+
 const upload = multer({
   dest: path.join(__dirname, '../uploads/'),
   limits: { fileSize: 50 * 1024 * 1024 },
@@ -150,13 +153,17 @@ router.put('/:id', auth, upload.single('image'), multerErrorHandler, async (req,
   try {
     const updateData = {};
 
-    const allowedFields = ['title', 'category', 'location', 'suburb', 'description', 'price', 'summary', 'about', 'keyFeatures', 'whyOpportunity', 'mapLink', 'featured', 'partnerShared', 'brokers', 'businessType', 'priceRange', 'deal'];
+    const allowedFields = ['title', 'category', 'location', 'suburb', 'description', 'price', 'summary', 'about', 'keyFeatures', 'whyOpportunity', 'mapLink', 'featured', 'partnerShared', 'brokers', 'businessType', 'priceRange', 'deal', 'saleStatus'];
 
     allowedFields.forEach(field => {
       if (req.body[field] !== undefined) {
         updateData[field] = req.body[field];
       }
     });
+
+    if (updateData.saleStatus !== undefined && !SALE_STATUSES.includes(updateData.saleStatus)) {
+      return res.status(400).json({ error: `saleStatus must be one of: ${SALE_STATUSES.join(', ')}` });
+    }
 
     // Reference ID: keep the existing value when one is supplied, otherwise
     // generate a random numeric ID. Handled after the
@@ -201,6 +208,27 @@ router.put('/:id', auth, upload.single('image'), multerErrorHandler, async (req,
     res.status(400).json({ error: err.message, details: err });
   }
 });
+// PATCH /:id/sale-status — change only the "For Sale" / "Under Offer" tag
+// (used by the status picker in the admin listings table).
+router.patch('/:id/sale-status', auth, async (req, res) => {
+  try {
+    const { saleStatus } = req.body || {};
+    if (!SALE_STATUSES.includes(saleStatus)) {
+      return res.status(400).json({ error: `saleStatus must be one of: ${SALE_STATUSES.join(', ')}` });
+    }
+    const listing = await Listing.findByIdAndUpdate(
+      req.params.id,
+      { saleStatus },
+      { new: true, projection: { saleStatus: 1 } }
+    );
+    if (!listing) return res.status(404).json({ error: 'Listing not found' });
+    res.json({ _id: listing._id, saleStatus: listing.saleStatus });
+  } catch (err) {
+    console.error('Update sale status error:', err);
+    res.status(400).json({ error: err.message });
+  }
+});
+
 router.delete('/:id', auth, async (req, res) => {
   try {
     const deletedListing = await Listing.findByIdAndDelete(req.params.id);

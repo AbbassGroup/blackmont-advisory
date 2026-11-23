@@ -17,6 +17,7 @@ import { Label } from '@/components/ui/label';
 import { LandingButton } from '@/components/landing/presentation';
 import { landingFontVariables } from '@/components/landing/fonts';
 import { cn } from '@/lib/utils';
+import { apiClient } from '@/lib/api';
 import { buildNexarNote } from '@/lib/nexar-note';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { trackAccessEvent } from '@/lib/track';
@@ -193,26 +194,40 @@ export function GetStarted({
     setLoading(true);
     setFailed(false);
     try {
-      await submitResourceLead({
-        name: form.name,
-        email: form.email,
-        phone: form.phone,
-        industry: form.industry,
-        location: form.location,
-        comments: mergedComments,
-        notes: [
-          {
-            content: buildNexarNote([
-              ['Industry', form.industry],
-              ['Location', form.location],
-              ['Annual turnover', turnover],
-              ['Comments', userComment],
-              ['Preferred call time', selectedTime],
-            ]),
-          },
-        ],
-        resource: resourceTitle,
-      });
+      await Promise.all([
+        // Broker notification email.
+        apiClient.post('/api/partnership-contact-form/consultation', {
+          name: form.name.trim(),
+          phone: form.phone.trim(),
+          email: form.email.trim(),
+          industry: form.industry.trim(),
+          location: form.location.trim(),
+          turnover,
+          comments: userComment,
+          preferredTime: selectedTime,
+          resource: resourceTitle,
+        }),
+        submitResourceLead({
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          industry: form.industry,
+          location: form.location,
+          comments: mergedComments,
+          notes: [
+            {
+              content: buildNexarNote([
+                ['Industry', form.industry],
+                ['Location', form.location],
+                ['Annual turnover', turnover],
+                ['Comments', userComment],
+                ['Preferred call time', selectedTime],
+              ]),
+            },
+          ],
+          resource: resourceTitle,
+        }),
+      ]);
       trackAccessEvent('lead_submitted', {
         resource: resourceTitle,
         lead: {

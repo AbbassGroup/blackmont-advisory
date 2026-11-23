@@ -193,17 +193,29 @@ export function ContactForm({ lockedType, headingAs: Heading = 'h3' }: ContactFo
           ['Comments', comments],
         ]);
 
-        await axios.put(`${NEXAR_API_URL}/deals/update/by-email`, {
-          stage: 'Enquiry',
-          email: form.email,
-          phone: form.phone,
-          industry: form.industry,
-          location: form.location,
-          comments: mergedComments,
-          notes: [{ content: noteContent }],
-          businessUnit: 'Business Sellers',
-          name: form.name.trim(),
-        });
+        await Promise.all([
+          // Broker notification email.
+          apiClient.post('/api/partnership-contact-form/seller', {
+            name: form.name.trim(),
+            phone: form.phone.trim(),
+            email: form.email.trim(),
+            industry: form.industry.trim(),
+            location: form.location.trim(),
+            turnover,
+            comments,
+          }),
+          axios.put(`${NEXAR_API_URL}/deals/update/by-email`, {
+            stage: 'Enquiry',
+            email: form.email,
+            phone: form.phone,
+            industry: form.industry,
+            location: form.location,
+            comments: mergedComments,
+            notes: [{ content: noteContent }],
+            businessUnit: 'Business Sellers',
+            name: form.name.trim(),
+          }),
+        ]);
       } else {
         const noteContent = buildNexarNote([
           ['Industry interest', form.industryInterest],

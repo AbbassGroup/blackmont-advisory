@@ -13,7 +13,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import axios from 'axios';
 import { apiClient } from '@/lib/api';
+import { buildNexarNote } from '@/lib/nexar-note';
+
+const NEXAR_API_URL =
+  process.env.NEXT_PUBLIC_NEXAR_API_URL ||
+  'https://blackmont-api.nexartechnologies.com/api/v1';
 
 interface ContactFormModalProps {
   children: React.ReactNode;
@@ -73,7 +79,25 @@ export function ContactFormModal({ children }: ContactFormModalProps) {
     setLoading(true);
 
     try {
-      await apiClient.post('/api/partnership-contact-form', formData);
+      const noteContent = buildNexarNote([
+        ['Industry interest', formData.industryInterest],
+        ['Budget', formData.budget],
+        ['Timeline to buy', formData.timeline],
+      ]);
+
+      await Promise.all([
+        // Broker notification email.
+        apiClient.post('/api/partnership-contact-form', formData),
+        axios.put(`${NEXAR_API_URL}/deals/update/by-email`, {
+          stage: 'Enquiry',
+          email: formData.email.trim(),
+          phone: formData.contactNumber.trim(),
+          industry: formData.industryInterest.trim(),
+          ...(noteContent ? { notes: [{ content: noteContent }] } : {}),
+          businessUnit: 'Business Buyers',
+          name: formData.name.trim(),
+        }),
+      ]);
 
       toast.success(
         'Thank you! Your enquiry has been submitted successfully. We will contact you soon.',

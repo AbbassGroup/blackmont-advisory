@@ -1,13 +1,17 @@
 'use client';
 
 import { useId, useState } from 'react';
+import axios from 'axios';
 import { CheckCircle, Loader2 } from 'lucide-react';
 import { LandingButton } from '@/components/landing/presentation';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { apiClient } from '@/lib/api';
+import { buildNexarNote } from '@/lib/nexar-note';
 
-const CONTACT_API_URL =
-  'https://blackmont-api.nexartechnologies.com/api/v1/contacts/create';
+const NEXAR_API_URL =
+  process.env.NEXT_PUBLIC_NEXAR_API_URL ||
+  'https://blackmont-api.nexartechnologies.com/api/v1';
 
 const inputCls =
   'h-12 rounded-none border-advisory-input bg-white px-3 text-base text-midnight shadow-none outline-none transition-colors duration-200 placeholder:text-ink/70 focus-visible:border-midnight focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none md:text-base';
@@ -67,36 +71,47 @@ export function AcquisitionInterestForm() {
     setLoading(true);
 
     try {
-      const response = await fetch(CONTACT_API_URL, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer businessbrokersecret`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          firstName: form.firstName,
-          lastName: form.lastName,
-          phone: form.mobile,
-          email: form.email,
-          priceRange: form.purchasePriceRange,
-          industry: form.industryPreference,
-          ebitda: form.ebitdaRequirements,
-          location: form.locationPreference,
-          contactOwner: form.comments,
-        }),
-      });
+      const comments = form.comments.trim();
+      const noteContent = buildNexarNote([
+        ['Industry preference', form.industryPreference],
+        ['Purchase price range', form.purchasePriceRange],
+        ['EBITDA requirements', form.ebitdaRequirements],
+        ['Location preference', form.locationPreference],
+        ['Comments', comments],
+      ]);
 
-      if (!response.ok) {
-        throw new Error('Submission failed');
-      }
+      await Promise.all([
+        // Broker notification email.
+        apiClient.post('/api/partnership-contact-form/acquisition-interest', {
+          firstName: form.firstName.trim(),
+          lastName: form.lastName.trim(),
+          mobile: form.mobile.trim(),
+          email: form.email.trim(),
+          industryPreference: form.industryPreference.trim(),
+          purchasePriceRange: form.purchasePriceRange.trim(),
+          ebitdaRequirements: form.ebitdaRequirements.trim(),
+          locationPreference: form.locationPreference.trim(),
+          comments,
+        }),
+        axios.put(`${NEXAR_API_URL}/deals/update/by-email`, {
+          stage: 'Enquiry',
+          email: form.email.trim(),
+          phone: form.mobile.trim(),
+          industry: form.industryPreference.trim(),
+          location: form.locationPreference.trim(),
+          comments,
+          notes: [{ content: noteContent }],
+          businessUnit: 'Business Buyers',
+          name: `${form.firstName.trim()} ${form.lastName.trim()}`.trim(),
+        }),
+      ]);
 
       setSubmitted(true);
       setForm(initialForm);
     } catch (err) {
+      console.error('Error submitting acquisition interest form:', err);
       setError(
-        err instanceof Error
-          ? err.message
-          : 'Something went wrong. Please try again.',
+        'Your registration could not be sent. Please try again or email info@blackmontadvisory.com.',
       );
     } finally {
       setLoading(false);

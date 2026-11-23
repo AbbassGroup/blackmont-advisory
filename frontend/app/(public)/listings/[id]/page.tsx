@@ -60,6 +60,7 @@ interface Listing {
   mapLink?: string;
   keyFeatures?: string[];
   whyOpportunity?: string;
+  saleStatus?: string;
   isPinned?: boolean;
 }
 
@@ -178,6 +179,7 @@ export default async function ListingDetailPage({
         category={listing.category}
         summary={listing.summary}
         image={listing.image}
+        saleStatus={listing.saleStatus}
       >
         <ListingActions listingId={listing._id} listingTitle={listing.title} />
       </ListingBanner>

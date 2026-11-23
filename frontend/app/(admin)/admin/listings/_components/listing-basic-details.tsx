@@ -1,11 +1,13 @@
 import { RichTextEditor } from '@/components/proposal/rich-text-editor';
 import { cn } from '@/lib/utils';
+import { LISTING_STATUSES, type ListingStatus } from '@/lib/listing-status';
 import { ListingSection, ListingField, ListingInput, LISTING_INPUT_CLASS } from './form-presentation';
 
 const LOCATIONS = ['Australia', 'Adelaide', 'Perth', 'Melbourne', 'Geelong', 'Ballarat', 'Launceston', 'Brisbane', 'Hobart', 'Sydney'];
 
 interface BasicDetailsProps {
   title: string; setTitle: (value: string) => void;
+  saleStatus: ListingStatus; setSaleStatus: (value: ListingStatus) => void;
   category: string; setCategory: (value: string) => void;
   location: string; setLocation: (value: string) => void;
   suburb: string; setSuburb: (value: string) => void;
@@ -17,7 +19,7 @@ interface BasicDetailsProps {
 }
 
 export function ListingBasicDetails({
-  title, setTitle, category, setCategory, location, setLocation, suburb, setSuburb,
+  title, setTitle, saleStatus, setSaleStatus, category, setCategory, location, setLocation, suburb, setSuburb,
   price, setPrice, mapLink, setMapLink, summary, setSummary, about, setAbout, errors = {},
 }: BasicDetailsProps) {
   return (
@@ -25,6 +27,11 @@ export function ListingBasicDetails({
       <div className='grid gap-6 min-[681px]:grid-cols-2'>
         <ListingField id='title' label='Title' required error={errors.title}>
           <ListingInput id='title' name='title' value={title} onChange={(event) => setTitle(event.target.value)} placeholder='e.g. Turnkey Cafe in CBD' aria-required='true' aria-invalid={Boolean(errors.title)} aria-describedby={errors.title ? 'title-hint' : undefined} />
+        </ListingField>
+        <ListingField id='saleStatus' label='Status' hint='Shown as a tag on the public listing. You can change it at any time.'>
+          <select id='saleStatus' name='saleStatus' value={saleStatus} onChange={(event) => setSaleStatus(event.target.value as ListingStatus)} aria-describedby='saleStatus-hint' className={LISTING_INPUT_CLASS}>
+            {LISTING_STATUSES.map((status) => <option key={status.value} value={status.value}>{status.label}</option>)}
+          </select>
         </ListingField>
         <ListingField id='category' label='Category'>
           <ListingInput id='category' name='category' value={category} onChange={(event) => setCategory(event.target.value)} placeholder='e.g. Hospitality' />
