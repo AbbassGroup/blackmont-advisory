@@ -23,6 +23,8 @@ import {
   publishedIndustryPages,
 } from '@/lib/data/industry-benchmarks';
 import { indexableGuides } from '@/lib/data/guides';
+import { CityLinks } from '@/components/landing/location-page/sections';
+import { aOrAn, industryLabel, industryStateLinks } from '@/lib/data/industry-states';
 
 type IndustryPageProps = {
   params: Promise<{ industry: string }>;
@@ -59,6 +61,8 @@ export default async function IndustryPage({ params }: IndustryPageProps) {
     (other) => other.page.slug !== page.slug,
   );
   const guides = indexableGuides();
+  const label = industryLabel(page.h1);
+  const stateLinks = industryStateLinks(page.slug, label);
 
   const crumbs = [
     { name: 'Home', path: '' },
@@ -111,6 +115,16 @@ export default async function IndustryPage({ params }: IndustryPageProps) {
       <BuyerChecks items={page.buyerChecks} />
 
       <IndustryFaqs items={page.faqs} />
+
+      {stateLinks.length > 0 && (
+        <CityLinks
+          id='by-state'
+          tone='white'
+          heading={`Selling ${aOrAn(label)} ${label.toLowerCase()} by state`}
+          intro='Local market notes and the lease, licensing and transfer rules for each state.'
+          cities={stateLinks}
+        />
+      )}
 
       <IndustryNextSteps />
 

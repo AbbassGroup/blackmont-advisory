@@ -57,9 +57,9 @@ export const BROKER_LOCATIONS: BrokerLocation[] = [
     ],
     areaGroups: [
       { name: 'CBD and inner city', areas: ['Melbourne CBD', 'Collins Street', 'Southbank', 'Docklands', 'South Melbourne', 'Port Melbourne'] },
-      { name: 'Inner south and east', areas: ['Richmond', 'South Yarra', 'Toorak', 'St Kilda', 'Brighton', 'Hawthorn', 'Kew', 'Camberwell'] },
-      { name: 'North and west', areas: ['Fitzroy', 'Brunswick', 'Preston', 'Essendon', 'Footscray', 'Werribee', 'Tullamarine'] },
-      { name: 'East and south-east', areas: ['Box Hill', 'Doncaster', 'Glen Waverley', 'Oakleigh', 'Ringwood', 'Dandenong', 'Moorabbin', 'Frankston', 'Cranbourne'] },
+      { name: 'Inner south and east', areas: ['Richmond', 'South Yarra', 'Toorak', 'St Kilda', 'Brighton', 'Hawthorn', 'Kew', 'Camberwell', 'Malvern', 'Balwyn'] },
+      { name: 'North and west', areas: ['Fitzroy', 'Brunswick', 'Preston', 'Eltham', 'Essendon', 'Footscray', 'Werribee', 'Tullamarine'] },
+      { name: 'East and south-east', areas: ['Box Hill', 'Blackburn', 'Doncaster', 'Doncaster East', 'Glen Waverley', 'Mount Waverley', 'Oakleigh', 'Ringwood', 'Bentleigh East', 'Dandenong', 'Moorabbin', 'Frankston', 'Cranbourne', 'Berwick'] },
     ],
     faqs: [
       {

@@ -4,6 +4,7 @@ import {
   CONTENT_UPDATED,
   indexableIndustryPages,
 } from '@/lib/data/industry-benchmarks';
+import { industryStateParams } from '@/lib/data/industry-states';
 import { indexableGuides } from '@/lib/data/guides';
 import { PINNED_ACQUISITION_LISTING_ID } from '@/data/pinned-listing';
 import { authorPath, fetchPublicAuthors } from '@/lib/authors';
@@ -102,6 +103,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }),
   );
 
+  // Industry × state pages (/selling-a/<industry>/<state>), from the same data as their route.
+  const industryStateEntries: MetadataRoute.Sitemap = industryStateParams().map(({ industry, state }) => ({
+    url: `${BASE_URL}/selling-a/${industry}/${state}`,
+    lastModified: new Date(CONTENT_UPDATED),
+  }));
+
   const guideEntries: MetadataRoute.Sitemap = indexableGuides().map((guide) => ({
     url: `${BASE_URL}/guides/${guide.slug}`,
     lastModified: new Date(CONTENT_UPDATED),
@@ -125,6 +132,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...cityEntries,
     ...suburbEntries,
     ...industryEntries,
+    ...industryStateEntries,
     ...guideEntries,
     ...listingEntries,
     ...authorEntries,

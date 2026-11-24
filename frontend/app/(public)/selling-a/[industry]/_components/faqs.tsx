@@ -2,7 +2,7 @@ import { Minus, Plus } from 'lucide-react';
 import { LandingContainer } from '@/components/landing/presentation';
 import type { IndustryFaq } from '@/lib/data/industry-benchmarks';
 
-export function IndustryFaqs({ items }: { items: IndustryFaq[] }) {
+export function IndustryFaqs({ items, heading = 'Common questions' }: { items: IndustryFaq[]; heading?: string }) {
   if (!items.length) return null;
 
   return (
@@ -15,7 +15,7 @@ export function IndustryFaqs({ items }: { items: IndustryFaq[] }) {
           id='industry-faq-title'
           className='m-0 font-advisory-heading text-[clamp(29px,6.5vw,38px)] leading-[1.25] font-bold tracking-normal text-midnight min-[681px]:text-[clamp(32px,3.4vw,43px)]'
         >
-          Common questions
+          {heading}
         </h2>
         <div className='mt-8 border-b border-advisory-rule min-[681px]:mt-10'>
           {items.map(({ q, a }, index) => (

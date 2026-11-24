@@ -40,6 +40,7 @@ export function suburbMetadata(page: SuburbPage, mode: Mode): Metadata {
     path: `${MODES[mode].base}/${page.slug}`,
     title: page.title,
     description: page.description,
+    keywords: page.keywords?.length ? [page.keyword, ...page.keywords] : undefined,
   });
 }
 

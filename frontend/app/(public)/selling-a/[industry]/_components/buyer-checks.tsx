@@ -2,7 +2,7 @@ import { Check } from 'lucide-react';
 import { LandingContainer } from '@/components/landing/presentation';
 import type { BuyerCheck } from '@/lib/data/industry-benchmarks';
 
-export function BuyerChecks({ items }: { items: BuyerCheck[] }) {
+export function BuyerChecks({ items, heading = 'What buyers will ask for' }: { items: BuyerCheck[]; heading?: string }) {
   return (
     <section
       aria-labelledby='buyer-checks-title'
@@ -13,7 +13,7 @@ export function BuyerChecks({ items }: { items: BuyerCheck[] }) {
           id='buyer-checks-title'
           className='m-0 font-advisory-heading text-[clamp(29px,6.5vw,38px)] leading-[1.25] font-bold tracking-normal text-midnight min-[681px]:text-[clamp(32px,3.4vw,43px)]'
         >
-          What buyers will ask for
+          {heading}
         </h2>
         <ul role='list' className='m-0 mt-8 list-none border-b border-advisory-rule p-0 min-[681px]:mt-10'>
           {items.map(({ label, detail }) => (

@@ -10,6 +10,8 @@ export type SuburbCopy = Omit<LocationPageCopy, 'slug'> & {
   keyword: string;
   /** Alt text for the banner photo; includes the keyword. */
   imageAlt: string;
+  /** Extra search phrases for the meta keywords tag (optional). */
+  keywords?: string[];
 };
 
 export type SuburbEntry = {
