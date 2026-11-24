@@ -38,9 +38,9 @@ export function ChangePasswordForm({ home, changePassword }: { home: string; cha
       <form onSubmit={onSubmit} className='flex w-full max-w-[600px] flex-col gap-6 border border-advisory-rule bg-white p-5 min-[681px]:p-8'>
         <fieldset disabled={loading} className='m-0 flex min-w-0 flex-col gap-5 border-0 p-0'>
           <legend className='sr-only'>Change password</legend>
-          <AuthPasswordField id='current-password' label='Current password' required autoComplete='current-password' disabled={loading} value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} />
-          <AuthPasswordField id='new-password' label='New password' required autoComplete='new-password' disabled={loading} hint='Use at least 6 characters.' value={newPassword} onChange={(event) => setNewPassword(event.target.value)} />
-          <AuthPasswordField id='confirm-password' label='Confirm new password' required autoComplete='new-password' disabled={loading} value={confirm} onChange={(event) => setConfirm(event.target.value)} />
+          <AuthPasswordField id='current-password' label='Current password' required autoComplete='off' data-1p-ignore data-lpignore='true' data-form-type='other' disabled={loading} value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} />
+          <AuthPasswordField id='new-password' label='New password' required autoComplete='off' data-1p-ignore data-lpignore='true' data-form-type='other' disabled={loading} hint='Use at least 6 characters.' value={newPassword} onChange={(event) => setNewPassword(event.target.value)} />
+          <AuthPasswordField id='confirm-password' label='Confirm new password' required autoComplete='off' data-1p-ignore data-lpignore='true' data-form-type='other' disabled={loading} value={confirm} onChange={(event) => setConfirm(event.target.value)} />
         </fieldset>
         {error && <AuthMessage>{error}</AuthMessage>}
         <div className='flex flex-wrap gap-3 border-t border-advisory-rule pt-5'><LandingButton size='compact' type='submit' disabled={loading}>{loading && <Loader2 aria-hidden='true' className='size-4 animate-spin motion-reduce:animate-none' />}{loading ? 'Updating…' : 'Update password'}</LandingButton><LandingButton variant='outline' size='compact' disabled={loading} onClick={() => router.push(home)}>Cancel</LandingButton></div>
