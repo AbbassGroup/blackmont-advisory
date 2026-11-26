@@ -31,3 +31,10 @@ export async function loadResourceTab(type: ResourceType, page: number) {
 /** Canonical for a paged tab: page 1 is the bare path, later pages keep ?page=. */
 export const pagedCanonical = (path: string, page: number) =>
   page === 1 ? path : `${path}?page=${page}`;
+
+/**
+ * Paged tabs share one description, which audits flag as duplicate meta
+ * descriptions. Later pages get a "Page N" lead-in so each is unique.
+ */
+export const pagedDescription = (description: string, page: number) =>
+  page === 1 ? description : `Page ${page}: ${description}`;

@@ -10,7 +10,9 @@ export function JsonLd({
         <script
           key={i}
           type='application/ld+json'
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(block) }}
+          // Escape "<" so a title containing "</script>" can't end the block
+          // early and leave a truncated, invalid JSON-LD payload.
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(block).replace(/</g, '\\u003c') }}
         />
       ))}
     </>

@@ -5,20 +5,22 @@ import { indexableGuides } from '@/lib/data/guides';
 import { GuidesBanner } from './_components/banner';
 import { GuideList } from './_components/guide-list';
 import { IndustryLinks } from './_components/industry-links';
+import { SaleOverview } from './_components/sale-overview';
 
-const TITLE = 'Guides to Selling a Business';
+const TITLE = 'How to Sell a Business: Guides for Owners';
 const DESCRIPTION =
-  'Practical guides for Australian business owners considering a sale: what buyers check, how long it takes, and what the process actually involves.';
+  'How selling a business works in Australia, stage by stage: preparation, valuation, confidential marketing, due diligence and completion, with in-depth owner guides.';
 
 export const metadata: Metadata = buildMetadata({
   path: '/guides',
-  title: `${TITLE} | Blackmont Advisory`,
+  // Distinct from /resources/guides, which is the article listing.
+  title: 'How to Sell a Business in Australia: Owner Guides | Blackmont Advisory',
   description: DESCRIPTION,
 });
 
 const CRUMBS = [
   { name: 'Home', path: '' },
-  { name: TITLE, path: '/guides' },
+  { name: 'Selling Guides', path: '/guides' },
 ];
 
 export default function GuidesIndexPage() {
@@ -45,6 +47,7 @@ export default function GuidesIndexPage() {
       <JsonLd data={jsonLd} />
       <GuidesBanner title={TITLE} crumbs={CRUMBS} />
       <GuideList guides={guides} />
+      <SaleOverview />
       <IndustryLinks />
     </div>
   );

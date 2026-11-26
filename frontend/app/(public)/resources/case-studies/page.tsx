@@ -5,7 +5,7 @@ import { breadcrumbJsonLd, buildMetadata, itemListJsonLd } from '@/lib/seo';
 import { ResourcesBanner } from '../_components/banner';
 import { ResourceTabs } from '../_components/resource-tabs';
 import { BlogSection } from '../_components/blog-section';
-import { loadResourceTab, pagedCanonical, toPageNumber } from '../_components/load-tab';
+import { loadResourceTab, pagedCanonical, pagedDescription, toPageNumber } from '../_components/load-tab';
 
 const PATH = '/resources/case-studies';
 
@@ -18,8 +18,10 @@ export async function generateMetadata({ searchParams }: CaseStudiesPageProps): 
   return buildMetadata({
     path: pagedCanonical(PATH, page),
     title: `Business Sale Case Studies${page > 1 ? ` – Page ${page}` : ''} | Blackmont Advisory`,
-    description:
+    description: pagedDescription(
       'Business sale case studies from Blackmont Advisory: how we have helped Australian owners sell their businesses and buyers acquire the right one.',
+      page,
+    ),
   });
 }
 
