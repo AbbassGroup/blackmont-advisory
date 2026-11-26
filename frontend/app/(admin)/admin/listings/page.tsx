@@ -10,6 +10,7 @@ import { AdminPageLayout } from '@/components/admin/page-layout';
 import { LandingButton, LandingButtonLink } from '@/components/landing/presentation';
 import { landingFontVariables } from '@/components/landing/fonts';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { LISTING_STATUSES, listingStatusLabel, toListingStatus, type ListingStatus } from '@/lib/listing-status';
 
 type Listing = {
   _id: string;
@@ -19,7 +20,10 @@ type Listing = {
   referenceId: string;
   deal?: string;
   businessName?: string;
+  saleStatus?: string;
 };
+
+const STATUS_SELECT_CLASS = 'h-10 min-w-[140px] cursor-pointer rounded-none border border-advisory-input bg-white px-3 py-2 font-advisory-body text-sm text-midnight outline-none transition-colors duration-150 focus:border-gilt disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none';
 
 const ROW_ACTION_CLASS = 'inline-flex size-10 shrink-0 cursor-pointer items-center justify-center border border-transparent text-ink transition-colors duration-150 hover:border-advisory-rule hover:bg-canvas hover:text-midnight focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gilt disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none';
 const listingName = (listing: Listing) => listing.businessName || listing.title || 'Untitled business';
@@ -36,6 +40,9 @@ export default function ListingsPage() {
   const [deleteTarget, setDeleteTarget] = useState<Listing | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState('');
+  const [statusSavingId, setStatusSavingId] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState('');
+  const [statusError, setStatusError] = useState('');
   const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => () => { if (copyTimer.current) clearTimeout(copyTimer.current); }, []);
@@ -66,6 +73,31 @@ export default function ListingsPage() {
       copyTimer.current = setTimeout(() => setCopiedId(null), 2000);
     } catch {
       setCopyError('The listing URL could not be copied. Please try again.');
+    }
+  };
+
+  const handleStatusChange = async (listing: Listing, next: ListingStatus) => {
+    if (!user?.token || statusSavingId) return;
+    const previous = listing.saleStatus;
+    const setStatus = (value?: string) =>
+      setListings((items) => items.map((item) => (item._id === listing._id ? { ...item, saleStatus: value } : item)));
+
+    setStatusError('');
+    setStatusMessage('');
+    setStatus(next);
+    setStatusSavingId(listing._id);
+    try {
+      await apiClient.patch(
+        `/api/listings/${listing._id}/sale-status`,
+        { saleStatus: next },
+        { headers: { Authorization: `Bearer ${user.token}` } },
+      );
+      setStatusMessage(`${listingName(listing)} is now marked ${listingStatusLabel(next)}.`);
+    } catch {
+      setStatus(previous);
+      setStatusError(`The status for ${listingName(listing)} could not be changed. Please try again.`);
+    } finally {
+      setStatusSavingId(null);
     }
   };
 
@@ -106,7 +138,8 @@ export default function ListingsPage() {
       action={<LandingButtonLink href='/admin/listings/new' size='compact'><Plus aria-hidden='true' className='size-4' /> Add listing</LandingButtonLink>}
     >
       {copyError && <p role='alert' className='m-0 border border-red-200 bg-red-50 px-5 py-4 text-sm leading-[1.75] text-red-800'>{copyError}</p>}
-      <p role='status' aria-live='polite' className='sr-only'>{copiedId ? 'Public listing URL copied.' : ''}</p>
+      {statusError && <p role='alert' className='m-0 border border-red-200 bg-red-50 px-5 py-4 text-sm leading-[1.75] text-red-800'>{statusError}</p>}
+      <p role='status' aria-live='polite' className='sr-only'>{copiedId ? 'Public listing URL copied.' : statusMessage}</p>
 
       <section aria-label='Business listings' aria-busy={loading} className='min-w-0 border border-advisory-rule bg-white'>
         <div className='flex flex-col gap-4 border-b border-advisory-rule p-5 min-[681px]:flex-row min-[681px]:items-center min-[681px]:justify-between min-[681px]:p-6'>
@@ -132,7 +165,7 @@ export default function ListingsPage() {
           <div>
             <p role='status' className='sr-only'>Loading listings.</p>
             <div aria-hidden='true' className='min-w-0 overflow-x-auto'>
-              <table className='w-full min-w-[880px] text-left text-sm leading-[1.65]'>
+              <table className='w-full min-w-[1040px] text-left text-sm leading-[1.65]'>
                 <ListingTableHead />
                 <tbody className='divide-y divide-advisory-rule'>
                   {[0, 1, 2, 3, 4].map((index) => (
@@ -141,6 +174,7 @@ export default function ListingsPage() {
                       <td className='w-[34%] min-w-56 px-5 py-5'><div className='h-4 w-4/5 animate-pulse bg-canvas motion-reduce:animate-none' /></td>
                       <td className='min-w-36 px-5 py-5'><div className='h-4 w-24 animate-pulse bg-canvas motion-reduce:animate-none' /></td>
                       <td className='px-5 py-5'><div className='h-4 w-20 animate-pulse bg-canvas motion-reduce:animate-none' /></td>
+                      <td className='px-5 py-3'><div className='h-10 w-[140px] animate-pulse bg-canvas motion-reduce:animate-none' /></td>
                       <td className='px-5 py-3'><div className='ml-auto h-10 w-32 animate-pulse bg-canvas motion-reduce:animate-none' /></td>
                     </tr>
                   ))}
@@ -162,8 +196,8 @@ export default function ListingsPage() {
           </div>
         ) : (
           <div role='region' aria-label='Business listing table' tabIndex={0} className='min-w-0 overflow-x-auto focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-gilt'>
-            <table className='w-full min-w-[880px] text-left text-sm leading-[1.65]'>
-              <caption className='sr-only'>Business listings, reference IDs, locations, prices and management actions.</caption>
+            <table className='w-full min-w-[1040px] text-left text-sm leading-[1.65]'>
+              <caption className='sr-only'>Business listings, reference IDs, locations, prices, sale status and management actions.</caption>
               <ListingTableHead />
               <tbody className='divide-y divide-advisory-rule'>
                 {visibleListings.map((listing) => {
@@ -176,6 +210,21 @@ export default function ListingsPage() {
                       </td>
                       <td className='min-w-36 px-5 py-5 align-top text-ink'>{listing.location || '—'}</td>
                       <td className='px-5 py-5 align-top whitespace-nowrap tabular-nums text-midnight'>{listing.price === 0 || listing.price ? String(listing.price) : '—'}</td>
+                      <td className='px-5 py-3 align-top'>
+                        <div className='flex items-center gap-2'>
+                          <label htmlFor={`status-${listing._id}`} className='sr-only'>Status for {name}</label>
+                          <select
+                            id={`status-${listing._id}`}
+                            value={toListingStatus(listing.saleStatus)}
+                            disabled={deleting || Boolean(statusSavingId)}
+                            onChange={(event) => void handleStatusChange(listing, event.target.value as ListingStatus)}
+                            className={STATUS_SELECT_CLASS}
+                          >
+                            {LISTING_STATUSES.map((status) => <option key={status.value} value={status.value}>{status.label}</option>)}
+                          </select>
+                          {statusSavingId === listing._id && <Loader2 aria-hidden='true' className='size-4 shrink-0 animate-spin text-ink motion-reduce:animate-none' />}
+                        </div>
+                      </td>
                       <td className='px-5 py-3 align-top'>
                         <div role='group' aria-label={`Actions for ${name}`} className='flex items-center justify-end gap-1'>
                           <button type='button' onClick={() => void handleCopyUrl(listing._id)} disabled={deleting} className={ROW_ACTION_CLASS} title={copiedId === listing._id ? 'Listing URL copied' : 'Copy public listing URL'} aria-label={`Copy public listing URL for ${name}`}>
@@ -220,7 +269,7 @@ function ListingTableHead() {
   return (
     <thead className='border-b border-advisory-rule bg-canvas text-midnight'>
       <tr>
-        {['Reference ID', 'Business name', 'Location', 'Price', 'Actions'].map((label) => (
+        {['Reference ID', 'Business name', 'Location', 'Price', 'Status', 'Actions'].map((label) => (
           <th key={label} scope='col' className={cn('px-5 py-4 font-semibold', label === 'Actions' && 'text-right')}>{label}</th>
         ))}
       </tr>

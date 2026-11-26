@@ -19,6 +19,7 @@ import { ListingMediaDocuments, type ListingDocument, type ImTemplateOption } fr
 import { ListingContactTeam } from '../_components/listing-contact-team';
 import { External } from '../_components/external';
 import { BROKERS } from '@/lib/data/brokers-list';
+import { DEFAULT_LISTING_STATUS, toListingStatus, type ListingStatus } from '@/lib/listing-status';
 
 export default function ListingFormPage() {
   const params = useParams();
@@ -49,6 +50,7 @@ export default function ListingFormPage() {
 
   // Form State
   const [title, setTitle] = useState('');
+  const [saleStatus, setSaleStatus] = useState<ListingStatus>(DEFAULT_LISTING_STATUS);
   const [category, setCategory] = useState('');
   const [location, setLocation] = useState('');
   const [suburb, setSuburb] = useState('');
@@ -100,6 +102,7 @@ export default function ListingFormPage() {
           const data = res.data;
 
           setTitle(data.title || '');
+          setSaleStatus(toListingStatus(data.saleStatus));
           setCategory(data.category || '');
           setLocation(data.location || '');
           setSuburb(data.suburb || '');
@@ -207,6 +210,7 @@ export default function ListingFormPage() {
     try {
       const fd = new FormData();
       fd.append('title', title);
+      fd.append('saleStatus', saleStatus);
       fd.append('category', category);
       fd.append('location', location);
       fd.append('suburb', suburb);
@@ -399,6 +403,8 @@ export default function ListingFormPage() {
           <ListingBasicDetails
             title={title}
             setTitle={updateField(setTitle, 'title')}
+            saleStatus={saleStatus}
+            setSaleStatus={setSaleStatus}
             category={category}
             setCategory={setCategory}
             location={location}

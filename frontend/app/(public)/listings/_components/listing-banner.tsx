@@ -7,6 +7,7 @@ import {
 } from '@/components/landing/presentation';
 import { Breadcrumbs } from '@/components/seo/breadcrumbs';
 import { cn } from '@/lib/utils';
+import { listingStatusLabel, toListingStatus } from '@/lib/listing-status';
 
 type ListingBannerProps = {
   title: string;
@@ -16,6 +17,8 @@ type ListingBannerProps = {
   price?: string;
   location?: string;
   category?: string;
+  /** "For Sale" / "Under Offer" tag; omitted on the pinned acquisition page. */
+  saleStatus?: string;
   acquisitionAccess?: boolean;
   children?: ReactNode;
 };
@@ -28,9 +31,12 @@ export function ListingBanner({
   price,
   location,
   category,
+  saleStatus,
   acquisitionAccess = false,
   children,
 }: ListingBannerProps) {
+  const showStatus = !acquisitionAccess;
+  const underOffer = toListingStatus(saleStatus) === 'under-offer';
   return (
     <section aria-labelledby='listing-title' className='relative isolate overflow-hidden border-b border-advisory-rule bg-canvas'>
       <LandingContainer className={cn(
@@ -50,9 +56,24 @@ export function ListingBanner({
               { name: title, path: `/listings/${listingId}` },
             ]}
           />
+          {showStatus && (
+            <p className='mt-8 mb-0'>
+              <span
+                className={cn(
+                  'inline-flex items-center border px-3 py-1 text-xs leading-[1.6] font-semibold tracking-[0.08em] uppercase',
+                  underOffer ? 'border-gilt bg-gilt text-midnight' : 'border-midnight bg-midnight text-white',
+                )}
+              >
+                {listingStatusLabel(saleStatus)}
+              </span>
+            </p>
+          )}
           <h1
             id='listing-title'
-            className='mt-8 mb-0 max-w-[760px] break-words font-advisory-heading text-[clamp(32px,7.5vw,44px)] leading-[1.22] font-bold tracking-normal text-midnight min-[681px]:text-[clamp(38px,4.2vw,54px)]'
+            className={cn(
+              showStatus ? 'mt-4' : 'mt-8',
+              'mb-0 max-w-[760px] break-words font-advisory-heading text-[clamp(32px,7.5vw,44px)] leading-[1.22] font-bold tracking-normal text-midnight min-[681px]:text-[clamp(38px,4.2vw,54px)]',
+            )}
           >
             {title}
           </h1>

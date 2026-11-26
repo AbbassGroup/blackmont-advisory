@@ -5,7 +5,7 @@ type BuyerValueDriversProps = {
   details: string[];
 };
 
-export function BuyerValueDrivers({ drivers, details }: BuyerValueDriversProps) {
+export function BuyerValueDrivers({ drivers, details, heading = 'The five things buyers pay for' }: BuyerValueDriversProps & { heading?: string }) {
   return (
     <section
       aria-labelledby='buyer-value-drivers-title'
@@ -16,7 +16,7 @@ export function BuyerValueDrivers({ drivers, details }: BuyerValueDriversProps) 
           id='buyer-value-drivers-title'
           className='m-0 font-advisory-heading text-[clamp(29px,6.5vw,38px)] leading-[1.25] font-bold tracking-normal text-midnight min-[681px]:text-[clamp(32px,3.4vw,43px)]'
         >
-          The five things buyers pay for
+          {heading}
         </h2>
 
         <ul

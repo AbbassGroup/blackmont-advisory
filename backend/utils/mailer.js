@@ -20,6 +20,7 @@ async function sendMail(msg) {
   if (msg.text) data.text = msg.text;
   if (msg.html) data.html = msg.html;
   if (msg.cc) data.cc = msg.cc;
+  if (msg.replyTo) data['h:Reply-To'] = msg.replyTo;
 
   if (msg.attachments && msg.attachments.length > 0) {
     data.attachment = msg.attachments.map(att => ({

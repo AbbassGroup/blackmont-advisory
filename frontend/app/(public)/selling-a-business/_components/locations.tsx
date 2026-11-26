@@ -1,31 +1,15 @@
 import { ArrowRight } from 'lucide-react';
 import { LandingLink } from '@/components/landing/landing-link';
 import { BROKER_LOCATIONS } from '@/lib/data/broker-locations';
+import { suburbHrefsFor } from '@/lib/data/suburb-pages';
 import { SectionShell, bodyText, cardTitle } from '@/components/landing/tabbed-page/section-shell';
 import { STATE_OUTLINES } from '@/components/landing/tabbed-page/state-outlines';
 
-const MELBOURNE_AREAS = [
-  'Melbourne CBD',
-  'Southbank',
-  'Docklands',
-  'South Melbourne',
-  'Port Melbourne',
-  'Richmond',
-  'South Yarra',
-  'St Kilda',
-  'Fitzroy',
-  'Brunswick',
-  'Hawthorn',
-  'Box Hill',
-  'Glen Waverley',
-  'Ringwood',
-  'Dandenong',
-  'Moorabbin',
-  'Frankston',
-  'Footscray',
-  'Werribee',
-  'Tullamarine',
-];
+// Every Melbourne area, in the same order and groups as the Melbourne city page.
+const MELBOURNE_AREAS = (BROKER_LOCATIONS.find((l) => l.slug === 'melbourne')?.areaGroups ?? []).flatMap((g) => g.areas);
+
+// Area name → suburb page URL (every area above has its own page).
+const AREA_LINKS = suburbHrefsFor('melbourne', '/selling-a-business');
 
 const STATES = [
   {
@@ -63,11 +47,23 @@ export function Locations() {
             We work with owners right across metropolitan Melbourne, including:
           </p>
           <ul className='m-0 flex list-none flex-wrap gap-2 p-0'>
-            {MELBOURNE_AREAS.map((area) => (
-              <li key={area} className='border border-advisory-rule bg-white px-3 py-1.5 text-sm text-ink'>
-                {area}
-              </li>
-            ))}
+            {MELBOURNE_AREAS.map((area) =>
+              AREA_LINKS[area] ? (
+                <li key={area}>
+                  <LandingLink
+                    href={AREA_LINKS[area]}
+                    className='inline-flex items-center gap-1.5 border border-gilt/50 bg-white px-3 py-1.5 text-sm font-semibold text-midnight transition-colors hover:border-gilt hover:bg-gilt/10 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-gilt'
+                  >
+                    {area}
+                    <ArrowRight size={13} aria-hidden='true' className='text-gilt' />
+                  </LandingLink>
+                </li>
+              ) : (
+                <li key={area} className='border border-advisory-rule bg-white px-3 py-1.5 text-sm text-ink'>
+                  {area}
+                </li>
+              ),
+            )}
           </ul>
         </div>
         <ul className='m-0 grid list-none gap-px self-start border border-advisory-rule bg-advisory-rule p-0 min-[541px]:grid-cols-2'>

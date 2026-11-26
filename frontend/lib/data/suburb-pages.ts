@@ -1,10 +1,18 @@
 import { brokerLocationBySlug, type BrokerLocation } from '@/lib/data/broker-locations';
 import type { LocationPage } from '@/lib/data/location-pages';
 import { BRISBANE } from '@/lib/data/suburbs/brisbane';
+import { BRISBANE_B } from '@/lib/data/suburbs/brisbane-b';
 import { MELBOURNE_A } from '@/lib/data/suburbs/melbourne-a';
 import { MELBOURNE_B } from '@/lib/data/suburbs/melbourne-b';
+import { MELBOURNE_C } from '@/lib/data/suburbs/melbourne-c';
+import { MELBOURNE_D } from '@/lib/data/suburbs/melbourne-d';
+import { MELBOURNE_E } from '@/lib/data/suburbs/melbourne-e';
+import { MELBOURNE_F } from '@/lib/data/suburbs/melbourne-f';
 import { PERTH } from '@/lib/data/suburbs/perth';
+import { PERTH_B } from '@/lib/data/suburbs/perth-b';
 import { SYDNEY } from '@/lib/data/suburbs/sydney';
+import { SYDNEY_B } from '@/lib/data/suburbs/sydney-b';
+import { SYDNEY_C } from '@/lib/data/suburbs/sydney-c';
 import type { SuburbEntry } from '@/lib/data/suburbs/types';
 
 /**
@@ -20,9 +28,10 @@ export type SuburbPage = LocationPage & {
   suburb: { slug: string; name: string; nearby: string[] };
   keyword: string;
   imageAlt: string;
+  keywords?: string[];
 };
 
-export const SUBURBS: SuburbEntry[] = [...MELBOURNE_A, ...MELBOURNE_B, ...SYDNEY, ...BRISBANE, ...PERTH];
+export const SUBURBS: SuburbEntry[] = [...MELBOURNE_A, ...MELBOURNE_B, ...MELBOURNE_C, ...MELBOURNE_D, ...MELBOURNE_E, ...MELBOURNE_F, ...SYDNEY, ...SYDNEY_B, ...SYDNEY_C, ...BRISBANE, ...BRISBANE_B, ...PERTH, ...PERTH_B];
 
 function cityOf(entry: SuburbEntry): BrokerLocation {
   const city = brokerLocationBySlug(entry.city);
