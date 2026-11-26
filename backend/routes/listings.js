@@ -302,9 +302,9 @@ router.delete('/:id/documents/:docId', auth, async (req, res) => {
   }
 });
 
-router.get('/:id/im', async (req, res) => {
-  try {
-    const { token } = req.query;
+// Resolves an IM share token into access flags. Shared by the PDF viewer and
+// its revisit ping so both apply identical revocation / 30-day expiry rules.
+async function resolveImAccess(token) {
     let isAuthorized = false;
     let isAdmin = false;
     let viewerEnquiry = null;
@@ -339,6 +339,40 @@ router.get('/:id/im', async (req, res) => {
         console.error('IM viewer token error:', err.message);
       }
     }
+
+    return { isAuthorized, isAdmin, viewerEnquiry, isRevoked };
+}
+
+// POST /:id/im/revisit?token=… — called by the PDF viewer page when a reader
+// returns to an already-open tab after being away (see viewImTemplate). Logs a
+// fresh IM view + broker notification and re-applies revocation / expiry, so a
+// tab left open doesn't hide repeat visits or outlive a revoke.
+router.post('/:id/im/revisit', async (req, res) => {
+  try {
+    const { isAuthorized, isAdmin, viewerEnquiry, isRevoked } = await resolveImAccess(req.query.token);
+    if (isAdmin) return res.json({ ok: true });
+    if (!viewerEnquiry) return res.status(403).json({ error: 'denied' });
+
+    recordImView({
+      listingId: req.params.id,
+      enquiry: viewerEnquiry,
+      accessDenied: !isAuthorized,
+      userAgent: req.get('User-Agent'),
+    });
+
+    if (isRevoked) return res.status(403).json({ error: 'expired' });
+    if (!isAuthorized) return res.status(403).json({ error: 'denied' });
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error('IM revisit error:', err);
+    return res.status(500).json({ error: 'server_error' });
+  }
+});
+
+router.get('/:id/im', async (req, res) => {
+  try {
+    const { token } = req.query;
+    const { isAuthorized, isAdmin, viewerEnquiry, isRevoked } = await resolveImAccess(token);
 
     // If this listing serves a web IM template (instead of PDFs), hand off to
     // the email-gated template viewer. The view is recorded when the recipient

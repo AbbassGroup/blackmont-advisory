@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useState, type FormEvent } from 'react';
+import { Suspense, useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
@@ -11,6 +11,11 @@ import { SessionLoading } from '@/components/portal/session-loading';
 import { ImReader, type ImTemplate } from '@/components/im';
 
 type GateError = '' | 'mismatch' | 'expired' | 'denied' | 'generic' | 'not_found_listing' | 'not_found_template';
+// A tab left open (or idle) this long is treated as a new visit when the reader
+// returns: we silently re-verify, which logs a fresh IM view, notifies the
+// broker and re-applies revocation / 30-day expiry.
+const SESSION_IDLE_MS = 30 * 60 * 1000;
+
 const ERROR_MESSAGES: Record<Exclude<GateError, '' | 'expired'>, string> = {
   mismatch: "This email doesn't match our records for this memorandum.",
   denied: 'This link is invalid or access has not been granted.',
@@ -25,6 +30,10 @@ function SecureImViewer({ listingId, token }: { listingId: string; token: string
   const [error, setError] = useState<GateError>('');
   const [template, setTemplate] = useState<ImTemplate | null>(null);
 
+  const verifiedEmailRef = useRef('');
+  const lastActiveRef = useRef(0);
+  const reverifyingRef = useRef(false);
+
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     if (!email.trim() || submitting) return;
@@ -32,6 +41,8 @@ function SecureImViewer({ listingId, token }: { listingId: string; token: string
     setError('');
     try {
       const { data } = await apiClient.post(`/api/listings/${listingId}/im-template/verify`, { token, email: email.trim() });
+      verifiedEmailRef.current = email.trim();
+      lastActiveRef.current = Date.now();
       setTemplate(data.template as ImTemplate);
     } catch (cause: unknown) {
       const code = (cause as { response?: { data?: { error?: string } } })?.response?.data?.error || '';
@@ -43,6 +54,40 @@ function SecureImViewer({ listingId, token }: { listingId: string; token: string
       else setError('generic');
     } finally { setSubmitting(false); }
   };
+
+  // Re-verify in the background when the reader comes back after being away.
+  const reverify = useCallback(async () => {
+    if (reverifyingRef.current || !verifiedEmailRef.current) return;
+    reverifyingRef.current = true;
+    try {
+      const { data } = await apiClient.post(`/api/listings/${listingId}/im-template/verify`, { token, email: verifiedEmailRef.current });
+      setTemplate(data.template as ImTemplate);
+    } catch (cause: unknown) {
+      const status = (cause as { response?: { status?: number; data?: { error?: string } } })?.response;
+      if (!status) return; // network blip: keep the current view, try again next return
+      // Access was revoked, expired or otherwise refused: lock the memorandum.
+      setTemplate(null);
+      setEmail('');
+      verifiedEmailRef.current = '';
+      setError(status.data?.error === 'expired' ? 'expired' : 'denied');
+    } finally {
+      reverifyingRef.current = false;
+    }
+  }, [listingId, token]);
+
+  useEffect(() => {
+    if (!template) return;
+    const onActivity = () => {
+      if (document.visibilityState !== 'visible') return;
+      const now = Date.now();
+      const idleFor = now - lastActiveRef.current;
+      lastActiveRef.current = now;
+      if (idleFor >= SESSION_IDLE_MS) void reverify();
+    };
+    const events = ['visibilitychange', 'focus', 'pointerdown', 'keydown', 'scroll', 'touchstart'] as const;
+    events.forEach((name) => (name === 'visibilitychange' ? document : window).addEventListener(name, onActivity, { passive: true }));
+    return () => events.forEach((name) => (name === 'visibilitychange' ? document : window).removeEventListener(name, onActivity));
+  }, [template, reverify]);
 
   if (template) return <ImReader sections={template.sections} brokerEmail={template.brokerEmail} templateId={template._id} />;
   if (error === 'expired') return <DocumentState title='This link has expired' description='This Information Memorandum is no longer available. If you believe this is an error, please contact the broker directly.' />;
