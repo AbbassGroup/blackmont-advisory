@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useState, type FormEvent } from 'react';
+import { Suspense, useEffect, useRef, useState, type FormEvent } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
@@ -10,11 +10,19 @@ import { LandingButton } from '@/components/landing/presentation';
 import { SessionLoading } from '@/components/portal/session-loading';
 import { ImReader, type ImTemplate } from '@/components/im';
 
-type GateError = '' | 'mismatch' | 'expired' | 'denied' | 'generic' | 'not_found_listing' | 'not_found_template';
+type GateError = '' | 'mismatch' | 'expired' | 'denied' | 'generic' | 'timeout' | 'not_found_listing' | 'not_found_template';
+// After this long with no activity (or with the tab in the background) the
+// memorandum locks and the reader must verify their email again. Each
+// re-verification logs a fresh IM view, notifies the broker and re-applies
+// revocation / 30-day expiry, so a tab left open can't hide repeat visits.
+const SESSION_IDLE_MS = 30 * 60 * 1000;
+const IDLE_CHECK_MS = 30 * 1000;
+
 const ERROR_MESSAGES: Record<Exclude<GateError, '' | 'expired'>, string> = {
   mismatch: "This email doesn't match our records for this memorandum.",
   denied: 'This link is invalid or access has not been granted.',
   generic: 'Something went wrong. Please try again.',
+  timeout: 'Your session timed out due to inactivity. Please verify your email again to continue.',
   not_found_listing: 'The requested listing could not be found.',
   not_found_template: 'The requested template could not be found.',
 };
@@ -25,6 +33,8 @@ function SecureImViewer({ listingId, token }: { listingId: string; token: string
   const [error, setError] = useState<GateError>('');
   const [template, setTemplate] = useState<ImTemplate | null>(null);
 
+  const lastActiveRef = useRef(0);
+
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     if (!email.trim() || submitting) return;
@@ -32,6 +42,7 @@ function SecureImViewer({ listingId, token }: { listingId: string; token: string
     setError('');
     try {
       const { data } = await apiClient.post(`/api/listings/${listingId}/im-template/verify`, { token, email: email.trim() });
+      lastActiveRef.current = Date.now();
       setTemplate(data.template as ImTemplate);
     } catch (cause: unknown) {
       const code = (cause as { response?: { data?: { error?: string } } })?.response?.data?.error || '';
@@ -43,6 +54,29 @@ function SecureImViewer({ listingId, token }: { listingId: string; token: string
       else setError('generic');
     } finally { setSubmitting(false); }
   };
+
+  // Idle timeout: lock the memorandum back to the email gate once the reader
+  // has been inactive (or away from the tab) for SESSION_IDLE_MS.
+  useEffect(() => {
+    if (!template) return;
+    const lock = () => { setTemplate(null); setEmail(''); setError('timeout'); };
+    const isIdle = () => Date.now() - lastActiveRef.current >= SESSION_IDLE_MS;
+    const onActivity = () => {
+      if (document.visibilityState !== 'visible') return;
+      // Check first: background-tab timers are throttled, so the interval may
+      // not have fired yet when the reader comes back.
+      if (isIdle()) return lock();
+      lastActiveRef.current = Date.now();
+    };
+    const timer = window.setInterval(() => { if (isIdle()) lock(); }, IDLE_CHECK_MS);
+    // Capture phase so scrolls inside nested containers (which don't bubble) count too.
+    const events = ['visibilitychange', 'focus', 'pointerdown', 'keydown', 'scroll', 'wheel', 'touchstart'] as const;
+    events.forEach((name) => window.addEventListener(name, onActivity, { capture: true, passive: true }));
+    return () => {
+      window.clearInterval(timer);
+      events.forEach((name) => window.removeEventListener(name, onActivity, { capture: true }));
+    };
+  }, [template]);
 
   if (template) return <ImReader sections={template.sections} brokerEmail={template.brokerEmail} templateId={template._id} />;
   if (error === 'expired') return <DocumentState title='This link has expired' description='This Information Memorandum is no longer available. If you believe this is an error, please contact the broker directly.' />;

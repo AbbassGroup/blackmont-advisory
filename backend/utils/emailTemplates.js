@@ -558,6 +558,41 @@ const viewImTemplate = (title, docsJson) => {
       scrollArea.scrollTop = scrollTop - walkY;
     });
 
+    // Idle timeout: after 30 minutes with no activity (or with the tab in the
+    // background) the documents are hidden behind a "session timed out" screen.
+    // Reopening reloads the page, which logs a fresh IM view, notifies the
+    // broker and re-checks revocation / 30-day expiry on the server.
+    (function () {
+      const IDLE_MS = 30 * 60 * 1000;
+      let lastActive = Date.now();
+      let locked = false;
+      function lock() {
+        if (locked) return;
+        locked = true;
+        document.body.innerHTML =
+          '<div style="font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;background:#f9f9f9">' +
+          '<div style="background:#fff;padding:48px 40px;border-radius:10px;box-shadow:0 2px 16px rgba(0,0,0,.08);text-align:center;max-width:440px;margin:20px">' +
+          '<div style="font-size:48px;margin-bottom:20px">⏱️</div>' +
+          '<h1 style="font-size:24px;color:#333;margin:0 0 12px">Your Session Has Timed Out</h1>' +
+          '<p style="color:#666;line-height:1.6;font-size:15px;margin:0 0 24px">For confidentiality, this Information Memorandum was closed after a period of inactivity.</p>' +
+          '<button id="im-reopen" style="padding:12px 28px;background:#1b2535;color:#fff;font-weight:bold;border:0;border-radius:6px;font-size:14px;cursor:pointer">Reopen Memorandum</button>' +
+          '</div></div>';
+        document.getElementById('im-reopen').onclick = function () { location.reload(); };
+      }
+      function isIdle() { return Date.now() - lastActive >= IDLE_MS; }
+      function onActivity() {
+        if (locked || document.visibilityState !== 'visible') return;
+        // Check first: background-tab timers are throttled, so the interval
+        // may not have fired yet when the reader comes back.
+        if (isIdle()) return lock();
+        lastActive = Date.now();
+      }
+      setInterval(function () { if (!locked && isIdle()) lock(); }, 30 * 1000);
+      ['visibilitychange', 'focus', 'pointerdown', 'keydown', 'scroll', 'wheel', 'touchstart'].forEach(function (n) {
+        window.addEventListener(n, onActivity, { capture: true, passive: true });
+      });
+    })();
+
     // Aggressive security blocks
     document.addEventListener('contextmenu', e => e.preventDefault());
     document.addEventListener('copy', e => e.preventDefault());

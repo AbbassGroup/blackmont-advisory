@@ -330,9 +330,9 @@ router.delete('/:id/documents/:docId', auth, async (req, res) => {
   }
 });
 
-router.get('/:id/im', async (req, res) => {
-  try {
-    const { token } = req.query;
+// Resolves an IM share token into access flags (admin preview, enquiry,
+// manual revocation, 30-day auto-expiry).
+async function resolveImAccess(token) {
     let isAuthorized = false;
     let isAdmin = false;
     let viewerEnquiry = null;
@@ -367,6 +367,14 @@ router.get('/:id/im', async (req, res) => {
         console.error('IM viewer token error:', err.message);
       }
     }
+
+    return { isAuthorized, isAdmin, viewerEnquiry, isRevoked };
+}
+
+router.get('/:id/im', async (req, res) => {
+  try {
+    const { token } = req.query;
+    const { isAuthorized, isAdmin, viewerEnquiry, isRevoked } = await resolveImAccess(token);
 
     // If this listing serves a web IM template (instead of PDFs), hand off to
     // the email-gated template viewer. The view is recorded when the recipient
