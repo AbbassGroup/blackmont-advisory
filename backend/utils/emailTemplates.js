@@ -558,48 +558,39 @@ const viewImTemplate = (title, docsJson) => {
       scrollArea.scrollTop = scrollTop - walkY;
     });
 
-    // Revisit tracking: a tab left open (or idle) for 30+ minutes counts as a
-    // new visit when the reader returns. Ping the server so it logs a fresh IM
-    // view, notifies the broker and re-checks revocation / expiry.
+    // Idle timeout: after 30 minutes with no activity (or with the tab in the
+    // background) the documents are hidden behind a "session timed out" screen.
+    // Reopening reloads the page, which logs a fresh IM view, notifies the
+    // broker and re-checks revocation / 30-day expiry on the server.
     (function () {
       const IDLE_MS = 30 * 60 * 1000;
-      const path = location.pathname.endsWith('/') ? location.pathname.slice(0, -1) : location.pathname;
-      const revisitUrl = path + '/revisit' + location.search;
       let lastActive = Date.now();
-      let pinging = false;
-      function lockViewer(expired) {
+      let locked = false;
+      function lock() {
+        if (locked) return;
+        locked = true;
         document.body.innerHTML =
           '<div style="font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;background:#f9f9f9">' +
           '<div style="background:#fff;padding:48px 40px;border-radius:10px;box-shadow:0 2px 16px rgba(0,0,0,.08);text-align:center;max-width:440px;margin:20px">' +
-          '<div style="font-size:48px;margin-bottom:20px">' + (expired ? '⏳' : '🔒') + '</div>' +
-          '<h1 style="font-size:24px;color:#333;margin:0 0 12px">' + (expired ? 'This Link Has Expired' : 'Access Denied') + '</h1>' +
-          '<p style="color:#666;line-height:1.6;font-size:15px;margin:0">This Information Memorandum is no longer available. If you believe this is an error, please contact the broker directly.</p>' +
+          '<div style="font-size:48px;margin-bottom:20px">⏱️</div>' +
+          '<h1 style="font-size:24px;color:#333;margin:0 0 12px">Your Session Has Timed Out</h1>' +
+          '<p style="color:#666;line-height:1.6;font-size:15px;margin:0 0 24px">For confidentiality, this Information Memorandum was closed after a period of inactivity.</p>' +
+          '<button id="im-reopen" style="padding:12px 28px;background:#1b2535;color:#fff;font-weight:bold;border:0;border-radius:6px;font-size:14px;cursor:pointer">Reopen Memorandum</button>' +
           '</div></div>';
+        document.getElementById('im-reopen').onclick = function () { location.reload(); };
       }
-      async function revisit() {
-        if (pinging) return;
-        pinging = true;
-        try {
-          const res = await fetch(revisitUrl, { method: 'POST' });
-          if (res.status === 403) {
-            const body = await res.json().catch(() => ({}));
-            lockViewer(body.error === 'expired');
-          }
-        } catch (e) { /* network blip: keep the view, retry on next return */ }
-        finally { pinging = false; }
-      }
+      function isIdle() { return Date.now() - lastActive >= IDLE_MS; }
       function onActivity() {
-        if (document.visibilityState !== 'visible') return;
-        const now = Date.now();
-        const idleFor = now - lastActive;
-        lastActive = now;
-        if (idleFor >= IDLE_MS) revisit();
+        if (locked || document.visibilityState !== 'visible') return;
+        // Check first: background-tab timers are throttled, so the interval
+        // may not have fired yet when the reader comes back.
+        if (isIdle()) return lock();
+        lastActive = Date.now();
       }
-      document.addEventListener('visibilitychange', onActivity);
-      ['focus', 'pointerdown', 'keydown', 'touchstart', 'wheel'].forEach(function (n) {
-        window.addEventListener(n, onActivity, { passive: true });
+      setInterval(function () { if (!locked && isIdle()) lock(); }, 30 * 1000);
+      ['visibilitychange', 'focus', 'pointerdown', 'keydown', 'scroll', 'wheel', 'touchstart'].forEach(function (n) {
+        window.addEventListener(n, onActivity, { capture: true, passive: true });
       });
-      scrollArea.addEventListener('scroll', onActivity, { passive: true });
     })();
 
     // Aggressive security blocks

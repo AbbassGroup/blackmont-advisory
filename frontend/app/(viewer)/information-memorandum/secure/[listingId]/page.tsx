@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
+import { Suspense, useEffect, useRef, useState, type FormEvent } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { apiClient } from '@/lib/api';
@@ -10,16 +10,19 @@ import { LandingButton } from '@/components/landing/presentation';
 import { SessionLoading } from '@/components/portal/session-loading';
 import { ImReader, type ImTemplate } from '@/components/im';
 
-type GateError = '' | 'mismatch' | 'expired' | 'denied' | 'generic' | 'not_found_listing' | 'not_found_template';
-// A tab left open (or idle) this long is treated as a new visit when the reader
-// returns: we silently re-verify, which logs a fresh IM view, notifies the
-// broker and re-applies revocation / 30-day expiry.
+type GateError = '' | 'mismatch' | 'expired' | 'denied' | 'generic' | 'timeout' | 'not_found_listing' | 'not_found_template';
+// After this long with no activity (or with the tab in the background) the
+// memorandum locks and the reader must verify their email again. Each
+// re-verification logs a fresh IM view, notifies the broker and re-applies
+// revocation / 30-day expiry, so a tab left open can't hide repeat visits.
 const SESSION_IDLE_MS = 30 * 60 * 1000;
+const IDLE_CHECK_MS = 30 * 1000;
 
 const ERROR_MESSAGES: Record<Exclude<GateError, '' | 'expired'>, string> = {
   mismatch: "This email doesn't match our records for this memorandum.",
   denied: 'This link is invalid or access has not been granted.',
   generic: 'Something went wrong. Please try again.',
+  timeout: 'Your session timed out due to inactivity. Please verify your email again to continue.',
   not_found_listing: 'The requested listing could not be found.',
   not_found_template: 'The requested template could not be found.',
 };
@@ -30,9 +33,7 @@ function SecureImViewer({ listingId, token }: { listingId: string; token: string
   const [error, setError] = useState<GateError>('');
   const [template, setTemplate] = useState<ImTemplate | null>(null);
 
-  const verifiedEmailRef = useRef('');
   const lastActiveRef = useRef(0);
-  const reverifyingRef = useRef(false);
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -41,7 +42,6 @@ function SecureImViewer({ listingId, token }: { listingId: string; token: string
     setError('');
     try {
       const { data } = await apiClient.post(`/api/listings/${listingId}/im-template/verify`, { token, email: email.trim() });
-      verifiedEmailRef.current = email.trim();
       lastActiveRef.current = Date.now();
       setTemplate(data.template as ImTemplate);
     } catch (cause: unknown) {
@@ -55,39 +55,28 @@ function SecureImViewer({ listingId, token }: { listingId: string; token: string
     } finally { setSubmitting(false); }
   };
 
-  // Re-verify in the background when the reader comes back after being away.
-  const reverify = useCallback(async () => {
-    if (reverifyingRef.current || !verifiedEmailRef.current) return;
-    reverifyingRef.current = true;
-    try {
-      const { data } = await apiClient.post(`/api/listings/${listingId}/im-template/verify`, { token, email: verifiedEmailRef.current });
-      setTemplate(data.template as ImTemplate);
-    } catch (cause: unknown) {
-      const status = (cause as { response?: { status?: number; data?: { error?: string } } })?.response;
-      if (!status) return; // network blip: keep the current view, try again next return
-      // Access was revoked, expired or otherwise refused: lock the memorandum.
-      setTemplate(null);
-      setEmail('');
-      verifiedEmailRef.current = '';
-      setError(status.data?.error === 'expired' ? 'expired' : 'denied');
-    } finally {
-      reverifyingRef.current = false;
-    }
-  }, [listingId, token]);
-
+  // Idle timeout: lock the memorandum back to the email gate once the reader
+  // has been inactive (or away from the tab) for SESSION_IDLE_MS.
   useEffect(() => {
     if (!template) return;
+    const lock = () => { setTemplate(null); setEmail(''); setError('timeout'); };
+    const isIdle = () => Date.now() - lastActiveRef.current >= SESSION_IDLE_MS;
     const onActivity = () => {
       if (document.visibilityState !== 'visible') return;
-      const now = Date.now();
-      const idleFor = now - lastActiveRef.current;
-      lastActiveRef.current = now;
-      if (idleFor >= SESSION_IDLE_MS) void reverify();
+      // Check first: background-tab timers are throttled, so the interval may
+      // not have fired yet when the reader comes back.
+      if (isIdle()) return lock();
+      lastActiveRef.current = Date.now();
     };
-    const events = ['visibilitychange', 'focus', 'pointerdown', 'keydown', 'scroll', 'touchstart'] as const;
-    events.forEach((name) => (name === 'visibilitychange' ? document : window).addEventListener(name, onActivity, { passive: true }));
-    return () => events.forEach((name) => (name === 'visibilitychange' ? document : window).removeEventListener(name, onActivity));
-  }, [template, reverify]);
+    const timer = window.setInterval(() => { if (isIdle()) lock(); }, IDLE_CHECK_MS);
+    // Capture phase so scrolls inside nested containers (which don't bubble) count too.
+    const events = ['visibilitychange', 'focus', 'pointerdown', 'keydown', 'scroll', 'wheel', 'touchstart'] as const;
+    events.forEach((name) => window.addEventListener(name, onActivity, { capture: true, passive: true }));
+    return () => {
+      window.clearInterval(timer);
+      events.forEach((name) => window.removeEventListener(name, onActivity, { capture: true }));
+    };
+  }, [template]);
 
   if (template) return <ImReader sections={template.sections} brokerEmail={template.brokerEmail} templateId={template._id} />;
   if (error === 'expired') return <DocumentState title='This link has expired' description='This Information Memorandum is no longer available. If you believe this is an error, please contact the broker directly.' />;
