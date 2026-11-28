@@ -243,7 +243,7 @@ function ProposalContent() {
 
       <ProposalDocument
         appearance='advisory'
-        contentClassName='mx-auto w-[calc(100%_-_40px)] max-w-advisory min-[681px]:w-[calc(100%_-_72px)] min-[1121px]:w-[calc(100%_-_104px)]'
+        contentClassName='lp-container'
         sections={proposal.sections ?? []}
         context={{
           template: proposal.template ?? 'business_appraisal',

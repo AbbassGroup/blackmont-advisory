@@ -58,7 +58,7 @@ export function WhyBlackmont() {
             {/* Gilt rule that draws across the top on hover. */}
             <span
               aria-hidden='true'
-              className='absolute inset-x-0 top-0 h-[3px] origin-left scale-x-0 bg-gilt transition-transform duration-300 ease-out group-hover:scale-x-100 motion-reduce:transition-none'
+              className='lp-card-bar'
             />
             <div className='mb-6 flex items-start justify-between'>
               <span className='flex size-12 items-center justify-center bg-midnight text-gilt transition-colors duration-300 group-hover:bg-gilt group-hover:text-midnight motion-reduce:transition-none'>

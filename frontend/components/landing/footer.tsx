@@ -13,6 +13,7 @@ const LINK_GROUPS: { heading: string; label: string; links: FooterLink[] }[] = [
       { label: 'Buying a Business', href: '/buying-a-business' },
       { label: 'Valuation', href: '/business-valuation' },
       { label: 'Business Brokers', href: '/business-brokers' },
+      { label: '$5M+ Acquisitions', href: '/listings/exclusive-5m-acquisition-opportunities' },
       { label: 'Exit Planning', href: '/exit' },
     ],
   },

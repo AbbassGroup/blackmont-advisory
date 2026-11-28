@@ -130,7 +130,7 @@ export function LandingHeader({ homePath = '' }: { homePath?: '' | '/' }) {
                 key={link.href}
                 href={link.href.startsWith('#') ? `${homePath}${link.href}` : link.href}
                 onClick={() => setOpen(false)}
-                className='py-[12px] text-[15px] leading-[1.5] font-semibold whitespace-nowrap transition-colors duration-200 ease-out hover:text-gilt hover:underline hover:underline-offset-[6px] focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none min-[1280px]:py-0 min-[1444px]:text-base'
+                className='lp-nav-link'
               >
                 {link.label}
               </LandingLink>

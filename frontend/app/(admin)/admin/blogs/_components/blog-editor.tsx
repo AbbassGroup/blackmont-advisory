@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { uploadBlogImage, blogErrorMessage, clampHeadings } from '@/lib/blogs';
+import { linkAttributesFor, normalizeInternalLinks } from '@/lib/blog-links';
 
 /**
  * Heading levels the toolbar offers. The article title is the page's h1, so the
@@ -30,7 +31,10 @@ import { uploadBlogImage, blogErrorMessage, clampHeadings } from '@/lib/blogs';
  * paste, since TipTap would otherwise drop it to a plain paragraph.
  */
 const HEADING_LEVELS = [2, 3, 4] as const;
-const toEditorHeadings = (html: string) => clampHeadings(html, HEADING_LEVELS[0], HEADING_LEVELS[HEADING_LEVELS.length - 1]);
+// Also strips TipTap's old default `nofollow`/new-tab from internal links, so
+// opening and re-saving an article cleans it, and pasted HTML arrives clean.
+const toEditorHeadings = (html: string) =>
+  normalizeInternalLinks(clampHeadings(html, HEADING_LEVELS[0], HEADING_LEVELS[HEADING_LEVELS.length - 1]));
 import { cn } from '@/lib/utils';
 
 /**
@@ -84,7 +88,9 @@ export function BlogEditor({
     extensions: [
       StarterKit.configure({
         heading: { levels: [...HEADING_LEVELS] },
-        link: { openOnClick: false, autolink: true },
+        // No blanket target/rel: TipTap's default adds `nofollow` + new tab to
+        // every link, including our own pages. handleSetLink picks per link.
+        link: { openOnClick: false, autolink: true, HTMLAttributes: { target: null, rel: null } },
       }),
       Underline,
       BlogImage,
@@ -138,7 +144,7 @@ export function BlogEditor({
       .chain()
       .focus()
       .extendMarkRange('link')
-      .setLink({ href: href.trim() })
+      .setLink({ href: href.trim(), ...linkAttributesFor(href) })
       .run();
   };
 

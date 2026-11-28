@@ -47,7 +47,7 @@ export function HowWeWork() {
               {String(i + 1).padStart(2, '0')}
             </span>
             <div className='min-w-0'>
-              <h3 className='m-0 mb-2 font-advisory-heading text-xl leading-[1.35] font-bold tracking-normal text-midnight'>
+              <h3 className='lp-card-title'>
                 <span className='sr-only'>Step {i + 1}: </span>
                 {title}
               </h3>

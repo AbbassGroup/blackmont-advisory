@@ -11,7 +11,7 @@ export const GUIDES: Guide[] = [
   {
     slug: 'is-my-business-ready-to-sell',
     h1: 'Is My Business Ready to Sell?',
-    pageTitle: 'Is My Business Ready to Sell?',
+    pageTitle: 'Is My Business Ready to Sell? 10 Things Buyers Check',
     metaDescription:
       'The ten things buyers check before making an offer on an Australian business, what a weak answer looks like against a strong one, and where owners lose value.',
     summary:

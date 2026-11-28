@@ -16,6 +16,7 @@ import { BuyerChecks } from './_components/buyer-checks';
 import { IndustryFaqs } from './_components/faqs';
 import { IndustryNextSteps } from './_components/next-steps';
 import { IndustryRelatedGuides } from './_components/related-guides';
+import { INDUSTRY_CASE_STUDIES } from '@/lib/data/industry-case-studies';
 import {
   CONTENT_UPDATED,
   indexableIndustryPages,
@@ -135,6 +136,7 @@ export default async function IndustryPage({ params }: IndustryPageProps) {
           multiple: multiple.trim(),
         }))}
         guides={guides}
+        caseStudies={INDUSTRY_CASE_STUDIES[page.slug]}
       />
     </div>
   );

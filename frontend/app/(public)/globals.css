@@ -239,6 +239,74 @@
   }
 }
 
+/* ── Landing primitives ────────────────────────────────────────────────────
+ * Short names for the long utility strings repeated on every marketing page.
+ * Server-rendered markup ships twice (HTML + the RSC payload that mirrors it),
+ * so each repeated class string costs double; collapsing them keeps the
+ * text-to-HTML ratio healthy. Components layer = any utility passed alongside
+ * (e.g. `font-normal`, `text-xs`) still overrides these. */
+@layer components {
+  .lp-container {
+    @apply mx-auto w-[calc(100%_-_40px)] max-w-advisory min-[681px]:w-[calc(100%_-_72px)] min-[1121px]:w-[calc(100%_-_104px)];
+  }
+  .lp-focus {
+    @apply focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-gilt;
+  }
+  .lp-text-link {
+    @apply focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-gilt font-advisory-body text-[15px] font-bold tracking-normal underline decoration-1 underline-offset-[5px] transition-colors duration-200 ease-out hover:text-gilt hover:decoration-2 motion-reduce:transition-none;
+  }
+  .lp-btn {
+    @apply focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-gilt inline-flex cursor-pointer items-center justify-center gap-2 rounded-none border font-advisory-body text-center text-sm leading-[1.45] font-bold tracking-normal no-underline transition-colors duration-200 ease-out motion-reduce:transition-none disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .lp-nav-link {
+    @apply focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-gilt py-[12px] text-[15px] leading-[1.5] font-semibold whitespace-nowrap transition-colors duration-200 ease-out hover:text-gilt hover:underline hover:underline-offset-[6px] motion-reduce:transition-none min-[1280px]:py-0 min-[1444px]:text-base;
+  }
+
+  /* Tabbed / location page sections */
+  .lp-section {
+    @apply scroll-mt-[56px] pt-9 pb-12 min-[681px]:pt-10 min-[681px]:pb-14 min-[1121px]:pt-12 min-[1121px]:pb-16;
+  }
+  .lp-section-title {
+    @apply m-0 font-advisory-heading text-[clamp(26px,5.6vw,32px)] leading-[1.25] font-bold tracking-normal text-midnight min-[681px]:text-[clamp(28px,3vw,38px)];
+  }
+  .lp-card-title {
+    @apply m-0 mb-2 font-advisory-heading text-xl leading-[1.35] font-bold tracking-normal text-midnight;
+  }
+  .lp-body {
+    @apply m-0 text-[15px] leading-[1.7] text-ink min-[681px]:text-base;
+  }
+
+  /* Linked cards (city / state cards with a faint outline behind) */
+  .lp-card {
+    @apply relative isolate flex h-full flex-col overflow-hidden border border-advisory-rule bg-white p-6 transition-[border-color,box-shadow,transform] duration-300 ease-out hover:-translate-y-1 hover:border-gilt/60 hover:shadow-[0_18px_40px_-24px_rgba(15,22,35,0.45)] focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none motion-reduce:hover:translate-y-0;
+  }
+  .lp-card-bar {
+    @apply absolute inset-x-0 top-0 h-[3px] origin-left scale-x-0 bg-gilt transition-transform duration-300 ease-out group-hover:scale-x-100 motion-reduce:transition-none;
+  }
+  .lp-outline {
+    @apply pointer-events-none absolute top-1/2 -z-10 w-auto -translate-y-1/2 fill-midnight/[0.06] transition-[fill,scale] duration-500 ease-out group-hover:scale-105 group-hover:fill-gilt/[0.2] motion-reduce:transition-none motion-reduce:group-hover:scale-100;
+  }
+  .lp-nudge {
+    @apply text-gilt transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none;
+  }
+
+  /* FAQ accordion */
+  .lp-faq-summary {
+    @apply flex cursor-pointer list-none items-start justify-between gap-6 py-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gilt [&::-webkit-details-marker]:hidden;
+  }
+  .lp-faq-q {
+    @apply m-0 font-advisory-heading text-lg leading-[1.4] font-bold tracking-normal text-midnight min-[681px]:text-xl;
+  }
+  .lp-faq-chevron {
+    @apply mt-1 shrink-0 text-gilt transition-transform duration-200 group-open:rotate-180 motion-reduce:transition-none;
+  }
+
+  /* Contact form field */
+  .lp-input {
+    @apply block min-h-[42px] w-full rounded-none border border-white/40 bg-deep-navy px-3 py-2.5 text-[15px] leading-[1.65] text-white caret-gilt outline-none transition-colors duration-150 placeholder:text-white/60 focus:border-gilt motion-reduce:transition-none disabled:cursor-not-allowed disabled:opacity-50;
+  }
+}
+
 /* ── Information Memorandum inline editing ─────────────────────────────── */
 .im-editable {
   outline: none;

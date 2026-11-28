@@ -33,7 +33,7 @@ export async function generateMetadata({
     `View details for ${listing.title} at Blackmont Advisory.`;
 
   return {
-    title: `${listing.title} | Blackmont Advisory`,
+    title: `${id === PINNED_ACQUISITION_LISTING_ID ? PINNED_ACQUISITION_LISTING.seoTitle : listing.title} | Blackmont Advisory`,
     description: seoDescription.slice(0, 160),
     alternates: { canonical: `/listings/${id}` },
     openGraph: {
@@ -98,17 +98,62 @@ export default async function ListingDetailPage({
     listing._id === PINNED_ACQUISITION_LISTING_ID;
 
   const listingUrl = `${SITE_URL}/listings/${listing._id}`;
+  const description = listing.summary || listing.description || listing.title;
+  const image = listing.image
+    ? listing.image.startsWith('/')
+      ? `${SITE_URL}${listing.image}`
+      : listing.image
+    : undefined;
+  // Google's Product markup is only valid with an `offers` price (or ratings,
+  // which we don't have). Emit it only for a real numeric asking price — a
+  // "P.O.A" listing gets no Product rather than an invalid one.
+  const askingPrice = /^\$?\s*[\d,]+(\.\d+)?$/.test(listing.price?.trim() ?? '')
+    ? Number(listing.price!.replace(/[^\d.]/g, ''))
+    : null;
+  const availability =
+    listing.saleStatus === 'sold'
+      ? 'https://schema.org/SoldOut'
+      : listing.saleStatus === 'under-offer'
+        ? 'https://schema.org/LimitedAvailability'
+        : 'https://schema.org/InStock';
+
+  const primaryEntity = isPinnedAcquisitionListing
+    ? {
+        // Not an item for sale: a buyer-side service for $5M+ acquisitions.
+        '@context': 'https://schema.org',
+        '@type': 'Service',
+        name: listing.title,
+        description:
+          'Exclusive access to off-market Australian business acquisition opportunities valued at $5 million and above.',
+        serviceType: 'Business acquisition advisory',
+        url: listingUrl,
+        ...(image ? { image } : {}),
+        areaServed: { '@type': 'Country', name: 'Australia' },
+        provider: { '@id': `${SITE_URL}/#organization` },
+      }
+    : askingPrice
+      ? {
+          '@context': 'https://schema.org',
+          '@type': 'Product',
+          name: listing.title,
+          description,
+          ...(image ? { image } : {}),
+          ...(listing.category ? { category: listing.category } : {}),
+          url: listingUrl,
+          brand: { '@type': 'Brand', name: 'Blackmont Advisory' },
+          offers: {
+            '@type': 'Offer',
+            price: askingPrice,
+            priceCurrency: 'AUD',
+            availability,
+            url: listingUrl,
+            seller: { '@id': `${SITE_URL}/#organization` },
+          },
+        }
+      : null;
+
   const structuredData = [
-    {
-      '@context': 'https://schema.org',
-      '@type': 'Product',
-      name: listing.title,
-      description: listing.summary || listing.description || listing.title,
-      ...(listing.image ? { image: listing.image } : {}),
-      category: listing.category,
-      url: listingUrl,
-      brand: { '@type': 'Brand', name: 'Blackmont Advisory' },
-    },
+    ...(primaryEntity ? [primaryEntity] : []),
     {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',

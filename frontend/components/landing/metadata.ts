@@ -8,8 +8,8 @@ const DESCRIPTION =
 // NOTE: openGraph/twitter are REPLACED (not deep-merged) by Next.js, so this
 // block re-declares images/siteName/locale to keep the root layout's defaults.
 export const landingMetadata: Metadata = {
-  title:
-    'Blackmont Advisory | Boutique M&A Advisory for Business Sales & Acquisitions',
+  // Keep the <title> under ~60 characters so Google shows it untruncated.
+  title: 'M&A Advisory for Business Sales | Blackmont Advisory',
   description: DESCRIPTION,
   alternates: { canonical: '/' },
   openGraph: {

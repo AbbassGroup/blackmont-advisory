@@ -29,7 +29,7 @@ export function SectionShell({
       id={id}
       aria-labelledby={headingId}
       className={cn(
-        'scroll-mt-[56px] pt-9 pb-12 min-[681px]:pt-10 min-[681px]:pb-14 min-[1121px]:pt-12 min-[1121px]:pb-16',
+        'lp-section',
         tone === 'canvas' ? 'bg-canvas' : 'bg-white',
       )}
     >
@@ -38,7 +38,7 @@ export function SectionShell({
           <h2
             data-landing-reveal
             id={headingId}
-            className='m-0 font-advisory-heading text-[clamp(26px,5.6vw,32px)] leading-[1.25] font-bold tracking-normal text-midnight min-[681px]:text-[clamp(28px,3vw,38px)]'
+            className='lp-section-title'
           >
             {heading}
           </h2>
@@ -55,5 +55,5 @@ export function SectionShell({
 }
 
 export const cardTitle =
-  'm-0 mb-2 font-advisory-heading text-xl leading-[1.35] font-bold tracking-normal text-midnight';
-export const bodyText = 'm-0 text-[15px] leading-[1.7] text-ink min-[681px]:text-base';
+  'lp-card-title';
+export const bodyText = 'lp-body';

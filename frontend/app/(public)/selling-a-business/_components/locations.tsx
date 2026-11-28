@@ -3,7 +3,7 @@ import { LandingLink } from '@/components/landing/landing-link';
 import { BROKER_LOCATIONS } from '@/lib/data/broker-locations';
 import { suburbHrefsFor } from '@/lib/data/suburb-pages';
 import { SectionShell, bodyText, cardTitle } from '@/components/landing/tabbed-page/section-shell';
-import { STATE_OUTLINES } from '@/components/landing/tabbed-page/state-outlines';
+import { StateOutline } from '@/components/landing/tabbed-page/state-outlines';
 
 // Every Melbourne area, in the same order and groups as the Melbourne city page.
 const MELBOURNE_AREAS = (BROKER_LOCATIONS.find((l) => l.slug === 'melbourne')?.areaGroups ?? []).flatMap((g) => g.areas);
@@ -72,23 +72,17 @@ export function Locations() {
             const place = BROKER_LOCATIONS.find((location) => location.outline === title);
             const card = (
               <>
-                {STATE_OUTLINES[title] && (
-                  // Decorative state outline, sitting faintly behind the text.
-                  <svg
-                    aria-hidden='true'
-                    focusable='false'
-                    viewBox={STATE_OUTLINES[title].viewBox}
-                    className='pointer-events-none absolute top-1/2 -right-4 -z-10 h-[88%] w-auto -translate-y-1/2 fill-midnight/[0.08] transition-[fill,scale] duration-500 ease-out group-hover:scale-105 group-hover:fill-gilt/[0.22] motion-reduce:transition-none motion-reduce:group-hover:scale-100'
-                  >
-                    <path d={STATE_OUTLINES[title].d} />
-                  </svg>
-                )}
+                {/* Decorative state outline, sitting faintly behind the text. */}
+                <StateOutline
+                  name={title}
+                  className='lp-outline -right-4 h-[88%] fill-midnight/[0.08] group-hover:fill-gilt/[0.22]'
+                />
                 <h3 className={cardTitle}>{title}</h3>
                 <p className='m-0 text-[15px] leading-[1.65] text-ink'>{text}</p>
                 {place && (
                   <span className='mt-4 inline-flex items-center gap-2 text-sm font-bold text-midnight'>
                     Sell a business in {place.city}
-                    <ArrowRight size={16} aria-hidden='true' className='text-gilt transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none' />
+                    <ArrowRight size={16} aria-hidden='true' className='lp-nudge' />
                   </span>
                 )}
               </>

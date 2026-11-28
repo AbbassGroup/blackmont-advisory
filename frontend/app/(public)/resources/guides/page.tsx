@@ -86,7 +86,7 @@ export default async function ResourceGuidesPage({ searchParams }: GuidesPagePro
         <>
           <div className='bg-white pt-14 min-[681px]:pt-16 min-[1121px]:pt-20'>
             <LandingContainer>
-              <h2 className='m-0 font-advisory-heading text-[clamp(26px,5.6vw,32px)] leading-[1.25] font-bold tracking-normal text-midnight min-[681px]:text-[clamp(28px,3vw,38px)]'>
+              <h2 className='lp-section-title'>
                 In-depth selling guides
               </h2>
             </LandingContainer>

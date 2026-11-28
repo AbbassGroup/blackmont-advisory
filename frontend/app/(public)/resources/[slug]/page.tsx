@@ -15,6 +15,7 @@ import {
 } from '@/lib/blogs';
 import { authorPath } from '@/lib/authors';
 import { faqJsonLd } from '@/lib/seo';
+import { normalizeInternalLinks } from '@/lib/blog-links';
 import { JsonLd } from '@/components/seo/json-ld';
 import { BlogFaqs, BlogKeyTakeaways } from '../_components/blog-answers';
 import { BlogAuthorBox } from '../_components/blog-author-box';
@@ -294,10 +295,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               {keyTakeaways.length > 0 && <BlogKeyTakeaways items={keyTakeaways} />}
 
               {/* Article body, authored in the admin editor. Any h1 in it is
-                  demoted so the title above stays the page's only h1. */}
+                  demoted so the title above stays the page's only h1, and
+                  internal links lose any stored nofollow/new-tab attributes. */}
               <div
                 className={ARTICLE_CLASS}
-                dangerouslySetInnerHTML={{ __html: clampHeadings(blog.content) }}
+                dangerouslySetInnerHTML={{ __html: normalizeInternalLinks(clampHeadings(blog.content)) }}
               />
 
               {faqs.length > 0 && <BlogFaqs items={faqs} />}

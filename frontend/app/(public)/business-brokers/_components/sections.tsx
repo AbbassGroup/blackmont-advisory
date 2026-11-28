@@ -51,7 +51,7 @@ export function WhatWeDo() {
               href={href}
               className='group relative flex h-full flex-col overflow-hidden border border-advisory-rule bg-white p-7 transition-[border-color,box-shadow,transform] duration-300 ease-out hover:-translate-y-1 hover:border-gilt hover:shadow-[0_22px_48px_-28px_rgba(15,22,35,0.55)] focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none motion-reduce:hover:translate-y-0 min-[681px]:p-8'
             >
-              <span aria-hidden='true' className='absolute inset-x-0 top-0 h-[3px] origin-left scale-x-0 bg-gilt transition-transform duration-300 ease-out group-hover:scale-x-100 motion-reduce:transition-none' />
+              <span aria-hidden='true' className='lp-card-bar' />
               <span className='mb-5 flex size-12 items-center justify-center bg-midnight text-gilt transition-colors duration-300 group-hover:bg-gilt group-hover:text-midnight motion-reduce:transition-none'>
                 <Icon size={22} strokeWidth={1.75} aria-hidden='true' />
               </span>
@@ -59,7 +59,7 @@ export function WhatWeDo() {
               <p className={`${bodyText} mb-6`}>{text}</p>
               <span className='mt-auto inline-flex items-center gap-2 text-sm font-bold text-midnight'>
                 {cta}
-                <ArrowRight size={16} aria-hidden='true' className='text-gilt transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none' />
+                <ArrowRight size={16} aria-hidden='true' className='lp-nudge' />
               </span>
             </LandingLink>
           </li>

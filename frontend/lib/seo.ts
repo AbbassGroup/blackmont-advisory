@@ -71,6 +71,14 @@ export function breadcrumbJsonLd(
   };
 }
 
+/**
+ * A free online tool page (calculator, scorecard, report).
+ *
+ * Deliberately a WebPage, not WebApplication/SoftwareApplication: Google
+ * validates those as a Software App rich result, which REQUIRES
+ * `aggregateRating` or `review`. We have no genuine ratings, so that markup
+ * was reported as a structured-data error on every tool page.
+ */
 export function webAppJsonLd({
   name,
   description,
@@ -82,21 +90,22 @@ export function webAppJsonLd({
 }): Json {
   return {
     '@context': 'https://schema.org',
-    '@type': 'WebApplication',
+    '@type': 'WebPage',
     name,
     description,
     url: absoluteUrl(path),
-    applicationCategory: 'BusinessApplication',
-    operatingSystem: 'Web',
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'AUD' },
-    provider: {
-      '@type': 'Organization',
-      name: ORG_NAME,
-      url: absoluteUrl(),
-    },
+    inLanguage: 'en-AU',
+    isPartOf: { '@type': 'WebSite', name: ORG_NAME, url: absoluteUrl() },
+    publisher: { '@id': `${SITE_URL}/#organization` },
   };
 }
 
+/**
+ * Summary-page list (Google's "carousel" format): each ListItem carries only
+ * `position` and `url`. Mixing `name`/`description` in without an `item`
+ * matches neither of Google's two ListItem shapes and gets flagged as an error.
+ * `name`/`description` stay in the input type so callers needn't change.
+ */
 export function itemListJsonLd(
   name: string,
   items: { name: string; description: string; path: string }[],
@@ -108,8 +117,6 @@ export function itemListJsonLd(
     itemListElement: items.map((it, i) => ({
       '@type': 'ListItem',
       position: i + 1,
-      name: it.name,
-      description: it.description,
       url: absoluteUrl(it.path),
     })),
   };

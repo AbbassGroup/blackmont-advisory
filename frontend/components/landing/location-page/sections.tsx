@@ -6,19 +6,9 @@ import {
   bodyText,
   cardTitle,
 } from '@/components/landing/tabbed-page/section-shell';
-import { STATE_OUTLINES } from '@/components/landing/tabbed-page/state-outlines';
+import { StateOutline } from '@/components/landing/tabbed-page/state-outlines';
 import type { RecentAcquisition } from '@/lib/data/recent-acquisitions';
 import type { LocationPage, Tip } from '@/lib/data/location-pages';
-
-function StateOutline({ name, className }: { name: string; className: string }) {
-  const outline = STATE_OUTLINES[name];
-  if (!outline) return null;
-  return (
-    <svg aria-hidden='true' focusable='false' viewBox={outline.viewBox} className={className}>
-      <path d={outline.d} />
-    </svg>
-  );
-}
 
 /* ── Overview: local copy beside a navy highlights panel ─────── */
 
@@ -73,7 +63,7 @@ export function StepsSection({
               {String(i + 1).padStart(2, '0')}
             </span>
             <div className='min-w-0'>
-              <h3 className='m-0 mb-2 font-advisory-heading text-xl leading-[1.35] font-bold tracking-normal text-midnight'>
+              <h3 className='lp-card-title'>
                 <span className='sr-only'>Step {i + 1}: </span>
                 {title}
               </h3>
@@ -201,12 +191,12 @@ export function CityLinks({
           <li key={city.href}>
             <LandingLink
               href={city.href}
-              className='group relative isolate flex h-full min-h-[170px] flex-col overflow-hidden border border-advisory-rule bg-white p-6 transition-[border-color,box-shadow,transform] duration-300 ease-out hover:-translate-y-1 hover:border-gilt/60 hover:shadow-[0_18px_40px_-24px_rgba(15,22,35,0.45)] focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none motion-reduce:hover:translate-y-0'
+              className='lp-card group min-h-[170px]'
             >
-              <span aria-hidden='true' className='absolute inset-x-0 top-0 h-[3px] origin-left scale-x-0 bg-gilt transition-transform duration-300 ease-out group-hover:scale-x-100 motion-reduce:transition-none' />
+              <span aria-hidden='true' className='lp-card-bar' />
               <StateOutline
                 name={city.outline}
-                className='pointer-events-none absolute top-1/2 -right-6 -z-10 h-[78%] w-auto -translate-y-1/2 fill-midnight/[0.06] transition-[fill,scale] duration-500 ease-out group-hover:scale-105 group-hover:fill-gilt/[0.2] motion-reduce:transition-none motion-reduce:group-hover:scale-100'
+                className='lp-outline -right-6 h-[78%]'
               />
               <span className='mb-3 text-xs font-bold tracking-[0.14em] text-gilt uppercase'>
                 {city.state} · {city.stateAbbr}
@@ -214,7 +204,7 @@ export function CityLinks({
               <span className='mb-6 font-advisory-heading text-2xl leading-[1.3] font-bold text-midnight'>{city.city}</span>
               <span className='mt-auto inline-flex items-center gap-2 text-sm font-bold text-midnight'>
                 {city.cta}
-                <ArrowRight size={16} aria-hidden='true' className='text-gilt transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none' />
+                <ArrowRight size={16} aria-hidden='true' className='lp-nudge' />
               </span>
             </LandingLink>
           </li>

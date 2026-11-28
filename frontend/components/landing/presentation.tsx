@@ -11,7 +11,7 @@ export function LandingContainer({
   return (
     <div
       className={cn(
-        'mx-auto w-[calc(100%_-_40px)] max-w-advisory min-[681px]:w-[calc(100%_-_72px)] min-[1121px]:w-[calc(100%_-_104px)]',
+        'lp-container',
         className,
       )}
       {...props}
@@ -71,7 +71,7 @@ export function LandingSectionIntro({
 }
 
 export const landingButtonVariants = cva(
-  'inline-flex cursor-pointer items-center justify-center gap-2 rounded-none border font-advisory-body text-center text-sm leading-[1.45] font-bold tracking-normal no-underline transition-colors duration-200 ease-out focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none disabled:cursor-not-allowed disabled:opacity-50',
+  'lp-btn',
   {
     variants: {
       size: {
@@ -140,7 +140,7 @@ export function LandingTextLink({
   return (
     <LandingLink
       className={cn(
-        'font-advisory-body text-[15px] font-bold tracking-normal underline decoration-1 underline-offset-[5px] transition-colors duration-200 ease-out hover:text-gilt hover:decoration-2 focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-gilt motion-reduce:transition-none',
+        'lp-text-link',
         {
           'text-midnight': tone === 'midnight',
           'text-gilt': tone === 'gilt',

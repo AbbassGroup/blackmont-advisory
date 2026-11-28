@@ -6,13 +6,16 @@ import {
 import { LandingLink } from '@/components/landing/landing-link';
 import { LastUpdated } from '@/components/seo/last-updated';
 import type { Guide } from '@/lib/data/guides';
+import type { IndustryCaseStudy } from '@/lib/data/industry-case-studies';
 
 type RelatedGuidesProps = {
   industries: { slug: string; title: string; multiple: string }[];
   guides: Pick<Guide, 'slug' | 'h1' | 'summary'>[];
+  /** Real deals in this sector; the section is omitted when empty. */
+  caseStudies?: IndustryCaseStudy[];
 };
 
-export function IndustryRelatedGuides({ industries, guides }: RelatedGuidesProps) {
+export function IndustryRelatedGuides({ industries, guides, caseStudies = [] }: RelatedGuidesProps) {
   return (
     <div className='bg-white text-ink py-14 min-[681px]:py-16 min-[1121px]:py-20'>
       <LandingContainer>
@@ -71,6 +74,37 @@ export function IndustryRelatedGuides({ industries, guides }: RelatedGuidesProps
                 </li>
               ))}
             </ul>
+          </section>
+        )}
+
+        {caseStudies.length > 0 && (
+          <section
+            aria-labelledby='sector-case-studies-title'
+            className={industries.length || guides.length ? 'mt-10 border-t border-advisory-rule pt-10' : undefined}
+          >
+            <h2
+              id='sector-case-studies-title'
+              className='m-0 font-advisory-heading text-[29px] leading-[1.3] font-bold tracking-normal text-midnight min-[681px]:text-[34px]'
+            >
+              Recent deals in this sector
+            </h2>
+            <ul role='list' className='m-0 mt-6 grid list-none gap-7 p-0 min-[931px]:grid-cols-3 min-[931px]:gap-10'>
+              {caseStudies.map(({ slug, title, summary }) => (
+                <li key={slug}>
+                  <LandingTextLink
+                    href={`/resources/${slug}`}
+                    className='inline-flex min-h-11 items-start gap-3 font-advisory-heading text-[21px] leading-[1.45] no-underline'
+                  >
+                    {title}
+                    <ArrowUpRight aria-hidden='true' className='mt-1.5 size-4 shrink-0 text-gilt' />
+                  </LandingTextLink>
+                  <p className='mt-3 mb-0 text-[15px] leading-[1.8]'>{summary}</p>
+                </li>
+              ))}
+            </ul>
+            <LandingTextLink href='/resources/case-studies' className='mt-7 inline-flex min-h-11 items-center'>
+              See all case studies
+            </LandingTextLink>
           </section>
         )}
 

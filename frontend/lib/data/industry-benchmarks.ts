@@ -59,7 +59,7 @@ export const INDUSTRY_BENCHMARKS: IndustryBenchmark[] = [
     page: {
       slug: 'cafe-or-restaurant',
       h1: 'Selling a Café or Restaurant in Australia',
-      pageTitle: 'Selling a Café or Restaurant in Australia',
+      pageTitle: 'Sell a Café or Restaurant: Multiples, Value & Timing',
       metaDescription:
         'What do cafés and restaurants sell for in Australia? Typical multiples, price ranges, time to sell, and what buyers check before making an offer.',
       covers: 'café and restaurant',
@@ -153,7 +153,7 @@ export const INDUSTRY_BENCHMARKS: IndustryBenchmark[] = [
     page: {
       slug: 'trades-business',
       h1: 'Selling a Trades Business in Australia',
-      pageTitle: 'Selling a Trades Business in Australia',
+      pageTitle: 'Sell a Trades Business: Multiples, Value & Timing',
       metaDescription:
         'What do plumbing, electrical and HVAC businesses sell for in Australia? Typical multiples, price ranges, time to sell, and what buyers pay a premium for.',
       covers: 'plumbing, electrical, HVAC, pest control and similar',
@@ -247,7 +247,7 @@ export const INDUSTRY_BENCHMARKS: IndustryBenchmark[] = [
     page: {
       slug: 'retail-business',
       h1: 'Selling a Retail Business in Australia',
-      pageTitle: 'Selling a Retail Business in Australia',
+      pageTitle: 'Sell a Retail Business: Multiples, Value & Timing',
       metaDescription:
         'What do Australian retail shops sell for? Typical multiples, price ranges, time to sell, and how your lease and stock affect what a buyer will pay.',
       covers: 'retail',
@@ -341,7 +341,7 @@ export const INDUSTRY_BENCHMARKS: IndustryBenchmark[] = [
     page: {
       slug: 'professional-services-firm',
       h1: 'Selling a Professional Services Firm in Australia',
-      pageTitle: 'Selling a Professional Services Firm in Australia',
+      pageTitle: 'Sell a Professional Services Firm: Value & Multiples',
       metaDescription:
         'What do accounting, financial planning, law, IT and consulting firms sell for in Australia? Typical multiples, price ranges and what buyers examine.',
       covers: 'professional services',
@@ -435,7 +435,7 @@ export const INDUSTRY_BENCHMARKS: IndustryBenchmark[] = [
     page: {
       slug: 'allied-health-practice',
       h1: 'Selling an Allied Health Practice in Australia',
-      pageTitle: 'Selling an Allied Health Practice in Australia',
+      pageTitle: 'Sell an Allied Health Practice: Value & Multiples',
       metaDescription:
         'What do physiotherapy, dental, psychology and other allied health practices sell for in Australia? Typical multiples, price ranges, and what buyers examine.',
       covers: 'allied health',
@@ -529,7 +529,7 @@ export const INDUSTRY_BENCHMARKS: IndustryBenchmark[] = [
     page: {
       slug: 'manufacturing-business',
       h1: 'Selling a Manufacturing Business in Australia',
-      pageTitle: 'Selling a Manufacturing Business in Australia',
+      pageTitle: 'Sell a Manufacturing Business: Value & Multiples',
       metaDescription:
         'What do Australian manufacturing businesses sell for? Typical EBITDA multiples, price ranges, time to sell, and what buyers examine during due diligence.',
       covers: 'manufacturing',
@@ -623,7 +623,7 @@ export const INDUSTRY_BENCHMARKS: IndustryBenchmark[] = [
     page: {
       slug: 'ecommerce-business',
       h1: 'Selling an Ecommerce Business in Australia',
-      pageTitle: 'Selling an Ecommerce Business in Australia',
+      pageTitle: 'Sell an Ecommerce Business: Multiples, Value & Timing',
       metaDescription:
         'What do Australian ecommerce businesses sell for? Typical multiples, price ranges, time to sell, and how platform concentration and margin trends affect the price.',
       covers: 'ecommerce',
@@ -717,7 +717,7 @@ export const INDUSTRY_BENCHMARKS: IndustryBenchmark[] = [
     page: {
       slug: 'childcare-centre',
       h1: 'Selling a Childcare Centre in Australia',
-      pageTitle: 'Selling a Childcare Centre in Australia',
+      pageTitle: 'Sell a Childcare Centre: Multiples, Value & Timing',
       metaDescription:
         'What do childcare centres and OSHC services sell for in Australia? Typical multiples, price ranges, time to sell, and how occupancy and your rating affect the price.',
       covers: 'childcare and OSHC',
@@ -811,7 +811,7 @@ export const INDUSTRY_BENCHMARKS: IndustryBenchmark[] = [
     page: {
       slug: 'transport-logistics-business',
       h1: 'Selling a Transport or Logistics Business in Australia',
-      pageTitle: 'Selling a Transport or Logistics Business in Australia',
+      pageTitle: 'Sell a Transport or Logistics Business: Value Guide',
       metaDescription:
         'What do Australian transport and logistics businesses sell for? Typical multiples, price ranges, time to sell, and how compliance history affects the price.',
       covers: 'transport and logistics',
@@ -905,7 +905,7 @@ export const INDUSTRY_BENCHMARKS: IndustryBenchmark[] = [
     page: {
       slug: 'hair-and-beauty-salon',
       h1: 'Selling a Hair or Beauty Salon in Australia',
-      pageTitle: 'Selling a Hair or Beauty Salon in Australia',
+      pageTitle: 'Sell a Hair or Beauty Salon: Multiples, Value & Timing',
       metaDescription:
         'What do Australian hair and beauty salons sell for? Typical multiples, price ranges, time to sell, and why your client database and staff decide the price.',
       covers: 'hair and beauty',

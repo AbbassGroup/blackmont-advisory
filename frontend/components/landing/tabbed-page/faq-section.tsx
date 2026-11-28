@@ -28,14 +28,14 @@ export function FaqSection({
       <div className='border-b border-advisory-rule'>
         {faqs.map(({ q, a, link }, i) => (
           <details key={q} open={i === 0} className='group border-t border-advisory-rule'>
-            <summary className='flex cursor-pointer list-none items-start justify-between gap-6 py-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gilt [&::-webkit-details-marker]:hidden'>
-              <h3 className='m-0 font-advisory-heading text-lg leading-[1.4] font-bold tracking-normal text-midnight min-[681px]:text-xl'>
+            <summary className='lp-faq-summary'>
+              <h3 className='lp-faq-q'>
                 {q}
               </h3>
               <ChevronDown
                 size={20}
                 aria-hidden='true'
-                className='mt-1 shrink-0 text-gilt transition-transform duration-200 group-open:rotate-180 motion-reduce:transition-none'
+                className='lp-faq-chevron'
               />
             </summary>
             <div className='pb-6'>

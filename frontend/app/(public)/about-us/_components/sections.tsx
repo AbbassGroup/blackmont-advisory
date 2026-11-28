@@ -186,7 +186,7 @@ export function Services() {
                     : 'border-advisory-rule bg-white text-midnight hover:border-gilt',
                 )}
               >
-                <span aria-hidden='true' className='absolute inset-x-0 top-0 h-[3px] origin-left scale-x-0 bg-gilt transition-transform duration-300 ease-out group-hover:scale-x-100 motion-reduce:transition-none' />
+                <span aria-hidden='true' className='lp-card-bar' />
                 <div className='mb-6 flex items-center gap-4'>
                   <span className={cn('flex size-12 items-center justify-center', dark ? 'bg-gilt text-midnight' : 'bg-midnight text-gilt')}>
                     <Icon size={22} strokeWidth={1.75} aria-hidden='true' />
@@ -207,7 +207,7 @@ export function Services() {
                 </ul>
                 <span className={cn('mt-auto inline-flex items-center gap-2 text-sm font-bold', dark ? 'text-gilt' : 'text-midnight')}>
                   {cta}
-                  <ArrowRight size={16} aria-hidden='true' className='text-gilt transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none' />
+                  <ArrowRight size={16} aria-hidden='true' className='lp-nudge' />
                 </span>
               </LandingLink>
             </li>

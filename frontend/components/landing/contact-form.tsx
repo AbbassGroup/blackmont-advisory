@@ -80,7 +80,7 @@ function ContactField({
     'aria-invalid': Boolean(error),
     'aria-describedby': error ? errorId : undefined,
     className: cn(
-      'block min-h-[42px] w-full rounded-none border border-white/40 bg-deep-navy px-3 py-2.5 text-[15px] leading-[1.65] text-white caret-gilt outline-none transition-colors duration-150 placeholder:text-white/60 focus:border-gilt motion-reduce:transition-none disabled:cursor-not-allowed disabled:opacity-50',
+      'lp-input',
       error && 'border-red-300',
     ),
   };

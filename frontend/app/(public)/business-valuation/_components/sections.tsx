@@ -221,7 +221,7 @@ export function ValueDrivers() {
               key={title}
               className='group relative flex flex-col overflow-hidden border border-advisory-rule bg-white p-6 transition-[border-color,box-shadow,transform] duration-300 ease-out hover:-translate-y-1 hover:border-gilt/60 hover:shadow-[0_18px_40px_-24px_rgba(15,22,35,0.45)] min-[681px]:p-7 motion-reduce:transition-none motion-reduce:hover:translate-y-0'
             >
-              <span aria-hidden='true' className='absolute inset-x-0 top-0 h-[3px] origin-left scale-x-0 bg-gilt transition-transform duration-300 ease-out group-hover:scale-x-100 motion-reduce:transition-none' />
+              <span aria-hidden='true' className='lp-card-bar' />
               <div className='mb-5 flex items-start justify-between'>
                 <span className='flex size-12 items-center justify-center bg-midnight text-gilt transition-colors duration-300 group-hover:bg-gilt group-hover:text-midnight motion-reduce:transition-none'>
                   <Icon size={22} strokeWidth={1.75} aria-hidden='true' />
