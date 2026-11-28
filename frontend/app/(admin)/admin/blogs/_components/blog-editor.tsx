@@ -17,6 +17,7 @@ import {
   Link as LinkIcon,
   Unlink,
   ImagePlus,
+  Captions,
   Undo2,
   Redo2,
   Loader2,
@@ -154,13 +155,24 @@ export function BlogEditor({
     setUploading(true);
     try {
       const url = await uploadBlogImage(file);
-      editor.chain().focus().insertContent({ type: 'image', attrs: { src: url } }).run();
+      // Alt text describes the image for screen readers and Google Images;
+      // SEO audits flag every image without it.
+      const alt = window.prompt('Describe this image (alt text), e.g. "Table of EBITDA multiples by industry"', '')?.trim() || null;
+      editor.chain().focus().insertContent({ type: 'image', attrs: { src: url, alt } }).run();
+      if (!alt) toast.warning('Image added without alt text. Select it and use the alt text button to add one.');
     } catch (error) {
       toast.error(blogErrorMessage(error, 'Failed to upload image'));
     } finally {
       setUploading(false);
       if (imageInputRef.current) imageInputRef.current.value = '';
     }
+  };
+
+  const handleSetImageAlt = () => {
+    const current = (editor.getAttributes('image').alt as string | null) ?? '';
+    const alt = window.prompt('Image alt text (describe what the image shows)', current);
+    if (alt === null) return;
+    editor.chain().focus().updateAttributes('image', { alt: alt.trim() || null }).run();
   };
 
   const marks = [
@@ -240,6 +252,14 @@ export function BlogEditor({
           ) : (
             <ImagePlus className='h-4 w-4' />
           )}
+        </ToolbarButton>
+        <ToolbarButton
+          title='Image alt text'
+          active={false}
+          disabled={!editor.isActive('image')}
+          onClick={handleSetImageAlt}
+        >
+          <Captions className='h-4 w-4' />
         </ToolbarButton>
 
         <ToolbarDivider />
